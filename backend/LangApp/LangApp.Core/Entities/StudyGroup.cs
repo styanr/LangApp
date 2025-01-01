@@ -1,5 +1,6 @@
 using LangApp.Core.Common;
 using LangApp.Core.Events;
+using LangApp.Core.Exceptions.StudyGroup;
 using LangApp.Core.ValueObjects;
 
 namespace LangApp.Core.Entities;
@@ -9,22 +10,21 @@ public class StudyGroup : AggregateRoot
     private readonly HashSet<Member> _members = new();
 
     public string Name { get; private set; }
-    public StudyGroupLanguage Language { get; private set; }
+    public Language Language { get; private set; }
 
     public Guid OwnerId { get; private set; }
 
     public IReadOnlyCollection<Member> Members => _members;
 
-    internal StudyGroup(string name, StudyGroupLanguage language, Guid ownerId)
+    internal StudyGroup(string name, Language language, Guid ownerId)
     {
         Name = name;
         Language = language;
         OwnerId = ownerId;
     }
 
-    private StudyGroup(Guid id, DateTimeOffset dateCreated, DateTimeOffset dateUpdated, DateTimeOffset dateDeleted,
-        bool isDeleted, string name, StudyGroupLanguage language, Guid ownerId, IEnumerable<Member> members)
-        : base(id, dateCreated, dateUpdated, dateDeleted, isDeleted)
+    internal StudyGroup(Guid id, string name, Language language, Guid ownerId, IEnumerable<Member> members)
+        : base(id)
     {
         Name = name;
         Language = language;

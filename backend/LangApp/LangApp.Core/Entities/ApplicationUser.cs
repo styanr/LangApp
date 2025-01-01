@@ -13,19 +13,7 @@ public class ApplicationUser : BaseEntity
     public string? PictureUrl { get; private set; }
     public AppUserRole Role { get; private set; }
 
-    private ApplicationUser(Guid id, DateTimeOffset dateCreated, DateTimeOffset dateUpdated, DateTimeOffset dateDeleted,
-        bool isDeleted, Username username, UserFullName fullName, string? pictureUrl, AppUserRole role, string email,
-        string passwordHash) : base(id, dateCreated, dateUpdated, dateDeleted, isDeleted)
-    {
-        Username = username;
-        FullName = fullName;
-        PictureUrl = pictureUrl;
-        Role = role;
-        Email = email;
-        PasswordHash = passwordHash;
-    }
-
-    internal ApplicationUser(Username username, UserFullName fullName, string? pictureUrl, AppUserRole role,
+    private void _init(Username username, UserFullName fullName, string? pictureUrl, AppUserRole role,
         string email,
         string passwordHash)
     {
@@ -35,5 +23,19 @@ public class ApplicationUser : BaseEntity
         Role = role;
         Email = email;
         PasswordHash = passwordHash;
+    }
+
+    internal ApplicationUser(Guid id, Username username, UserFullName fullName, string? pictureUrl, AppUserRole role,
+        string email,
+        string passwordHash) : base(id)
+    {
+        _init(username, fullName, pictureUrl, role, email, passwordHash);
+    }
+
+    internal ApplicationUser(Username username, UserFullName fullName, string? pictureUrl, AppUserRole role,
+        string email,
+        string passwordHash)
+    {
+        _init(username, fullName, pictureUrl, role, email, passwordHash);
     }
 }

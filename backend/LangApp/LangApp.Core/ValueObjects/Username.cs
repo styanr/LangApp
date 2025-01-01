@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using LangApp.Core.Common;
+using LangApp.Core.Exceptions.Username;
 
 namespace LangApp.Core.ValueObjects;
 

@@ -8,24 +8,18 @@ public abstract class AggregateRoot : BaseEntity
     {
     }
 
-    protected AggregateRoot(Guid id, DateTimeOffset dateCreated, DateTimeOffset dateUpdated, DateTimeOffset dateDeleted,
-        bool isDeleted) : base(
-        id,
-        dateCreated,
-        dateUpdated,
-        dateDeleted,
-        isDeleted)
+    protected AggregateRoot(Guid id) : base(id)
     {
     }
 
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents;
 
-    public void CreateEvent(IDomainEvent @event)
+    protected void CreateEvent(IDomainEvent @event)
     {
         _domainEvents.Add(@event);
     }
 
-    public void ClearEvents()
+    protected void ClearEvents()
     {
         _domainEvents.Clear();
     }

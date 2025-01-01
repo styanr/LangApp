@@ -1,6 +1,6 @@
 using LangApp.Core.ValueObjects;
 
-namespace LangApp.Core.Common;
+namespace LangApp.Core.Exceptions.StudyGroup;
 
 public class AlreadyContainsMembersException : LangAppException
 {
