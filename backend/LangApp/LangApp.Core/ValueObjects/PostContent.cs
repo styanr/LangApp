@@ -1,4 +1,5 @@
 using LangApp.Core.Exceptions;
+using LangApp.Core.Exceptions.Post;
 
 namespace LangApp.Core.ValueObjects;
 
@@ -14,20 +15,5 @@ public record PostContent
         {
             throw new PostContentLengthException(content.Length, MinLength, MaxLength);
         }
-    }
-}
-
-public class PostContentLengthException : LangAppException
-{
-    public int ContentLength { get; }
-    public int MinLength { get; }
-    public int MaxLength { get; }
-
-    public PostContentLengthException(int contentLength, int minLength, int maxLength) : base(
-        $"Content length of {contentLength} is invalid. It must be between {minLength} and {maxLength}")
-    {
-        ContentLength = contentLength;
-        MinLength = minLength;
-        MaxLength = maxLength;
     }
 }

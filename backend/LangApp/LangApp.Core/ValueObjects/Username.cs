@@ -6,8 +6,8 @@ namespace LangApp.Core.ValueObjects;
 
 public record Username
 {
-    private const int MinLen = 4;
-    private const int MaxLen = 20;
+    private const int MinLength = 4;
+    private const int MaxLength = 20;
     private readonly Regex re = new("^(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$");
 
     public string Value { get; }
@@ -20,14 +20,9 @@ public record Username
             throw new UsernameEmptyException();
         }
 
-        if (username.Length < MinLen)
+        if (username.Length is < MinLength or > MaxLength)
         {
-            throw new UsernameTooShortException(username, MinLen);
-        }
-
-        if (username.Length > MaxLen)
-        {
-            throw new UsernameTooLongException(username, MaxLen);
+            throw new UsernameLengthException(username, username.Length, MinLength, MaxLength);
         }
 
         if (!re.IsMatch(username))

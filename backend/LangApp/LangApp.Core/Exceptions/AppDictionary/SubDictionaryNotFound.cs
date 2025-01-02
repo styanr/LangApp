@@ -1,3 +1,11 @@
 namespace LangApp.Core.Exceptions.AppDictionary;
 
-public class SubDictionaryNotFound(Guid id) : LangAppException($"Sub-dictionary with ID {id} not found");
+public class SubDictionaryNotFound : LangAppException
+{
+    public Guid Id { get; }
+
+    public SubDictionaryNotFound(Guid id) : base($"Sub-dictionary with ID {id} not found")
+    {
+        Id = id;
+    }
+}
