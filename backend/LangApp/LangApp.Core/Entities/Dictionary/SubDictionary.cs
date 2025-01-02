@@ -2,7 +2,7 @@ using LangApp.Core.Common;
 using LangApp.Core.Exceptions.SubDictionary;
 using LangApp.Core.ValueObjects;
 
-namespace LangApp.Core.Entities;
+namespace LangApp.Core.Entities.Dictionary;
 
 public class SubDictionary : BaseEntity
 {

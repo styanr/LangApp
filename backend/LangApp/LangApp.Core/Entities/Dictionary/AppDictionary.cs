@@ -1,7 +1,8 @@
 using LangApp.Core.Common;
+using LangApp.Core.Events.AppDictionaryCtx;
 using LangApp.Core.Exceptions.AppDictionary;
 
-namespace LangApp.Core.Entities;
+namespace LangApp.Core.Entities.Dictionary;
 
 public class AppDictionary : AggregateRoot
 {
@@ -19,7 +20,7 @@ public class AppDictionary : AggregateRoot
     {
         _subDictionaries.Add(subDictionary);
 
-        CreateEvent(new SubDictionaryCreated(subDictionary.Language, subDictionary.Title));
+        AddEvent(new SubDictionaryCreated(this, subDictionary.Language, subDictionary.Title));
     }
 
     public void RemoveSubDictionary(Guid subDictionaryId)
@@ -28,7 +29,7 @@ public class AppDictionary : AggregateRoot
 
         _subDictionaries.Remove(subDictionary);
 
-        CreateEvent(new SubDictionaryRemoved(subDictionary.Language, subDictionary.Title));
+        AddEvent(new SubDictionaryRemoved(this, subDictionary.Language, subDictionary.Title));
     }
 
     public void AddEntryToSubDictionary(Guid subDictionaryId, string expression, List<string> definitions)
@@ -36,7 +37,7 @@ public class AppDictionary : AggregateRoot
         var subDictionary = GetSubDictionary(subDictionaryId);
         subDictionary.AddEntry(expression, definitions);
 
-        CreateEvent(new SubDictionaryEntryAdded(subDictionary.Language, subDictionary.Title, expression));
+        AddEvent(new SubDictionaryEntryAdded(this, subDictionary.Language, subDictionary.Title, expression));
     }
 
     public void AddDefinitionToEntry(Guid subDictionaryId, string expression, string definition)
@@ -44,7 +45,7 @@ public class AppDictionary : AggregateRoot
         var subDictionary = GetSubDictionary(subDictionaryId);
         subDictionary.AddDefinition(expression, definition);
 
-        CreateEvent(new SubDictionaryDefinitionAdded(subDictionary.Language, subDictionary.Title, expression,
+        AddEvent(new SubDictionaryDefinitionAdded(this, subDictionary.Language, subDictionary.Title, expression,
             definition));
     }
 
@@ -53,7 +54,7 @@ public class AppDictionary : AggregateRoot
         var subDictionary = GetSubDictionary(subDictionaryId);
         subDictionary.RemoveEntry(expression);
 
-        CreateEvent(new SubDictionaryEntryRemoved(subDictionary.Language, subDictionary.Title, expression));
+        AddEvent(new SubDictionaryEntryRemoved(this, subDictionary.Language, subDictionary.Title, expression));
     }
 
     public void RemoveDefinitionFromSubDictionary(Guid subDictionaryId, string expression, string definition)
@@ -61,7 +62,7 @@ public class AppDictionary : AggregateRoot
         var subDictionary = GetSubDictionary(subDictionaryId);
         subDictionary.RemoveDefinition(expression, definition);
 
-        CreateEvent(new SubDictionaryDefinitionRemoved(subDictionary.Language, subDictionary.Title, expression,
+        AddEvent(new SubDictionaryDefinitionRemoved(this, subDictionary.Language, subDictionary.Title, expression,
             definition));
     }
 

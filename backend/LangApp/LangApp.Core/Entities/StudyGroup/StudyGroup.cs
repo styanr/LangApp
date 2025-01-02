@@ -1,9 +1,10 @@
 using LangApp.Core.Common;
 using LangApp.Core.Events;
+using LangApp.Core.Events.StudyGroupCtx;
 using LangApp.Core.Exceptions.StudyGroup;
 using LangApp.Core.ValueObjects;
 
-namespace LangApp.Core.Entities;
+namespace LangApp.Core.Entities.StudyGroup;
 
 public class StudyGroup : AggregateRoot
 {
@@ -32,6 +33,7 @@ public class StudyGroup : AggregateRoot
         _members = [..members];
     }
 
+    // probably use a simple list here
     public void AddMembers(IEnumerable<Member> members)
     {
         var list = members.ToList();
@@ -41,17 +43,18 @@ public class StudyGroup : AggregateRoot
 
         _members.UnionWith(list);
 
-        CreateEvent(new StudyGroupMembersAdded(this, list));
+        AddEvent(new StudyGroupMembersAdded(this, list));
     }
 
-    public void RemoveMembers(List<Member> members)
+    public void RemoveMembers(IEnumerable<Member> members)
     {
-        var except = members.Except(Members).ToList();
+        var list = members.ToList();
+        var except = list.Except(Members).ToList();
 
         if (except.Count != 0) throw new CantRemoveMembersException(except);
 
-        _members.ExceptWith(members);
+        _members.ExceptWith(list);
 
-        CreateEvent(new StudyGroupRemovedMembers(this, members));
+        AddEvent(new StudyGroupRemovedMembers(this, list));
     }
 }

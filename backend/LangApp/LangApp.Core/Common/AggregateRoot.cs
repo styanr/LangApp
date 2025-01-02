@@ -14,7 +14,7 @@ public abstract class AggregateRoot : BaseEntity
 
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents;
 
-    protected void CreateEvent(IDomainEvent @event)
+    protected void AddEvent(IDomainEvent @event)
     {
         _domainEvents.Add(@event);
     }
