@@ -2,6 +2,7 @@ using LangApp.Core.Common;
 
 namespace LangApp.Core.Entities.Feed;
 
+// todo: tasks, file attachments
 public class FeedItem : BaseEntity
 {
     public string Title { get; private set; }
