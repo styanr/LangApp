@@ -1,3 +1,3 @@
 namespace LangApp.Core.ValueObjects;
 
-public record UserFullName();
+public record UserFullName(string FirstName, string LastName);

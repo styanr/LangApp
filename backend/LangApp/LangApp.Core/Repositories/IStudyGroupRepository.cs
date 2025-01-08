@@ -1,4 +1,4 @@
-using LangApp.Core.Entities.StudyGroup;
+using LangApp.Core.Entities.StudyGroups;
 
 namespace LangApp.Core.Repositories;
 

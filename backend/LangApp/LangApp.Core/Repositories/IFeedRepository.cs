@@ -1,4 +1,4 @@
-using LangApp.Core.Entities.Feed;
+using LangApp.Core.Entities.Feeds;
 
 namespace LangApp.Core.Repositories;
 

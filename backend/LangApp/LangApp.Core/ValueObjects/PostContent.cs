@@ -1,5 +1,5 @@
 using LangApp.Core.Exceptions;
-using LangApp.Core.Exceptions.Post;
+using LangApp.Core.Exceptions.Posts;
 
 namespace LangApp.Core.ValueObjects;
 
