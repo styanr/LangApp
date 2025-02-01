@@ -15,4 +15,8 @@
         <ProjectReference Include="..\LangApp.Core\LangApp.Core.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <Folder Include="StudyGroups\Models\"/>
+    </ItemGroup>
+
 </Project>

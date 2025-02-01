@@ -1,10 +1,11 @@
 using LangApp.Core.Common;
 using LangApp.Core.Enums;
+using LangApp.Core.Events.Users;
 using LangApp.Core.ValueObjects;
 
 namespace LangApp.Core.Entities;
 
-public class ApplicationUser : BaseEntity
+public class ApplicationUser : AggregateRoot
 {
     public Username Username { get; private set; }
     public string Email { get; private set; }
@@ -32,5 +33,40 @@ public class ApplicationUser : BaseEntity
         string email)
     {
         _init(username, fullName, pictureUrl, role, email);
+    }
+
+    public void UpdateUsername(Username username)
+    {
+        if (Username == username) return;
+
+        Username = username;
+        AddEvent(new UserUsernameUpdated(username));
+    }
+
+    public void UpdateFullName(UserFullName fullName)
+    {
+        if (FullName == fullName) return;
+
+        FullName = fullName;
+
+        AddEvent(new UserFullNameUpdated(FullName));
+    }
+
+    public void UpdatePictureUrl(string? pictureUrl)
+    {
+        if (PictureUrl == pictureUrl) return;
+
+        PictureUrl = pictureUrl;
+
+        AddEvent(new UserPictureUrlUpdated(pictureUrl));
+    }
+
+    public void UpdateRole(AppUserRole role)
+    {
+        if (Role == role) return;
+
+        Role = role;
+
+        AddEvent(new UserRoleUpdated(role));
     }
 }

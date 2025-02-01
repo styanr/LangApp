@@ -9,6 +9,7 @@ public class StudyGroup : AggregateRoot
 {
     private readonly HashSet<Member> _members = new();
 
+    // TODO name validation
     public string Name { get; private set; }
     public Language Language { get; private set; }
 
@@ -55,5 +56,14 @@ public class StudyGroup : AggregateRoot
         _members.ExceptWith(list);
 
         AddEvent(new StudyGroupRemovedMembers(this, list));
+    }
+
+    public void UpdateName(string name)
+    {
+        if (Name == name) return;
+        
+        Name = name;
+        
+        AddEvent(new StudyGroupNameUpdated(name));
     }
 }

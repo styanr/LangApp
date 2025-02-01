@@ -1,3 +1,5 @@
+using LangApp.Core.Entities;
+
 namespace LangApp.Application.Users;
 
 public interface IApplicationUserReadService

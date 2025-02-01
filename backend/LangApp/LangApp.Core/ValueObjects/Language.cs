@@ -1,6 +1,5 @@
 using LangApp.Core.Common;
 using LangApp.Core.Exceptions.Languages;
-
 namespace LangApp.Core.ValueObjects;
 
 public record Language

@@ -1,5 +1,6 @@
 using LangApp.Application.Common.Abstractions;
 using LangApp.Application.Users.Exceptions;
+using LangApp.Application.Users.Models;
 using LangApp.Core.Entities;
 using LangApp.Core.Enums;
 using LangApp.Core.Factories.Users;
@@ -9,12 +10,10 @@ using ICommand = LangApp.Application.Common.Abstractions.ICommand;
 
 namespace LangApp.Application.Users.Commands;
 
-public record FullNameWriteModel(string FirstName, string LastName);
-
 public record CreateUser(
     string Username,
     string Email,
-    FullNameWriteModel FullName,
+    FullNameModel FullName,
     string? PictureUrl,
     AppUserRole Role
 ) : ICommand;
@@ -38,12 +37,12 @@ public class CreateUserHandler : ICommandHandler<CreateUser>
         var (usernameModel, email, fullNameModel, pictureUrl, role) = command;
         if (await _readService.ExistsByUsernameAsync(command.Username))
         {
-            throw new ApplicationUserAlreadyExistsExceptions(command.Username);
+            throw new UserAlreadyExistsException(command.Username);
         }
 
         if (await _readService.ExistsByEmailAsync(command.Email))
         {
-            throw new ApplicationUserAlreadyExistsExceptions(command.Email);
+            throw new UserAlreadyExistsException(command.Email);
         }
 
         var username = new Username(usernameModel);
