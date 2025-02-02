@@ -1,10 +1,10 @@
 namespace LangApp.Core.ValueObjects;
 
-public record DictionaryTitle
+public record LexiconTitle
 {
     public string Value { get; }
 
-    public DictionaryTitle(string value)
+    public LexiconTitle(string value)
     {
         if (string.IsNullOrEmpty(value))
         {

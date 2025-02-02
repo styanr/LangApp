@@ -4,7 +4,7 @@ using LangApp.Core.ValueObjects;
 
 namespace LangApp.Core.Events.LanguageDictionaries;
 
-public record DictionaryDefinitionRemoved(
-    LanguageDictionary Dictionary,
+public record LexiconDefinitionRemoved(
+    Lexicon Dictionary,
     Expression Expression,
     Definition Definition) : IDomainEvent;
