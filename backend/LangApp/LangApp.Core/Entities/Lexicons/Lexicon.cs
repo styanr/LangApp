@@ -1,9 +1,9 @@
 using LangApp.Core.Common;
 using LangApp.Core.Events.LanguageDictionaries;
-using LangApp.Core.Exceptions.SubDictionaries;
+using LangApp.Core.Exceptions.Lexicons;
 using LangApp.Core.ValueObjects;
 
-namespace LangApp.Core.Entities.Dictionaries;
+namespace LangApp.Core.Entities.Lexicons;
 
 public class Lexicon : AggregateRoot
 {
@@ -16,18 +16,21 @@ public class Lexicon : AggregateRoot
     public IReadOnlyDictionary<Expression, Definitions> Entries =>
         _entries.ToDictionary(x => x.Key, x => x.Value);
 
-    internal Lexicon(Language language, LexiconTitle title)
+    internal Lexicon(Guid userId, Language language, LexiconTitle title)
     {
+        UserId = userId;
         Language = language;
         Title = title;
     }
 
     internal Lexicon(
         Guid id,
+        Guid userId,
         Language language,
         LexiconTitle title,
         Dictionary<Expression, Definitions> entries) : base(id)
     {
+        UserId = userId;
         Language = language;
         Title = title;
         _entries = entries;

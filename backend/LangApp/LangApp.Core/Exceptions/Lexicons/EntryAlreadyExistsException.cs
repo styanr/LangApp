@@ -1,4 +1,4 @@
-namespace LangApp.Core.Exceptions.SubDictionaries;
+namespace LangApp.Core.Exceptions.Lexicons;
 
 public class EntryAlreadyExistsException : LangAppException
 {

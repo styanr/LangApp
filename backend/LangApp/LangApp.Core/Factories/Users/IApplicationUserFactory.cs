@@ -1,4 +1,5 @@
 using LangApp.Core.Entities;
+using LangApp.Core.Entities.Users;
 using LangApp.Core.Enums;
 using LangApp.Core.ValueObjects;
 

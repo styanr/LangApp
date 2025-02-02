@@ -1,23 +1,24 @@
-using LangApp.Core.Entities.Dictionaries;
+using LangApp.Core.Entities.Lexicons;
 using LangApp.Core.ValueObjects;
 
-namespace LangApp.Core.Factories.Dictionaries;
+namespace LangApp.Core.Factories.Lexicons;
 
 public class LexiconFactory
 {
-    public Lexicon Create(Language language, LexiconTitle title)
+    public Lexicon Create(Guid ownerId, Language language, LexiconTitle title)
     {
-        var dictionary = new Lexicon(language, title);
+        var dictionary = new Lexicon(ownerId, language, title);
         return dictionary;
     }
 
     public Lexicon Create(
+        Guid ownerId,
         Guid id,
         Language language,
         LexiconTitle title,
         Dictionary<Expression, Definitions> entries)
     {
-        var dictionary = new Lexicon(id, language, title, entries);
+        var dictionary = new Lexicon(ownerId, id, language, title, entries);
         return dictionary;
     }
 }

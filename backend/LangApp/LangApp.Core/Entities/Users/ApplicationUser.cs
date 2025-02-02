@@ -3,7 +3,7 @@ using LangApp.Core.Enums;
 using LangApp.Core.Events.Users;
 using LangApp.Core.ValueObjects;
 
-namespace LangApp.Core.Entities;
+namespace LangApp.Core.Entities.Users;
 
 public class ApplicationUser : AggregateRoot
 {

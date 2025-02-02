@@ -1,4 +1,4 @@
-using LangApp.Core.Entities.Dictionaries;
+using LangApp.Core.Entities.Lexicons;
 
 namespace LangApp.Core.Repositories;
 
