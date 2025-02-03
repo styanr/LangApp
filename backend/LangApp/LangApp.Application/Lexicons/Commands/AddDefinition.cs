@@ -24,7 +24,7 @@ public class AddDefinitionHandler : ICommandHandler<AddDefinition>
     {
         var (lexiconId, expressionValue, definitionValue) = command;
 
-        var lexicon = await _repository.GetAsync(lexiconId);
+        var lexicon = await _repository.GetAsync(lexiconId) ?? throw new LexiconNotFoundException(lexiconId);
 
         var expression = new Expression(expressionValue);
         var definition = new Definition(definitionValue);

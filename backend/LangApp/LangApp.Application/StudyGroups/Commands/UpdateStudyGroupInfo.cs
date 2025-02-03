@@ -1,5 +1,6 @@
 using System.Windows.Input;
 using LangApp.Application.Common.Abstractions;
+using LangApp.Application.StudyGroups.Exceptions;
 using LangApp.Core.Repositories;
 using ICommand = LangApp.Application.Common.Abstractions.ICommand;
 
@@ -11,7 +12,7 @@ public record UpdateStudyGroupInfo(
 
 public class UpdateStudyGroupInfoCommandHandler : ICommandHandler<UpdateStudyGroupInfo>
 {
-    private IStudyGroupRepository _repository;
+    private readonly IStudyGroupRepository _repository;
 
     public UpdateStudyGroupInfoCommandHandler(IStudyGroupRepository repository)
     {
@@ -20,9 +21,10 @@ public class UpdateStudyGroupInfoCommandHandler : ICommandHandler<UpdateStudyGro
 
     public async Task HandleAsync(UpdateStudyGroupInfo command, CancellationToken cancellationToken)
     {
-        var (id, name) = command;
+        var (studyGroupId, name) = command;
 
-        var studyGroup = await _repository.GetAsync(id);
+        var studyGroup = await _repository.GetAsync(studyGroupId) ??
+                         throw new StudyGroupNotFoundException(studyGroupId);
 
         studyGroup.UpdateName(name);
 

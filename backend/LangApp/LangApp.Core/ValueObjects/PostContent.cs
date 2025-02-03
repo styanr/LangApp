@@ -15,5 +15,7 @@ public record PostContent
         {
             throw new PostContentLengthException(content.Length, MinLength, MaxLength);
         }
+
+        Value = content;
     }
 }

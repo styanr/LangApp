@@ -1,4 +1,5 @@
 using LangApp.Application.Common.Abstractions;
+using LangApp.Application.Lexicons.Exceptions;
 using LangApp.Core.Repositories;
 using LangApp.Core.ValueObjects;
 
@@ -23,7 +24,7 @@ public class AddEntryHandler : ICommandHandler<AddEntry>
     {
         var (lexiconId, expressionValue, definitionValues) = command;
 
-        var lexicon = await _repository.GetAsync(lexiconId);
+        var lexicon = await _repository.GetAsync(lexiconId) ?? throw new LexiconNotFoundException(lexiconId);
 
         var expression = new Expression(expressionValue);
         var definitions = new Definitions(definitionValues.Select(d => new Definition(d)));

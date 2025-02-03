@@ -1,4 +1,5 @@
 using LangApp.Application.Common.Abstractions;
+using LangApp.Application.StudyGroups.Exceptions;
 using LangApp.Core.Repositories;
 using LangApp.Core.ValueObjects;
 
@@ -24,7 +25,8 @@ public class RemoveMembersFromStudyGroupHandler : ICommandHandler<RemoveMembersF
 
         var members = membersModel.Select(m => new Member(m));
 
-        var studyGroup = await _repository.GetAsync(studyGroupId);
+        var studyGroup = await _repository.GetAsync(studyGroupId) ??
+                         throw new StudyGroupNotFoundException(studyGroupId);
         studyGroup.RemoveMembers(members);
         await _repository.UpdateAsync(studyGroup);
     }

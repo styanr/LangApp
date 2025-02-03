@@ -5,5 +5,5 @@ namespace LangApp.Core.Factories.StudyGroups;
 
 public interface IStudyGroupFactory
 {
-    StudyGroup CreateEmpty(string name, Language language, Guid ownerId);
+    StudyGroup Create(string name, Language language, Guid ownerId);
 }

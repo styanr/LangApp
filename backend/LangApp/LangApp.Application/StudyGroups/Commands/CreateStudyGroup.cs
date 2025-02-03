@@ -29,7 +29,7 @@ public class CreateStudyGroupHandler : ICommandHandler<CreateStudyGroup>
 
         var language = new Language(languageModel);
 
-        var studyGroup = _factory.CreateEmpty(name, language, ownerId);
+        var studyGroup = _factory.Create(name, language, ownerId);
         await _repository.AddAsync(studyGroup);
     }
 }

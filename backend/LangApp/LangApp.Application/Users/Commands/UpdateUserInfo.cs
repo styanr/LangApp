@@ -31,7 +31,7 @@ public class UpdateUserInfoCommandHandler : ICommandHandler<UpdateUserInfo>
     {
         var (id, usernameModel, fullNameModel, pictureUrl, role) = command;
 
-        var user = await _repository.GetAsync(id);
+        var user = await _repository.GetAsync(id) ?? throw new UserNotFoundException(id);
 
         var username = new Username(usernameModel);
         var fullName = new UserFullName(fullNameModel.FirstName, fullNameModel.LastName);
