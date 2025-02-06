@@ -1,12 +1,12 @@
-using LangApp.Application.Common.Abstractions;
+using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.Users.Exceptions;
 using LangApp.Application.Users.Models;
-using LangApp.Core.Entities;
+using LangApp.Application.Users.Services;
 using LangApp.Core.Enums;
 using LangApp.Core.Factories.Users;
 using LangApp.Core.Repositories;
 using LangApp.Core.ValueObjects;
-using ICommand = LangApp.Application.Common.Abstractions.ICommand;
+using Abstractions_ICommand = LangApp.Application.Common.Commands.Abstractions.ICommand;
 
 namespace LangApp.Application.Users.Commands;
 
@@ -16,7 +16,7 @@ public record CreateUser(
     FullNameModel FullName,
     string? PictureUrl,
     AppUserRole Role
-) : ICommand;
+) : Abstractions_ICommand;
 
 public class CreateUserHandler : ICommandHandler<CreateUser>
 {

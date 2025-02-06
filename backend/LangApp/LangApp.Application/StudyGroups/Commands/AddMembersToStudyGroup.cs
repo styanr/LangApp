@@ -1,4 +1,4 @@
-using LangApp.Application.Common.Abstractions;
+using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.StudyGroups.Exceptions;
 using LangApp.Core.Repositories;
 using LangApp.Core.ValueObjects;

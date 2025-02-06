@@ -1,7 +1,7 @@
-using LangApp.Application.Common.Abstractions;
+using LangApp.Application.Common.Commands.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace LangApp.Application.Common;
+namespace LangApp.Application.Common.Commands;
 
 public class InMemoryCommandDispatcher : ICommandDispatcher
 {

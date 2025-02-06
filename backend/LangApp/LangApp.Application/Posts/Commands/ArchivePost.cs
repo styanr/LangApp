@@ -1,4 +1,4 @@
-using LangApp.Application.Common.Abstractions;
+using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.Posts.Exceptions;
 using LangApp.Core.Repositories;
 

@@ -1,5 +1,4 @@
-using LangApp.Application.Common.Abstractions;
-using LangApp.Core.Entities.StudyGroups;
+using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Core.Factories.StudyGroups;
 using LangApp.Core.Repositories;
 using LangApp.Core.ValueObjects;

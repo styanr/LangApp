@@ -15,6 +15,8 @@ public class Post : AggregateRoot
     public Guid GroupId { get; private set; }
     public bool Archived { get; private set; } = true;
     public PostContent Content { get; private set; }
+    public DateTime CreatedAt { get; private set; } = DateTime.Now;
+    public DateTime EditedAt { get; private set; } = DateTime.Now;
     public IReadOnlyCollection<string> Media => _media.AsReadOnly();
 
     internal Post(Guid authorId, Guid groupId, PostType type, string title, PostContent content)
@@ -35,6 +37,7 @@ public class Post : AggregateRoot
     public void Edit(PostContent content)
     {
         Content = content;
+        EditedAt = DateTime.Now;
 
         AddEvent(new PostEditedEvent(this, content));
     }

@@ -1,14 +1,13 @@
-using System.Windows.Input;
-using LangApp.Application.Common.Abstractions;
+using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.StudyGroups.Exceptions;
 using LangApp.Core.Repositories;
-using ICommand = LangApp.Application.Common.Abstractions.ICommand;
+using Abstractions_ICommand = LangApp.Application.Common.Commands.Abstractions.ICommand;
 
 namespace LangApp.Application.StudyGroups.Commands;
 
 public record UpdateStudyGroupInfo(
     Guid StudyGroupId,
-    string Name) : ICommand;
+    string Name) : Abstractions_ICommand;
 
 public class UpdateStudyGroupInfoCommandHandler : ICommandHandler<UpdateStudyGroupInfo>
 {

@@ -1,4 +1,4 @@
-using LangApp.Application.Common.Abstractions;
+using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Core.Enums;
 using LangApp.Core.Factories.Posts;
 using LangApp.Core.Repositories;
