@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangApp.Application", "Lang
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangApp.Infrastructure", "LangApp.Infrastructure\LangApp.Infrastructure.csproj", "{76E73932-BDD9-4DA5-B21A-F0F1E76F2185}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangApp.Api", "LangApp.Api\LangApp.Api.csproj", "{12B8CDA2-7C7A-45EB-8372-DF26A0CB7A6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{76E73932-BDD9-4DA5-B21A-F0F1E76F2185}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76E73932-BDD9-4DA5-B21A-F0F1E76F2185}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76E73932-BDD9-4DA5-B21A-F0F1E76F2185}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12B8CDA2-7C7A-45EB-8372-DF26A0CB7A6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12B8CDA2-7C7A-45EB-8372-DF26A0CB7A6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12B8CDA2-7C7A-45EB-8372-DF26A0CB7A6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12B8CDA2-7C7A-45EB-8372-DF26A0CB7A6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

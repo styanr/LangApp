@@ -15,4 +15,9 @@
         <ProjectReference Include="..\LangApp.Core\LangApp.Core.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <Folder Include="Exercises\"/>
+        <Folder Include="Submissions\"/>
+    </ItemGroup>
+
 </Project>
