@@ -1,10 +1,10 @@
 namespace LangApp.Core.ValueObjects;
 
-public record Expression
+public record Term
 {
     public string Value { get; }
 
-    public Expression(string value)
+    public Term(string value)
     {
         if (string.IsNullOrEmpty(value))
         {

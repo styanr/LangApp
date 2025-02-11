@@ -1,10 +1,11 @@
-using LangApp.Application.Posts.Dto;
+using LangApp.Infrastructure.EF.Models.Posts;
 using LangApp.Infrastructure.EF.Models.Users;
 
-namespace LangApp.Application.StudyGroups.Dto;
+namespace LangApp.Infrastructure.EF.Models.StudyGroups;
 
 public class StudyGroupReadModel
 {
+    public Guid Id { get; set; }
     public string Name { get; set; }
     public string Language { get; set; }
     public UserReadModel Owner { get; set; }
