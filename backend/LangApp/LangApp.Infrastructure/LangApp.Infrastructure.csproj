@@ -6,4 +6,18 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.3"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Queries\Handlers\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\LangApp.Application\LangApp.Application.csproj"/>
+        <ProjectReference Include="..\LangApp.Core\LangApp.Core.csproj"/>
+    </ItemGroup>
+
 </Project>
