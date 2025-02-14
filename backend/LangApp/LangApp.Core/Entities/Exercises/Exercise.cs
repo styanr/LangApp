@@ -10,6 +10,10 @@ public abstract class Exercise : AggregateRoot
     public Guid GroupId { get; private set; }
     public DateTime DueDate { get; private set; }
 
+    protected Exercise()
+    {
+    }
+
     internal Exercise(string title, int maxScore, Guid creatorId, DateTime dueDate, Guid groupId)
     {
         Title = title;

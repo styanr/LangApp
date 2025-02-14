@@ -19,6 +19,10 @@ public class Post : AggregateRoot
     public DateTime EditedAt { get; private set; } = DateTime.Now;
     public IReadOnlyCollection<string> Media => _media.AsReadOnly();
 
+    private Post()
+    {
+    }
+
     internal Post(Guid authorId, Guid groupId, PostType type, string title, PostContent content)
     {
         Type = type;

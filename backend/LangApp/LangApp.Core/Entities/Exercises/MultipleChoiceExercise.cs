@@ -10,6 +10,10 @@ public class MultipleChoiceExercise : Exercise
     public IReadOnlyList<MultipleChoiceQuestion> Questions => _questions.AsReadOnly();
     public MultipleChoiceOption CorrectOption { get; private set; }
 
+    private MultipleChoiceExercise()
+    {
+    }
+
     public MultipleChoiceExercise(string title, int maxScore, Guid creatorId, DateTime dueDate, Guid groupId,
         List<MultipleChoiceQuestion> questions, MultipleChoiceOption correctOption) : base(
         title, maxScore, creatorId, dueDate, groupId)
@@ -25,20 +29,3 @@ public class MultipleChoiceExercise : Exercise
         CorrectOption = correctOption;
     }
 }
-
-//         if (answer is not MultipleChoiceAnswer multipleChoiceAnswer)
-// {
-//     throw new LangAppException("Invalid answer type");
-// }
-
-// if (multipleChoiceAnswer.SelectedOptions.Count != _questions.Count)
-// {
-//     throw new LangAppException("Invalid multiple choice answer count");
-// }
-
-// double correctOptions = _questions.Zip(multipleChoiceAnswer.SelectedOptions)
-//     .Count(t => t.First.CorrectOption == t.Second);
-
-// Percentage percentage = new(correctOptions / _questions.Count);
-
-// return new Evaluation(percentage);

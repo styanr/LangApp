@@ -1,5 +1,5 @@
 using LangApp.Core.Common;
-using LangApp.Core.Events.LanguageDictionaries;
+using LangApp.Core.Events.Lexicons;
 using LangApp.Core.Exceptions.Lexicons;
 using LangApp.Core.ValueObjects;
 
@@ -7,14 +7,17 @@ namespace LangApp.Core.Entities.Lexicons;
 
 public class Lexicon : AggregateRoot
 {
-    private readonly Dictionary<Expression, Definitions> _entries = new();
+    private readonly List<LexiconEntry> _entries = new();
 
     public Guid UserId { get; private set; }
     public Language Language { get; private set; }
     public LexiconTitle Title { get; private set; }
 
-    public IReadOnlyDictionary<Expression, Definitions> Entries =>
-        _entries.ToDictionary(x => x.Key, x => x.Value);
+    public IReadOnlyList<LexiconEntry> Entries => _entries.AsReadOnly();
+
+    private Lexicon()
+    {
+    }
 
     internal Lexicon(Guid userId, Language language, LexiconTitle title)
     {
@@ -28,7 +31,7 @@ public class Lexicon : AggregateRoot
         Guid userId,
         Language language,
         LexiconTitle title,
-        Dictionary<Expression, Definitions> entries) : base(id)
+        List<LexiconEntry> entries) : base(id)
     {
         UserId = userId;
         Language = language;
@@ -36,46 +39,41 @@ public class Lexicon : AggregateRoot
         _entries = entries;
     }
 
-    public void AddEntry(Expression expression, Definitions definitions)
+    public void AddEntry(LexiconEntry entry)
     {
-        if (!_entries.TryAdd(expression, definitions))
+        if (_entries.Any(e => e.Id == entry.Id))
         {
-            throw new EntryAlreadyExistsException(expression.Value);
+            throw new EntryAlreadyExistsException(entry.Id.ToString());
         }
 
-        AddEvent(new LexiconEntryAdded(this, expression, definitions));
+        _entries.Add(entry);
+        AddEvent(new LexiconEntryAdded(this, entry));
     }
 
-    public void AddDefinition(Expression expression, Definition definition)
+    public void AddDefinition(Guid entryId, Definition definition)
     {
-        if (!_entries.TryGetValue(expression, out var definitions))
-        {
-            throw new EntryNotFoundException(expression.Value);
-        }
+        var entry = _entries.FirstOrDefault(e => e.Id == entryId)
+                    ?? throw new EntryNotFoundException(entryId.ToString());
 
-        definitions.Add(definition);
-        AddEvent(new LexiconDefinitionAdded(this, expression, definition));
+        entry.Add(definition);
+        AddEvent(new LexiconDefinitionAdded(this, entry));
     }
 
-    public void RemoveDefinition(Expression expression, Definition definition)
+    public void RemoveDefinition(Guid entryId, Definition definition)
     {
-        if (!_entries.TryGetValue(expression, out var definitions))
-        {
-            throw new EntryNotFoundException(expression.Value);
-        }
+        var entry = _entries.FirstOrDefault(e => e.Id == entryId)
+                    ?? throw new EntryNotFoundException(entryId.ToString());
 
-        definitions.Remove(definition);
-        AddEvent(new LexiconDefinitionRemoved(this, expression, definition));
+        entry.Remove(definition);
+        AddEvent(new LexiconDefinitionRemoved(this, entry));
     }
 
-    public void RemoveEntry(Expression expression)
+    public void RemoveEntry(Guid entryId)
     {
-        if (!_entries.ContainsKey(expression))
-        {
-            throw new EntryNotFoundException(expression.Value);
-        }
+        var entry = _entries.FirstOrDefault(e => e.Id == entryId)
+                    ?? throw new EntryNotFoundException(entryId.ToString());
 
-        _entries.Remove(expression);
-        AddEvent(new LexiconEntryRemoved(this, expression));
+        _entries.Remove(entry);
+        AddEvent(new LexiconEntryRemoved(this, entry));
     }
 }

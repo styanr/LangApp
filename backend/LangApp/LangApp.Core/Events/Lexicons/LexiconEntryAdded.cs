@@ -1,10 +1,8 @@
 using LangApp.Core.Common;
 using LangApp.Core.Entities.Lexicons;
-using LangApp.Core.ValueObjects;
 
-namespace LangApp.Core.Events.LanguageDictionaries;
+namespace LangApp.Core.Events.Lexicons;
 
 public record LexiconEntryAdded(
     Lexicon Dictionary,
-    Expression Expression,
-    Definitions Definitions) : IDomainEvent;
+    LexiconEntry Entry) : IDomainEvent;

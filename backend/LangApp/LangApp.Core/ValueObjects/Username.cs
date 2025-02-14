@@ -30,4 +30,9 @@ public record Username
             throw new UsernameInvalidException(username);
         }
     }
+
+    public override string ToString()
+    {
+        return Value;
+    }
 };

@@ -1,5 +1,6 @@
 using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.Lexicons.Exceptions;
+using LangApp.Core.Factories.Lexicons;
 using LangApp.Core.Repositories;
 using LangApp.Core.ValueObjects;
 
@@ -7,29 +8,35 @@ namespace LangApp.Application.Lexicons.Commands;
 
 public record AddEntry(
     Guid LexiconId,
-    string Expression,
+    Guid EntryId,
+    string Term,
     List<string> Definitions
 ) : ICommand;
 
 public class AddEntryHandler : ICommandHandler<AddEntry>
 {
     private readonly ILexiconRepository _repository;
+    private readonly ILexiconEntryFactory _entryFactory;
 
-    public AddEntryHandler(ILexiconRepository repository)
+    public AddEntryHandler(ILexiconRepository repository, ILexiconEntryFactory entryFactory)
     {
         _repository = repository;
+        _entryFactory = entryFactory;
     }
 
     public async Task HandleAsync(AddEntry command, CancellationToken cancellationToken)
     {
-        var (lexiconId, expressionValue, definitionValues) = command;
+        var (lexiconId, entryId, termValue, definitionValues) = command;
 
         var lexicon = await _repository.GetAsync(lexiconId) ?? throw new LexiconNotFoundException(lexiconId);
 
-        var expression = new Expression(expressionValue);
-        var definitions = new Definitions(definitionValues.Select(d => new Definition(d)));
+        var definitions = definitionValues.Select(d => new Definition(d));
 
-        lexicon.AddEntry(expression, definitions);
+        var term = new Term(termValue);
+
+        var entry = _entryFactory.Create(entryId, term, definitions);
+        
+        lexicon.AddEntry(entry);
         await _repository.UpdateAsync(lexicon);
     }
 }

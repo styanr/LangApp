@@ -10,6 +10,10 @@ public class Submission : AggregateRoot
     public DateTime SubmittedAt { get; private set; } = DateTime.Now;
     public Evaluation? EvaluationResult { get; private set; }
 
+    protected Submission()
+    {
+    }
+
     internal Submission(Guid exerciseId, Guid studentId)
     {
         ExerciseId = exerciseId;

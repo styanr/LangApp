@@ -7,7 +7,7 @@ namespace LangApp.Application.Lexicons.Commands;
 
 public record RemoveEntry(
     Guid LexiconId,
-    string Expression
+    Guid EntryId
 ) : ICommand;
 
 public class RemoveEntryHandler : ICommandHandler<RemoveEntry>
@@ -21,13 +21,11 @@ public class RemoveEntryHandler : ICommandHandler<RemoveEntry>
 
     public async Task HandleAsync(RemoveEntry command, CancellationToken cancellationToken)
     {
-        var (lexiconId, expressionValue) = command;
+        var (lexiconId, entryId) = command;
 
         var lexicon = await _repository.GetAsync(lexiconId) ?? throw new LexiconNotFoundException(lexiconId);
 
-        var expression = new Expression(expressionValue);
-
-        lexicon.RemoveEntry(expression);
+        lexicon.RemoveEntry(entryId);
         await _repository.UpdateAsync(lexicon);
     }
 }

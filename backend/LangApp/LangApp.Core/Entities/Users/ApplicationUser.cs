@@ -13,7 +13,7 @@ public class ApplicationUser : AggregateRoot
     public string? PictureUrl { get; private set; }
     public AppUserRole Role { get; private set; }
 
-    private void _init(Username username, UserFullName fullName, string? pictureUrl, AppUserRole role,
+    private void Init(Username username, UserFullName fullName, string? pictureUrl, AppUserRole role,
         string email)
     {
         Username = username;
@@ -23,16 +23,20 @@ public class ApplicationUser : AggregateRoot
         Email = email;
     }
 
+    private ApplicationUser()
+    {
+    }
+
     internal ApplicationUser(Guid id, Username username, UserFullName fullName, string? pictureUrl, AppUserRole role,
         string email) : base(id)
     {
-        _init(username, fullName, pictureUrl, role, email);
+        Init(username, fullName, pictureUrl, role, email);
     }
 
     internal ApplicationUser(Username username, UserFullName fullName, string? pictureUrl, AppUserRole role,
         string email)
     {
-        _init(username, fullName, pictureUrl, role, email);
+        Init(username, fullName, pictureUrl, role, email);
     }
 
     public void UpdateUsername(Username username)

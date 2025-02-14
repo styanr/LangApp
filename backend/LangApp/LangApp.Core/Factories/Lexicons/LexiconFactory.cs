@@ -16,7 +16,7 @@ public class LexiconFactory
         Guid id,
         Language language,
         LexiconTitle title,
-        Dictionary<Expression, Definitions> entries)
+        List<LexiconEntry> entries)
     {
         var dictionary = new Lexicon(ownerId, id, language, title, entries);
         return dictionary;

@@ -11,8 +11,8 @@ public static class Extensions
 {
     public static IServiceCollection AddApplicationLayer(this IServiceCollection services)
     {
-        // services.AddCommands();
-        // services.AddQueries();
+        services.AddCommands();
+        services.AddQueries();
 
         var assembly = Assembly.GetAssembly(typeof(IEvaluationStrategy<,>));
 

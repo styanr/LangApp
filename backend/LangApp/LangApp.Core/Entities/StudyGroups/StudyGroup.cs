@@ -17,6 +17,10 @@ public class StudyGroup : AggregateRoot
 
     public IReadOnlyCollection<Member> Members => _members;
 
+    private StudyGroup()
+    {
+    }
+
     internal StudyGroup(string name, Language language, Guid ownerId)
     {
         Name = name;
@@ -61,9 +65,9 @@ public class StudyGroup : AggregateRoot
     public void UpdateName(string name)
     {
         if (Name == name) return;
-        
+
         Name = name;
-        
+
         AddEvent(new StudyGroupNameUpdated(name));
     }
 }

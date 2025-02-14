@@ -18,4 +18,9 @@ public record PostContent
 
         Value = content;
     }
+
+    public override string ToString()
+    {
+        return Value;
+    }
 }

@@ -7,7 +7,7 @@ namespace LangApp.Application.Lexicons.Commands;
 
 public record AddDefinition(
     Guid LexiconId,
-    string Expression,
+    Guid EntryId,
     string Definition
 ) : ICommand;
 
@@ -22,14 +22,13 @@ public class AddDefinitionHandler : ICommandHandler<AddDefinition>
 
     public async Task HandleAsync(AddDefinition command, CancellationToken cancellationToken)
     {
-        var (lexiconId, expressionValue, definitionValue) = command;
+        var (lexiconId, entryId, definitionValue) = command;
 
         var lexicon = await _repository.GetAsync(lexiconId) ?? throw new LexiconNotFoundException(lexiconId);
 
-        var expression = new Expression(expressionValue);
         var definition = new Definition(definitionValue);
 
-        lexicon.AddDefinition(expression, definition);
+        lexicon.AddDefinition(entryId, definition);
         await _repository.UpdateAsync(lexicon);
     }
 }

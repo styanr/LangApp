@@ -1,5 +1,6 @@
 using LangApp.Core.Common;
 using LangApp.Core.Exceptions.Languages;
+
 namespace LangApp.Core.ValueObjects;
 
 public record Language
@@ -15,5 +16,10 @@ public record Language
         }
 
         Value = value;
+    }
+
+    public override string ToString()
+    {
+        return Value;
     }
 }
