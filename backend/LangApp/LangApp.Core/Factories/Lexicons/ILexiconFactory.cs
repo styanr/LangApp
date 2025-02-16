@@ -7,6 +7,9 @@ public interface ILexiconFactory
 {
     Lexicon Create(Guid ownerId, Language language, LexiconTitle title);
 
-    Lexicon Create(Guid id, Guid ownerId, Language language, LexiconTitle title,
-        Dictionary<Term, Definitions> entries);
+    Lexicon Create(Guid ownerId,
+        Guid id,
+        Language language,
+        LexiconTitle title,
+        List<LexiconEntry> entries);
 }

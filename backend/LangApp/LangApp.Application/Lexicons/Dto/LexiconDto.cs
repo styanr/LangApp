@@ -5,4 +5,4 @@ public record LexiconDto(
     Guid UserId,
     string Language,
     string Title,
-    Dictionary<string, IEnumerable<string>> Entries);
+    IEnumerable<LexiconEntryDto> Entries);

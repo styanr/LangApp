@@ -7,6 +7,9 @@ namespace LangApp.Infrastructure.EF.Models.Posts;
 public class PostReadModel
 {
     public Guid Id { get; set; }
+    public Guid AuthorId { get; set; }
+    public Guid GroupId { get; set; }
+
     public PostType Type { get; set; }
     public string Title { get; set; }
     public string Content { get; set; }

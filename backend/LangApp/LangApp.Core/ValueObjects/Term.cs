@@ -13,4 +13,9 @@ public record Term
 
         Value = value;
     }
+
+    public override string ToString()
+    {
+        return Value;
+    }
 }

@@ -1,6 +1,9 @@
 using System.Reflection;
 using LangApp.Application.Common.Commands;
 using LangApp.Application.Common.Queries;
+using LangApp.Core.Factories.Lexicons;
+using LangApp.Core.Factories.Posts;
+using LangApp.Core.Factories.StudyGroups;
 using LangApp.Core.Factories.Users;
 using LangApp.Core.Services.EvaluationStrategies;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +12,7 @@ namespace LangApp.Application.Common;
 
 public static class Extensions
 {
-    public static IServiceCollection AddApplicationLayer(this IServiceCollection services)
+    public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddCommands();
         services.AddQueries();
@@ -21,7 +24,12 @@ public static class Extensions
             .AsImplementedInterfaces()
             .WithScopedLifetime());
 
-        services.AddSingleton<IApplicationUserFactory, ApplicationUserFactory>();
+        services.AddTransient<IApplicationUserFactory, ApplicationUserFactory>();
+        services.AddTransient<ILexiconFactory, LexiconFactory>();
+        services.AddTransient<ILexiconEntryFactory, LexiconEntryFactory>();
+        services.AddTransient<IPostFactory, PostFactory>();
+        services.AddTransient<IStudyGroupFactory, StudyGroupFactory>();
+
 
         return services;
     }

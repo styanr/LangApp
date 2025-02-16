@@ -14,21 +14,24 @@ internal sealed class ReadDbContext : DbContext
     public DbSet<PostReadModel> Posts { get; set; }
     public DbSet<LexiconReadModel> Lexicons { get; set; }
 
-    public ReadDbContext(DbContextOptions<ReadDbContext> options)
+    public ReadDbContext(DbContextOptions<ReadDbContext> options) : base(options)
     {
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema("lang_app");
+        modelBuilder.HasDefaultSchema("application");
 
         var configuration = new ReadConfiguration();
+
         modelBuilder.ApplyConfiguration<UserReadModel>(configuration);
         modelBuilder.ApplyConfiguration<StudyGroupReadModel>(configuration);
+        modelBuilder.ApplyConfiguration<MemberReadModel>(configuration);
         modelBuilder.ApplyConfiguration<PostReadModel>(configuration);
         modelBuilder.ApplyConfiguration<LexiconReadModel>(configuration);
         modelBuilder.ApplyConfiguration<LexiconEntryReadModel>(configuration);
-        
+        modelBuilder.ApplyConfiguration<LexiconEntryDefinitionReadModel>(configuration);
+
         base.OnModelCreating(modelBuilder);
     }
 }

@@ -20,34 +20,38 @@ public record CreateUser(
 
 public class CreateUserHandler : ICommandHandler<CreateUser>
 {
-    private readonly IApplicationUserFactory _factory;
-    private readonly IApplicationUserRepository _repository;
-    private readonly IApplicationUserReadService _readService;
-
-    public CreateUserHandler(IApplicationUserRepository repository, IApplicationUserReadService readService,
-        IApplicationUserFactory factory)
+    // private readonly IApplicationUserFactory _factory;
+    // private readonly IApplicationUserRepository _repository;
+    // private readonly IApplicationUserReadService _readService;
+    //
+    // public CreateUserHandler(IApplicationUserRepository repository, IApplicationUserReadService readService,
+    //     IApplicationUserFactory factory)
+    // {
+    //     _repository = repository;
+    //     _readService = readService;
+    //     _factory = factory;
+    // }
+    //
+    // public async Task HandleAsync(CreateUser command, CancellationToken cancellationToken)
+    // {
+    //     var (usernameModel, email, fullNameModel, pictureUrl, role) = command;
+    //     if (await _readService.ExistsByUsernameAsync(command.Username))
+    //     {
+    //         throw new UserAlreadyExistsException(command.Username);
+    //     }
+    //
+    //     if (await _readService.ExistsByEmailAsync(command.Email))
+    //     {
+    //         throw new UserAlreadyExistsException(command.Email);
+    //     }
+    //
+    //     var username = new Username(usernameModel);
+    //     var fullName = new UserFullName(fullNameModel.FirstName, fullNameModel.LastName);
+    //
+    //     await _repository.AddAsync(_factory.Create(username, fullName, pictureUrl, role, email));
+    // }
+    public Task HandleAsync(CreateUser command, CancellationToken cancellationToken)
     {
-        _repository = repository;
-        _readService = readService;
-        _factory = factory;
-    }
-
-    public async Task HandleAsync(CreateUser command, CancellationToken cancellationToken)
-    {
-        var (usernameModel, email, fullNameModel, pictureUrl, role) = command;
-        if (await _readService.ExistsByUsernameAsync(command.Username))
-        {
-            throw new UserAlreadyExistsException(command.Username);
-        }
-
-        if (await _readService.ExistsByEmailAsync(command.Email))
-        {
-            throw new UserAlreadyExistsException(command.Email);
-        }
-
-        var username = new Username(usernameModel);
-        var fullName = new UserFullName(fullNameModel.FirstName, fullNameModel.LastName);
-
-        await _repository.AddAsync(_factory.Create(username, fullName, pictureUrl, role, email));
+        throw new NotImplementedException();
     }
 }

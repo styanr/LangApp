@@ -7,17 +7,16 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.13"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.3"/>
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Queries\Handlers\"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\LangApp.Application\LangApp.Application.csproj"/>
         <ProjectReference Include="..\LangApp.Core\LangApp.Core.csproj"/>
+        <ProjectReference Include="..\Shared\Shared.csproj"/>
     </ItemGroup>
 
 </Project>

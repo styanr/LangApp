@@ -5,7 +5,7 @@ namespace LangApp.Core.Repositories;
 public interface ILexiconRepository
 {
     Task<Lexicon?> GetAsync(Guid id);
-    Task AddAsync(Lexicon group);
-    Task UpdateAsync(Lexicon group);
-    Task DeleteAsync(Lexicon group);
+    Task AddAsync(Lexicon lexicon);
+    Task UpdateAsync(Lexicon lexicon);
+    Task DeleteAsync(Lexicon lexicon);
 }

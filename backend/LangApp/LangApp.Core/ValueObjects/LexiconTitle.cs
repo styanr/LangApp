@@ -4,6 +4,10 @@ public record LexiconTitle
 {
     public string Value { get; }
 
+    private LexiconTitle()
+    {
+    }
+
     public LexiconTitle(string value)
     {
         if (string.IsNullOrEmpty(value))

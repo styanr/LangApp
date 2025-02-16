@@ -1,4 +1,3 @@
-using System.Text.Json;
 using LangApp.Infrastructure.EF.Models.Lexicons;
 using LangApp.Infrastructure.EF.Models.Posts;
 using LangApp.Infrastructure.EF.Models.StudyGroups;
@@ -11,9 +10,11 @@ namespace LangApp.Infrastructure.EF.Config;
 internal sealed class ReadConfiguration :
     IEntityTypeConfiguration<UserReadModel>,
     IEntityTypeConfiguration<StudyGroupReadModel>,
+    IEntityTypeConfiguration<MemberReadModel>,
     IEntityTypeConfiguration<PostReadModel>,
     IEntityTypeConfiguration<LexiconReadModel>,
-    IEntityTypeConfiguration<LexiconEntryReadModel>
+    IEntityTypeConfiguration<LexiconEntryReadModel>,
+    IEntityTypeConfiguration<LexiconEntryDefinitionReadModel>
 {
     public void Configure(EntityTypeBuilder<UserReadModel> builder)
     {
@@ -23,11 +24,11 @@ internal sealed class ReadConfiguration :
             .HasConversion(fn => fn.ToString(), s => new FullNameReadModel(s));
 
         builder.HasMany(u => u.StudyGroups)
-            .WithMany(g => g.Members);
+            .WithMany(g => g.Members).UsingEntity<MemberReadModel>();
         builder.HasMany(u => u.ManagedGroups)
-            .WithOne(g => g.Owner);
-        builder.HasOne(u => u.Lexicon)
-            .WithOne(l => l.Owner);
+            .WithOne(g => g.Owner).HasForeignKey(g => g.OwnerId);
+        builder.HasMany(u => u.Lexicons)
+            .WithOne(l => l.Owner).HasForeignKey(l => l.OwnerId);
     }
 
     public void Configure(EntityTypeBuilder<StudyGroupReadModel> builder)
@@ -39,11 +40,27 @@ internal sealed class ReadConfiguration :
             .WithMany(u => u.ManagedGroups);
 
         builder.HasMany(g => g.Members)
-            .WithMany(u => u.StudyGroups);
+            .WithMany(u => u.StudyGroups)
+            .UsingEntity<MemberReadModel>(
+                m => m.HasOne<UserReadModel>()
+                    .WithMany()
+                    .HasForeignKey(mb => mb.UserId),
+                m => m.HasOne<StudyGroupReadModel>()
+                    .WithMany()
+                    .HasForeignKey(mb => mb.GroupId));
 
         builder.HasMany(g => g.Posts)
-            .WithOne(p => p.Group);
+            .WithOne(p => p.Group).HasForeignKey(p => p.GroupId);
     }
+
+    public void Configure(EntityTypeBuilder<MemberReadModel> builder)
+    {
+        builder.ToTable("Members");
+        builder.HasKey(m => new { m.UserId, m.GroupId });
+        builder.HasOne<UserReadModel>().WithMany().HasForeignKey(m => m.UserId);
+        builder.HasOne<StudyGroupReadModel>().WithMany().HasForeignKey(m => m.GroupId);
+    }
+
 
     public void Configure(EntityTypeBuilder<PostReadModel> builder)
     {
@@ -51,7 +68,7 @@ internal sealed class ReadConfiguration :
         builder.HasKey(p => p.Id);
 
         builder.HasOne(p => p.Author)
-            .WithMany();
+            .WithMany().HasForeignKey(p => p.AuthorId);
 
         builder.HasOne(p => p.Group)
             .WithMany(g => g.Posts);
@@ -61,17 +78,14 @@ internal sealed class ReadConfiguration :
     {
         builder.ToTable("Lexicons");
         builder.HasKey(l => l.Id);
-        builder.Property(l => l.Language).IsRequired().HasMaxLength(50);
-        builder.Property(l => l.Title).IsRequired().HasMaxLength(255);
 
         builder.HasOne(l => l.Owner)
-            .WithOne(u => u.Lexicon)
-            .HasForeignKey<LexiconReadModel>(l => l.Id)
-            .OnDelete(DeleteBehavior.Cascade);
+            .WithMany(u => u.Lexicons)
+            .HasForeignKey(l => l.OwnerId);
 
         builder.HasMany(l => l.Entries)
             .WithOne(e => e.Lexicon)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(e => e.LexiconId);
     }
 
     public void Configure(EntityTypeBuilder<LexiconEntryReadModel> builder)
@@ -79,14 +93,28 @@ internal sealed class ReadConfiguration :
         builder.ToTable("LexiconEntries");
         builder.HasKey(e => e.Id);
 
-        builder.Property(e => e.Definitions)
-            .HasConversion(
-                v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)default),
-                v => JsonSerializer.Deserialize<ICollection<string>>(v, (JsonSerializerOptions?)default) ??
-                     new List<string>()
-            );
+        builder.Property(e => e.Term)
+            .IsRequired();
 
         builder.HasOne(e => e.Lexicon)
             .WithMany(l => l.Entries);
+
+        builder.HasMany(e => e.Definitions)
+            .WithOne(d => d.Entry)
+            .HasForeignKey(d => d.LexiconEntryId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+
+    public void Configure(EntityTypeBuilder<LexiconEntryDefinitionReadModel> builder)
+    {
+        builder.ToTable("LexiconEntryDefinitions");
+        builder.HasKey(d => d.Id);
+
+        builder.Property(d => d.Value)
+            .HasColumnName("Definition")
+            .IsRequired();
+
+        builder.HasOne(d => d.Entry)
+            .WithMany(e => e.Definitions);
     }
 }

@@ -16,5 +16,5 @@ public class UserReadModel
     public ICollection<StudyGroupReadModel> StudyGroups { get; set; }
     public ICollection<StudyGroupReadModel> ManagedGroups { get; set; }
 
-    public LexiconReadModel Lexicon { get; set; }
+    public ICollection<LexiconReadModel> Lexicons { get; set; }
 }

@@ -14,7 +14,7 @@ public class LexiconEntry : BaseEntity
     public Guid LexiconId { get; private set; }
     public Term Term { get; private set; }
 
-    public IReadOnlyList<Definition> Values => _definitions.AsReadOnly();
+    public IReadOnlyList<Definition> Definitions => _definitions.AsReadOnly();
 
     public LexiconEntry(Guid id, Term term, IEnumerable<Definition> definitions) : base(id)
     {

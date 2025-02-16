@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangApp.Infrastructure", "L
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangApp.Api", "LangApp.Api\LangApp.Api.csproj", "{12B8CDA2-7C7A-45EB-8372-DF26A0CB7A6F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{6FA22917-8B90-433A-BD78-2500CB463E77}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{12B8CDA2-7C7A-45EB-8372-DF26A0CB7A6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12B8CDA2-7C7A-45EB-8372-DF26A0CB7A6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12B8CDA2-7C7A-45EB-8372-DF26A0CB7A6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FA22917-8B90-433A-BD78-2500CB463E77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FA22917-8B90-433A-BD78-2500CB463E77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FA22917-8B90-433A-BD78-2500CB463E77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FA22917-8B90-433A-BD78-2500CB463E77}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -6,6 +6,7 @@ namespace LangApp.Infrastructure.EF.Models.StudyGroups;
 public class StudyGroupReadModel
 {
     public Guid Id { get; set; }
+    public Guid OwnerId { get; set; }
     public string Name { get; set; }
     public string Language { get; set; }
     public UserReadModel Owner { get; set; }
