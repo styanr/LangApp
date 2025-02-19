@@ -19,7 +19,7 @@ public class Lexicon : AggregateRoot
     {
     }
 
-    internal Lexicon(Guid userId, Language language, LexiconTitle title)
+    internal Lexicon(Guid id, Guid userId, Language language, LexiconTitle title) : base(id)
     {
         UserId = userId;
         Language = language;

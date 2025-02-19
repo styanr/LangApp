@@ -29,6 +29,8 @@ public record Username
         {
             throw new UsernameInvalidException(username);
         }
+
+        Value = username;
     }
 
     public override string ToString()

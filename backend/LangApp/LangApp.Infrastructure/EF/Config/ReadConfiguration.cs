@@ -23,6 +23,8 @@ internal sealed class ReadConfiguration :
         builder.Property(u => u.FullName)
             .HasConversion(fn => fn.ToString(), s => new FullNameReadModel(s));
 
+        builder.Property(u => u.Username).HasColumnName("UserName");
+
         builder.HasMany(u => u.StudyGroups)
             .WithMany(g => g.Members).UsingEntity<MemberReadModel>();
         builder.HasMany(u => u.ManagedGroups)
@@ -97,12 +99,12 @@ internal sealed class ReadConfiguration :
             .IsRequired();
 
         builder.HasOne(e => e.Lexicon)
-            .WithMany(l => l.Entries);
+            .WithMany(l => l.Entries)
+            .HasForeignKey(e => e.LexiconId);
 
         builder.HasMany(e => e.Definitions)
             .WithOne(d => d.Entry)
-            .HasForeignKey(d => d.LexiconEntryId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(d => d.LexiconEntryId);
     }
 
     public void Configure(EntityTypeBuilder<LexiconEntryDefinitionReadModel> builder)
@@ -115,6 +117,7 @@ internal sealed class ReadConfiguration :
             .IsRequired();
 
         builder.HasOne(d => d.Entry)
-            .WithMany(e => e.Definitions);
+            .WithMany(e => e.Definitions)
+            .HasForeignKey(d => d.LexiconEntryId);
     }
 }

@@ -11,7 +11,7 @@ public record CreateStudyGroup(
     Guid OwnerId
 ) : ICommand;
 
-public class CreateStudyGroupHandler : ICommandHandler<CreateStudyGroup>
+public class CreateStudyGroupHandler : ICommandHandler<CreateStudyGroup, Guid>
 {
     private readonly IStudyGroupRepository _repository;
     private readonly IStudyGroupFactory _factory;
@@ -22,7 +22,7 @@ public class CreateStudyGroupHandler : ICommandHandler<CreateStudyGroup>
         _factory = factory;
     }
 
-    public async Task HandleAsync(CreateStudyGroup command, CancellationToken cancellationToken)
+    public async Task<Guid> HandleAsync(CreateStudyGroup command, CancellationToken cancellationToken)
     {
         var (name, languageModel, ownerId) = command;
 
@@ -30,5 +30,7 @@ public class CreateStudyGroupHandler : ICommandHandler<CreateStudyGroup>
 
         var studyGroup = _factory.Create(name, language, ownerId);
         await _repository.AddAsync(studyGroup);
+
+        return studyGroup.Id;
     }
 }

@@ -5,5 +5,5 @@ namespace LangApp.Core.Factories.Lexicons;
 
 public interface ILexiconEntryFactory
 {
-    LexiconEntry Create(Guid id, Term term, IEnumerable<Definition> definitions);
+    LexiconEntry Create(Term term, IEnumerable<Definition> definitions);
 }

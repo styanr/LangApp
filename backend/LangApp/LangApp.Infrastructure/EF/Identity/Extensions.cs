@@ -11,6 +11,7 @@ public static class Extensions
         services.AddIdentity<IdentityApplicationUser, IdentityRole<Guid>>()
             .AddEntityFrameworkStores<WriteDbContext>()
             .AddDefaultTokenProviders();
+
         return services;
     }
 }

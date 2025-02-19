@@ -1,3 +1,4 @@
+using LangApp.Api.Common.Endpoints;
 using LangApp.Application.Common;
 using LangApp.Infrastructure;
 
@@ -15,6 +16,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.MapGroup("/api").AddApplicationEndpoints();
 
 app.UseHttpsRedirection();
 

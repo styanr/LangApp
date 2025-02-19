@@ -1,4 +1,5 @@
 using LangApp.Core.Entities.Users;
+using LangApp.Core.Factories.Users;
 using LangApp.Core.Repositories;
 using LangApp.Infrastructure.EF.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -9,20 +10,27 @@ namespace LangApp.Infrastructure.EF.Repositories.Users;
 internal sealed class PostgresApplicationUserRepository : IApplicationUserRepository
 {
     private readonly UserManager<IdentityApplicationUser> _userManager;
+    private readonly IApplicationUserFactory _factory;
 
-    public PostgresApplicationUserRepository(UserManager<IdentityApplicationUser> userManager)
+    public PostgresApplicationUserRepository(UserManager<IdentityApplicationUser> userManager,
+        IApplicationUserFactory factory)
     {
         _userManager = userManager;
+        _factory = factory;
     }
 
-    public Task<ApplicationUser?> GetAsync(Guid id)
+    public async Task<ApplicationUser?> GetAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var identityUser = await _userManager.FindByIdAsync(id.ToString());
+
+        return identityUser?.ToDomainModel(_factory);
     }
 
     public Task AddAsync(ApplicationUser user)
     {
-        throw new NotImplementedException();
+        var identityUser = user.ToIdentityModel();
+
+        return _userManager.CreateAsync(identityUser);
     }
 
     public Task UpdateAsync(ApplicationUser user)

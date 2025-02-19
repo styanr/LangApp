@@ -1,12 +1,20 @@
 using LangApp.Core.Entities.Lexicons;
+using LangApp.Core.Services.KeyGeneration;
 using LangApp.Core.ValueObjects;
 
 namespace LangApp.Core.Factories.Lexicons;
 
 public class LexiconEntryFactory : ILexiconEntryFactory
 {
-    public LexiconEntry Create(Guid id, Term term, IEnumerable<Definition> definitions)
+    private readonly IKeyGenerator _keyGenerator;
+
+    public LexiconEntryFactory(IKeyGenerator keyGenerator)
     {
-        return new LexiconEntry(id, term, definitions);
+        _keyGenerator = keyGenerator;
+    }
+
+    public LexiconEntry Create(Term term, IEnumerable<Definition> definitions)
+    {
+        return new LexiconEntry(_keyGenerator.NewKey(), term, definitions);
     }
 }

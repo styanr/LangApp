@@ -3,7 +3,7 @@ using LangApp.Application.Common.Queries.Abstractions;
 using LangApp.Core.Factories.Users;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace LangApp.Application.Common.Queries;
+namespace Shared.Queries;
 
 public static class Extensions
 {
@@ -13,7 +13,7 @@ public static class Extensions
 
         services.AddSingleton<IQueryDispatcher, InMemoryQueryDispatcher>();
         services.Scan(s => s.FromAssemblies(assembly)
-            .AddClasses(c => c.AssignableTo(typeof(IQueryHandler<,>)))
+            .AddClasses(c => c.AssignableTo(typeof(IQueryHandler<,>)), publicOnly: false)
             .AsImplementedInterfaces()
             .WithScopedLifetime());
 

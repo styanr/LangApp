@@ -1,3 +1,4 @@
+using LangApp.Application.Users.Services;
 using LangApp.Core.Repositories;
 using LangApp.Infrastructure.EF.Context;
 using LangApp.Infrastructure.EF.Options;
@@ -6,6 +7,7 @@ using LangApp.Infrastructure.EF.Repositories.Lexicons;
 using LangApp.Infrastructure.EF.Repositories.Posts;
 using LangApp.Infrastructure.EF.Repositories.StudyGroups;
 using LangApp.Infrastructure.EF.Repositories.Users;
+using LangApp.Infrastructure.EF.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +25,7 @@ internal static class Extensions
         services.AddScoped<IExerciseRepository, PostgresExerciseRepository>();
         services.AddScoped<IPostRepository, PostgresPostRepository>();
         services.AddScoped<IStudyGroupRepository, PostgresStudyGroupRepository>();
+        services.AddScoped<IApplicationUserReadService, ApplicationUserReadService>();
 
         var postgres = configuration.GetOptions<PostgresOptions>("Postgres");
         services.AddDbContext<ReadDbContext>(opt => opt.UseNpgsql(postgres.ConnectionString));

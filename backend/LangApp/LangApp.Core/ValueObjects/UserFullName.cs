@@ -15,7 +15,7 @@ public record UserFullName
 
     public UserFullName(string value)
     {
-        var values = value.Split(".");
+        var values = value.Split(",");
 
         FirstName = values.First();
         LastName = values.Last();

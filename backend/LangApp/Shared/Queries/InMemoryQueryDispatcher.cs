@@ -1,7 +1,7 @@
 using LangApp.Application.Common.Queries.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace LangApp.Application.Common.Queries;
+namespace Shared.Queries;
 
 internal sealed class InMemoryQueryDispatcher : IQueryDispatcher
 {
@@ -12,13 +12,13 @@ internal sealed class InMemoryQueryDispatcher : IQueryDispatcher
         _serviceProvider = serviceProvider;
     }
 
-    public async Task<TResult> QueryAsync<TResult>(IQuery<TResult> query)
+    public async Task<TResult?> QueryAsync<TResult>(IQuery<TResult> query)
     {
         using var scope = _serviceProvider.CreateScope();
         var handlerType = typeof(IQueryHandler<,>).MakeGenericType(query.GetType(), typeof(TResult));
         var handler = scope.ServiceProvider.GetRequiredService(handlerType);
 
-        return await (Task<TResult>)handlerType.GetMethod(nameof(IQueryHandler<IQuery<TResult>, TResult>.HandleAsync))
+        return await (Task<TResult?>)handlerType.GetMethod(nameof(IQueryHandler<IQuery<TResult>, TResult>.HandleAsync))
             ?.Invoke(handler, new[] { query });
     }
 }

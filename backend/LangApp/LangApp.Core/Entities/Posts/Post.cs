@@ -23,7 +23,7 @@ public class Post : AggregateRoot
     {
     }
 
-    internal Post(Guid authorId, Guid groupId, PostType type, string title, PostContent content)
+    internal Post(Guid id, Guid authorId, Guid groupId, PostType type, string title, PostContent content) : base(id)
     {
         Type = type;
         Title = title;
@@ -32,8 +32,9 @@ public class Post : AggregateRoot
         Content = content;
     }
 
-    internal Post(Guid authorId, Guid groupId, PostType type, string title, PostContent content, List<string> media) :
-        this(authorId, groupId, type, title, content)
+    internal Post(Guid id, Guid authorId, Guid groupId, PostType type, string title, PostContent content,
+        List<string> media) :
+        this(id, authorId, groupId, type, title, content)
     {
         _media = media;
     }

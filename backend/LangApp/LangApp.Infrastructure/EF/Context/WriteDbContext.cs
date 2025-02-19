@@ -22,6 +22,8 @@ internal sealed class WriteDbContext : IdentityDbContext<IdentityApplicationUser
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.HasDefaultSchema("application");
         var configuration = new WriteConfiguration();
 
@@ -31,7 +33,5 @@ internal sealed class WriteDbContext : IdentityDbContext<IdentityApplicationUser
         modelBuilder.ApplyConfiguration<Post>(configuration);
         modelBuilder.ApplyConfiguration<Lexicon>(configuration);
         modelBuilder.ApplyConfiguration<LexiconEntry>(configuration);
-
-        base.OnModelCreating(modelBuilder);
     }
 }

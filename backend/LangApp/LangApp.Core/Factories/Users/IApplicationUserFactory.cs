@@ -9,4 +9,7 @@ public interface IApplicationUserFactory
 {
     ApplicationUser Create(Username username, UserFullName fullName, string? pictureUrl, AppUserRole role,
         string email);
+
+    ApplicationUser Create(Guid id, Username username, UserFullName fullName, string? pictureUrl, AppUserRole role,
+        string email);
 }

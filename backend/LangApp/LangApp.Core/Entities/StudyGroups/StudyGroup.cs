@@ -21,7 +21,7 @@ public class StudyGroup : AggregateRoot
     {
     }
 
-    internal StudyGroup(string name, Language language, Guid ownerId)
+    internal StudyGroup(Guid id, string name, Language language, Guid ownerId) : base(id)
     {
         Name = name;
         Language = language;
