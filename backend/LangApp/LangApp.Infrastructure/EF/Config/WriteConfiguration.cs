@@ -26,7 +26,7 @@ internal sealed class WriteConfiguration :
         builder.HasKey(u => u.Id);
         builder.Property(u => u.FullName)
             .HasConversion(fn => fn.ToString(), s => new UserFullName(s));
-        
+
         builder.HasIndex(u => u.UserName).IsUnique();
         builder.HasIndex(u => u.Email).IsUnique();
     }
@@ -36,7 +36,9 @@ internal sealed class WriteConfiguration :
         builder.ToTable("StudyGroups");
         builder.HasKey(g => g.Id);
 
-        builder.HasMany(g => g.Members).WithOne();
+        builder.HasMany(g => g.Members)
+            .WithOne()
+            .HasForeignKey(m => m.GroupId);
         builder.Property(g => g.Language).HasConversion(g => g.ToString(), s => new Language(s));
     }
 
@@ -46,7 +48,6 @@ internal sealed class WriteConfiguration :
         builder.HasKey(m => new { m.UserId, m.GroupId });
 
         builder.HasOne<IdentityApplicationUser>().WithMany().HasForeignKey(m => m.UserId);
-        builder.HasOne<StudyGroup>().WithMany().HasForeignKey(m => m.GroupId);
     }
 
     public void Configure(EntityTypeBuilder<Post> builder)

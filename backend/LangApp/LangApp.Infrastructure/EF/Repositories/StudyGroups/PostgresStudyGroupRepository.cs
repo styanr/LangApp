@@ -18,7 +18,9 @@ internal sealed class PostgresStudyGroupRepository : IStudyGroupRepository
 
     public Task<StudyGroup?> GetAsync(Guid id)
     {
-        return _context.StudyGroups.FirstOrDefaultAsync(g => g.Id == id);
+        return _context.StudyGroups
+            .Include(g => g.Members)
+            .FirstOrDefaultAsync(g => g.Id == id);
     }
 
     public async Task AddAsync(StudyGroup group)

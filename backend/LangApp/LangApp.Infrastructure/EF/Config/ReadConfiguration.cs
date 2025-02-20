@@ -84,13 +84,13 @@ internal sealed class ReadConfiguration :
         builder.ToTable("Lexicons");
         builder.HasKey(l => l.Id);
 
+        builder.Property(l => l.Language).IsRequired();
+        builder.Property(l => l.Title).IsRequired();
+
         builder.HasOne(l => l.Owner)
             .WithMany(u => u.Lexicons)
-            .HasForeignKey(l => l.OwnerId);
-
-        builder.HasMany(l => l.Entries)
-            .WithOne(e => e.Lexicon)
-            .HasForeignKey(e => e.LexiconId);
+            .HasForeignKey(l => l.OwnerId)
+            .IsRequired();
     }
 
     public void Configure(EntityTypeBuilder<LexiconEntryReadModel> builder)
@@ -98,16 +98,17 @@ internal sealed class ReadConfiguration :
         builder.ToTable("LexiconEntries");
         builder.HasKey(e => e.Id);
 
-        builder.Property(e => e.Term)
-            .IsRequired();
+        builder.Property(e => e.Term).IsRequired();
 
         builder.HasOne(e => e.Lexicon)
             .WithMany(l => l.Entries)
-            .HasForeignKey(e => e.LexiconId);
+            .HasForeignKey(e => e.LexiconId)
+            .IsRequired();
 
         builder.HasMany(e => e.Definitions)
             .WithOne(d => d.Entry)
-            .HasForeignKey(d => d.LexiconEntryId);
+            .HasForeignKey(d => d.LexiconEntryId)
+            .IsRequired();
     }
 
     public void Configure(EntityTypeBuilder<LexiconEntryDefinitionReadModel> builder)
@@ -115,12 +116,7 @@ internal sealed class ReadConfiguration :
         builder.ToTable("LexiconEntryDefinitions");
         builder.HasKey(d => d.Id);
 
-        builder.Property(d => d.Value)
-            .HasColumnName("Definition")
-            .IsRequired();
-
-        builder.HasOne(d => d.Entry)
-            .WithMany(e => e.Definitions)
-            .HasForeignKey(d => d.LexiconEntryId);
+        builder.Property(d => d.LexiconEntryId).IsRequired();
+        builder.Property(d => d.Value).IsRequired();
     }
 }

@@ -37,7 +37,7 @@ public class StudyGroup : AggregateRoot
         _members = [..members];
     }
 
-    // probably use a simple list here
+    // TODO: use a simple list here
     public void AddMembers(IEnumerable<Member> members)
     {
         var list = members.ToList();
@@ -53,9 +53,9 @@ public class StudyGroup : AggregateRoot
     public void RemoveMembers(IEnumerable<Member> members)
     {
         var list = members.ToList();
-        var except = list.Except(Members).ToList();
-
-        if (except.Count != 0) throw new CantRemoveMembersException(except);
+        // var except = list.Except(Members).ToList();
+        //
+        // if (except.Count != 0) throw new CantRemoveMembersException(except);
 
         _members.ExceptWith(list);
 

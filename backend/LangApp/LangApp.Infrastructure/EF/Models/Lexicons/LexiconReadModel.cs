@@ -10,5 +10,5 @@ public class LexiconReadModel
     public Guid OwnerId { get; set; }
 
     public UserReadModel Owner { get; set; }
-    public List<LexiconEntryReadModel> Entries { get; set; } = new();
+    public required IEnumerable<LexiconEntryReadModel> Entries { get; set; }
 }

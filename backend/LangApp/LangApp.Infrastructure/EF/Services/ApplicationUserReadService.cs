@@ -14,6 +14,11 @@ internal sealed class ApplicationUserReadService : IApplicationUserReadService
         _users = context.Users;
     }
 
+    public async Task<bool> Exists(Guid id)
+    {
+        return await _users.AnyAsync(u => u.Id == id);
+    }
+
     public async Task<bool> ExistsByUsernameAsync(string username)
     {
         return await _users.AnyAsync(u => u.Username == username);

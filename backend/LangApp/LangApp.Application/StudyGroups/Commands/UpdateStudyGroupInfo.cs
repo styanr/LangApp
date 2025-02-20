@@ -1,13 +1,12 @@
 using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.StudyGroups.Exceptions;
 using LangApp.Core.Repositories;
-using Abstractions_ICommand = LangApp.Application.Common.Commands.Abstractions.ICommand;
 
 namespace LangApp.Application.StudyGroups.Commands;
 
 public record UpdateStudyGroupInfo(
     Guid StudyGroupId,
-    string Name) : Abstractions_ICommand;
+    string Name) : ICommand;
 
 public class UpdateStudyGroupInfoCommandHandler : ICommandHandler<UpdateStudyGroupInfo>
 {

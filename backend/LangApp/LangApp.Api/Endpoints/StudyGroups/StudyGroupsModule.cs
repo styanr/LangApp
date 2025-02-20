@@ -1,4 +1,5 @@
 using LangApp.Api.Common.Endpoints;
+using LangApp.Api.Endpoints.StudyGroups.Models;
 using LangApp.Application.Common;
 using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.Common.Queries.Abstractions;
@@ -19,6 +20,9 @@ public class StudyGroupsModule : IEndpointModule
 
         group.MapGet("/{id:guid}", Get).WithName("GetStudyGroup");
         group.MapPost("/", Create).WithName("CreateStudyGroup");
+        group.MapPost("/{id:guid}/members", AddMembers).WithName("AddMembersToStudyGroup");
+        group.MapDelete("/{id:guid}/members", RemoveMembers).WithName("RemoveMembersFromStudyGroup");
+        group.MapPut("/{id:guid}", Put).WithName("UpdateStudyGroupInfo");
 
         app.MapGet("/users/{userId:guid}/groups", GetByUser).WithName("GetStudyGroupByUser");
     }
@@ -28,7 +32,6 @@ public class StudyGroupsModule : IEndpointModule
         [FromServices] IQueryDispatcher dispatcher)
     {
         var result = await dispatcher.QueryAsync(query);
-
         return ApplicationTypedResults.OkOrNotFound(result);
     }
 
@@ -37,7 +40,6 @@ public class StudyGroupsModule : IEndpointModule
         [FromServices] IQueryDispatcher dispatcher)
     {
         var result = await dispatcher.QueryAsync(query);
-
         return ApplicationTypedResults.OkOrNotFound(result);
     }
 
@@ -46,16 +48,48 @@ public class StudyGroupsModule : IEndpointModule
         [FromServices] ICommandDispatcher dispatcher)
     {
         var id = await dispatcher.DispatchWithResultAsync(command);
-
         return TypedResults.CreatedAtRoute("GetStudyGroup", new { id });
     }
 
     private async Task<NoContent> AddMembers(
-        [FromBody] AddMembersToStudyGroup command,
+        [FromRoute] Guid id,
+        [FromBody] MembersBodyRequestModel request,
         [FromServices] ICommandDispatcher dispatcher)
     {
-        await dispatcher.DispatchAsync(command);
+        var command = new AddMembersToStudyGroup(
+            id,
+            request.Members
+        );
 
+        await dispatcher.DispatchAsync(command);
+        return TypedResults.NoContent();
+    }
+
+    private async Task<NoContent> RemoveMembers(
+        [FromRoute] Guid id,
+        [FromBody] MembersBodyRequestModel request,
+        [FromServices] ICommandDispatcher dispatcher)
+    {
+        var command = new RemoveMembersFromStudyGroup(
+            id,
+            request.Members
+        );
+
+        await dispatcher.DispatchAsync(command);
+        return TypedResults.NoContent();
+    }
+
+    private async Task<NoContent> Put(
+        [FromRoute] Guid id,
+        [FromBody] StudyGroupInfoRequestModel request,
+        [FromServices] ICommandDispatcher dispatcher)
+    {
+        var command = new UpdateStudyGroupInfo(
+            id,
+            request.Name
+        );
+
+        await dispatcher.DispatchAsync(command);
         return TypedResults.NoContent();
     }
 }
