@@ -1,8 +1,9 @@
+using LangApp.Application.Common.Exceptions;
 using LangApp.Core.Exceptions;
 
 namespace LangApp.Application.StudyGroups.Exceptions;
 
-public class StudyGroupNotFoundException : LangAppException
+public class StudyGroupNotFoundException : NotFoundException
 {
     public Guid Id { get; }
 

@@ -1,8 +1,9 @@
+using LangApp.Application.Common.Exceptions;
 using LangApp.Core.Exceptions;
 
 namespace LangApp.Application.Users.Exceptions;
 
-public class UserNotFoundException : LangAppException
+public class UserNotFoundException : NotFoundException
 {
     public Guid Id { get; }
 
