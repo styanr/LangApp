@@ -26,6 +26,14 @@ internal sealed class PostgresApplicationUserRepository : IApplicationUserReposi
         return identityUser?.ToDomainModel(_factory);
     }
 
+    public async Task<IEnumerable<ApplicationUser>> GetAsync(IEnumerable<Guid> ids)
+    {
+        return await _userManager.Users
+            .Where(u => ids.Contains(u.Id))
+            .Select(u => u.ToDomainModel(_factory))
+            .ToListAsync();
+    }
+
     public Task AddAsync(ApplicationUser user)
     {
         var identityUser = user.ToIdentityModel();

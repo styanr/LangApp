@@ -1,8 +1,9 @@
+using LangApp.Application.Common.Exceptions;
 using LangApp.Core.Exceptions;
 
 namespace LangApp.Application.Posts.Exceptions;
 
-public class PostNotFoundException : LangAppException
+public class PostNotFoundException : NotFoundException
 {
     public Guid CommandPostId { get; }
 

@@ -26,6 +26,9 @@ internal sealed class WriteConfiguration :
         builder.HasKey(u => u.Id);
         builder.Property(u => u.FullName)
             .HasConversion(fn => fn.ToString(), s => new UserFullName(s));
+        
+        builder.HasIndex(u => u.UserName).IsUnique();
+        builder.HasIndex(u => u.Email).IsUnique();
     }
 
     public void Configure(EntityTypeBuilder<StudyGroup> builder)

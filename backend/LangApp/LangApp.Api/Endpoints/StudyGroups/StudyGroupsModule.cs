@@ -43,11 +43,19 @@ public class StudyGroupsModule : IEndpointModule
 
     private async Task<CreatedAtRoute> Create(
         [FromBody] CreateStudyGroup command,
-        [FromServices] ICommandDispatcher dispatcher,
-        [FromServices] IKeyGenerator keyGenerator)
+        [FromServices] ICommandDispatcher dispatcher)
     {
-        var id = await dispatcher.DispatchAsync<CreateStudyGroup, Guid>(command);
+        var id = await dispatcher.DispatchWithResultAsync(command);
 
         return TypedResults.CreatedAtRoute("GetStudyGroup", new { id });
+    }
+
+    private async Task<NoContent> AddMembers(
+        [FromBody] AddMembersToStudyGroup command,
+        [FromServices] ICommandDispatcher dispatcher)
+    {
+        await dispatcher.DispatchAsync(command);
+
+        return TypedResults.NoContent();
     }
 }

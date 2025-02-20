@@ -1,5 +1,6 @@
 using LangApp.Application.Common.Queries.Abstractions;
 using LangApp.Application.StudyGroups.Dto;
+using LangApp.Application.StudyGroups.Exceptions;
 using LangApp.Application.StudyGroups.Queries;
 using LangApp.Infrastructure.EF.Context;
 using LangApp.Infrastructure.EF.Models.StudyGroups;
@@ -16,9 +17,9 @@ internal sealed class GetStudyGroupHandler : IQueryHandler<GetStudyGroup, StudyG
         _groups = context.StudyGroups;
     }
 
-    public Task<StudyGroupDto?> HandleAsync(GetStudyGroup query)
+    public async Task<StudyGroupDto?> HandleAsync(GetStudyGroup query)
     {
-        return _groups
+        var group = await _groups
             .Include(g => g.Owner)
             .Include(g => g.Members)
             .Where(g => g.Id == query.Id)
@@ -40,5 +41,7 @@ internal sealed class GetStudyGroupHandler : IQueryHandler<GetStudyGroup, StudyG
                     )
                 )
             )).AsNoTracking().SingleOrDefaultAsync();
+
+        return group ?? throw new StudyGroupNotFoundException(query.Id);
     }
 }

@@ -28,7 +28,10 @@ internal static class Extensions
         services.AddScoped<IApplicationUserReadService, ApplicationUserReadService>();
 
         var postgres = configuration.GetOptions<PostgresOptions>("Postgres");
-        services.AddDbContext<ReadDbContext>(opt => opt.UseNpgsql(postgres.ConnectionString));
+        services.AddDbContext<ReadDbContext>(opt =>
+            opt.UseNpgsql(postgres.ConnectionString)
+                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
+
         services.AddDbContext<WriteDbContext>(opt => opt.UseNpgsql(postgres.ConnectionString));
 
         return services;

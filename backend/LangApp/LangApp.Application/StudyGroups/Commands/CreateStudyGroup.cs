@@ -9,7 +9,7 @@ public record CreateStudyGroup(
     string Name,
     string Language,
     Guid OwnerId
-) : ICommand;
+) : ICommand<Guid>;
 
 public class CreateStudyGroupHandler : ICommandHandler<CreateStudyGroup, Guid>
 {

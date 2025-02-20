@@ -16,7 +16,7 @@ public record CreateUser(
     FullNameModel FullName,
     string? PictureUrl,
     AppUserRole Role
-) : Abstractions_ICommand;
+) : ICommand<Guid>;
 
 public class CreateUserHandler : ICommandHandler<CreateUser, Guid>
 {
@@ -37,12 +37,12 @@ public class CreateUserHandler : ICommandHandler<CreateUser, Guid>
         var (usernameModel, email, fullNameModel, pictureUrl, role) = command;
         if (await _readService.ExistsByUsernameAsync(command.Username))
         {
-            throw new UserAlreadyExistsException(command.Username);
+            throw new UsernameTakenException(command.Username);
         }
 
         if (await _readService.ExistsByEmailAsync(command.Email))
         {
-            throw new UserAlreadyExistsException(command.Email);
+            throw new EmailTakenException(command.Email);
         }
 
         var username = new Username(usernameModel);

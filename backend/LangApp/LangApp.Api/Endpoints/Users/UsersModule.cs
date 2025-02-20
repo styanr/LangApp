@@ -33,8 +33,7 @@ public class UsersModule : IEndpointModule
         [FromServices] ICommandDispatcher dispatcher
     )
     {
-        var id = await dispatcher.DispatchAsync<CreateUser, Guid>(command);
-
+        var id = await dispatcher.DispatchWithResultAsync(command);
         return TypedResults.CreatedAtRoute("CreateUser", new { id });
     }
 }

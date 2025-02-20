@@ -1,8 +1,9 @@
+using LangApp.Application.Common.Exceptions;
 using LangApp.Core.Exceptions;
 
 namespace LangApp.Application.Lexicons.Exceptions;
 
-public class LexiconNotFoundException : LangAppException
+public class LexiconNotFoundException : NotFoundException
 {
     public Guid Id { get; }
 

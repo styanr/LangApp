@@ -31,6 +31,9 @@ internal sealed class ReadConfiguration :
             .WithOne(g => g.Owner).HasForeignKey(g => g.OwnerId);
         builder.HasMany(u => u.Lexicons)
             .WithOne(l => l.Owner).HasForeignKey(l => l.OwnerId);
+
+        builder.HasIndex(u => u.Username).IsUnique();
+        builder.HasIndex(u => u.Email).IsUnique();
     }
 
     public void Configure(EntityTypeBuilder<StudyGroupReadModel> builder)

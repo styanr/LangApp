@@ -21,12 +21,16 @@ public class InMemoryCommandDispatcher : ICommandDispatcher
         await handler.HandleAsync(command, cancellationToken);
     }
 
-    public async Task<TResult> DispatchAsync<TCommand, TResult>(TCommand command,
-        CancellationToken cancellationToken = default) where TCommand : class, ICommand
+    public async Task<TResult> DispatchWithResultAsync<TResult>(ICommand<TResult> command,
+        CancellationToken cancellationToken = default)
     {
         using var scope = _serviceProvider.CreateScope();
-        var handler = scope.ServiceProvider.GetRequiredService<ICommandHandler<TCommand, TResult>>();
 
-        return await handler.HandleAsync(command, cancellationToken);
+        var handlerType = typeof(ICommandHandler<,>).MakeGenericType(command.GetType(), typeof(TResult));
+        var handler = scope.ServiceProvider.GetRequiredService(handlerType);
+
+        var method = handlerType.GetMethod(nameof(ICommandHandler<ICommand<TResult>, TResult>.HandleAsync));
+
+        return await (Task<TResult>)method!.Invoke(handler, new object[] { command, cancellationToken })!;
     }
 }
