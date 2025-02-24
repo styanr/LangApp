@@ -1,5 +1,5 @@
 using System.Text.Json;
-using LangApp.Application.Common.Exceptions;
+using LangApp.Core.Common.Exceptions;
 using LangApp.Core.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;

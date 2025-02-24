@@ -1,4 +1,4 @@
-using LangApp.Application.Common.Exceptions;
+using LangApp.Core.Common.Exceptions;
 using LangApp.Core.Exceptions;
 
 namespace LangApp.Application.StudyGroups.Exceptions;

@@ -32,7 +32,14 @@ internal static class Extensions
             opt.UseNpgsql(postgres.ConnectionString)
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
 
-        services.AddDbContext<WriteDbContext>(opt => opt.UseNpgsql(postgres.ConnectionString));
+        services.AddDbContext<WriteDbContext>(opt =>
+        {
+            opt.UseNpgsql(postgres.ConnectionString);
+            opt.EnableSensitiveDataLogging();
+        });
+
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
 
         return services;
     }

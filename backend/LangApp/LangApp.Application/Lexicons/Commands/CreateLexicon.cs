@@ -9,9 +9,9 @@ public record CreateLexicon(
     string Title,
     string Language,
     Guid OwnerId
-) : ICommand;
+) : ICommand<Guid>;
 
-public class CreateLexiconHandler : ICommandHandler<CreateLexicon>
+public class CreateLexiconHandler : ICommandHandler<CreateLexicon, Guid>
 {
     private readonly ILexiconRepository _repository;
     private readonly ILexiconFactory _factory;
@@ -22,7 +22,7 @@ public class CreateLexiconHandler : ICommandHandler<CreateLexicon>
         _factory = factory;
     }
 
-    public async Task HandleAsync(CreateLexicon command, CancellationToken cancellationToken)
+    public async Task<Guid> HandleAsync(CreateLexicon command, CancellationToken cancellationToken)
     {
         var (title, languageValue, userId) = command;
 
@@ -31,5 +31,7 @@ public class CreateLexiconHandler : ICommandHandler<CreateLexicon>
 
         var lexicon = _factory.Create(userId, language, dictionaryTitle);
         await _repository.AddAsync(lexicon);
+
+        return lexicon.Id;
     }
 }

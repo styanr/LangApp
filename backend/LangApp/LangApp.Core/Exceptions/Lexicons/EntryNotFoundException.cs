@@ -1,6 +1,8 @@
+using LangApp.Core.Common.Exceptions;
+
 namespace LangApp.Core.Exceptions.Lexicons;
 
-public class EntryNotFoundException : LangAppException
+public class EntryNotFoundException : NotFoundException
 {
     public string Expression { get; }
 

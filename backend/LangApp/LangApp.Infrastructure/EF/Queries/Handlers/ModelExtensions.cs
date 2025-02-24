@@ -1,4 +1,6 @@
+using LangApp.Application.Lexicons.Dto;
 using LangApp.Application.Users.Dto;
+using LangApp.Infrastructure.EF.Models.Lexicons;
 using LangApp.Infrastructure.EF.Models.Users;
 
 namespace LangApp.Infrastructure.EF.Queries.Handlers;
@@ -18,6 +20,16 @@ public static class ModelExtensions
             userReadModel.FullName.ToDto(),
             userReadModel.PictureUrl,
             userReadModel.Role
+        );
+    }
+
+    public static LexiconEntryDto ToDto(this LexiconEntryReadModel entryReadModel)
+    {
+        return new LexiconEntryDto(
+            entryReadModel.Id,
+            entryReadModel.LexiconId,
+            entryReadModel.Term,
+            entryReadModel.Definitions?.Select(d => d.Value) ?? []
         );
     }
 }

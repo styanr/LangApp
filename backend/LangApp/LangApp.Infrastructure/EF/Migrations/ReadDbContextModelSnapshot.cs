@@ -27,7 +27,8 @@ namespace LangApp.Infrastructure.EF.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<Guid>("LexiconEntryId")
                         .HasColumnType("uuid");
@@ -73,16 +74,16 @@ namespace LangApp.Infrastructure.EF.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Lexicons", "application");
                 });
@@ -93,6 +94,9 @@ namespace LangApp.Infrastructure.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("Archived")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid>("AuthorId")
                         .HasColumnType("uuid");
 
@@ -101,16 +105,15 @@ namespace LangApp.Infrastructure.EF.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("EditedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<Guid>("GroupId")
                         .HasColumnType("uuid");
 
                     b.PrimitiveCollection<string[]>("Media")
-                        .IsRequired()
                         .HasColumnType("text[]");
 
                     b.Property<string>("Title")
@@ -266,7 +269,7 @@ namespace LangApp.Infrastructure.EF.Migrations
                 {
                     b.HasOne("LangApp.Infrastructure.EF.Models.Users.UserReadModel", "Owner")
                         .WithMany("Lexicons")
-                        .HasForeignKey("OwnerId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -18,8 +18,16 @@ internal sealed class PostgresPostRepository : IPostRepository
 
     public Task<Post?> GetAsync(Guid id)
     {
-        return _posts.SingleOrDefaultAsync(p => p.Id == id);
+        return GetAsync(id, false);
     }
+
+    public Task<Post?> GetAsync(Guid id, bool showArchived)
+    {
+        return _posts
+            .WhereShowArchived(showArchived)
+            .SingleOrDefaultAsync(p => p.Id == id);
+    }
+
 
     public async Task AddAsync(Post post)
     {

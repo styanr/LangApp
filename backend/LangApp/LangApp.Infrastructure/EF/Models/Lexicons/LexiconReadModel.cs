@@ -7,7 +7,7 @@ public class LexiconReadModel
     public Guid Id { get; init; }
     public string Language { get; init; }
     public string Title { get; init; }
-    public Guid OwnerId { get; set; }
+    public Guid UserId { get; set; }
 
     public UserReadModel Owner { get; set; }
     public required IEnumerable<LexiconEntryReadModel> Entries { get; set; }

@@ -18,7 +18,10 @@ internal sealed class PostgresLexiconRepository : ILexiconRepository
 
     public Task<Lexicon?> GetAsync(Guid id)
     {
-        return _lexicons.SingleOrDefaultAsync(l => l.Id == id);
+        return _lexicons
+            .Include(l => l.Entries)
+            .ThenInclude(e => e.Definitions)
+            .SingleOrDefaultAsync(l => l.Id == id);
     }
 
     public async Task AddAsync(Lexicon lexicon)

@@ -30,7 +30,7 @@ internal sealed class ReadConfiguration :
         builder.HasMany(u => u.ManagedGroups)
             .WithOne(g => g.Owner).HasForeignKey(g => g.OwnerId);
         builder.HasMany(u => u.Lexicons)
-            .WithOne(l => l.Owner).HasForeignKey(l => l.OwnerId);
+            .WithOne(l => l.Owner).HasForeignKey(l => l.UserId);
 
         builder.HasIndex(u => u.Username).IsUnique();
         builder.HasIndex(u => u.Email).IsUnique();
@@ -89,7 +89,7 @@ internal sealed class ReadConfiguration :
 
         builder.HasOne(l => l.Owner)
             .WithMany(u => u.Lexicons)
-            .HasForeignKey(l => l.OwnerId)
+            .HasForeignKey(l => l.UserId)
             .IsRequired();
     }
 
@@ -115,6 +115,7 @@ internal sealed class ReadConfiguration :
     {
         builder.ToTable("LexiconEntryDefinitions");
         builder.HasKey(d => d.Id);
+        builder.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
 
         builder.Property(d => d.LexiconEntryId).IsRequired();
         builder.Property(d => d.Value).IsRequired();

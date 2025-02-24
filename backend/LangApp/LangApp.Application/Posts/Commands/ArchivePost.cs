@@ -4,7 +4,7 @@ using LangApp.Core.Repositories;
 
 namespace LangApp.Application.Posts.Commands;
 
-public record ArchivePost(Guid PostId) : ICommand;
+public record ArchivePost(Guid Id) : ICommand;
 
 public class ArchivePostHandler : ICommandHandler<ArchivePost>
 {
@@ -17,8 +17,8 @@ public class ArchivePostHandler : ICommandHandler<ArchivePost>
 
     public async Task HandleAsync(ArchivePost command, CancellationToken cancellationToken)
     {
-        var post = await _repository.GetAsync(command.PostId);
-        if (post is null) throw new PostNotFoundException(command.PostId);
+        var post = await _repository.GetAsync(command.Id);
+        if (post is null) throw new PostNotFoundException(command.Id);
 
         post.Archive();
         await _repository.UpdateAsync(post);

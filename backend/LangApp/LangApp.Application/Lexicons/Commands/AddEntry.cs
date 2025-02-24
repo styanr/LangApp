@@ -10,9 +10,9 @@ public record AddEntry(
     Guid LexiconId,
     string Term,
     List<string> Definitions
-) : ICommand;
+) : ICommand<Guid>;
 
-public class AddEntryHandler : ICommandHandler<AddEntry>
+public class AddEntryHandler : ICommandHandler<AddEntry, Guid>
 {
     private readonly ILexiconRepository _repository;
     private readonly ILexiconEntryFactory _entryFactory;
@@ -23,7 +23,7 @@ public class AddEntryHandler : ICommandHandler<AddEntry>
         _entryFactory = entryFactory;
     }
 
-    public async Task HandleAsync(AddEntry command, CancellationToken cancellationToken)
+    public async Task<Guid> HandleAsync(AddEntry command, CancellationToken cancellationToken)
     {
         var (lexiconId, termValue, definitionValues) = command;
 
@@ -33,9 +33,11 @@ public class AddEntryHandler : ICommandHandler<AddEntry>
 
         var term = new Term(termValue);
 
-        var entry = _entryFactory.Create(term, definitions);
+        var entry = _entryFactory.Create(lexiconId, term, definitions);
 
         lexicon.AddEntry(entry);
         await _repository.UpdateAsync(lexicon);
+
+        return entry.Id;
     }
 }

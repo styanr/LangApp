@@ -13,10 +13,10 @@ public class Post : AggregateRoot
     public string Title { get; private set; }
     public Guid AuthorId { get; private set; }
     public Guid GroupId { get; private set; }
-    public bool Archived { get; private set; } = true;
+    public bool Archived { get; private set; } = false;
     public PostContent Content { get; private set; }
-    public DateTime CreatedAt { get; private set; } = DateTime.Now;
-    public DateTime EditedAt { get; private set; } = DateTime.Now;
+    public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
+    public DateTime EditedAt { get; private set; } = DateTime.UtcNow;
     public IReadOnlyCollection<string> Media => _media.AsReadOnly();
 
     private Post()
@@ -42,7 +42,7 @@ public class Post : AggregateRoot
     public void Edit(PostContent content)
     {
         Content = content;
-        EditedAt = DateTime.Now;
+        UpdateEditedAt();
 
         AddEvent(new PostEditedEvent(this, content));
     }
@@ -52,5 +52,17 @@ public class Post : AggregateRoot
         Archived = true;
 
         AddEvent(new PostArchivedEvent(this));
+    }
+
+    public void Unarchive()
+    {
+        Archived = false;
+
+        AddEvent(new PostUnarchivedEvent(this));
+    }
+
+    private void UpdateEditedAt()
+    {
+        EditedAt = DateTime.UtcNow;
     }
 }

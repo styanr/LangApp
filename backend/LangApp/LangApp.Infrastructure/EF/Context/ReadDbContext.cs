@@ -14,6 +14,7 @@ internal sealed class ReadDbContext : DbContext
     public DbSet<PostReadModel> Posts { get; set; }
     public DbSet<LexiconReadModel> Lexicons { get; set; }
 
+
     public ReadDbContext(DbContextOptions<ReadDbContext> options) : base(options)
     {
     }

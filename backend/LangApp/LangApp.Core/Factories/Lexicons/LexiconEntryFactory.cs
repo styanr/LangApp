@@ -13,8 +13,8 @@ public class LexiconEntryFactory : ILexiconEntryFactory
         _keyGenerator = keyGenerator;
     }
 
-    public LexiconEntry Create(Term term, IEnumerable<Definition> definitions)
+    public LexiconEntry Create(Guid lexiconId, Term term, IEnumerable<Definition> definitions)
     {
-        return new LexiconEntry(_keyGenerator.NewKey(), term, definitions);
+        return new LexiconEntry(_keyGenerator.NewKey(), lexiconId, term, definitions);
     }
 }

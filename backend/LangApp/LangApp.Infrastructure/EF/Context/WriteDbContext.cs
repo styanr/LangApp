@@ -15,6 +15,7 @@ internal sealed class WriteDbContext : IdentityDbContext<IdentityApplicationUser
     public DbSet<StudyGroup> StudyGroups { get; set; }
     public DbSet<Post> Posts { get; set; }
     public DbSet<Lexicon> Lexicons { get; set; }
+    public DbSet<LexiconEntry> LexiconEntries { get; set; }
 
     public WriteDbContext(DbContextOptions<WriteDbContext> options) : base(options)
     {

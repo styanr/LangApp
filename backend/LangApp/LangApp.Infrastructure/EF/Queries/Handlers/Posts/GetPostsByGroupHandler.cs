@@ -23,7 +23,7 @@ internal sealed class GetPostsByGroupHandler : IQueryHandler<GetPostsByGroup, Pa
         var totalCount = await _posts.Where(p => p.GroupId == query.GroupId).CountAsync();
 
         var posts = await _posts
-            .Where(p => p.GroupId == query.GroupId)
+            .Where(p => p.GroupId == query.GroupId && !p.Archived)
             .TakePage(query.PageNumber, query.PageSize)
             .AsNoTracking()
             .Select(p => new PostSlimDto(

@@ -20,20 +20,15 @@ internal sealed class GetLexiconHandler : IQueryHandler<GetLexicon, LexiconDto>
     {
         return _lexicons
             .Include(l => l.Entries)
+            .ThenInclude(e => e.Definitions)
             .Where(l => l.Id == query.Id)
             .Select(l => new LexiconDto
             (
                 l.Id,
-                l.OwnerId,
+                l.UserId,
                 l.Language,
                 l.Title,
-                l.Entries.Select(e => new LexiconEntryDto
-                (
-                    e.Id,
-                    e.LexiconId,
-                    e.Term,
-                    e.Definitions.Select(d => d.Value)
-                ))
+                l.Entries.Select(e => e.ToDto())
             )).AsNoTracking().SingleOrDefaultAsync();
     }
 }

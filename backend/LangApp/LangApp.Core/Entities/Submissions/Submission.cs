@@ -7,7 +7,7 @@ public class Submission : AggregateRoot
 {
     public Guid ExerciseId { get; private set; }
     public Guid StudentId { get; private set; }
-    public DateTime SubmittedAt { get; private set; } = DateTime.Now;
+    public DateTime SubmittedAt { get; private set; } = DateTime.UtcNow;
     public Evaluation? EvaluationResult { get; private set; }
 
     protected Submission()

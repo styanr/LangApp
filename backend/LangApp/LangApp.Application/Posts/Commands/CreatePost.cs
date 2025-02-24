@@ -13,9 +13,9 @@ public record CreatePost(
     string Title,
     string Content,
     List<string>? Media = null
-) : ICommand;
+) : ICommand<Guid>;
 
-public class CreatePostHandler : ICommandHandler<CreatePost>
+public class CreatePostHandler : ICommandHandler<CreatePost, Guid>
 {
     private readonly IPostRepository _repository;
     private readonly IPostFactory _factory;
@@ -26,11 +26,13 @@ public class CreatePostHandler : ICommandHandler<CreatePost>
         _factory = factory;
     }
 
-    public async Task HandleAsync(CreatePost command, CancellationToken cancellationToken)
+    public async Task<Guid> HandleAsync(CreatePost command, CancellationToken cancellationToken)
     {
         var content = new PostContent(command.Content);
         var post = _factory.Create(command.AuthorId, command.GroupId, command.Type, command.Title, content,
             command.Media ?? []);
         await _repository.AddAsync(post);
+
+        return post.Id;
     }
 }

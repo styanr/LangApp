@@ -19,11 +19,11 @@ internal sealed class GetLexiconByUserHandler : IQueryHandler<GetLexiconsByUser,
     public async Task<IEnumerable<LexiconSlimDto>?> HandleAsync(GetLexiconsByUser query)
     {
         return await _lexicons
-            .Where(l => l.OwnerId == query.UserId)
+            .Where(l => l.UserId == query.UserId)
             .Select(l => new LexiconSlimDto
             (
                 l.Id,
-                l.OwnerId,
+                l.UserId,
                 l.Language,
                 l.Title
             )).AsNoTracking().ToListAsync();

@@ -19,8 +19,7 @@ internal sealed class GetPostHandler : IQueryHandler<GetPost, PostDto>
     public Task<PostDto?> HandleAsync(GetPost query)
     {
         return _posts
-            .Include(p => p.Media)
-            .Where(p => p.Id == query.Id)
+            .Where(p => p.Id == query.Id && !p.Archived)
             .Select(p => new PostDto
             (
                 p.Id,
@@ -30,7 +29,7 @@ internal sealed class GetPostHandler : IQueryHandler<GetPost, PostDto>
                 p.Title,
                 p.Content,
                 p.EditedAt,
-                p.Media
+                p.Media ?? new List<string>()
             )).AsNoTracking().SingleOrDefaultAsync();
     }
 }

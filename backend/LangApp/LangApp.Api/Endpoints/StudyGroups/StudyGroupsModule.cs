@@ -24,7 +24,7 @@ public class StudyGroupsModule : IEndpointModule
         group.MapDelete("/{id:guid}/members", RemoveMembers).WithName("RemoveMembersFromStudyGroup");
         group.MapPut("/{id:guid}", Put).WithName("UpdateStudyGroupInfo");
 
-        app.MapGet("/users/{userId:guid}/groups", GetByUser).WithName("GetStudyGroupByUser");
+        app.MapVersionedGroup("users").MapGet("/{userId:guid}/groups", GetByUser).WithName("GetStudyGroupByUser");
     }
 
     private async Task<Results<Ok<StudyGroupDto>, NotFound>> Get(

@@ -16,8 +16,9 @@ public class LexiconEntry : BaseEntity
 
     public IReadOnlyList<Definition> Definitions => _definitions.AsReadOnly();
 
-    public LexiconEntry(Guid id, Term term, IEnumerable<Definition> definitions) : base(id)
+    public LexiconEntry(Guid id, Guid lexiconId, Term term, IEnumerable<Definition> definitions) : base(id)
     {
+        LexiconId = lexiconId;
         Term = term;
         var list = definitions.ToList();
 

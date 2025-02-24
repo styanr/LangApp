@@ -72,10 +72,8 @@ internal sealed class WriteConfiguration :
         builder.ToTable("LexiconEntries");
 
         builder.HasKey(e => e.Id);
-
-        builder.HasOne<Lexicon>()
-            .WithMany()
-            .HasForeignKey(e => e.LexiconId);
+        builder.Property(e => e.Id)
+            .ValueGeneratedNever(); // Needed for proper change tracking
 
         builder.Property(e => e.Term)
             .HasConversion(term => term.ToString(), value => new Term(value))
@@ -91,10 +89,10 @@ internal sealed class WriteConfiguration :
             definitionsBuilder.WithOwner()
                 .HasForeignKey("LexiconEntryId");
 
+            definitionsBuilder.Property<Guid>("Id").HasColumnType("uuid");
             definitionsBuilder.HasKey("Id");
 
             definitionsBuilder.Property(d => d.Value)
-                .HasColumnName("Definition")
                 .IsRequired();
         });
     }

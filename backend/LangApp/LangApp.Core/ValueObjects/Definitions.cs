@@ -16,8 +16,3 @@ public record Definition
 
     public static implicit operator string(Definition definition) => definition.Value;
 }
-
-public record Definitions
-{
-    // TODO: value equality
-}
