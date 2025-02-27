@@ -15,10 +15,10 @@ public class ApplicationUserFactory : IApplicationUserFactory
         _keyGenerator = keyGenerator;
     }
 
-    public ApplicationUser Create(Username username, UserFullName fullName, string? pictureUrl, AppUserRole role,
+    public ApplicationUser Create(Username username, UserFullName fullName, string? pictureUrl, UserRole role,
         string email) => new(_keyGenerator.NewKey(), username, fullName, pictureUrl, role, email);
 
     public ApplicationUser Create(Guid id, Username username, UserFullName fullName, string? pictureUrl,
-        AppUserRole role,
+        UserRole role,
         string email) => new(id, username, fullName, pictureUrl, role, email);
 }

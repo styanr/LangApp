@@ -7,9 +7,9 @@ namespace LangApp.Core.Factories.Users;
 
 public interface IApplicationUserFactory
 {
-    ApplicationUser Create(Username username, UserFullName fullName, string? pictureUrl, AppUserRole role,
+    ApplicationUser Create(Username username, UserFullName fullName, string? pictureUrl, UserRole role,
         string email);
 
-    ApplicationUser Create(Guid id, Username username, UserFullName fullName, string? pictureUrl, AppUserRole role,
+    ApplicationUser Create(Guid id, Username username, UserFullName fullName, string? pictureUrl, UserRole role,
         string email);
 }

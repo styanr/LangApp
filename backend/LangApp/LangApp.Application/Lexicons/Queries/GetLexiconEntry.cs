@@ -4,4 +4,4 @@ using LangApp.Application.Lexicons.Dto;
 
 namespace LangApp.Application.Lexicons.Queries;
 
-public record GetLexiconEntry(Guid LexiconId, Guid EntryId) : IQuery<LexiconEntryDto>;
+public record GetLexiconEntry(Guid LexiconId, Guid EntryId) : Common.Queries.Abstractions.IQuery<LexiconEntryDto>;

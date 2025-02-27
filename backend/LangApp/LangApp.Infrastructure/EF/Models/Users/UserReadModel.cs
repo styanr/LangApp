@@ -12,7 +12,7 @@ public class UserReadModel
     public FullNameReadModel FullName { get; set; }
     public string Email { get; set; }
     public string? PictureUrl { get; set; }
-    public AppUserRole Role { get; set; }
+    public UserRole Role { get; set; }
 
     public string? NormalizedUserName { get; set; }
 

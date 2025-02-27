@@ -7,5 +7,5 @@ public record UserDto(
     string Username,
     FullNameDto FullName,
     string? PictureUrl,
-    AppUserRole Role
+    UserRole Role
 );

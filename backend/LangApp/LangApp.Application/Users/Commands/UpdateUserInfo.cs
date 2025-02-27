@@ -1,5 +1,4 @@
 using LangApp.Application.Common.Commands.Abstractions;
-using LangApp.Application.Users.Exceptions;
 using LangApp.Application.Users.Models;
 using LangApp.Application.Users.Services;
 using LangApp.Core.Enums;
@@ -14,7 +13,7 @@ public record UpdateUserInfo(
     string Username,
     FullNameModel FullName,
     string? PictureUrl,
-    AppUserRole UserRole) : ICommand;
+    UserRole UserRole) : ICommand;
 
 public class UpdateUserInfoCommandHandler : ICommandHandler<UpdateUserInfo>
 {

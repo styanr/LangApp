@@ -1,4 +1,5 @@
 using System.Text.Json;
+using LangApp.Application.Auth.Exceptions;
 using LangApp.Core.Common.Exceptions;
 using LangApp.Core.Exceptions;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,12 @@ public class ExceptionMiddleware : IMiddleware
         {
             await CreateResponse(context, StatusCodes.Status404NotFound, e);
         }
+        catch (RegisterValidationException e)
+        {
+            await CreateResponse(context, StatusCodes.Status400BadRequest, e,
+                e => new() { { "validation_errors", e.Errors } }
+            );
+        }
         catch (LangAppException e)
         {
             await CreateResponse(context, StatusCodes.Status400BadRequest, e);
@@ -28,13 +35,17 @@ public class ExceptionMiddleware : IMiddleware
         }
     }
 
-    private static async Task CreateResponse(HttpContext context, int statusCode, Exception e)
+    private static async Task CreateResponse<TException>(
+        HttpContext context,
+        int statusCode,
+        TException e,
+        Func<TException, Dictionary<string, object>>? func = null
+    ) where TException : Exception
     {
         context.Response.StatusCode = statusCode;
         context.Response.Headers.Append(HeaderNames.ContentType, "application/json");
 
         var errorCode = ToUnderscoreCase(e.GetType().Name.Replace("Exception", string.Empty));
-
 
         var problemDetails = new ProblemDetails
         {
@@ -45,6 +56,14 @@ public class ExceptionMiddleware : IMiddleware
             Instance = context.Request.Path,
             Extensions = { { "error_code", errorCode } }
         };
+
+        if (func is not null)
+        {
+            foreach (var (key, value) in func(e))
+            {
+                problemDetails.Extensions.Add(key, value);
+            }
+        }
 
         var json = JsonSerializer.Serialize(problemDetails,
             new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower });

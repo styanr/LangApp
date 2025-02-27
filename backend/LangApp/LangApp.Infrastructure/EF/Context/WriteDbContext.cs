@@ -34,5 +34,11 @@ internal sealed class WriteDbContext : IdentityDbContext<IdentityApplicationUser
         modelBuilder.ApplyConfiguration<Post>(configuration);
         modelBuilder.ApplyConfiguration<Lexicon>(configuration);
         modelBuilder.ApplyConfiguration<LexiconEntry>(configuration);
+        modelBuilder.ApplyConfiguration<IdentityRole<Guid>>(configuration);
+        modelBuilder.ApplyConfiguration<IdentityUserClaim<Guid>>(configuration);
+        modelBuilder.ApplyConfiguration<IdentityUserRole<Guid>>(configuration);
+        modelBuilder.ApplyConfiguration<IdentityUserLogin<Guid>>(configuration);
+        modelBuilder.ApplyConfiguration<IdentityUserToken<Guid>>(configuration);
+        modelBuilder.ApplyConfiguration<IdentityRoleClaim<Guid>>(configuration);
     }
 }

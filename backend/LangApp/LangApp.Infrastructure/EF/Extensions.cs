@@ -21,7 +21,7 @@ internal static class Extensions
         IConfiguration configuration)
     {
         services.AddScoped<ILexiconRepository, PostgresLexiconRepository>();
-        services.AddScoped<IApplicationUserRepository, PostgresApplicationUserRepository>();
+        services.AddScoped<IApplicationUserRepository, IdentityUserRepository>();
         services.AddScoped<IExerciseRepository, PostgresExerciseRepository>();
         services.AddScoped<IPostRepository, PostgresPostRepository>();
         services.AddScoped<IStudyGroupRepository, PostgresStudyGroupRepository>();

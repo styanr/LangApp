@@ -1,4 +1,5 @@
 using LangApp.Infrastructure.EF.Config;
+using LangApp.Infrastructure.EF.Models.Identity;
 using LangApp.Infrastructure.EF.Models.Lexicons;
 using LangApp.Infrastructure.EF.Models.Posts;
 using LangApp.Infrastructure.EF.Models.StudyGroups;
@@ -32,6 +33,8 @@ internal sealed class ReadDbContext : DbContext
         modelBuilder.ApplyConfiguration<LexiconReadModel>(configuration);
         modelBuilder.ApplyConfiguration<LexiconEntryReadModel>(configuration);
         modelBuilder.ApplyConfiguration<LexiconEntryDefinitionReadModel>(configuration);
+        modelBuilder.ApplyConfiguration<IdentityRoleReadModel>(configuration);
+        modelBuilder.ApplyConfiguration<IdentityUserClaimReadModel>(configuration);
 
         base.OnModelCreating(modelBuilder);
     }

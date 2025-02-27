@@ -8,14 +8,14 @@ public sealed class IdentityApplicationUser : IdentityUser<Guid>
 {
     public UserFullName FullName { get; private set; }
     public string? PictureUrl { get; private set; }
-    public AppUserRole Role { get; private set; }
+    public UserRole Role { get; private set; }
 
     private IdentityApplicationUser()
     {
     }
 
     public IdentityApplicationUser(Guid id, Username username, UserFullName fullName, string email, string? pictureUrl,
-        AppUserRole role)
+        UserRole role)
     {
         Id = id;
         UserName = username.ToString();

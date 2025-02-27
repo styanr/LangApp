@@ -1,6 +1,6 @@
+using LangApp.Application.Auth.Exceptions;
 using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.StudyGroups.Exceptions;
-using LangApp.Application.Users.Exceptions;
 using LangApp.Application.Users.Services;
 using LangApp.Core.Repositories;
 using LangApp.Core.ValueObjects;

@@ -13,7 +13,7 @@ public static class Extensions
     {
         services.AddPostgres(configuration);
         services.AddQueries();
-        services.AddIdentityServices();
+        services.AddIdentityServices(configuration);
 
         services.AddHostedService<AppInitializer>();
 

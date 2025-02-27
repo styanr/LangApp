@@ -1,3 +1,4 @@
+using LangApp.Infrastructure.EF.Models.Identity;
 using LangApp.Infrastructure.EF.Models.Lexicons;
 using LangApp.Infrastructure.EF.Models.Posts;
 using LangApp.Infrastructure.EF.Models.StudyGroups;
@@ -14,7 +15,10 @@ internal sealed class ReadConfiguration :
     IEntityTypeConfiguration<PostReadModel>,
     IEntityTypeConfiguration<LexiconReadModel>,
     IEntityTypeConfiguration<LexiconEntryReadModel>,
-    IEntityTypeConfiguration<LexiconEntryDefinitionReadModel>
+    IEntityTypeConfiguration<LexiconEntryDefinitionReadModel>,
+    IEntityTypeConfiguration<IdentityRoleReadModel>,
+    IEntityTypeConfiguration<IdentityUserClaimReadModel>,
+    IEntityTypeConfiguration<IdentityUserRoleReadModel>
 {
     public void Configure(EntityTypeBuilder<UserReadModel> builder)
     {
@@ -119,5 +123,20 @@ internal sealed class ReadConfiguration :
 
         builder.Property(d => d.LexiconEntryId).IsRequired();
         builder.Property(d => d.Value).IsRequired();
+    }
+
+    public void Configure(EntityTypeBuilder<IdentityRoleReadModel> builder)
+    {
+        builder.ToTable("Roles");
+    }
+
+    public void Configure(EntityTypeBuilder<IdentityUserClaimReadModel> builder)
+    {
+        builder.ToTable("Claims");
+    }
+
+    public void Configure(EntityTypeBuilder<IdentityUserRoleReadModel> builder)
+    {
+        builder.ToTable("UserRoles");
     }
 }

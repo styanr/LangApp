@@ -11,13 +11,13 @@ public class ApplicationUser : AggregateRoot
     public string Email { get; private set; }
     public UserFullName FullName { get; private set; }
     public string? PictureUrl { get; private set; }
-    public AppUserRole Role { get; private set; }
+    public UserRole Role { get; private set; }
 
     private ApplicationUser()
     {
     }
 
-    internal ApplicationUser(Guid id, Username username, UserFullName fullName, string? pictureUrl, AppUserRole role,
+    internal ApplicationUser(Guid id, Username username, UserFullName fullName, string? pictureUrl, UserRole role,
         string email) : base(id)
     {
         Username = username;
@@ -53,7 +53,7 @@ public class ApplicationUser : AggregateRoot
         AddEvent(new UserPictureUrlUpdated(pictureUrl));
     }
 
-    public void UpdateRole(AppUserRole role)
+    public void UpdateRole(UserRole role)
     {
         if (Role == role) return;
 

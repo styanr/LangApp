@@ -8,7 +8,8 @@ public interface IApplicationUserRepository
 {
     Task<ApplicationUser?> GetAsync(Guid id);
     Task<IEnumerable<ApplicationUser>> GetAsync(IEnumerable<Guid> ids);
-    Task AddAsync(ApplicationUser user);
+    Task AddAsync(ApplicationUser user, string password);
     Task UpdateAsync(ApplicationUser user);
     Task DeleteAsync(ApplicationUser user);
+    Task<ApplicationUser?> GetByUsername(string username);
 }
