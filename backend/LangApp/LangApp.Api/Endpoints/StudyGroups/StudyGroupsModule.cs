@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using LangApp.Api.Common.Endpoints;
 using LangApp.Api.Endpoints.StudyGroups.Models;
 using LangApp.Application.Common;
@@ -6,7 +7,7 @@ using LangApp.Application.Common.Queries.Abstractions;
 using LangApp.Application.StudyGroups.Commands;
 using LangApp.Application.StudyGroups.Dto;
 using LangApp.Application.StudyGroups.Queries;
-using LangApp.Core.Services.KeyGeneration;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +19,8 @@ public class StudyGroupsModule : IEndpointModule
     {
         var group = app.MapVersionedGroup("groups");
 
-        group.MapGet("/{id:guid}", Get).WithName("GetStudyGroup");
+        group.MapGet("/{id:guid}", Get)
+            .WithName("GetStudyGroup");
         group.MapPost("/", Create).WithName("CreateStudyGroup");
         group.MapPost("/{id:guid}/members", AddMembers).WithName("AddMembersToStudyGroup");
         group.MapDelete("/{id:guid}/members", RemoveMembers).WithName("RemoveMembersFromStudyGroup");

@@ -27,7 +27,7 @@ public class TokenFactory : ITokenFactory
 
     public TokenResponse GenerateJwtToken(IdentityApplicationUser user)
     {
-        var secret = Encoding.ASCII.GetBytes(_options.Secret);
+        var secret = Encoding.UTF8.GetBytes(_options.Secret);
 
         var handler = new JwtSecurityTokenHandler();
         var descriptor = new SecurityTokenDescriptor

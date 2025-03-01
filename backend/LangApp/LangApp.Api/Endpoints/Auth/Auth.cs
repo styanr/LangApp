@@ -16,8 +16,12 @@ public class Auth : IEndpointModule
     {
         var group = app.MapVersionedGroup("auth");
         group.MapGet("{id:guid}", Get).WithName("GetUser");
-        group.MapPost("/register", Register).WithName("Register");
-        group.MapPost("/login", Login).WithName("Login");
+        group.MapPost("/register", Register)
+            .AllowAnonymous()
+            .WithName("Register");
+        group.MapPost("/login", Login)
+            .AllowAnonymous()
+            .WithName("Login");
     }
 
     private async Task<Results<Ok<UserDto>, NotFound>> Get(
