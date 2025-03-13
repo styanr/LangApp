@@ -1,5 +1,7 @@
 using LangApp.Application.Common.Commands.Abstractions;
+using LangApp.Application.Common.Exceptions;
 using LangApp.Application.Posts.Exceptions;
+using LangApp.Core.Entities.Posts;
 using LangApp.Core.Repositories;
 using LangApp.Core.ValueObjects;
 
@@ -7,7 +9,8 @@ namespace LangApp.Application.Posts.Commands;
 
 public record EditPost(
     Guid PostId,
-    string Content
+    string Content,
+    Guid UserId
 ) : ICommand;
 
 public class EditPostHandler : ICommandHandler<EditPost>
@@ -25,6 +28,11 @@ public class EditPostHandler : ICommandHandler<EditPost>
         var content = new PostContent(command.Content);
 
         if (post is null) throw new PostNotFoundException(command.PostId);
+
+        if (!post.CanBeModifiedBy(command.UserId))
+        {
+            throw new UnauthorizedException(command.UserId, post);
+        }
 
         post.Edit(content);
         await _repository.UpdateAsync(post);

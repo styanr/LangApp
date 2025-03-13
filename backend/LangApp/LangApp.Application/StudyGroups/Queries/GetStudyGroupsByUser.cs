@@ -4,7 +4,6 @@ using LangApp.Application.StudyGroups.Dto;
 
 namespace LangApp.Application.StudyGroups.Queries;
 
-public class GetStudyGroupsByUser : PagedQuery<PagedResult<StudyGroupSlimDto>>
-{
-    public Guid UserId { get; set; }
-}
+public record GetStudyGroupsByUser(
+    Guid UserId
+) : PagedQuery<PagedResult<StudyGroupSlimDto>>;

@@ -4,7 +4,6 @@ using LangApp.Application.Users.Dto;
 
 namespace LangApp.Application.Users.Queries;
 
-public class SearchUsers : PagedQuery<PagedResult<UserDto>>
-{
-    public string SearchTerm { get; set; } = string.Empty;
-}
+public record SearchUsers(
+    string SearchTerm
+) : PagedQuery<PagedResult<UserDto>>;

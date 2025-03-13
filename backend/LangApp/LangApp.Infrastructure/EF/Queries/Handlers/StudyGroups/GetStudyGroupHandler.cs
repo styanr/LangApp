@@ -20,6 +20,7 @@ internal sealed class GetStudyGroupHandler : IQueryHandler<GetStudyGroup, StudyG
     public async Task<StudyGroupDto?> HandleAsync(GetStudyGroup query)
     {
         var group = await _groups
+            .Where(g => g.OwnerId == query.Id)
             .Include(g => g.Owner)
             .Include(g => g.Members)
             .Where(g => g.Id == query.Id)

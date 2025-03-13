@@ -65,4 +65,9 @@ public class Post : AggregateRoot
     {
         EditedAt = DateTime.UtcNow;
     }
+
+    public bool CanBeModifiedBy(Guid userId)
+    {
+        return AuthorId == userId;
+    }
 }

@@ -3,7 +3,4 @@ using LangApp.Application.Users.Dto;
 
 namespace LangApp.Application.Users.Queries;
 
-public class GetUser : IQuery<UserDto>
-{
-    public Guid Id { get; set; }
-}
+public record GetUser(Guid Id) : IQuery<UserDto>;

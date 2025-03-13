@@ -4,7 +4,7 @@ using LangApp.Application.Posts.Dto;
 
 namespace LangApp.Application.Posts.Queries;
 
-public class GetPostsByGroup : PagedQuery<PagedResult<PostSlimDto>>
-{
-    public Guid GroupId { get; set; }
-}
+public record GetPostsByGroup(
+    Guid GroupId,
+    Guid UserId
+) : PagedQuery<PagedResult<PostSlimDto>>;

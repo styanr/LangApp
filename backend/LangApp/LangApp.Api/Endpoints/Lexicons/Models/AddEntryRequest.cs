@@ -1,5 +1,5 @@
 namespace LangApp.Api.Endpoints.Lexicons.Models;
 
-public record AddEntryRequestModel(
+public record AddEntryRequest(
     string Term,
     List<string> Definitions);

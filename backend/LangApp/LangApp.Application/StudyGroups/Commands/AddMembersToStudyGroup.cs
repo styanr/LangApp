@@ -1,7 +1,9 @@
 using LangApp.Application.Auth.Exceptions;
 using LangApp.Application.Common.Commands.Abstractions;
+using LangApp.Application.Common.Exceptions;
 using LangApp.Application.StudyGroups.Exceptions;
 using LangApp.Application.Users.Services;
+using LangApp.Core.Entities.StudyGroups;
 using LangApp.Core.Repositories;
 using LangApp.Core.ValueObjects;
 
@@ -9,7 +11,8 @@ namespace LangApp.Application.StudyGroups.Commands;
 
 public record AddMembersToStudyGroup(
     Guid StudyGroupId,
-    IEnumerable<Guid> Members
+    IEnumerable<Guid> Members,
+    Guid UserId
 ) : ICommand;
 
 public class AddMembersToStudyGroupHandler : ICommandHandler<AddMembersToStudyGroup>
@@ -28,12 +31,17 @@ public class AddMembersToStudyGroupHandler : ICommandHandler<AddMembersToStudyGr
 
     public async Task HandleAsync(AddMembersToStudyGroup command, CancellationToken cancellationToken)
     {
-        var (studyGroupId, membersModel) = command;
+        var (studyGroupId, membersModel, userId) = command;
 
         var members = membersModel.Select(m => new Member(m, studyGroupId)).ToList();
 
         var studyGroup = await _repository.GetAsync(studyGroupId) ??
                          throw new StudyGroupNotFoundException(studyGroupId);
+
+        if (!studyGroup.CanBeModifiedBy(userId))
+        {
+            throw new UnauthorizedException(userId, studyGroup);
+        }
 
         foreach (var member in members)
         {

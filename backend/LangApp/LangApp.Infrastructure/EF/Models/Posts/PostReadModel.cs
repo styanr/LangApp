@@ -1,10 +1,11 @@
+using LangApp.Core.Common;
 using LangApp.Core.Enums;
 using LangApp.Infrastructure.EF.Models.StudyGroups;
 using LangApp.Infrastructure.EF.Models.Users;
 
 namespace LangApp.Infrastructure.EF.Models.Posts;
 
-public class PostReadModel
+public class PostReadModel : IIdentifiable
 {
     public Guid Id { get; set; }
     public Guid AuthorId { get; set; }

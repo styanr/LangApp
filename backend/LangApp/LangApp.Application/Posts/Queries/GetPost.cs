@@ -3,7 +3,7 @@ using LangApp.Application.Posts.Dto;
 
 namespace LangApp.Application.Posts.Queries;
 
-public class GetPost : IQuery<PostDto>
-{
-    public Guid Id { get; set; }
-}
+public record GetPost(
+    Guid Id,
+    Guid UserId
+) : IQuery<PostDto>;

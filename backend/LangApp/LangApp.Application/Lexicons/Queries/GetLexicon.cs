@@ -3,7 +3,4 @@ using LangApp.Application.Lexicons.Dto;
 
 namespace LangApp.Application.Lexicons.Queries;
 
-public class GetLexicon : IQuery<LexiconDto>
-{
-    public Guid Id { get; set; }
-}
+public record GetLexicon(Guid Id, Guid UserId) : IQuery<LexiconDto>;

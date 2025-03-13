@@ -1,8 +1,9 @@
+using LangApp.Core.Common;
 using LangApp.Infrastructure.EF.Models.Users;
 
 namespace LangApp.Infrastructure.EF.Models.Lexicons;
 
-public class LexiconReadModel
+public class LexiconReadModel : IIdentifiable
 {
     public Guid Id { get; init; }
     public string Language { get; init; }

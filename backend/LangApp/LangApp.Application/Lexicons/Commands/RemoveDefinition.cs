@@ -1,4 +1,5 @@
 using LangApp.Application.Common.Commands.Abstractions;
+using LangApp.Application.Common.Exceptions;
 using LangApp.Application.Lexicons.Exceptions;
 using LangApp.Core.Repositories;
 using LangApp.Core.ValueObjects;
@@ -8,7 +9,8 @@ namespace LangApp.Application.Lexicons.Commands;
 public record RemoveDefinition(
     Guid LexiconId,
     Guid EntryId,
-    string Definition
+    string Definition,
+    Guid UserId
 ) : ICommand;
 
 public class RemoveDefinitionHandler : ICommandHandler<RemoveDefinition>
@@ -22,9 +24,14 @@ public class RemoveDefinitionHandler : ICommandHandler<RemoveDefinition>
 
     public async Task HandleAsync(RemoveDefinition command, CancellationToken cancellationToken)
     {
-        var (lexiconId, entryId, definitionValue) = command;
+        var (lexiconId, entryId, definitionValue, userId) = command;
 
         var lexicon = await _repository.GetAsync(lexiconId) ?? throw new LexiconNotFoundException(lexiconId);
+
+        if (!lexicon.CanBeModifiedBy(userId))
+        {
+            throw new UnauthorizedException(userId, lexicon);
+        }
 
         var definition = new Definition(definitionValue);
         lexicon.RemoveDefinition(entryId, definition);

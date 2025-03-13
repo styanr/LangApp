@@ -17,7 +17,7 @@ public class StudyGroupsModule : IEndpointModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {
-        var group = app.MapVersionedGroup("groups");
+        var group = app.MapVersionedGroup("groups").WithTags("Groups");
 
         group.MapGet("/{id:guid}", Get)
             .WithName("GetStudyGroup");
@@ -26,41 +26,57 @@ public class StudyGroupsModule : IEndpointModule
         group.MapDelete("/{id:guid}/members", RemoveMembers).WithName("RemoveMembersFromStudyGroup");
         group.MapPut("/{id:guid}", Put).WithName("UpdateStudyGroupInfo");
 
-        app.MapVersionedGroup("users").MapGet("/{userId:guid}/groups", GetByUser).WithName("GetStudyGroupByUser");
+        app.MapVersionedGroup("users")
+            .WithTags("Groups")
+            .MapGet("/me/groups", GetForUser)
+            .WithName("GetStudyGroupForUser");
     }
 
     private async Task<Results<Ok<StudyGroupDto>, NotFound>> Get(
-        [AsParameters] GetStudyGroup query,
-        [FromServices] IQueryDispatcher dispatcher)
+        [AsParameters] GetStudyGroupRequest request,
+        [FromServices] IQueryDispatcher dispatcher
+    )
     {
+        var query = new GetStudyGroup(request.Id);
         var result = await dispatcher.QueryAsync(query);
         return ApplicationTypedResults.OkOrNotFound(result);
     }
 
-    private async Task<Results<Ok<PagedResult<StudyGroupSlimDto>>, NotFound>> GetByUser(
-        [AsParameters] GetStudyGroupsByUser query,
-        [FromServices] IQueryDispatcher dispatcher)
+    private async Task<Results<Ok<PagedResult<StudyGroupSlimDto>>, NotFound>> GetForUser(
+        [FromServices] IQueryDispatcher dispatcher,
+        HttpContext context)
     {
+        var userId = context.User.GetUserId();
+        var query = new GetStudyGroupsByUser(userId);
         var result = await dispatcher.QueryAsync(query);
         return ApplicationTypedResults.OkOrNotFound(result);
     }
 
     private async Task<CreatedAtRoute> Create(
-        [FromBody] CreateStudyGroup command,
-        [FromServices] ICommandDispatcher dispatcher)
+        [FromBody] CreateStudyGroupRequest request,
+        [FromServices] ICommandDispatcher dispatcher,
+        HttpContext context)
     {
+        var userId = context.User.GetUserId();
+        var userRole = context.User.GetUserRole();
+
+        var command = new CreateStudyGroup(request.Name, request.Language, userId, userRole);
         var id = await dispatcher.DispatchWithResultAsync(command);
         return TypedResults.CreatedAtRoute("GetStudyGroup", new { id });
     }
 
     private async Task<NoContent> AddMembers(
         [FromRoute] Guid id,
-        [FromBody] MembersBodyRequestModel request,
-        [FromServices] ICommandDispatcher dispatcher)
+        [FromBody] AddMembersRequest request,
+        [FromServices] ICommandDispatcher dispatcher,
+        HttpContext context)
     {
+        var userId = context.User.GetUserId();
+
         var command = new AddMembersToStudyGroup(
             id,
-            request.Members
+            request.Members,
+            userId
         );
 
         await dispatcher.DispatchAsync(command);
@@ -70,11 +86,15 @@ public class StudyGroupsModule : IEndpointModule
     private async Task<NoContent> RemoveMembers(
         [FromRoute] Guid id,
         [FromBody] MembersBodyRequestModel request,
-        [FromServices] ICommandDispatcher dispatcher)
+        [FromServices] ICommandDispatcher dispatcher,
+        HttpContext context)
     {
+        var userId = context.User.GetUserId();
+
         var command = new RemoveMembersFromStudyGroup(
             id,
-            request.Members
+            request.Members,
+            userId
         );
 
         await dispatcher.DispatchAsync(command);
@@ -84,11 +104,14 @@ public class StudyGroupsModule : IEndpointModule
     private async Task<NoContent> Put(
         [FromRoute] Guid id,
         [FromBody] StudyGroupInfoRequestModel request,
-        [FromServices] ICommandDispatcher dispatcher)
+        [FromServices] ICommandDispatcher dispatcher,
+        HttpContext context)
     {
+        var userId = context.User.GetUserId();
         var command = new UpdateStudyGroupInfo(
             id,
-            request.Name
+            request.Name,
+            userId
         );
 
         await dispatcher.DispatchAsync(command);

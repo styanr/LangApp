@@ -1,4 +1,7 @@
 using LangApp.Application.Common.Commands.Abstractions;
+using LangApp.Application.Common.Exceptions;
+using LangApp.Core.Entities.StudyGroups;
+using LangApp.Core.Enums;
 using LangApp.Core.Factories.StudyGroups;
 using LangApp.Core.Repositories;
 using LangApp.Core.ValueObjects;
@@ -8,7 +11,8 @@ namespace LangApp.Application.StudyGroups.Commands;
 public record CreateStudyGroup(
     string Name,
     string Language,
-    Guid OwnerId
+    Guid OwnerId,
+    UserRole OwnerRole
 ) : ICommand<Guid>;
 
 public class CreateStudyGroupHandler : ICommandHandler<CreateStudyGroup, Guid>
@@ -24,7 +28,13 @@ public class CreateStudyGroupHandler : ICommandHandler<CreateStudyGroup, Guid>
 
     public async Task<Guid> HandleAsync(CreateStudyGroup command, CancellationToken cancellationToken)
     {
-        var (name, languageModel, ownerId) = command;
+        var (name, languageModel, ownerId, role) = command;
+
+        // TODO: move this logic to domain?
+        if (role != UserRole.Teacher)
+        {
+            throw new UnauthorizedRoleException<StudyGroup>(ownerId, role);
+        }
 
         var language = new Language(languageModel);
 

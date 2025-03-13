@@ -1,4 +1,4 @@
 namespace LangApp.Api.Endpoints.Lexicons.Models;
 
-public record AddDefinitionRequestModel(
+public record AddDefinitionRequest(
     string Definition);

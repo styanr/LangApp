@@ -76,4 +76,9 @@ public class Lexicon : AggregateRoot
         _entries.Remove(entry);
         AddEvent(new LexiconEntryRemoved(this, entry));
     }
+
+    public bool CanBeModifiedBy(Guid userId)
+    {
+        return UserId == userId;
+    }
 }

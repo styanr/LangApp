@@ -3,7 +3,4 @@ using LangApp.Application.Lexicons.Dto;
 
 namespace LangApp.Application.Lexicons.Queries;
 
-public class GetLexiconsByUser : IQuery<IEnumerable<LexiconSlimDto>>
-{
-    public Guid UserId { get; set; }
-}
+public record GetLexiconsByUser(Guid UserId) : IQuery<IEnumerable<LexiconSlimDto>>;

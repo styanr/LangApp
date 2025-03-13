@@ -1,4 +1,5 @@
 using LangApp.Application.Common.Commands.Abstractions;
+using LangApp.Application.Common.Exceptions;
 using LangApp.Application.Lexicons.Exceptions;
 using LangApp.Core.Factories.Lexicons;
 using LangApp.Core.Repositories;
@@ -9,7 +10,8 @@ namespace LangApp.Application.Lexicons.Commands;
 public record AddEntry(
     Guid LexiconId,
     string Term,
-    List<string> Definitions
+    List<string> Definitions,
+    Guid UserId
 ) : ICommand<Guid>;
 
 public class AddEntryHandler : ICommandHandler<AddEntry, Guid>
@@ -25,10 +27,15 @@ public class AddEntryHandler : ICommandHandler<AddEntry, Guid>
 
     public async Task<Guid> HandleAsync(AddEntry command, CancellationToken cancellationToken)
     {
-        var (lexiconId, termValue, definitionValues) = command;
+        var (lexiconId, termValue, definitionValues, userId) = command;
 
         var lexicon = await _repository.GetAsync(lexiconId) ?? throw new LexiconNotFoundException(lexiconId);
 
+        if (!lexicon.CanBeModifiedBy(userId))
+        {
+            throw new UnauthorizedException(userId, lexicon);
+        }
+        
         var definitions = definitionValues.Select(d => new Definition(d));
 
         var term = new Term(termValue);

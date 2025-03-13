@@ -14,7 +14,7 @@ public class LexiconsModule : IEndpointModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {
-        var group = app.MapVersionedGroup("lexicons");
+        var group = app.MapVersionedGroup("lexicons").WithTags("Lexicons");
 
         group.MapGet("/{id:guid}", Get).WithName("GetLexicon");
         group.MapPost("/", Create).WithName("CreateLexicon");
@@ -27,32 +27,42 @@ public class LexiconsModule : IEndpointModule
         group.MapDelete("/{lexiconId:guid}/entries/{entryId:guid}/definitions", RemoveDefinition)
             .WithName("RemoveDefinition");
 
-        app.MapVersionedGroup("users").MapGet("/{userId:guid}/lexicons", GetByUser)
-            .WithName("GetLexiconsByUser");
+        app.MapVersionedGroup("users")
+            .WithTags("Lexicons")
+            .MapGet("/me/lexicons", GetForUser)
+            .WithName("GetLexiconsForUser");
     }
 
     private async Task<Results<Ok<LexiconDto>, NotFound>> Get(
-        [AsParameters] GetLexicon query,
-        [FromServices] IQueryDispatcher dispatcher)
+        [AsParameters] GetLexiconRequest request,
+        [FromServices] IQueryDispatcher dispatcher,
+        HttpContext context)
     {
+        var userId = context.User.GetUserId();
+        var query = new GetLexicon(request.Id, userId);
         var lexicon = await dispatcher.QueryAsync(query);
 
         return ApplicationTypedResults.OkOrNotFound(lexicon);
     }
 
-    private async Task<Results<Ok<IEnumerable<LexiconSlimDto>>, NotFound>> GetByUser(
-        [AsParameters] GetLexiconsByUser query,
-        [FromServices] IQueryDispatcher dispatcher)
+    private async Task<Results<Ok<IEnumerable<LexiconSlimDto>>, NotFound>> GetForUser(
+        [FromServices] IQueryDispatcher dispatcher,
+        HttpContext context)
     {
+        var userId = context.User.GetUserId();
+        var query = new GetLexiconsByUser(userId);
         var lexicons = await dispatcher.QueryAsync(query);
 
         return ApplicationTypedResults.OkOrNotFound(lexicons);
     }
 
     private async Task<CreatedAtRoute> Create(
-        [FromBody] CreateLexicon command,
-        [FromServices] ICommandDispatcher dispatcher)
+        [FromBody] CreateLexiconRequest request,
+        [FromServices] ICommandDispatcher dispatcher,
+        HttpContext context)
     {
+        var userId = context.User.GetUserId();
+        var command = new CreateLexicon(request.Title, request.Language, userId);
         var id = await dispatcher.DispatchWithResultAsync(command);
 
         return TypedResults.CreatedAtRoute("GetLexicon", new { id });
@@ -60,13 +70,17 @@ public class LexiconsModule : IEndpointModule
 
     private async Task<Results<CreatedAtRoute, NotFound>> AddEntry(
         [FromRoute] Guid lexiconId,
-        [FromBody] AddEntryRequestModel request,
-        [FromServices] ICommandDispatcher dispatcher)
+        [FromBody] AddEntryRequest request,
+        [FromServices] ICommandDispatcher dispatcher,
+        HttpContext context)
     {
+        var userId = context.User.GetUserId();
+
         var command = new AddEntry(
             lexiconId,
             request.Term,
-            request.Definitions);
+            request.Definitions,
+            userId);
 
         var entryId = await dispatcher.DispatchWithResultAsync(command);
 
@@ -76,13 +90,17 @@ public class LexiconsModule : IEndpointModule
     private async Task<Results<NoContent, NotFound>> AddDefinition(
         [FromRoute] Guid lexiconId,
         [FromRoute] Guid entryId,
-        [FromBody] AddDefinitionRequestModel request,
-        [FromServices] ICommandDispatcher dispatcher)
+        [FromBody] AddDefinitionRequest request,
+        [FromServices] ICommandDispatcher dispatcher,
+        HttpContext context)
     {
+        var userId = context.User.GetUserId();
+
         var command = new AddDefinition(
             lexiconId,
             entryId,
-            request.Definition);
+            request.Definition,
+            userId);
 
         await dispatcher.DispatchAsync(command);
 
@@ -90,20 +108,24 @@ public class LexiconsModule : IEndpointModule
     }
 
     private async Task<Results<Ok<LexiconEntryDto>, NotFound>> GetEntry(
-        [AsParameters] GetLexiconEntry query,
-        [FromServices] IQueryDispatcher dispatcher)
+        [AsParameters] GetLexiconEntryRequest request,
+        [FromServices] IQueryDispatcher dispatcher,
+        HttpContext context)
     {
+        var userId = context.User.GetUserId();
+        var query = new GetLexiconEntry(request.LexiconId, request.EntryId, userId);
         var entry = await dispatcher.QueryAsync(query);
 
         return ApplicationTypedResults.OkOrNotFound(entry);
     }
 
     private async Task<Results<NoContent, NotFound>> RemoveEntry(
-        [FromRoute] Guid lexiconId,
-        [FromRoute] Guid entryId,
-        [FromServices] ICommandDispatcher dispatcher)
+        [AsParameters] RemoveEntryRequest request,
+        [FromServices] ICommandDispatcher dispatcher,
+        HttpContext context)
     {
-        var command = new RemoveEntry(lexiconId, entryId);
+        var userId = context.User.GetUserId();
+        var command = new RemoveEntry(request.LexiconId, request.EntryId, userId);
 
         await dispatcher.DispatchAsync(command);
 
@@ -113,13 +135,17 @@ public class LexiconsModule : IEndpointModule
     private async Task<Results<NoContent, NotFound>> RemoveDefinition(
         [FromRoute] Guid lexiconId,
         [FromRoute] Guid entryId,
-        [FromBody] RemoveDefinitionRequestModel request,
-        [FromServices] ICommandDispatcher dispatcher)
+        [FromBody] RemoveDefinitionRequest request,
+        [FromServices] ICommandDispatcher dispatcher,
+        HttpContext context)
     {
+        var userId = context.User.GetUserId();
+
         var command = new RemoveDefinition(
             lexiconId,
             entryId,
-            request.Definition);
+            request.Definition,
+            userId);
 
         await dispatcher.DispatchAsync(command);
 

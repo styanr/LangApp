@@ -15,39 +15,57 @@ public class PostsModule : IEndpointModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {
-        var group = app.MapVersionedGroup("posts");
+        var group = app.MapVersionedGroup("posts").WithTags("Posts");
 
         group.MapGet("/{id:guid}", Get).WithName("GetPost");
         group.MapPost("/", Create).WithName("CreatePost");
         group.MapPut("/{id:guid}", Edit).WithName("EditPost");
         group.MapPatch("/{id:guid}", Archive).WithName("ArchivePost");
 
-        app.MapVersionedGroup("groups").MapGet("/{groupId:guid}/posts", GetByGroup)
+        app.MapVersionedGroup("groups")
+            .WithTags("Posts")
+            .MapGet("/{groupId:guid}/posts", GetByGroup)
             .WithName("GetPostsByGroup");
     }
 
     private async Task<Results<Ok<PostDto>, NotFound>> Get(
-        [AsParameters] GetPost query,
-        [FromServices] IQueryDispatcher dispatcher)
+        [AsParameters] GetPostRequest request,
+        [FromServices] IQueryDispatcher dispatcher,
+        HttpContext context)
     {
+        var userId = context.User.GetUserId();
+        var query = new GetPost(request.Id, userId);
         var post = await dispatcher.QueryAsync(query);
 
         return ApplicationTypedResults.OkOrNotFound(post);
     }
 
     private async Task<Results<Ok<PagedResult<PostSlimDto>>, NotFound>> GetByGroup(
-        [AsParameters] GetPostsByGroup query,
-        [FromServices] IQueryDispatcher dispatcher)
+        [AsParameters] GetPostsByGroupRequest request,
+        [FromServices] IQueryDispatcher dispatcher,
+        HttpContext context)
     {
+        var userId = context.User.GetUserId();
+        var query = new GetPostsByGroup(request.GroupId, userId);
         var posts = await dispatcher.QueryAsync(query);
 
         return ApplicationTypedResults.OkOrNotFound(posts);
     }
 
     private async Task<CreatedAtRoute> Create(
-        [FromBody] CreatePost command,
-        [FromServices] ICommandDispatcher dispatcher)
+        [FromBody] CreatePostRequest request,
+        [FromServices] ICommandDispatcher dispatcher,
+        HttpContext context)
     {
+        var userId = context.User.GetUserId();
+        var command = new CreatePost(
+            userId,
+            request.GroupId,
+            request.Type,
+            request.Title,
+            request.Content,
+            request.Media);
+
         var id = await dispatcher.DispatchWithResultAsync(command);
 
         return TypedResults.CreatedAtRoute("GetPost", new { id });
@@ -55,10 +73,12 @@ public class PostsModule : IEndpointModule
 
     private async Task<NoContent> Edit(
         [FromRoute] Guid id,
-        [FromBody] EditPostRequestModel request,
-        [FromServices] ICommandDispatcher dispatcher)
+        [FromBody] EditPostRequest request,
+        [FromServices] ICommandDispatcher dispatcher,
+        HttpContext context)
     {
-        var command = new EditPost(id, request.Content);
+        var userId = context.User.GetUserId();
+        var command = new EditPost(id, request.Content, userId);
 
         await dispatcher.DispatchAsync(command);
 
@@ -66,9 +86,12 @@ public class PostsModule : IEndpointModule
     }
 
     private async Task<NoContent> Archive(
-        [AsParameters] ArchivePost command,
-        [FromServices] ICommandDispatcher dispatcher)
+        [AsParameters] ArchivePostRequest request,
+        [FromServices] ICommandDispatcher dispatcher,
+        HttpContext context)
     {
+        var userId = context.User.GetUserId();
+        var command = new ArchivePost(request.Id, userId);
         await dispatcher.DispatchAsync(command);
 
         return TypedResults.NoContent();

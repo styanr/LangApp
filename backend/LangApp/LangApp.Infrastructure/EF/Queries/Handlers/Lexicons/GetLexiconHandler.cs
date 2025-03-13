@@ -19,9 +19,10 @@ internal sealed class GetLexiconHandler : IQueryHandler<GetLexicon, LexiconDto>
     public Task<LexiconDto?> HandleAsync(GetLexicon query)
     {
         return _lexicons
+            .Where(l => l.UserId == query.UserId)
+            .Where(l => l.Id == query.Id)
             .Include(l => l.Entries)
             .ThenInclude(e => e.Definitions)
-            .Where(l => l.Id == query.Id)
             .Select(l => new LexiconDto
             (
                 l.Id,

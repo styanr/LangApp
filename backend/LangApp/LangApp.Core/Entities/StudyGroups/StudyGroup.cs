@@ -70,4 +70,14 @@ public class StudyGroup : AggregateRoot
 
         AddEvent(new StudyGroupNameUpdated(name));
     }
+
+    public bool CanBeModifiedBy(Guid userId)
+    {
+        return OwnerId == userId;
+    }
+
+    public bool ContainsMember(Guid userId)
+    {
+        return _members.Select(m => m.UserId).Contains(userId);
+    }
 }

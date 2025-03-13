@@ -17,6 +17,7 @@ public record UpdateUserInfo(
 
 public class UpdateUserInfoCommandHandler : ICommandHandler<UpdateUserInfo>
 {
+    // TODO
     // private readonly IApplicationUserRepository _repository;
     // private readonly IApplicationUserReadService _readService;
     //

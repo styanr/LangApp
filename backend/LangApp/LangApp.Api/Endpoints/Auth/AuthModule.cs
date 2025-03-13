@@ -10,25 +10,41 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LangApp.Api.Endpoints.Auth;
 
-public class Auth : IEndpointModule
+public class AuthModule : IEndpointModule
 {
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {
-        var group = app.MapVersionedGroup("auth");
-        group.MapGet("{id:guid}", Get).WithName("GetUser");
+        var group = app.MapVersionedGroup("auth").WithTags("Authentication");
         group.MapPost("/register", Register)
             .AllowAnonymous()
             .WithName("Register");
         group.MapPost("/login", Login)
             .AllowAnonymous()
             .WithName("Login");
+
+        var userGroup = app.MapVersionedGroup("users").WithTags("Users");
+        userGroup.MapGet("{id:guid}", Get).WithName("GetUser");
+        userGroup.MapGet("me", GetAuthenticated).WithName("GetCurrentUser");
     }
 
-    private async Task<Results<Ok<UserDto>, NotFound>> Get(
+    private async Task<Results<Ok<UserDto>, NotFound>> GetAuthenticated(
         [AsParameters] GetUser query,
         [FromServices] IQueryDispatcher dispatcher
     )
     {
+        var user = await dispatcher.QueryAsync(query);
+
+        return ApplicationTypedResults.OkOrNotFound(user);
+    }
+
+    private async Task<Results<Ok<UserDto>, NotFound>> Get(
+        [FromServices] IQueryDispatcher dispatcher,
+        HttpContext context
+    )
+    {
+        var userId = context.User.GetUserId();
+
+        var query = new GetUser(userId);
         var user = await dispatcher.QueryAsync(query);
 
         return ApplicationTypedResults.OkOrNotFound(user);

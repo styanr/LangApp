@@ -1,5 +1,7 @@
 using LangApp.Application.Common.Commands.Abstractions;
+using LangApp.Application.Common.Exceptions;
 using LangApp.Application.StudyGroups.Exceptions;
+using LangApp.Core.Entities.StudyGroups;
 using LangApp.Core.Repositories;
 using LangApp.Core.ValueObjects;
 
@@ -7,7 +9,8 @@ namespace LangApp.Application.StudyGroups.Commands;
 
 public record RemoveMembersFromStudyGroup(
     Guid StudyGroupId,
-    IEnumerable<Guid> Members
+    IEnumerable<Guid> Members,
+    Guid UserId
 ) : ICommand;
 
 public class RemoveMembersFromStudyGroupHandler : ICommandHandler<RemoveMembersFromStudyGroup>
@@ -21,12 +24,18 @@ public class RemoveMembersFromStudyGroupHandler : ICommandHandler<RemoveMembersF
 
     public async Task HandleAsync(RemoveMembersFromStudyGroup command, CancellationToken cancellationToken)
     {
-        var (studyGroupId, membersModel) = command;
+        var (studyGroupId, membersModel, userId) = command;
 
         var members = membersModel.Select(m => new Member(m, studyGroupId));
 
         var studyGroup = await _repository.GetAsync(studyGroupId) ??
                          throw new StudyGroupNotFoundException(studyGroupId);
+
+        if (!studyGroup.CanBeModifiedBy(userId))
+        {
+            throw new UnauthorizedException(userId, studyGroup);
+        }
+
         studyGroup.RemoveMembers(members);
         await _repository.UpdateAsync(studyGroup);
     }

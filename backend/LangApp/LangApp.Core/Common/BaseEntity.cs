@@ -1,9 +1,7 @@
 namespace LangApp.Core.Common;
 
-public abstract class BaseEntity
+public abstract class BaseEntity : IIdentifiable
 {
-    public Guid Id { get; init; }
-
     protected BaseEntity() : this(Guid.NewGuid())
     {
     }

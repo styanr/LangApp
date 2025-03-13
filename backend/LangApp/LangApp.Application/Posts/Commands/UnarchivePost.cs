@@ -1,10 +1,12 @@
 using LangApp.Application.Common.Commands.Abstractions;
+using LangApp.Application.Common.Exceptions;
 using LangApp.Application.Posts.Exceptions;
+using LangApp.Core.Entities.Posts;
 using LangApp.Core.Repositories;
 
 namespace LangApp.Application.Posts.Commands;
 
-public record UnarchivePost(Guid Id) : ICommand;
+public record UnarchivePost(Guid Id, Guid UserId) : ICommand;
 
 public class UnarchivePostHandler : ICommandHandler<UnarchivePost>
 {
@@ -17,8 +19,13 @@ public class UnarchivePostHandler : ICommandHandler<UnarchivePost>
 
     public async Task HandleAsync(UnarchivePost command, CancellationToken cancellationToken)
     {
-        var post = await _repository.GetAsync(command.Id, showArchived: true);
-        if (post is null) throw new PostNotFoundException(command.Id);
+        var post = await _repository.GetAsync(command.Id, showArchived: true) ??
+                   throw new PostNotFoundException(command.Id);
+
+        if (!post.CanBeModifiedBy(command.UserId))
+        {
+            throw new UnauthorizedException(command.UserId, post);
+        }
 
         post.Archive();
         await _repository.UpdateAsync(post);
