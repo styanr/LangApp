@@ -17,8 +17,10 @@ public class PostReadModel : IIdentifiable
     public string Content { get; set; }
     public DateTime EditedAt { get; set; }
     public DateTime CreatedAt { get; set; }
-    public ICollection<string>? Media { get; set; }
+    public List<string> Media { get; set; }
 
     public UserReadModel Author { get; set; }
     public StudyGroupReadModel Group { get; set; }
+
+    public bool IsEdited => CreatedAt != EditedAt;
 }

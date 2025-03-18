@@ -33,7 +33,8 @@ internal sealed class GetPostHandler : IQueryHandler<GetPost, PostDto>
                 p.GroupId,
                 p.Title,
                 p.Content,
-                p.EditedAt,
+                p.CreatedAt,
+                p.IsEdited,
                 p.Media ?? new List<string>()
             )).AsNoTracking().SingleOrDefaultAsync();
         if (post is null)

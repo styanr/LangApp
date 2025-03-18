@@ -17,6 +17,7 @@ public class Post : AggregateRoot
     public PostContent Content { get; private set; }
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
     public DateTime EditedAt { get; private set; } = DateTime.UtcNow;
+    public bool IsEdited => CreatedAt != EditedAt;
     public IReadOnlyCollection<string> Media => _media.AsReadOnly();
 
     private Post()

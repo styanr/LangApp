@@ -9,5 +9,6 @@ public record PostDto(
     Guid GroupId,
     string Title,
     string Content,
-    DateTime EditedAt,
+    DateTime CreatedAt,
+    bool IsEdited,
     IEnumerable<string> Media);

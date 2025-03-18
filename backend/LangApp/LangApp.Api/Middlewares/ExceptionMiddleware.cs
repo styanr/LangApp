@@ -15,6 +15,10 @@ public class ExceptionMiddleware : IMiddleware
         {
             await next(context);
         }
+        catch (InvalidCredentialsException e)
+        {
+            await CreateResponse(context, StatusCodes.Status401Unauthorized, e);
+        }
         catch (NotFoundException e)
         {
             await CreateResponse(context, StatusCodes.Status404NotFound, e);

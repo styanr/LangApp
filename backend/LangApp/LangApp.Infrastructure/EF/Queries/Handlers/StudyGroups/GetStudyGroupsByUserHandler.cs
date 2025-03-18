@@ -21,7 +21,7 @@ internal sealed class GetStudyGroupsByUserHandler : IQueryHandler<GetStudyGroups
     {
         var groups = await _groups
             .Include(g => g.Members)
-            .Where(g => g.Members.Any(g => g.Id == query.UserId))
+            .Where(g => g.Members.Any(m => m.Id == query.UserId) || g.OwnerId == query.UserId)
             .TakePage(query.PageNumber, query.PageSize)
             .AsNoTracking()
             .Select(g => new StudyGroupSlimDto(g.Id, g.Name, g.Language))

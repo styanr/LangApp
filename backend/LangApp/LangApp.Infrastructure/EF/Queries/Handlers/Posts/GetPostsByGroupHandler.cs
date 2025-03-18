@@ -1,3 +1,4 @@
+using System.Text;
 using LangApp.Application.Common;
 using LangApp.Application.Common.Exceptions;
 using LangApp.Application.Common.Queries.Abstractions;
@@ -24,7 +25,7 @@ internal sealed class GetPostsByGroupHandler : IQueryHandler<GetPostsByGroup, Pa
 
     public async Task<PagedResult<PostSlimDto>?> HandleAsync(GetPostsByGroup query)
     {
-        const int contentPreviewLength = 15;
+        const int contentPreviewLength = 50;
         var totalCount = await _posts.Where(p => p.GroupId == query.GroupId).CountAsync();
 
         var group = await _groups
@@ -46,7 +47,11 @@ internal sealed class GetPostsByGroupHandler : IQueryHandler<GetPostsByGroup, Pa
                 p.AuthorId,
                 p.Type,
                 p.Title,
-                p.Content.Substring(0, contentPreviewLength)))
+                ToPreview(p.Content, 30),
+                p.CreatedAt,
+                p.IsEdited,
+                p.Media.Count)
+            )
             .ToListAsync();
 
         return new PagedResult<PostSlimDto>(
@@ -55,5 +60,16 @@ internal sealed class GetPostsByGroupHandler : IQueryHandler<GetPostsByGroup, Pa
             query.PageNumber,
             query.PageSize
         );
+    }
+
+    private static string ToPreview(string value, int previewLength)
+    {
+        var builder = new StringBuilder(value.Substring(0, previewLength));
+        if (builder.Length != value.Length)
+        {
+            builder.Append("...");
+        }
+
+        return builder.ToString();
     }
 }

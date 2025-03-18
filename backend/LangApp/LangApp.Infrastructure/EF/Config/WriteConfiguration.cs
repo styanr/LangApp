@@ -81,6 +81,10 @@ internal sealed class WriteConfiguration :
         builder.Property(p => p.Content)
             .HasConversion(p => p.ToString(), s => new PostContent(s));
 
+        builder.Property("_media")
+            .HasColumnName("Media")
+            .HasDefaultValueSql("'{}'::text[]");
+
         builder.HasOne<IdentityApplicationUser>()
             .WithMany()
             .HasForeignKey(p => p.AuthorId)
