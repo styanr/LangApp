@@ -52,9 +52,21 @@ internal sealed class IdentityUserRepository : IApplicationUserRepository
         }
     }
 
-    public Task UpdateAsync(ApplicationUser user)
+    public async Task UpdateAsync(ApplicationUser model)
     {
-        throw new NotImplementedException();
+        var user = await _userManager.FindByIdAsync(model.Id.ToString());
+
+        if (user is null)
+        {
+            throw new UserNotFoundException(model.Id);
+        }
+
+        var identityModel = model.ToIdentityModel();
+        user.UserName = identityModel.UserName;
+        user.FullName = identityModel.FullName;
+        user.PictureUrl = identityModel.PictureUrl;
+
+        await _userManager.UpdateAsync(user);
     }
 
     public Task DeleteAsync(ApplicationUser user)

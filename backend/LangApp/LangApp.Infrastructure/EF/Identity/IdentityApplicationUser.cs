@@ -6,9 +6,9 @@ namespace LangApp.Infrastructure.EF.Identity;
 
 public sealed class IdentityApplicationUser : IdentityUser<Guid>
 {
-    public UserFullName FullName { get; private set; }
-    public string? PictureUrl { get; private set; }
-    public UserRole Role { get; private set; }
+    public UserFullName FullName { get; set; }
+    public string? PictureUrl { get; set; }
+    public UserRole Role { get; set; }
 
     private IdentityApplicationUser()
     {

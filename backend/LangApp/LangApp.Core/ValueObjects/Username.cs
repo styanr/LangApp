@@ -37,4 +37,14 @@ public record Username
     {
         return Value;
     }
+
+    public virtual bool Equals(Username? other)
+    {
+        return other?.Value == Value;
+    }
+
+    public override int GetHashCode()
+    {
+        return Value.GetHashCode();
+    }
 };
