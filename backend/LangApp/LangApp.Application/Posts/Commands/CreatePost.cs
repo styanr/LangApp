@@ -40,7 +40,7 @@ public class CreatePostHandler : ICommandHandler<CreatePost, Guid>
         var group = await _studyGroupRepository.GetAsync(command.GroupId) ??
                     throw new StudyGroupNotFoundException(command.GroupId);
 
-        if (!group.ContainsMember(command.AuthorId) && group.OwnerId != command.AuthorId)
+        if (!(group.ContainsMember(command.AuthorId) || group.CanBeModifiedBy(command.AuthorId)))
         {
             throw new UnauthorizedException(command.AuthorId, group);
         }

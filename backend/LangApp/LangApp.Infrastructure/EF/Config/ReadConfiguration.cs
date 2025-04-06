@@ -1,3 +1,7 @@
+using System.Text.Json;
+using LangApp.Infrastructure.EF.Config.Exceptions;
+using LangApp.Infrastructure.EF.Config.JsonConfig.ReadContext;
+using LangApp.Infrastructure.EF.Models.Assignments;
 using LangApp.Infrastructure.EF.Models.Identity;
 using LangApp.Infrastructure.EF.Models.Lexicons;
 using LangApp.Infrastructure.EF.Models.Posts;
@@ -16,6 +20,7 @@ internal sealed class ReadConfiguration :
     IEntityTypeConfiguration<LexiconReadModel>,
     IEntityTypeConfiguration<LexiconEntryReadModel>,
     IEntityTypeConfiguration<LexiconEntryDefinitionReadModel>,
+    IEntityTypeConfiguration<AssignmentReadModel>,
     IEntityTypeConfiguration<IdentityRoleReadModel>,
     IEntityTypeConfiguration<IdentityUserClaimReadModel>,
     IEntityTypeConfiguration<IdentityUserRoleReadModel>
@@ -124,6 +129,35 @@ internal sealed class ReadConfiguration :
         builder.Property(d => d.LexiconEntryId).IsRequired();
         builder.Property(d => d.Value).IsRequired();
     }
+
+    public void Configure(EntityTypeBuilder<AssignmentReadModel> builder)
+    {
+        builder.ToTable("Assignments");
+        builder.HasKey(a => a.Id);
+        builder.Property(a => a.Id).ValueGeneratedNever();
+        builder.Property(a => a.AuthorId);
+        builder.Property(a => a.GroupId);
+        builder.Property(a => a.DueTime);
+        builder.Property(a => a.MaxScore);
+        builder.Property(a => a.Type);
+
+        builder.Property(a => a.Details)
+            .HasConversion(
+                details => JsonSerializer.Serialize(details, new JsonSerializerOptions
+                    ()),
+                json => DeserializeAssignmentDetails(json)
+            );
+    }
+
+    private static AssignmentDetailsReadModel DeserializeAssignmentDetails(string json)
+    {
+        return JsonSerializer.Deserialize<AssignmentDetailsReadModel>(json, new JsonSerializerOptions
+               {
+                   TypeInfoResolver = new AssignmentDetailsReadModelTypeResolver()
+               })
+               ?? throw new DeserializationException(typeof(AssignmentDetailsReadModel), json);
+    }
+
 
     public void Configure(EntityTypeBuilder<IdentityRoleReadModel> builder)
     {

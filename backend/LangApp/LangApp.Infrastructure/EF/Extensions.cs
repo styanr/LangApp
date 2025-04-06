@@ -2,7 +2,7 @@ using LangApp.Application.Users.Services;
 using LangApp.Core.Repositories;
 using LangApp.Infrastructure.EF.Context;
 using LangApp.Infrastructure.EF.Options;
-using LangApp.Infrastructure.EF.Repositories.Exercises;
+using LangApp.Infrastructure.EF.Repositories.Assignments;
 using LangApp.Infrastructure.EF.Repositories.Lexicons;
 using LangApp.Infrastructure.EF.Repositories.Posts;
 using LangApp.Infrastructure.EF.Repositories.StudyGroups;
@@ -22,7 +22,7 @@ internal static class Extensions
     {
         services.AddScoped<ILexiconRepository, PostgresLexiconRepository>();
         services.AddScoped<IApplicationUserRepository, IdentityUserRepository>();
-        services.AddScoped<IExerciseRepository, PostgresExerciseRepository>();
+        services.AddScoped<IAssignmentRepository, PostgresAssignmentRepository>();
         services.AddScoped<IPostRepository, PostgresPostRepository>();
         services.AddScoped<IStudyGroupRepository, PostgresStudyGroupRepository>();
         services.AddScoped<IApplicationUserReadService, ApplicationUserReadService>();

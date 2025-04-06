@@ -1,3 +1,4 @@
+using LangApp.Core.Entities.Assignments;
 using LangApp.Core.Entities.Lexicons;
 using LangApp.Core.Entities.Posts;
 using LangApp.Core.Entities.StudyGroups;
@@ -16,6 +17,7 @@ internal sealed class WriteDbContext : IdentityDbContext<IdentityApplicationUser
     public DbSet<Post> Posts { get; set; }
     public DbSet<Lexicon> Lexicons { get; set; }
     public DbSet<LexiconEntry> LexiconEntries { get; set; }
+    public DbSet<Assignment> Assignments { get; set; }
 
     public WriteDbContext(DbContextOptions<WriteDbContext> options) : base(options)
     {
@@ -34,6 +36,7 @@ internal sealed class WriteDbContext : IdentityDbContext<IdentityApplicationUser
         modelBuilder.ApplyConfiguration<Post>(configuration);
         modelBuilder.ApplyConfiguration<Lexicon>(configuration);
         modelBuilder.ApplyConfiguration<LexiconEntry>(configuration);
+        modelBuilder.ApplyConfiguration<Assignment>(configuration);
         modelBuilder.ApplyConfiguration<IdentityRole<Guid>>(configuration);
         modelBuilder.ApplyConfiguration<IdentityUserClaim<Guid>>(configuration);
         modelBuilder.ApplyConfiguration<IdentityUserRole<Guid>>(configuration);

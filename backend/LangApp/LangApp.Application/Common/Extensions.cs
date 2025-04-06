@@ -1,7 +1,6 @@
 using System.Reflection;
 using LangApp.Application.Common.Commands;
-using LangApp.Application.Common.Queries;
-using LangApp.Application.Users.Services;
+using LangApp.Core.Factories.Assignments;
 using LangApp.Core.Factories.Lexicons;
 using LangApp.Core.Factories.Posts;
 using LangApp.Core.Factories.StudyGroups;
@@ -17,10 +16,10 @@ public static class Extensions
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddCommands();
-        var assembly = Assembly.GetAssembly(typeof(IEvaluationStrategy<,>))!;
+        var assembly = Assembly.GetAssembly(typeof(IGradingStrategy<,>))!;
 
         services.Scan(s => s.FromAssemblies(assembly)
-            .AddClasses(c => c.AssignableTo(typeof(IEvaluationStrategy<,>)))
+            .AddClasses(c => c.AssignableTo(typeof(IGradingStrategy<,>)))
             .AsImplementedInterfaces()
             .WithScopedLifetime());
 
@@ -30,6 +29,7 @@ public static class Extensions
         services.AddTransient<ILexiconEntryFactory, LexiconEntryFactory>();
         services.AddTransient<IPostFactory, PostFactory>();
         services.AddTransient<IStudyGroupFactory, StudyGroupFactory>();
+        services.AddTransient<IAssignmentFactory, AssignmentFactory>();
 
         return services;
     }

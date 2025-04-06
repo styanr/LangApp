@@ -1,27 +1,37 @@
 using LangApp.Core.Common;
+using LangApp.Core.Enums;
 using LangApp.Core.ValueObjects;
+using LangApp.Core.ValueObjects.Submissions;
 
 namespace LangApp.Core.Entities.Submissions;
 
 public class Submission : AggregateRoot
 {
-    public Guid ExerciseId { get; private set; }
+    public Guid AssignmentId { get; private set; }
     public Guid StudentId { get; private set; }
+    public AssignmentType Type { get; private set; }
+    public SubmissionDetails Details { get; private set; }
     public DateTime SubmittedAt { get; private set; } = DateTime.UtcNow;
-    public Evaluation? EvaluationResult { get; private set; }
+    public GradeStatus Status { get; private set; } = GradeStatus.Pending;
+    public SubmissionGrade? Grade { get; private set; }
 
-    protected Submission()
+    protected Submission(SubmissionDetails details, AssignmentType type)
     {
+        Details = details;
+        Type = type;
     }
 
-    internal Submission(Guid exerciseId, Guid studentId)
+    internal Submission(Guid assignmentId, Guid studentId, SubmissionDetails details, AssignmentType type, Guid id) :
+        base(id)
     {
-        ExerciseId = exerciseId;
+        AssignmentId = assignmentId;
         StudentId = studentId;
+        Details = details;
+        Type = type;
     }
 
-    public void Evaluate(Evaluation evaluationResult)
+    public void UpdateGrade(SubmissionGrade submissionGradeResult)
     {
-        EvaluationResult = evaluationResult;
+        Grade = submissionGradeResult;
     }
 }

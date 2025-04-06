@@ -1,12 +1,14 @@
+using System.Text.Json;
+using LangApp.Core.Entities.Assignments;
 using LangApp.Core.Entities.Lexicons;
 using LangApp.Core.Entities.Posts;
 using LangApp.Core.Entities.StudyGroups;
+using LangApp.Core.Entities.Submissions;
 using LangApp.Core.ValueObjects;
+using LangApp.Core.ValueObjects.Assignments;
+using LangApp.Infrastructure.EF.Config.Exceptions;
+using LangApp.Infrastructure.EF.Config.JsonConfig;
 using LangApp.Infrastructure.EF.Identity;
-using LangApp.Infrastructure.EF.Models.Lexicons;
-using LangApp.Infrastructure.EF.Models.Posts;
-using LangApp.Infrastructure.EF.Models.StudyGroups;
-using LangApp.Infrastructure.EF.Models.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -20,6 +22,8 @@ internal sealed class WriteConfiguration :
     IEntityTypeConfiguration<Post>,
     IEntityTypeConfiguration<Lexicon>,
     IEntityTypeConfiguration<LexiconEntry>,
+    IEntityTypeConfiguration<Assignment>,
+    IEntityTypeConfiguration<Submission>,
     IEntityTypeConfiguration<IdentityRole<Guid>>,
     IEntityTypeConfiguration<IdentityUserClaim<Guid>>,
     IEntityTypeConfiguration<IdentityUserRole<Guid>>,
@@ -140,6 +144,59 @@ internal sealed class WriteConfiguration :
 
             definitionsBuilder.Property(d => d.Value).IsRequired();
         });
+    }
+
+    public void Configure(EntityTypeBuilder<Assignment> builder)
+    {
+        builder.ToTable("Assignments");
+        builder.HasKey(e => e.Id);
+
+        builder.Property(e => e.Id).ValueGeneratedNever();
+
+        builder.HasOne<IdentityApplicationUser>()
+            .WithMany()
+            .HasForeignKey(a => a.AuthorId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne<StudyGroup>()
+            .WithMany()
+            .HasForeignKey(a => a.GroupId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Property(a => a.Details).HasConversion(entry =>
+                JsonSerializer.Serialize(entry,
+                    new JsonSerializerOptions { TypeInfoResolver = new PolymorphicTypeResolver<AssignmentDetails>() }),
+            value => DeserializeAssignmentDetails(value));
+    }
+
+    private static AssignmentDetails DeserializeAssignmentDetails(string json)
+    {
+        return JsonSerializer.Deserialize<AssignmentDetails>(json,
+                   new JsonSerializerOptions { TypeInfoResolver = new PolymorphicTypeResolver<AssignmentDetails>() }) ??
+               throw new DeserializationException(typeof(AssignmentDetails), json);
+    }
+
+    public void Configure(EntityTypeBuilder<Submission> builder)
+    {
+        // builder.ToTable("Submissions");
+        // builder.HasKey(e => e.Id);
+        //
+        // builder.Property(e => e.Id).ValueGeneratedNever();
+        //
+        // builder.HasOne<IdentityApplicationUser>()
+        //     .WithMany()
+        //     .HasForeignKey(a => a.StudentId)
+        //     .OnDelete(DeleteBehavior.Cascade);
+        //
+        // builder.HasOne<Assignment>()
+        //     .WithMany()
+        //     .HasForeignKey(a => a.AssignmentId)
+        //     .OnDelete(DeleteBehavior.Cascade);
+        //
+        // builder.Property(a => a.Details).HasConversion(entry =>
+        //         JsonSerializer.Serialize(entry,
+        //             new JsonSerializerOptions { TypeInfoResolver = new AssignmentDetailsTypeResolver() }),
+        //     value => DeserializeAssignmentDetails(value));
     }
 
     public void Configure(EntityTypeBuilder<IdentityRole<Guid>> builder)

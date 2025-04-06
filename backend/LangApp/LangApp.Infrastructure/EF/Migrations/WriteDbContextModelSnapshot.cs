@@ -24,6 +24,39 @@ namespace LangApp.Infrastructure.EF.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("LangApp.Core.Entities.Assignments.Assignment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Details")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("DueTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("MaxScore")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("Assignments", "application");
+                });
+
             modelBuilder.Entity("LangApp.Core.Entities.Lexicons.Lexicon", b =>
                 {
                     b.Property<Guid>("Id")
@@ -364,6 +397,21 @@ namespace LangApp.Infrastructure.EF.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("UserTokens", "application");
+                });
+
+            modelBuilder.Entity("LangApp.Core.Entities.Assignments.Assignment", b =>
+                {
+                    b.HasOne("LangApp.Infrastructure.EF.Identity.IdentityApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LangApp.Core.Entities.StudyGroups.StudyGroup", null)
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("LangApp.Core.Entities.Lexicons.Lexicon", b =>
