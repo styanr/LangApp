@@ -24,14 +24,14 @@ public class Assignment : AggregateRoot
     {
         if (dueTime <= DateTime.UtcNow)
         {
-            throw new AssignmentDueTimeInvalid(dueTime);
+            throw new AssignmentDueTimeInvalidException(dueTime);
         }
 
         DueTime = dueTime;
 
         if (maxScore <= 0)
         {
-            throw new AssignmentMaxScoreInvalid(maxScore);
+            throw new AssignmentMaxScoreInvalidException(maxScore);
         }
 
         Details = details;
@@ -48,4 +48,9 @@ public class Assignment : AggregateRoot
     public int MaxScore { get; private set; }
     public AssignmentType Type { get; private set; }
     public AssignmentDetails Details { get; private set; }
+
+    public bool CanBeFullyAccessedBy(Guid userId)
+    {
+        return AuthorId == userId;
+    }
 }

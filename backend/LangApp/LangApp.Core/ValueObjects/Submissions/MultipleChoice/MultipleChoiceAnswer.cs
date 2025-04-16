@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using LangApp.Core.Exceptions.Assignments;
 
 namespace LangApp.Core.ValueObjects.Submissions.MultipleChoice;
@@ -5,6 +6,10 @@ namespace LangApp.Core.ValueObjects.Submissions.MultipleChoice;
 public record MultipleChoiceAnswer
 {
     public int ChosenOptionIndex { get; private set; }
+
+    public MultipleChoiceAnswer()
+    {
+    }
 
     public MultipleChoiceAnswer(int chosenOptionIndex)
     {

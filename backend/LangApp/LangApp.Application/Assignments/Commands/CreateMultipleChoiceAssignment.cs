@@ -1,4 +1,5 @@
 using LangApp.Application.Assignments.Dto;
+using LangApp.Application.Assignments.Dto.MultipleChoice;
 using LangApp.Application.Assignments.Extensions;
 using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.Common.Exceptions;
@@ -8,7 +9,7 @@ using LangApp.Core.Repositories;
 
 namespace LangApp.Application.Assignments.Commands;
 
-public record AddMultipleChoiceAssignment(
+public record CreateMultipleChoiceAssignment(
     Guid AuthorId,
     Guid GroupId,
     DateTime DueTime,
@@ -16,13 +17,14 @@ public record AddMultipleChoiceAssignment(
     MultipleChoiceAssignmentDetailsDto Details
 ) : ICommand<Guid>;
 
-public class AddMultipleChoiceAssignmentHandler : ICommandHandler<AddMultipleChoiceAssignment, Guid>
+public class CreateMultipleChoiceAssignmentHandler : ICommandHandler<CreateMultipleChoiceAssignment, Guid>
 {
     private readonly IAssignmentRepository _repository;
     private readonly IAssignmentFactory _factory;
     private readonly IStudyGroupRepository _groupRepository;
 
-    public AddMultipleChoiceAssignmentHandler(IAssignmentRepository repository, IStudyGroupRepository groupRepository,
+    public CreateMultipleChoiceAssignmentHandler(IAssignmentRepository repository,
+        IStudyGroupRepository groupRepository,
         IAssignmentFactory factory)
     {
         _repository = repository;
@@ -30,7 +32,7 @@ public class AddMultipleChoiceAssignmentHandler : ICommandHandler<AddMultipleCho
         _factory = factory;
     }
 
-    public async Task<Guid> HandleAsync(AddMultipleChoiceAssignment command, CancellationToken cancellationToken)
+    public async Task<Guid> HandleAsync(CreateMultipleChoiceAssignment command, CancellationToken cancellationToken)
     {
         var (authorId, groupId, dueTime, maxScore, details) = command;
 

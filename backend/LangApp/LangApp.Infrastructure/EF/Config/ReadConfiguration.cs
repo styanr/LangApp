@@ -153,7 +153,8 @@ internal sealed class ReadConfiguration :
     {
         return JsonSerializer.Deserialize<AssignmentDetailsReadModel>(json, new JsonSerializerOptions
                {
-                   TypeInfoResolver = new AssignmentDetailsReadModelTypeResolver()
+                   TypeInfoResolver = new AssignmentDetailsReadModelTypeResolver(),
+                   PropertyNameCaseInsensitive = true
                })
                ?? throw new DeserializationException(typeof(AssignmentDetailsReadModel), json);
     }

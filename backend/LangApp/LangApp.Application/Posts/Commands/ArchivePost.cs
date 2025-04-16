@@ -1,6 +1,7 @@
 using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.Common.Exceptions;
 using LangApp.Application.Posts.Exceptions;
+using LangApp.Application.Posts.Services.PolicyServices;
 using LangApp.Core.Entities.Posts;
 using LangApp.Core.Repositories;
 
@@ -14,10 +15,12 @@ public record ArchivePost(
 public class ArchivePostHandler : ICommandHandler<ArchivePost>
 {
     private readonly IPostRepository _repository;
+    private readonly IPostModificationPolicyService _policy;
 
-    public ArchivePostHandler(IPostRepository repository)
+    public ArchivePostHandler(IPostRepository repository, IPostModificationPolicyService policy)
     {
         _repository = repository;
+        _policy = policy;
     }
 
     public async Task HandleAsync(ArchivePost command, CancellationToken cancellationToken)
@@ -25,7 +28,8 @@ public class ArchivePostHandler : ICommandHandler<ArchivePost>
         var post = await _repository.GetAsync(command.Id) ??
                    throw new PostNotFoundException(command.Id);
 
-        if (!post.CanBeModifiedBy(command.UserId))
+        var isAllowed = await _policy.IsSatisfiedBy(command.Id, command.UserId);
+        if (!isAllowed)
         {
             throw new UnauthorizedException(command.UserId, post);
         }

@@ -2,7 +2,9 @@ using LangApp.Application.Common.Exceptions;
 using LangApp.Application.Common.Queries.Abstractions;
 using LangApp.Application.Posts.Dto;
 using LangApp.Application.Posts.Queries;
+using LangApp.Application.Posts.Services.PolicyServices;
 using LangApp.Application.StudyGroups.Exceptions;
+using LangApp.Core.Services.Policies.Posts;
 using LangApp.Infrastructure.EF.Context;
 using LangApp.Infrastructure.EF.Models.Posts;
 using LangApp.Infrastructure.EF.Models.StudyGroups;
@@ -13,12 +15,12 @@ namespace LangApp.Infrastructure.EF.Queries.Handlers.Posts;
 internal sealed class GetPostHandler : IQueryHandler<GetPost, PostDto>
 {
     private readonly DbSet<PostReadModel> _posts;
-    private readonly DbSet<StudyGroupReadModel> _groups;
+    private readonly IPostAccessPolicyService _policy;
 
-    public GetPostHandler(ReadDbContext context)
+    public GetPostHandler(ReadDbContext context, IPostAccessPolicyService policy)
     {
+        _policy = policy;
         _posts = context.Posts;
-        _groups = context.StudyGroups;
     }
 
     public async Task<PostDto?> HandleAsync(GetPost query)
@@ -42,14 +44,11 @@ internal sealed class GetPostHandler : IQueryHandler<GetPost, PostDto>
             return null;
         }
 
-        var group = await _groups
-            .Where(g => g.Id == post.GroupId)
-            .Include(g => g.Members)
-            .SingleOrDefaultAsync() ?? throw new StudyGroupNotFoundException(post.GroupId);
+        var isAllowed = await _policy.IsSatisfiedBy(post.Id, post.GroupId, query.UserId);
 
-        if (group.Members.All(m => m.Id != query.UserId) && group.OwnerId != query.UserId)
+        if (!isAllowed)
         {
-            throw new UnauthorizedException(query.UserId, group);
+            throw new SimpleUnauthorizedException(query.UserId);
         }
 
         return post;

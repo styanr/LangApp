@@ -14,3 +14,14 @@ public class UnauthorizedException : ApplicationException
         Entity = entity;
     }
 }
+
+public class SimpleUnauthorizedException : ApplicationException
+{
+    public Guid UserId { get; set; }
+
+    public SimpleUnauthorizedException(Guid userId) : base(
+        $"The user '{userId}' is not authorized to perform this action")
+    {
+        UserId = userId;
+    }
+}

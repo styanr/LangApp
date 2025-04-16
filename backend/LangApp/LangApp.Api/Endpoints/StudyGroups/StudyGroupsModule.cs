@@ -67,7 +67,7 @@ public class StudyGroupsModule : IEndpointModule
 
     private async Task<NoContent> AddMembers(
         [FromRoute] Guid id,
-        [FromBody] AddMembersRequest request,
+        [FromBody] MembersBodyRequestModel request,
         [FromServices] ICommandDispatcher dispatcher,
         HttpContext context)
     {

@@ -1,13 +1,18 @@
+using System.Text.Json.Serialization;
 using LangApp.Core.Exceptions.Assignments;
 
 namespace LangApp.Core.ValueObjects.Assignments.MultipleChoice;
 
+// Json attributes are used here for the deserialization.
+// this is a violation of clean architecture, but I
+// don't see a better way to do this right now
+
 public record MultipleChoiceQuestion
 {
-    private readonly List<MultipleChoiceOption> _options;
+    [JsonPropertyName("question")] public string Question { get; }
+    [JsonPropertyName("options")] public List<MultipleChoiceOption> Options { get; }
 
-    public string Question { get; }
-    public IReadOnlyList<MultipleChoiceOption> Options => _options.AsReadOnly();
+    [JsonPropertyName("correctOptionIndex")]
     public int CorrectOptionIndex { get; }
 
     public MultipleChoiceQuestion(string question, List<MultipleChoiceOption> options, int correctOptionIndex)
@@ -28,7 +33,7 @@ public record MultipleChoiceQuestion
         }
 
         Question = question;
-        _options = options;
+        Options = options;
         CorrectOptionIndex = correctOptionIndex;
     }
 }

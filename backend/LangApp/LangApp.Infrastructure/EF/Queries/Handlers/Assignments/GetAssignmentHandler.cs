@@ -1,5 +1,7 @@
 using LangApp.Application.Assignments.Dto;
 using LangApp.Application.Assignments.Queries;
+using LangApp.Application.Assignments.Services.PolicyServices;
+using LangApp.Application.Common.Exceptions;
 using LangApp.Application.Common.Queries.Abstractions;
 using LangApp.Infrastructure.EF.Context;
 using LangApp.Infrastructure.EF.Models.Assignments;
@@ -12,17 +14,17 @@ namespace LangApp.Infrastructure.EF.Queries.Handlers.Assignments;
 internal class GetAssignmentHandler : IQueryHandler<GetAssignment, AssignmentDto>
 {
     private readonly DbSet<AssignmentReadModel> _assignments;
-    private readonly DbSet<StudyGroupReadModel> _groups;
+    private readonly IAssignmentFullAccessPolicyService _policy;
 
-    public GetAssignmentHandler(ReadDbContext context)
+    public GetAssignmentHandler(ReadDbContext context, IAssignmentFullAccessPolicyService policy)
     {
+        _policy = policy;
         _assignments = context.Assignments;
-        _groups = context.StudyGroups;
     }
 
-    public Task<AssignmentDto?> HandleAsync(GetAssignment query)
+    public async Task<AssignmentDto?> HandleAsync(GetAssignment query)
     {
-        var assignment = _assignments
+        var assignment = await _assignments
             .Where(a => a.Id == query.Id)
             .Select(a => new AssignmentDto(
                 a.Id,
@@ -35,6 +37,12 @@ internal class GetAssignmentHandler : IQueryHandler<GetAssignment, AssignmentDto
             ))
             .AsNoTracking()
             .SingleOrDefaultAsync();
+
+        var isAllowed = await _policy.IsSatisfiedBy(query.Id, query.UserId);
+        if (!isAllowed)
+        {
+            throw new SimpleUnauthorizedException(query.UserId);
+        }
 
         return assignment;
     }

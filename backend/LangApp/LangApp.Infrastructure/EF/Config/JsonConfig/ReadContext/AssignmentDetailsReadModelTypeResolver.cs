@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using LangApp.Infrastructure.EF.Models.Assignments;
+using LangApp.Infrastructure.EF.Models.Assignments.FillInTheBlank;
 using LangApp.Infrastructure.EF.Models.Assignments.MultipleChoice;
 
 namespace LangApp.Infrastructure.EF.Config.JsonConfig.ReadContext;
@@ -21,8 +22,12 @@ public class AssignmentDetailsReadModelTypeResolver : DefaultJsonTypeInfoResolve
                 UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FailSerialization,
                 DerivedTypes =
                 {
+                    // TODO: could probably do some trickery with the names (compare to read model without ReadModel)
                     new(typeof(MultipleChoiceAssignmentDetailsReadModel),
                         "MultipleChoiceAssignmentDetails"),
+
+                    new(typeof(FillInTheBlankAssignmentDetailsReadModel),
+                        "FillInTheBlankAssignmentDetails"),
                 }
             };
         }

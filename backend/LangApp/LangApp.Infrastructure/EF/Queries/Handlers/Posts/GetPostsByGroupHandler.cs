@@ -5,6 +5,7 @@ using LangApp.Application.Common.Queries.Abstractions;
 using LangApp.Application.Posts.Dto;
 using LangApp.Application.Posts.Queries;
 using LangApp.Application.StudyGroups.Exceptions;
+using LangApp.Application.StudyGroups.Services.PolicyServices;
 using LangApp.Infrastructure.EF.Context;
 using LangApp.Infrastructure.EF.Models.Posts;
 using LangApp.Infrastructure.EF.Models.StudyGroups;
@@ -16,9 +17,11 @@ internal sealed class GetPostsByGroupHandler : IQueryHandler<GetPostsByGroup, Pa
 {
     private readonly DbSet<PostReadModel> _posts;
     private readonly DbSet<StudyGroupReadModel> _groups;
+    private readonly IStudyGroupAccessPolicyService _policy;
 
-    public GetPostsByGroupHandler(ReadDbContext context)
+    public GetPostsByGroupHandler(ReadDbContext context, IStudyGroupAccessPolicyService policy)
     {
+        _policy = policy;
         _posts = context.Posts;
         _groups = context.StudyGroups;
     }
@@ -28,14 +31,11 @@ internal sealed class GetPostsByGroupHandler : IQueryHandler<GetPostsByGroup, Pa
         const int contentPreviewLength = 50;
         var totalCount = await _posts.Where(p => p.GroupId == query.GroupId).CountAsync();
 
-        var group = await _groups
-            .Where(g => g.Id == query.GroupId)
-            .Include(g => g.Members)
-            .SingleOrDefaultAsync() ?? throw new StudyGroupNotFoundException(query.GroupId);
+        var isAllowed = await _policy.IsSatisfiedBy(query.GroupId, query.UserId);
 
-        if (group.Members.All(m => m.Id != query.UserId) && group.OwnerId != query.UserId)
+        if (!isAllowed)
         {
-            throw new UnauthorizedException(query.UserId, group);
+            throw new SimpleUnauthorizedException(query.UserId);
         }
 
         var posts = await _posts
@@ -64,7 +64,7 @@ internal sealed class GetPostsByGroupHandler : IQueryHandler<GetPostsByGroup, Pa
 
     private static string ToPreview(string value, int previewLength)
     {
-        var builder = new StringBuilder(value.Substring(0, previewLength));
+        var builder = new StringBuilder(value.Substring(0, Math.Min(previewLength, value.Length)));
         if (builder.Length != value.Length)
         {
             builder.Append("...");

@@ -1,6 +1,7 @@
 using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.Common.Exceptions;
 using LangApp.Application.StudyGroups.Exceptions;
+using LangApp.Application.StudyGroups.Services.PolicyServices;
 using LangApp.Core.Entities.StudyGroups;
 using LangApp.Core.Enums;
 using LangApp.Core.Factories.Posts;
@@ -23,16 +24,17 @@ public class CreatePostHandler : ICommandHandler<CreatePost, Guid>
     private readonly IPostRepository _repository;
     private readonly IPostFactory _factory;
     private readonly IStudyGroupRepository _studyGroupRepository;
+    private readonly IStudyGroupAccessPolicyService _policy;
 
     public CreatePostHandler(
         IPostRepository repository,
         IPostFactory factory,
-        IStudyGroupRepository studyGroupRepository
-    )
+        IStudyGroupRepository studyGroupRepository, IStudyGroupAccessPolicyService policy)
     {
         _repository = repository;
         _factory = factory;
         _studyGroupRepository = studyGroupRepository;
+        _policy = policy;
     }
 
     public async Task<Guid> HandleAsync(CreatePost command, CancellationToken cancellationToken)
@@ -40,7 +42,8 @@ public class CreatePostHandler : ICommandHandler<CreatePost, Guid>
         var group = await _studyGroupRepository.GetAsync(command.GroupId) ??
                     throw new StudyGroupNotFoundException(command.GroupId);
 
-        if (!(group.ContainsMember(command.AuthorId) || group.CanBeModifiedBy(command.AuthorId)))
+        var isAllowed = await _policy.IsSatisfiedBy(command.GroupId, command.AuthorId);
+        if (!isAllowed)
         {
             throw new UnauthorizedException(command.AuthorId, group);
         }

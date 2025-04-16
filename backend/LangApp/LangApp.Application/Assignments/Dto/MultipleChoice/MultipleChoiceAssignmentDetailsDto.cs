@@ -1,4 +1,4 @@
-namespace LangApp.Application.Assignments.Dto;
+namespace LangApp.Application.Assignments.Dto.MultipleChoice;
 
 public record MultipleChoiceAssignmentDetailsDto(List<MultipleChoiceQuestionDto> Questions) : AssignmentDetailsDto;
 

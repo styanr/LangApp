@@ -16,7 +16,8 @@ public class AssignmentsModule : IEndpointModule
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {
         var group = app.MapVersionedGroup("assignments").WithTags("Assignments");
-        group.MapPost("/multiple-choice/", CreateMultipleChoice).WithName("CreateAssignment");
+        group.MapPost("/multiple-choice/", CreateMultipleChoice).WithName("CreateMultipleChoice");
+        group.MapPost("/fill-in-the-blank/", CreateFillInTheBlank).WithName("CreateFillInTheBlank");
         group.MapGet("/{id:guid}", Get).WithName("GetAssignment");
     }
 
@@ -32,14 +33,14 @@ public class AssignmentsModule : IEndpointModule
         return ApplicationTypedResults.OkOrNotFound(assignment);
     }
 
-    private async Task<Created> CreateMultipleChoice(
+    private async Task<CreatedAtRoute> CreateMultipleChoice(
         [FromBody] AddMultipleChoiceAssignmentRequest request,
         [FromServices] ICommandDispatcher dispatcher,
         HttpContext context)
     {
         var userId = context.User.GetUserId();
 
-        var command = new AddMultipleChoiceAssignment(
+        var command = new CreateMultipleChoiceAssignment(
             userId,
             request.GroupId,
             request.DueTime,
@@ -47,7 +48,26 @@ public class AssignmentsModule : IEndpointModule
             request.Details
         );
 
-        var assignmentId = await dispatcher.DispatchWithResultAsync(command);
-        return TypedResults.Created();
+        var id = await dispatcher.DispatchWithResultAsync(command);
+        return TypedResults.CreatedAtRoute("GetAssignment", new { id });
+    }
+
+    private async Task<CreatedAtRoute> CreateFillInTheBlank(
+        [FromBody] AddFillInTheBlankAssignmentRequest request,
+        [FromServices] ICommandDispatcher dispatcher,
+        HttpContext context)
+    {
+        var userId = context.User.GetUserId();
+
+        var command = new CreateFillInTheBlankAssignment(
+            userId,
+            request.GroupId,
+            request.DueTime,
+            request.MaxScore,
+            request.Details
+        );
+
+        var id = await dispatcher.DispatchWithResultAsync(command);
+        return TypedResults.CreatedAtRoute("GetAssignment", new { id });
     }
 }

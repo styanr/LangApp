@@ -1,5 +1,9 @@
 using System.Reflection;
+using LangApp.Application.Assignments.Services;
 using LangApp.Application.Common.Commands;
+using LangApp.Application.Posts.Services;
+using LangApp.Application.StudyGroups.Services;
+using LangApp.Core.Common;
 using LangApp.Core.Factories.Assignments;
 using LangApp.Core.Factories.Lexicons;
 using LangApp.Core.Factories.Posts;
@@ -23,6 +27,16 @@ public static class Extensions
             .AsImplementedInterfaces()
             .WithScopedLifetime());
 
+        services.Scan(s => s.FromAssemblies(assembly)
+            .AddClasses(c => c.AssignableTo(typeof(IPolicy<,>)))
+            .AsImplementedInterfaces()
+            .WithTransientLifetime());
+
+        services.Scan(s => s.FromAssemblies(assembly)
+            .AddClasses(c => c.AssignableTo(typeof(IPolicy<,,>)))
+            .AsImplementedInterfaces()
+            .WithTransientLifetime());
+
         services.AddTransient<IKeyGenerator, KeyGenerator>();
         services.AddTransient<IApplicationUserFactory, ApplicationUserFactory>();
         services.AddTransient<ILexiconFactory, LexiconFactory>();
@@ -30,6 +44,10 @@ public static class Extensions
         services.AddTransient<IPostFactory, PostFactory>();
         services.AddTransient<IStudyGroupFactory, StudyGroupFactory>();
         services.AddTransient<IAssignmentFactory, AssignmentFactory>();
+
+        services.AddPostPolicies();
+        services.AddStudyGroupServices();
+        services.AddAssignmentPolicies();
 
         return services;
     }

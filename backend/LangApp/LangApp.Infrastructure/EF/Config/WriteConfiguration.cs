@@ -165,14 +165,22 @@ internal sealed class WriteConfiguration :
 
         builder.Property(a => a.Details).HasConversion(entry =>
                 JsonSerializer.Serialize(entry,
-                    new JsonSerializerOptions { TypeInfoResolver = new PolymorphicTypeResolver<AssignmentDetails>() }),
+                    new JsonSerializerOptions
+                    {
+                        TypeInfoResolver = new PolymorphicTypeResolver<AssignmentDetails>(),
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    }),
             value => DeserializeAssignmentDetails(value));
     }
 
     private static AssignmentDetails DeserializeAssignmentDetails(string json)
     {
         return JsonSerializer.Deserialize<AssignmentDetails>(json,
-                   new JsonSerializerOptions { TypeInfoResolver = new PolymorphicTypeResolver<AssignmentDetails>() }) ??
+                   new JsonSerializerOptions
+                   {
+                       TypeInfoResolver = new PolymorphicTypeResolver<AssignmentDetails>(),
+                       PropertyNameCaseInsensitive = true
+                   }) ??
                throw new DeserializationException(typeof(AssignmentDetails), json);
     }
 

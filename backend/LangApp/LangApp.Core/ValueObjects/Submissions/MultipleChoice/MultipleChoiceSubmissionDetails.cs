@@ -1,9 +1,15 @@
+using System.Text.Json.Serialization;
+
 namespace LangApp.Core.ValueObjects.Submissions.MultipleChoice;
 
 public record MultipleChoiceSubmissionDetails : SubmissionDetails
 {
     private readonly List<MultipleChoiceAnswer> _answers;
     public IReadOnlyList<MultipleChoiceAnswer> Answers => _answers.AsReadOnly();
+
+    public MultipleChoiceSubmissionDetails()
+    {
+    }
 
     public MultipleChoiceSubmissionDetails(List<MultipleChoiceAnswer> answers)
     {
