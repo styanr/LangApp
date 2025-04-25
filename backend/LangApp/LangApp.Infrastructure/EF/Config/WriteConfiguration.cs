@@ -6,6 +6,7 @@ using LangApp.Core.Entities.StudyGroups;
 using LangApp.Core.Entities.Submissions;
 using LangApp.Core.ValueObjects;
 using LangApp.Core.ValueObjects.Assignments;
+using LangApp.Core.ValueObjects.Submissions;
 using LangApp.Infrastructure.EF.Config.Exceptions;
 using LangApp.Infrastructure.EF.Config.JsonConfig;
 using LangApp.Infrastructure.EF.Identity;
@@ -170,41 +171,55 @@ internal sealed class WriteConfiguration :
                         TypeInfoResolver = new PolymorphicTypeResolver<AssignmentDetails>(),
                         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                     }),
-            value => DeserializeAssignmentDetails(value));
-    }
-
-    private static AssignmentDetails DeserializeAssignmentDetails(string json)
-    {
-        return JsonSerializer.Deserialize<AssignmentDetails>(json,
-                   new JsonSerializerOptions
-                   {
-                       TypeInfoResolver = new PolymorphicTypeResolver<AssignmentDetails>(),
-                       PropertyNameCaseInsensitive = true
-                   }) ??
-               throw new DeserializationException(typeof(AssignmentDetails), json);
+            value => DeserializePolymorphic<AssignmentDetails>(value));
     }
 
     public void Configure(EntityTypeBuilder<Submission> builder)
     {
-        // builder.ToTable("Submissions");
-        // builder.HasKey(e => e.Id);
-        //
-        // builder.Property(e => e.Id).ValueGeneratedNever();
-        //
-        // builder.HasOne<IdentityApplicationUser>()
-        //     .WithMany()
-        //     .HasForeignKey(a => a.StudentId)
-        //     .OnDelete(DeleteBehavior.Cascade);
-        //
-        // builder.HasOne<Assignment>()
-        //     .WithMany()
-        //     .HasForeignKey(a => a.AssignmentId)
-        //     .OnDelete(DeleteBehavior.Cascade);
-        //
-        // builder.Property(a => a.Details).HasConversion(entry =>
-        //         JsonSerializer.Serialize(entry,
-        //             new JsonSerializerOptions { TypeInfoResolver = new AssignmentDetailsTypeResolver() }),
-        //     value => DeserializeAssignmentDetails(value));
+        builder.ToTable("Submissions");
+        builder.HasKey(e => e.Id);
+
+        builder.Property(e => e.Id).ValueGeneratedNever();
+
+        builder.HasOne<IdentityApplicationUser>()
+            .WithMany()
+            .HasForeignKey(a => a.StudentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne<Assignment>()
+            .WithMany()
+            .HasForeignKey(a => a.AssignmentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.OwnsOne(a => a.Grade, grade =>
+        {
+            grade.ToTable("SubmissionGrades");
+
+            grade.WithOwner().HasForeignKey("SubmissionId");
+
+            grade.OwnsOne(g => g.ScorePercentage, perc =>
+            {
+                perc.Property(p => p.Value)
+                    .HasColumnName("ScorePercentage");
+            });
+            grade.Property(g => g.Feedback);
+        });
+
+        builder.Property(a => a.Details).HasConversion(entry =>
+                JsonSerializer.Serialize(entry,
+                    new JsonSerializerOptions { TypeInfoResolver = new PolymorphicTypeResolver<SubmissionDetails>() }),
+            value => DeserializePolymorphic<SubmissionDetails>(value));
+    }
+
+    private static T DeserializePolymorphic<T>(string json)
+    {
+        return JsonSerializer.Deserialize<T>(json,
+                   new JsonSerializerOptions
+                   {
+                       TypeInfoResolver = new PolymorphicTypeResolver<T>(),
+                       PropertyNameCaseInsensitive = true
+                   }) ??
+               throw new DeserializationException(typeof(T), json);
     }
 
     public void Configure(EntityTypeBuilder<IdentityRole<Guid>> builder)

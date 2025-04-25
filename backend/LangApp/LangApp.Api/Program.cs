@@ -4,8 +4,6 @@ using LangApp.Api.Middlewares;
 using LangApp.Api.OpenApi;
 using LangApp.Application.Common;
 using LangApp.Infrastructure;
-using LangApp.Infrastructure.EF.Options;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 

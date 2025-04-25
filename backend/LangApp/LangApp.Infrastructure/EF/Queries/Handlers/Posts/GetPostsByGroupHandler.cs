@@ -35,7 +35,7 @@ internal sealed class GetPostsByGroupHandler : IQueryHandler<GetPostsByGroup, Pa
 
         if (!isAllowed)
         {
-            throw new SimpleUnauthorizedException(query.UserId);
+            throw new UnauthorizedException(query.UserId);
         }
 
         var posts = await _posts

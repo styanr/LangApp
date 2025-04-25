@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LangApp.Infrastructure.EF.Queries.Handlers.Assignments;
 
-internal class GetAssignmentHandler : IQueryHandler<GetAssignment, AssignmentDto>
+internal sealed class GetAssignmentHandler : IQueryHandler<GetAssignment, AssignmentDto>
 {
     private readonly DbSet<AssignmentReadModel> _assignments;
     private readonly IAssignmentFullAccessPolicyService _policy;
@@ -38,10 +38,15 @@ internal class GetAssignmentHandler : IQueryHandler<GetAssignment, AssignmentDto
             .AsNoTracking()
             .SingleOrDefaultAsync();
 
+        if (assignment is null)
+        {
+            return null;
+        }
+
         var isAllowed = await _policy.IsSatisfiedBy(query.Id, query.UserId);
         if (!isAllowed)
         {
-            throw new SimpleUnauthorizedException(query.UserId);
+            throw new UnauthorizedException(query.UserId);
         }
 
         return assignment;

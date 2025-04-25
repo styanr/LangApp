@@ -2,7 +2,7 @@ using LangApp.Application.Assignments.Dto.FillInTheBlank;
 
 namespace LangApp.Api.Endpoints.Assignments.Models;
 
-public record AddFillInTheBlankAssignmentRequest(
+public record CreateFillInTheBlankAssignmentRequest(
     Guid GroupId,
     DateTime DueTime,
     int MaxScore,

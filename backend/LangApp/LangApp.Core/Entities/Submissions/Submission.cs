@@ -15,6 +15,10 @@ public class Submission : AggregateRoot
     public GradeStatus Status { get; private set; } = GradeStatus.Pending;
     public SubmissionGrade? Grade { get; private set; }
 
+    private Submission()
+    {
+    }
+
     protected Submission(SubmissionDetails details, AssignmentType type)
     {
         Details = details;

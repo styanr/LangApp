@@ -3,7 +3,7 @@ using LangApp.Core.Enums;
 namespace LangApp.Application.Assignments.Dto;
 
 public record AssignmentDto(
-    Guid UserId,
+    Guid Id,
     Guid AuthorId,
     Guid GroupId,
     DateTime DueTime,

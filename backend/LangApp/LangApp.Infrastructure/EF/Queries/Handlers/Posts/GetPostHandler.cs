@@ -48,7 +48,7 @@ internal sealed class GetPostHandler : IQueryHandler<GetPost, PostDto>
 
         if (!isAllowed)
         {
-            throw new SimpleUnauthorizedException(query.UserId);
+            throw new UnauthorizedException(query.UserId);
         }
 
         return post;

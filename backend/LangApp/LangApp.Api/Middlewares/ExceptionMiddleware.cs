@@ -29,7 +29,7 @@ public class ExceptionMiddleware : IMiddleware
                 e => new() { { "validation_errors", e.Errors } }
             );
         }
-        catch (LangAppException e)
+        catch (Exception e) when (e is LangAppException or BadHttpRequestException)
         {
             await CreateResponse(context, StatusCodes.Status400BadRequest, e);
         }

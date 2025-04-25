@@ -4,24 +4,26 @@ namespace LangApp.Application.Common.Exceptions;
 
 public class UnauthorizedException : ApplicationException
 {
-    public Guid UserId { get; set; }
-    public IIdentifiable Entity { get; set; }
+    public Guid UserId { get; }
+    public Guid? EntityId { get; }
+    public string? EntityType { get; }
 
-    public UnauthorizedException(Guid userId, IIdentifiable entity) : base(
-        $"The user '{userId}' is not authorized to access {entity.GetType().Name} with ID {entity.Id}")
+    public UnauthorizedException(Guid userId)
+        : base($"The user '{userId}' is not authorized to perform this action.")
     {
         UserId = userId;
-        Entity = entity;
     }
-}
 
-public class SimpleUnauthorizedException : ApplicationException
-{
-    public Guid UserId { get; set; }
-
-    public SimpleUnauthorizedException(Guid userId) : base(
-        $"The user '{userId}' is not authorized to perform this action")
+    public UnauthorizedException(Guid userId, Guid entityId, string entityType)
+        : base($"The user '{userId}' is not authorized to access {entityType} with ID {entityId}.")
     {
         UserId = userId;
+        EntityId = entityId;
+        EntityType = entityType;
+    }
+
+    public UnauthorizedException(Guid userId, IIdentifiable entity)
+        : this(userId, entity.Id, entity.GetType().Name)
+    {
     }
 }

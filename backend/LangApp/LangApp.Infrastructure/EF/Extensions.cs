@@ -6,6 +6,7 @@ using LangApp.Infrastructure.EF.Repositories.Assignments;
 using LangApp.Infrastructure.EF.Repositories.Lexicons;
 using LangApp.Infrastructure.EF.Repositories.Posts;
 using LangApp.Infrastructure.EF.Repositories.StudyGroups;
+using LangApp.Infrastructure.EF.Repositories.Submissions;
 using LangApp.Infrastructure.EF.Repositories.Users;
 using LangApp.Infrastructure.EF.Services;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,8 @@ internal static class Extensions
         services.AddScoped<IAssignmentRepository, PostgresAssignmentRepository>();
         services.AddScoped<IPostRepository, PostgresPostRepository>();
         services.AddScoped<IStudyGroupRepository, PostgresStudyGroupRepository>();
+        services.AddScoped<ISubmissionRepository, PostgresSubmissionRepository>();
+
         services.AddScoped<IApplicationUserReadService, ApplicationUserReadService>();
 
         var postgres = configuration.GetOptions<PostgresOptions>("Postgres");

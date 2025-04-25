@@ -4,7 +4,7 @@ using LangApp.Core.ValueObjects.Assignments.MultipleChoice;
 
 namespace LangApp.Api.Endpoints.Assignments.Models;
 
-public record AddMultipleChoiceAssignmentRequest(
+public record CreateMultipleChoiceAssignmentRequest(
     Guid GroupId,
     DateTime DueTime,
     int MaxScore,

@@ -4,6 +4,7 @@ using LangApp.Api.Endpoints.Posts.Models;
 using LangApp.Application.Assignments.Commands;
 using LangApp.Application.Assignments.Dto;
 using LangApp.Application.Assignments.Queries;
+using LangApp.Application.Common;
 using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.Common.Queries.Abstractions;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -16,9 +17,13 @@ public class AssignmentsModule : IEndpointModule
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {
         var group = app.MapVersionedGroup("assignments").WithTags("Assignments");
-        group.MapPost("/multiple-choice/", CreateMultipleChoice).WithName("CreateMultipleChoice");
-        group.MapPost("/fill-in-the-blank/", CreateFillInTheBlank).WithName("CreateFillInTheBlank");
+        group.MapPost("/multiple-choice/", CreateMultipleChoice).WithName("CreateMultipleChoiceAssignment");
+        group.MapPost("/fill-in-the-blank/", CreateFillInTheBlank).WithName("CreateFillInTheBlankAssignment");
+
         group.MapGet("/{id:guid}", Get).WithName("GetAssignment");
+
+        app.MapVersionedGroup("groups").WithTags("Assignments").MapGet("/{groupId:guid}/assignments", GetByGroup)
+            .WithName("GetAssignmentsByGroup");
     }
 
     private async Task<Results<Ok<AssignmentDto>, NotFound>> Get(
@@ -33,8 +38,21 @@ public class AssignmentsModule : IEndpointModule
         return ApplicationTypedResults.OkOrNotFound(assignment);
     }
 
+
+    private async Task<Results<Ok<PagedResult<AssignmentDto>>, NotFound>> GetByGroup(
+        [AsParameters] GetAssignmentByGroupRequest request,
+        [FromServices] IQueryDispatcher dispatcher,
+        HttpContext context)
+    {
+        var userId = context.User.GetUserId();
+        var query = new GetAssignmentByGroup(request.GroupId, userId);
+        var assignment = await dispatcher.QueryAsync(query);
+
+        return ApplicationTypedResults.OkOrNotFound(assignment);
+    }
+
     private async Task<CreatedAtRoute> CreateMultipleChoice(
-        [FromBody] AddMultipleChoiceAssignmentRequest request,
+        [FromBody] CreateMultipleChoiceAssignmentRequest request,
         [FromServices] ICommandDispatcher dispatcher,
         HttpContext context)
     {
@@ -53,7 +71,7 @@ public class AssignmentsModule : IEndpointModule
     }
 
     private async Task<CreatedAtRoute> CreateFillInTheBlank(
-        [FromBody] AddFillInTheBlankAssignmentRequest request,
+        [FromBody] CreateFillInTheBlankAssignmentRequest request,
         [FromServices] ICommandDispatcher dispatcher,
         HttpContext context)
     {

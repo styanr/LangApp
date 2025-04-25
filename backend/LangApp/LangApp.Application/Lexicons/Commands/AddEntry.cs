@@ -35,7 +35,7 @@ public class AddEntryHandler : ICommandHandler<AddEntry, Guid>
         {
             throw new UnauthorizedException(userId, lexicon);
         }
-        
+
         var definitions = definitionValues.Select(d => new Definition(d));
 
         var term = new Term(termValue);

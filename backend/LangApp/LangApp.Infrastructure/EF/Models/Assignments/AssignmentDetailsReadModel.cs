@@ -1,3 +1,3 @@
 namespace LangApp.Infrastructure.EF.Models.Assignments;
 
-public class AssignmentDetailsReadModel();
+public abstract class AssignmentDetailsReadModel();

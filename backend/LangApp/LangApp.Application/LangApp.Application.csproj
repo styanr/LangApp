@@ -16,9 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Assignments\Exceptions\"/>
         <Folder Include="Auth\Queries\"/>
-        <Folder Include="Submissions\"/>
     </ItemGroup>
 
 </Project>

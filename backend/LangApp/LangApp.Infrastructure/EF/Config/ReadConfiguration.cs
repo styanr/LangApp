@@ -6,6 +6,7 @@ using LangApp.Infrastructure.EF.Models.Identity;
 using LangApp.Infrastructure.EF.Models.Lexicons;
 using LangApp.Infrastructure.EF.Models.Posts;
 using LangApp.Infrastructure.EF.Models.StudyGroups;
+using LangApp.Infrastructure.EF.Models.Submissions;
 using LangApp.Infrastructure.EF.Models.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -21,6 +22,8 @@ internal sealed class ReadConfiguration :
     IEntityTypeConfiguration<LexiconEntryReadModel>,
     IEntityTypeConfiguration<LexiconEntryDefinitionReadModel>,
     IEntityTypeConfiguration<AssignmentReadModel>,
+    IEntityTypeConfiguration<SubmissionReadModel>,
+    IEntityTypeConfiguration<SubmissionGradeReadModel>,
     IEntityTypeConfiguration<IdentityRoleReadModel>,
     IEntityTypeConfiguration<IdentityUserClaimReadModel>,
     IEntityTypeConfiguration<IdentityUserRoleReadModel>
@@ -149,6 +152,35 @@ internal sealed class ReadConfiguration :
             );
     }
 
+
+    public void Configure(EntityTypeBuilder<SubmissionReadModel> builder)
+    {
+        builder.ToTable("Submissions");
+        builder.HasKey(s => s.Id);
+        builder.Property(s => s.Id).ValueGeneratedNever();
+        builder.Property(s => s.AssignmentId);
+        builder.Property(s => s.StudentId);
+        builder.Property(s => s.Type);
+        builder.Property(s => s.SubmittedAt);
+        builder.Property(s => s.Status);
+
+        builder.HasOne(s => s.Grade).WithOne()
+            .HasForeignKey<SubmissionGradeReadModel>("SubmissionId");
+
+        builder.Property(s => s.Details)
+            .HasConversion(
+                details => JsonSerializer.Serialize(details, new JsonSerializerOptions()),
+                json => DeserializeSubmissionDetails(json)
+            );
+    }
+
+
+    public void Configure(EntityTypeBuilder<SubmissionGradeReadModel> builder)
+    {
+        builder.ToTable("SubmissionGrades");
+        builder.HasKey("SubmissionId");
+    }
+
     private static AssignmentDetailsReadModel DeserializeAssignmentDetails(string json)
     {
         return JsonSerializer.Deserialize<AssignmentDetailsReadModel>(json, new JsonSerializerOptions
@@ -159,6 +191,14 @@ internal sealed class ReadConfiguration :
                ?? throw new DeserializationException(typeof(AssignmentDetailsReadModel), json);
     }
 
+    private static SubmissionDetailsReadModel DeserializeSubmissionDetails(string json)
+    {
+        return JsonSerializer.Deserialize<SubmissionDetailsReadModel>(json, new JsonSerializerOptions
+        {
+            TypeInfoResolver = new SubmissionDetailsReadModelTypeResolver(),
+            PropertyNameCaseInsensitive = true
+        }) ?? throw new DeserializationException(typeof(SubmissionDetailsReadModel), json);
+    }
 
     public void Configure(EntityTypeBuilder<IdentityRoleReadModel> builder)
     {

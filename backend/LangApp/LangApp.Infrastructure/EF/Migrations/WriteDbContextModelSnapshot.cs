@@ -173,6 +173,39 @@ namespace LangApp.Infrastructure.EF.Migrations
                     b.ToTable("StudyGroups", "application");
                 });
 
+            modelBuilder.Entity("LangApp.Core.Entities.Submissions.Submission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AssignmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Details")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("SubmittedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignmentId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("Submissions", "application");
+                });
+
             modelBuilder.Entity("LangApp.Core.ValueObjects.Member", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -479,6 +512,59 @@ namespace LangApp.Infrastructure.EF.Migrations
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("LangApp.Core.Entities.Submissions.Submission", b =>
+                {
+                    b.HasOne("LangApp.Core.Entities.Assignments.Assignment", null)
+                        .WithMany()
+                        .HasForeignKey("AssignmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LangApp.Infrastructure.EF.Identity.IdentityApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("LangApp.Core.ValueObjects.SubmissionGrade", "Grade", b1 =>
+                        {
+                            b1.Property<Guid>("SubmissionId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Feedback")
+                                .HasColumnType("text");
+
+                            b1.HasKey("SubmissionId");
+
+                            b1.ToTable("SubmissionGrades", "application");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SubmissionId");
+
+                            b1.OwnsOne("LangApp.Core.ValueObjects.Percentage", "ScorePercentage", b2 =>
+                                {
+                                    b2.Property<Guid>("SubmissionGradeSubmissionId")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<double>("Value")
+                                        .HasColumnType("double precision")
+                                        .HasColumnName("ScorePercentage");
+
+                                    b2.HasKey("SubmissionGradeSubmissionId");
+
+                                    b2.ToTable("SubmissionGrades", "application");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("SubmissionGradeSubmissionId");
+                                });
+
+                            b1.Navigation("ScorePercentage")
+                                .IsRequired();
+                        });
+
+                    b.Navigation("Grade");
                 });
 
             modelBuilder.Entity("LangApp.Core.ValueObjects.Member", b =>
