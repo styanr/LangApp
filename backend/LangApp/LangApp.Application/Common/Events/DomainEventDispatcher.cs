@@ -1,0 +1,23 @@
+using LangApp.Core.Common;
+using MediatR;
+
+namespace LangApp.Application.Common.Events;
+
+public class DomainEventDispatcher : IDomainEventDispatcher
+{
+    private readonly IPublisher _publisher;
+
+    public DomainEventDispatcher(IMediator publisher)
+    {
+        _publisher = publisher;
+    }
+
+// TODO could be concurrent
+    public async Task DispatchEventsAsync(IEnumerable<IDomainEvent> events)
+    {
+        foreach (var @event in events)
+        {
+            await _publisher.Publish(@event);
+        }
+    }
+}

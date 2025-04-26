@@ -20,6 +20,6 @@ public class SubmissionFactory : ISubmissionFactory
     {
         var id = _keyGenerator.NewKey();
 
-        return new Submission(assignmentId, studentId, details, AssignmentType.MultipleChoice, id);
+        return Submission.Create(assignmentId, studentId, details, AssignmentType.MultipleChoice, id);
     }
 }

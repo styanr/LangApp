@@ -1,5 +1,6 @@
 using LangApp.Core.Common;
 using LangApp.Core.Enums;
+using LangApp.Core.Events.Submissions;
 using LangApp.Core.ValueObjects;
 using LangApp.Core.ValueObjects.Submissions;
 
@@ -32,6 +33,15 @@ public class Submission : AggregateRoot
         StudentId = studentId;
         Details = details;
         Type = type;
+    }
+
+    internal static Submission Create(
+        Guid assignmentId, Guid studentId, SubmissionDetails details, AssignmentType type, Guid id)
+    {
+        var submission = new Submission(assignmentId, studentId, details, type, id);
+        submission.AddEvent(new SubmissionCreated(submission));
+
+        return submission;
     }
 
     public void UpdateGrade(SubmissionGrade submissionGradeResult)

@@ -1,6 +1,7 @@
 using System.Reflection;
 using LangApp.Application.Assignments.Services;
 using LangApp.Application.Common.Commands;
+using LangApp.Application.Common.Events;
 using LangApp.Application.Posts.Services;
 using LangApp.Application.StudyGroups.Services;
 using LangApp.Core.Common;
@@ -47,9 +48,13 @@ public static class Extensions
         services.AddTransient<IAssignmentFactory, AssignmentFactory>();
         services.AddTransient<ISubmissionFactory, SubmissionFactory>();
 
+        services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
+
         services.AddPostPolicies();
         services.AddStudyGroupServices();
         services.AddAssignmentPolicies();
+
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
         return services;
     }

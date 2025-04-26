@@ -1,8 +1,9 @@
 using LangApp.Core.Enums;
+using LangApp.Core.Exceptions;
 
 namespace LangApp.Application.Common.Exceptions;
 
-public class UnauthorizedRoleException<T> : ApplicationException
+public class UnauthorizedRoleException<T> : LangAppException
 {
     public Guid UserId { get; set; }
     public UserRole Role { get; set; }

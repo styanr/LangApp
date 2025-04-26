@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using LangApp.Core.Exceptions;
 using LangApp.Infrastructure.EF.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -16,7 +17,7 @@ public static class Extensions
 
         if (jwtOptions is null)
         {
-            throw new ApplicationException("Jwt not set up.");
+            throw new LangAppException("Jwt not set up.");
         }
 
         services.AddAuthentication(o =>

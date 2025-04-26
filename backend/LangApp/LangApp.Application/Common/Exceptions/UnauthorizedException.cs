@@ -1,8 +1,9 @@
 using LangApp.Core.Common;
+using LangApp.Core.Exceptions;
 
 namespace LangApp.Application.Common.Exceptions;
 
-public class UnauthorizedException : ApplicationException
+public class UnauthorizedException : LangAppException
 {
     public Guid UserId { get; }
     public Guid? EntityId { get; }

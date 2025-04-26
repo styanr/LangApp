@@ -1,5 +1,6 @@
 using System.Text.Json;
 using LangApp.Application.Auth.Exceptions;
+using LangApp.Application.Common.Exceptions;
 using LangApp.Core.Common.Exceptions;
 using LangApp.Core.Exceptions;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,7 @@ public class ExceptionMiddleware : IMiddleware
         {
             await next(context);
         }
-        catch (InvalidCredentialsException e)
+        catch (LangAppException e) when (e is InvalidCredentialsException or UnauthorizedException)
         {
             await CreateResponse(context, StatusCodes.Status401Unauthorized, e);
         }

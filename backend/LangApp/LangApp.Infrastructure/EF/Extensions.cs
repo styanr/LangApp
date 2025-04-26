@@ -1,6 +1,7 @@
 using LangApp.Application.Users.Services;
 using LangApp.Core.Repositories;
 using LangApp.Infrastructure.EF.Context;
+using LangApp.Infrastructure.EF.Interceptors;
 using LangApp.Infrastructure.EF.Options;
 using LangApp.Infrastructure.EF.Repositories.Assignments;
 using LangApp.Infrastructure.EF.Repositories.Lexicons;
@@ -30,14 +31,17 @@ internal static class Extensions
 
         services.AddScoped<IApplicationUserReadService, ApplicationUserReadService>();
 
+        services.AddScoped<EventPublishingInterceptor>();
+
         var postgres = configuration.GetOptions<PostgresOptions>("Postgres");
         services.AddDbContext<ReadDbContext>(opt =>
             opt.UseNpgsql(postgres.ConnectionString)
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
 
-        services.AddDbContext<WriteDbContext>(opt =>
+        services.AddDbContext<WriteDbContext>((sp, opt) =>
         {
             opt.UseNpgsql(postgres.ConnectionString);
+            opt.AddInterceptors(sp.GetRequiredService<EventPublishingInterceptor>());
             opt.EnableSensitiveDataLogging();
         });
 
