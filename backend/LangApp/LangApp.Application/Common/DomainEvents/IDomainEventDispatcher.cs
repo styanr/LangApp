@@ -1,6 +1,6 @@
 using LangApp.Core.Common;
 
-namespace LangApp.Application.Common.Events;
+namespace LangApp.Application.Common.DomainEvents;
 
 public interface IDomainEventDispatcher
 {

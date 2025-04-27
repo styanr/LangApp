@@ -39,4 +39,6 @@ app.MapGroup("/api")
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseInfrastructureEndpoints();
+
 app.Run();

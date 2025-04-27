@@ -13,7 +13,7 @@ using LangApp.Infrastructure.EF.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Shared.Extensions;
+using Shared.Options;
 
 namespace LangApp.Infrastructure.EF;
 

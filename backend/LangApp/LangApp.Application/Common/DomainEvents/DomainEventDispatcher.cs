@@ -1,7 +1,7 @@
 using LangApp.Core.Common;
 using MediatR;
 
-namespace LangApp.Application.Common.Events;
+namespace LangApp.Application.Common.DomainEvents;
 
 public class DomainEventDispatcher : IDomainEventDispatcher
 {

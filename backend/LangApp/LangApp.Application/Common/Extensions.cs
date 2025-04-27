@@ -1,7 +1,7 @@
 using System.Reflection;
 using LangApp.Application.Assignments.Services;
 using LangApp.Application.Common.Commands;
-using LangApp.Application.Common.Events;
+using LangApp.Application.Common.DomainEvents;
 using LangApp.Application.Posts.Services;
 using LangApp.Application.StudyGroups.Services;
 using LangApp.Core.Common;

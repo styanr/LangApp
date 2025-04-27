@@ -2,9 +2,8 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
-using LangApp.Core.ValueObjects.Assignments;
 
-namespace LangApp.Infrastructure.EF.Config.JsonConfig;
+namespace LangApp.Infrastructure.EF.Config.JsonConfig.WriteContext;
 
 public class PolymorphicTypeResolver<TBase> : DefaultJsonTypeInfoResolver
 {

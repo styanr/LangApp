@@ -1,4 +1,4 @@
-using LangApp.Application.Common.Events;
+using LangApp.Application.Common.DomainEvents;
 using LangApp.Core.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;

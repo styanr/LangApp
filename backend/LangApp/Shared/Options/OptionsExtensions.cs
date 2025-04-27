@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 
-namespace Shared.Extensions;
+namespace Shared.Options;
 
 public static class OptionsExtensions
 {
