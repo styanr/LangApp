@@ -13,13 +13,15 @@ public class JobScheduler : IJobScheduler
         _backgroundJobs = backgroundJobs;
     }
 
-    public void Enqueue<TJob>(Expression<Action<TJob>> job)
+    public void Enqueue<TJob, TJobData>(Expression<Func<TJob, Task>> job)
+        where TJob : IJob<TJobData>
+        where TJobData : IJobData
     {
-        _backgroundJobs.Enqueue<TJob>(job);
+        _backgroundJobs.Enqueue(job);
     }
 
-    public void Enqueue(Expression<Action> job)
+    public void Enqueue(Expression<Func<Task>> job)
     {
-        throw new NotImplementedException();
+        _backgroundJobs.Enqueue(job);
     }
 }

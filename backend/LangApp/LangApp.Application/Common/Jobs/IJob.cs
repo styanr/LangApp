@@ -4,5 +4,5 @@ public interface IJobData;
 
 public interface IJob<in TJobData> where TJobData : IJobData
 {
-    void Execute(TJobData jobData);
+    Task ExecuteAsync(TJobData jobData);
 }

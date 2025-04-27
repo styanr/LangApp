@@ -2,6 +2,7 @@ using System.Reflection;
 using LangApp.Application.Assignments.Services;
 using LangApp.Application.Common.Commands;
 using LangApp.Application.Common.DomainEvents;
+using LangApp.Application.Common.Strategies;
 using LangApp.Application.Posts.Services;
 using LangApp.Application.StudyGroups.Services;
 using LangApp.Core.Common;
@@ -11,7 +12,7 @@ using LangApp.Core.Factories.Posts;
 using LangApp.Core.Factories.StudyGroups;
 using LangApp.Core.Factories.Submissions;
 using LangApp.Core.Factories.Users;
-using LangApp.Core.Services.EvaluationStrategies;
+using LangApp.Core.Services.GradingStrategies;
 using LangApp.Core.Services.KeyGeneration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,10 +23,10 @@ public static class Extensions
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddCommands();
-        var assembly = Assembly.GetAssembly(typeof(IGradingStrategy<,>))!;
+        var assembly = Assembly.GetAssembly(typeof(IGradingStrategy<>))!;
 
         services.Scan(s => s.FromAssemblies(assembly)
-            .AddClasses(c => c.AssignableTo(typeof(IGradingStrategy<,>)))
+            .AddClasses(c => c.AssignableTo(typeof(IGradingStrategy<>)))
             .AsImplementedInterfaces()
             .WithScopedLifetime());
 
@@ -48,7 +49,9 @@ public static class Extensions
         services.AddTransient<IAssignmentFactory, AssignmentFactory>();
         services.AddTransient<ISubmissionFactory, SubmissionFactory>();
 
-        services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
+        // TODO move to separate methods
+        services.AddSingleton<IDomainEventDispatcher, DomainEventDispatcher>();
+        services.AddSingleton<IGradingStrategyDispatcher, InMemoryGradingStrategyDispatcher>();
 
         services.AddPostPolicies();
         services.AddStudyGroupServices();

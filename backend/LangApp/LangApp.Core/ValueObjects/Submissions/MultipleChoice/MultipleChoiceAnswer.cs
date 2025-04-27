@@ -5,9 +5,10 @@ namespace LangApp.Core.ValueObjects.Submissions.MultipleChoice;
 
 public record MultipleChoiceAnswer
 {
-    public int ChosenOptionIndex { get; private set; }
+    [JsonPropertyName("chosenOptionIndex")]
+    public int ChosenOptionIndex { get; }
 
-    public MultipleChoiceAnswer()
+    private MultipleChoiceAnswer()
     {
     }
 

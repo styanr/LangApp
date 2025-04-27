@@ -19,7 +19,9 @@ public class SubmissionCreatedEventHandler : IDomainEventHandler<SubmissionCreat
 
     public Task Handle(SubmissionCreated notification, CancellationToken cancellationToken)
     {
-        _scheduler.Enqueue<SubmissionGradingJob>(job => job.Execute(new(notification.Submission.Id)));
+        _scheduler.Enqueue<SubmissionGradingJob, SubmissionGradingJobData>(job =>
+            job.ExecuteAsync(new(notification.Submission.Id)));
+
         return Task.CompletedTask;
     }
 }

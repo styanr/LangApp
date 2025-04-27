@@ -26,10 +26,6 @@ internal sealed class GetSubmissionHandler : IQueryHandler<GetSubmission, Submis
 
     public async Task<SubmissionDto?> HandleAsync(GetSubmission query)
     {
-        var submissionRaw = await _submissions
-            .Where(s => s.Id == query.Id).SingleOrDefaultAsync();
-
-
         var submission = await _submissions
             .Where(s => s.Id == query.Id)
             .Select(s => new SubmissionDto(
@@ -57,7 +53,7 @@ internal sealed class GetSubmissionHandler : IQueryHandler<GetSubmission, Submis
             return null;
         }
 
-        // TODO Optimize?
+        // TODO wrong access logic here
         var groupId = await _assignments
             .Where(a => a.Id == submission.AssignmentId)
             .Select(a => a.GroupId)

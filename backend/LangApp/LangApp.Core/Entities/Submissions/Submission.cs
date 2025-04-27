@@ -47,5 +47,6 @@ public class Submission : AggregateRoot
     public void UpdateGrade(SubmissionGrade submissionGradeResult)
     {
         Grade = submissionGradeResult;
+        Status = GradeStatus.Completed;
     }
 }

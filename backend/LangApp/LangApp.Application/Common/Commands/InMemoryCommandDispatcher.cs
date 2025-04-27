@@ -31,6 +31,6 @@ public class InMemoryCommandDispatcher : ICommandDispatcher
 
         var method = handlerType.GetMethod(nameof(ICommandHandler<ICommand<TResult>, TResult>.HandleAsync));
 
-        return await (Task<TResult>)method!.Invoke(handler, new object[] { command, cancellationToken })!;
+        return await (Task<TResult>)method!.Invoke(handler, [command, cancellationToken])!;
     }
 }
