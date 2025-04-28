@@ -6,24 +6,11 @@ using LangApp.Core.ValueObjects.Submissions.MultipleChoice;
 
 namespace LangApp.Core.Services.GradingStrategies;
 
-// TODO: is this "async" code a good choice?
 public class MultipleChoiceGradingStrategy
-    : IGradingStrategy<MultipleChoiceAssignmentDetails>
+    : SynchronousGradingStrategy<MultipleChoiceAssignmentDetails>
 {
-    public Task<SubmissionGrade> Grade(MultipleChoiceAssignmentDetails assignment,
-        SubmissionDetails submission, CancellationToken cancellationToken = default(CancellationToken))
-    {
-        try
-        {
-            return Task.FromResult(ExecuteGrade(assignment, submission, cancellationToken));
-        }
-        catch (Exception e)
-        {
-            return Task.FromException<SubmissionGrade>(e);
-        }
-    }
-
-    private SubmissionGrade ExecuteGrade(MultipleChoiceAssignmentDetails assignment, SubmissionDetails submission,
+    protected override SubmissionGrade ExecuteGrade(MultipleChoiceAssignmentDetails assignment,
+        SubmissionDetails submission,
         CancellationToken cancellationToken)
     {
         if (submission is not MultipleChoiceSubmissionDetails multipleChoiceSubmissionDetails)

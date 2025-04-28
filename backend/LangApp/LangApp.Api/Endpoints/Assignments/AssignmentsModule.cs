@@ -19,6 +19,7 @@ public class AssignmentsModule : IEndpointModule
         var group = app.MapVersionedGroup("assignments").WithTags("Assignments");
         group.MapPost("/multiple-choice/", CreateMultipleChoice).WithName("CreateMultipleChoiceAssignment");
         group.MapPost("/fill-in-the-blank/", CreateFillInTheBlank).WithName("CreateFillInTheBlankAssignment");
+        group.MapPost("/pronunciation/", CreatePronunciation).WithName("CreatePronunciationAssignment");
 
         group.MapGet("/{id:guid}", Get).WithName("GetAssignment");
 
@@ -78,6 +79,25 @@ public class AssignmentsModule : IEndpointModule
         var userId = context.User.GetUserId();
 
         var command = new CreateFillInTheBlankAssignment(
+            userId,
+            request.GroupId,
+            request.DueTime,
+            request.MaxScore,
+            request.Details
+        );
+
+        var id = await dispatcher.DispatchWithResultAsync(command);
+        return TypedResults.CreatedAtRoute("GetAssignment", new { id });
+    }
+
+    private async Task<CreatedAtRoute> CreatePronunciation(
+        [FromBody] CreatePronunciationAssignmentRequest request,
+        [FromServices] ICommandDispatcher dispatcher,
+        HttpContext context)
+    {
+        var userId = context.User.GetUserId();
+
+        var command = new CreatePronunciationAssignment(
             userId,
             request.GroupId,
             request.DueTime,

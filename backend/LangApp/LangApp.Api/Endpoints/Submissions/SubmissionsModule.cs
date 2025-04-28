@@ -16,6 +16,7 @@ public class SubmissionsModule : IEndpointModule
     {
         var group = app.MapVersionedGroup("submissions").WithTags("Submissions");
         group.MapPost("/multiple-choice/", CreateMultipleChoice).WithName("CreateMultipleChoiceSubmission");
+        group.MapPost("/pronunciation/", CreatePronunciation).WithName("CreatePronunciationSubmission");
         group.MapGet("{id:guid}", Get).WithName("GetSubmission");
     }
 
@@ -40,6 +41,32 @@ public class SubmissionsModule : IEndpointModule
         var command = new CreateMultipleChoiceSubmission(
             request.AssignmentId,
             request.Details,
+            userId
+        );
+
+        var id = await dispatcher.DispatchWithResultAsync(command);
+        return TypedResults.CreatedAtRoute("GetSubmission", new { id });
+    }
+
+    // TODO Could use streaming approach if storage is used up
+    private async Task<CreatedAtRoute> CreatePronunciation(
+        [FromForm] CreatePronunciationSubmissionRequest request,
+        [FromServices] ICommandDispatcher dispatcher,
+        HttpContext context)
+    {
+        var userId = context.User.GetUserId();
+
+        var stream = request.File.OpenReadStream();
+        var fileContentType = request.File.ContentType;
+
+        var details = new PronunciationSubmissionDetailsDto(
+            stream, fileContentType
+        );
+
+
+        var command = new CreatePronunciationSubmission(
+            request.AssignmentId,
+            details,
             userId
         );
 

@@ -33,6 +33,7 @@ app.UseExceptionMiddleware();
 app.UseHttpsRedirection();
 
 app.MapGroup("/api")
+    .DisableAntiforgery()
     .RequireAuthorization()
     .AddApplicationEndpoints();
 
