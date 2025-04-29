@@ -22,10 +22,10 @@ public class BlobContainerService
 
         try
         {
-            var response = await containerClient.CreateIfNotExistsAsync();
-            if (response is not null)
+            if (!await containerClient.ExistsAsync())
             {
-                _logger.LogInformation("Created new container {ContainerName}", containerName);
+                await containerClient.CreateAsync();
+                _logger.LogInformation("Created container {ContainerName}", containerName);
             }
             else
             {

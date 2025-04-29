@@ -58,4 +58,32 @@ public class BlobStorageService
             throw new BlobStorageException($"Failed to upload blob '{blobName}' to container '{containerName}'.", ex);
         }
     }
+
+    public async Task<Stream> DownloadFileAsync(string containerName, string blobName)
+    {
+        try
+        {
+            var containerClient = await _containerService.GetOrCreateContainerAsync(containerName);
+            var blobClient = containerClient.GetBlobClient(blobName);
+
+            var response = await blobClient.OpenReadAsync();
+
+            if (response is null)
+            {
+                throw new BlobStorageException($"Blob '{blobName}' not found in container '{containerName}'.");
+            }
+
+            _logger.LogInformation("Downloaded blob {BlobName} from container {ContainerName}", blobName,
+                containerName);
+
+            return response;
+        }
+        catch (RequestFailedException ex)
+        {
+            _logger.LogError(ex, "Blob download failed for {BlobName} in container {ContainerName}: {Message}",
+                blobName, containerName, ex.Message);
+            throw new BlobStorageException(
+                $"Failed to download blob '{blobName}' from container '{containerName}'.", ex);
+        }
+    }
 }

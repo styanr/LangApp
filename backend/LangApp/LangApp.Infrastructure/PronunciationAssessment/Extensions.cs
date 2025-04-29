@@ -1,4 +1,5 @@
 using LangApp.Core.Services.PronunciationAssessment;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LangApp.Infrastructure.PronunciationAssessment;
