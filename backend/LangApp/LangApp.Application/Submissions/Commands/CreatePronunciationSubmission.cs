@@ -24,17 +24,17 @@ public class CreatePronunciationSubmissionHandler : ICommandHandler<CreatePronun
     private readonly ISubmissionRepository _repository;
     private readonly IAssignmentRepository _assignmentRepository;
     private readonly IStudyGroupAccessPolicyService _groupAccessPolicy;
-    private readonly IBlobStorageService _blobStorageService;
+    private readonly IRecordingStorageService _recordingStorageService;
 
     public CreatePronunciationSubmissionHandler(ISubmissionFactory factory, ISubmissionRepository repository,
         IAssignmentRepository assignmentRepository, IStudyGroupAccessPolicyService groupAccessPolicy,
-        IBlobStorageService blobStorageService)
+        IRecordingStorageService recordingStorageService)
     {
         _factory = factory;
         _repository = repository;
         _assignmentRepository = assignmentRepository;
         _groupAccessPolicy = groupAccessPolicy;
-        _blobStorageService = blobStorageService;
+        _recordingStorageService = recordingStorageService;
     }
 
     public async Task<Guid> HandleAsync(CreatePronunciationSubmission command, CancellationToken cancellationToken)
@@ -51,15 +51,16 @@ public class CreatePronunciationSubmissionHandler : ICommandHandler<CreatePronun
             throw new UnauthorizedException(studentId, assignment.GroupId, "StudyGroup");
         }
 
+        // TODO properly validate the file type
         string[] permittedContentTypes = ["audio/wav", "audio/wave"];
         if (!permittedContentTypes.Contains(details.ContentType))
         {
             throw new LangAppException("Invalid file type");
         }
 
-        var blobUri = await _blobStorageService.UploadFileAsync(details.Recording);
+        var blobUri = await _recordingStorageService.UploadRecordingAsync(details.Recording);
 
-        var domainDetails = new PronunciationSubmissionDetails(blobUri);
+        var domainDetails = new PronunciationSubmissionDetails(blobUri.ToString());
 
         var submission = _factory.CreatePronunciation(assignmentId, studentId, domainDetails);
         await _repository.AddAsync(submission);

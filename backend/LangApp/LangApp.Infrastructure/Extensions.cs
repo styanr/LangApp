@@ -19,7 +19,7 @@ public static class Extensions
         services.AddQueries();
         services.AddIdentityServices(configuration);
         services.AddHangfire();
-        services.AddAzureBlobStorage();
+        services.AddAzureBlobStorage(configuration);
         services.AddPronunctiationAssessment();
 
         services.AddHostedService<AppInitializer>();

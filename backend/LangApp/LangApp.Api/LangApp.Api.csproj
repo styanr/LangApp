@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>LangApp.Api</RootNamespace>
+        <UserSecretsId>60303261-ecc8-40de-b07c-b7406ec33382</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
