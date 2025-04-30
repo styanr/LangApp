@@ -52,7 +52,7 @@ internal sealed class WriteConfiguration :
         builder.HasKey(g => g.Id);
 
         builder.Property(g => g.Language)
-            .HasConversion(g => g.ToString(), s => new Language(s));
+            .HasConversion(g => g.Code, s => Language.FromString(s));
 
         builder.HasMany(g => g.Members)
             .WithOne()
@@ -108,7 +108,7 @@ internal sealed class WriteConfiguration :
         builder.HasKey(l => l.Id);
 
         builder.Property(l => l.Language)
-            .HasConversion(g => g.ToString(), s => new Language(s));
+            .HasConversion(g => g.Code, s => Language.FromString(s));
         builder.Property(l => l.Title)
             .HasConversion(g => g.ToString(), s => new LexiconTitle(s));
 

@@ -36,7 +36,7 @@ public class CreateStudyGroupHandler : ICommandHandler<CreateStudyGroup, Guid>
             throw new UnauthorizedRoleException<StudyGroup>(ownerId, role);
         }
 
-        var language = new Language(languageModel);
+        var language = Language.FromString(languageModel);
 
         var studyGroup = _factory.Create(name, language, ownerId);
         await _repository.AddAsync(studyGroup);

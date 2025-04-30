@@ -26,7 +26,7 @@ public class CreateLexiconHandler : ICommandHandler<CreateLexicon, Guid>
     {
         var (title, languageValue, userId) = command;
 
-        var language = new Language(languageValue);
+        var language = Language.FromString(languageValue);
         var dictionaryTitle = new LexiconTitle(title);
 
         var lexicon = _factory.Create(userId, language, dictionaryTitle);

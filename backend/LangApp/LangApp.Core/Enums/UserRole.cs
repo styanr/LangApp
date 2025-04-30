@@ -3,7 +3,7 @@ namespace LangApp.Core.Enums;
 public enum UserRole
 {
     Teacher,
-    Learner
+    Student
 }
 
 public static class UserRoleExtensions

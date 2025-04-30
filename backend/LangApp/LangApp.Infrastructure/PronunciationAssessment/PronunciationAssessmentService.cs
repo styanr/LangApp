@@ -43,7 +43,7 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
 
         using var pushStream = AudioInputStream.CreatePushStream();
         using var audioInput = AudioConfig.FromStreamInput(pushStream);
-        using var recognizer = new SpeechRecognizer(speechConfig, language.Value, audioInput);
+        using var recognizer = new SpeechRecognizer(speechConfig, language.Code, audioInput);
 
         pronunciationConfig.ApplyTo(recognizer);
 
@@ -108,6 +108,7 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
 
         pushStream.Close();
         await recognizer.StopContinuousRecognitionAsync();
+        await assessmentComplete.Task;
 
         if (pronunciationResult is null)
         {

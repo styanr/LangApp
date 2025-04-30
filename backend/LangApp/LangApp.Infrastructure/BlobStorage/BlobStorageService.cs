@@ -9,15 +9,13 @@ namespace LangApp.Infrastructure.BlobStorage;
 public class BlobStorageService
 {
     private readonly BlobContainerService _containerService;
-    private readonly BlobClient _blobClient;
     private readonly ILogger<BlobStorageService> _logger;
 
-    public BlobStorageService(BlobContainerService containerService, ILogger<BlobStorageService> logger,
-        BlobClient blobClient)
+    public BlobStorageService(BlobContainerService containerService, ILogger<BlobStorageService> logger
+    )
     {
         _containerService = containerService;
         _logger = logger;
-        _blobClient = blobClient;
     }
 
     public async Task<Uri> UploadFileAsync(string containerName, Stream contentStream,

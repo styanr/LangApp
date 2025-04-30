@@ -10,7 +10,7 @@ public static class PronunciationAssignmentDetailsExtensions
     {
         return new PronunciationAssignmentDetails(
             dto.ReferenceText,
-            new Language(dto.Language)
+            Language.FromString(dto.Language)
         );
     }
 }
