@@ -26,9 +26,9 @@ public class PronunciationGradingStrategy : IGradingStrategy<PronunciationAssign
                 $"Provided submission {submission.GetType()} is not compatible with the assignment {assignment.GetType()}");
         }
 
-        var grade = await _assessmentService.Assess(pronunciationSubmission.FileUri, assignment.ReferenceText,
+        var score = await _assessmentService.Assess(pronunciationSubmission.FileUri, assignment.ReferenceText,
             assignment.Language);
 
-        return grade;
+        return new(score, "good job!");
     }
 }
