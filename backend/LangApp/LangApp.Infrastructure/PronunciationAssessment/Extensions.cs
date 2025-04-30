@@ -9,11 +9,11 @@ namespace LangApp.Infrastructure.PronunciationAssessment;
 
 public static class Extensions
 {
-    public static IServiceCollection AddPronunctiationAssessment(this IServiceCollection services,
+    public static IServiceCollection AddPronunciationAssessment(this IServiceCollection services,
         IConfiguration configuration)
     {
         services.AddOptions<SpeechConfigOptions>(configuration, "Azure:Speech");
-        services.AddScoped<IPronunciationAssessmentService, PronunciationAssessmentService>(); // TODO TEMP
+        services.AddScoped<IPronunciationAssessmentService, PronunciationAssessmentService>();
 
         return services;
     }

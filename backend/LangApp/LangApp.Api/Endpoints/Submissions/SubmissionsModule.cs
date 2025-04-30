@@ -59,7 +59,7 @@ public class SubmissionsModule : IEndpointModule
         var stream = request.File.OpenReadStream();
         var fileContentType = request.File.ContentType;
 
-        var details = new PronunciationSubmissionDetailsDto(
+        var details = new CreatePronunciationSubmissionDetailsDto(
             stream, fileContentType
         );
 

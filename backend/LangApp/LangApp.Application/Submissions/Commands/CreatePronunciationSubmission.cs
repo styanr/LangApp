@@ -14,7 +14,7 @@ namespace LangApp.Application.Submissions.Commands;
 
 public record CreatePronunciationSubmission(
     Guid AssignmentId,
-    PronunciationSubmissionDetailsDto Details,
+    CreatePronunciationSubmissionDetailsDto Details,
     Guid StudentId
 ) : ICommand<Guid>;
 

@@ -1,8 +1,10 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
+using LangApp.Core.ValueObjects.Submissions.Pronunciation;
 using LangApp.Infrastructure.EF.Models.Submissions;
 using LangApp.Infrastructure.EF.Models.Submissions.MultipleChoice;
+using LangApp.Infrastructure.EF.Models.Submissions.Pronunciation;
 
 namespace LangApp.Infrastructure.EF.Config.JsonConfig.ReadContext;
 
@@ -23,6 +25,8 @@ public class SubmissionDetailsReadModelTypeResolver : DefaultJsonTypeInfoResolve
                 {
                     new(typeof(MultipleChoiceSubmissionDetailsReadModel),
                         "MultipleChoiceSubmissionDetails"),
+                    new(typeof(PronunciationSubmissionDetailsReadModel),
+                        "PronunciationSubmissionDetails"),
                 }
             };
         }
