@@ -9,27 +9,24 @@ namespace LangApp.Infrastructure.EF.Queries.Handlers.Lexicons;
 
 internal sealed class GetEntryHandler : IQueryHandler<GetLexiconEntry, LexiconEntryDto>
 {
-    private readonly DbSet<LexiconReadModel> _lexicons;
+    private readonly ReadDbContext _context;
 
     public GetEntryHandler(ReadDbContext context)
     {
-        _lexicons = context.Lexicons;
+        _context = context;
     }
 
     public async Task<LexiconEntryDto?> HandleAsync(GetLexiconEntry query)
     {
-        var lexicon = await _lexicons
-            .Where(l => l.UserId == query.UserId)
-            .Include(l => l.Entries)
-            .ThenInclude(e => e.Definitions)
-            .Where(l => l.Id == query.LexiconId)
+        // Query that fetches only the needed entry with its definitions
+        // and verifies the lexicon belongs to the user in a single query
+        var entry = await _context.Lexicons
+            .Where(l => l.Id == query.LexiconId && l.UserId == query.UserId)
+            .SelectMany(l => l.Entries.Where(e => e.Id == query.EntryId))
+            .Include(e => e.Definitions)
             .AsNoTracking()
             .SingleOrDefaultAsync();
 
-        var entry = lexicon?.Entries
-            .SingleOrDefault(e => e.Id == query.EntryId)
-            ?.ToDto();
-
-        return entry;
+        return entry?.ToDto();
     }
 }

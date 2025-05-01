@@ -1,6 +1,5 @@
 using LangApp.Application.Assignments.Dto;
 using LangApp.Application.Assignments.Queries;
-using LangApp.Application.Assignments.Services.PolicyServices;
 using LangApp.Application.Common.Exceptions;
 using LangApp.Application.Common.Queries.Abstractions;
 using LangApp.Infrastructure.EF.Context;
@@ -14,27 +13,18 @@ namespace LangApp.Infrastructure.EF.Queries.Handlers.Assignments;
 internal sealed class GetAssignmentHandler : IQueryHandler<GetAssignment, AssignmentDto>
 {
     private readonly DbSet<AssignmentReadModel> _assignments;
-    private readonly IAssignmentFullAccessPolicyService _policy;
+    private readonly DbSet<StudyGroupReadModel> _groups;
 
-    public GetAssignmentHandler(ReadDbContext context, IAssignmentFullAccessPolicyService policy)
+    public GetAssignmentHandler(ReadDbContext context)
     {
-        _policy = policy;
         _assignments = context.Assignments;
+        _groups = context.StudyGroups;
     }
 
     public async Task<AssignmentDto?> HandleAsync(GetAssignment query)
     {
         var assignment = await _assignments
             .Where(a => a.Id == query.Id)
-            .Select(a => new AssignmentDto(
-                a.Id,
-                a.AuthorId,
-                a.GroupId,
-                a.DueTime,
-                a.MaxScore,
-                a.Type,
-                a.Details.ToDto()
-            ))
             .AsNoTracking()
             .SingleOrDefaultAsync();
 
@@ -43,12 +33,37 @@ internal sealed class GetAssignmentHandler : IQueryHandler<GetAssignment, Assign
             return null;
         }
 
-        var isAllowed = await _policy.IsSatisfiedBy(query.Id, query.UserId);
-        if (!isAllowed)
+        // Direct permission check
+        bool isAuthor = assignment.AuthorId == query.UserId;
+        bool isGroupMember = false;
+
+        if (!isAuthor)
+        {
+            var group = await _groups
+                .Include(g => g.Members)
+                .AsNoTracking()
+                .SingleOrDefaultAsync(g => g.Id == assignment.GroupId);
+
+            if (group is not null)
+            {
+                isGroupMember = group.OwnerId == query.UserId ||
+                                group.Members.Any(m => m.Id == query.UserId);
+            }
+        }
+
+        if (!isAuthor && !isGroupMember)
         {
             throw new UnauthorizedException(query.UserId);
         }
 
-        return assignment;
+        return new AssignmentDto(
+            assignment.Id,
+            assignment.AuthorId,
+            assignment.GroupId,
+            assignment.DueTime,
+            assignment.MaxScore,
+            assignment.Type,
+            assignment.Details.ToDto(!isAuthor)
+        );
     }
 }

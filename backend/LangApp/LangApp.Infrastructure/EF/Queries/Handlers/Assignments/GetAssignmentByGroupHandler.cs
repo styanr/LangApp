@@ -3,9 +3,9 @@ using LangApp.Application.Assignments.Queries;
 using LangApp.Application.Common;
 using LangApp.Application.Common.Exceptions;
 using LangApp.Application.Common.Queries.Abstractions;
-using LangApp.Application.StudyGroups.Services.PolicyServices;
 using LangApp.Infrastructure.EF.Context;
 using LangApp.Infrastructure.EF.Models.Assignments;
+using LangApp.Infrastructure.EF.Models.StudyGroups;
 using LangApp.Infrastructure.EF.Queries.Handlers.Assignments.Extensions;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,24 +14,50 @@ namespace LangApp.Infrastructure.EF.Queries.Handlers.Assignments;
 internal sealed class GetAssignmentForGroupHandler : IQueryHandler<GetAssignmentByGroup, PagedResult<AssignmentDto>>
 {
     private readonly DbSet<AssignmentReadModel> _assignments;
-    private readonly IStudyGroupAccessPolicyService _policy;
+    private readonly DbSet<StudyGroupReadModel> _groups;
 
-    public GetAssignmentForGroupHandler(ReadDbContext context, IStudyGroupAccessPolicyService policy)
+    public GetAssignmentForGroupHandler(ReadDbContext context)
     {
         _assignments = context.Assignments;
-        _policy = policy;
+        _groups = context.StudyGroups;
     }
 
+    // todo: maybe extract access check to a separate method
     public async Task<PagedResult<AssignmentDto>?> HandleAsync(GetAssignmentByGroup query)
     {
-        var totalCount = await _assignments.Where(a => a.GroupId == query.GroupId).CountAsync();
+        // Get the group with its members for permission checking
+        var group = await _groups
+            .Include(g => g.Members)
+            .AsNoTracking()
+            .SingleOrDefaultAsync(g => g.Id == query.GroupId);
 
-        var canAccess = await _policy.IsSatisfiedBy(query.GroupId, query.UserId);
+        if (group is null)
+        {
+            return null;
+        }
+
+        // Direct permission check
+        var canAccess = false;
+        var canAccessFull = false;
+
+        // Group owner can access all assignments in their group
+        if (group.OwnerId == query.UserId)
+        {
+            canAccess = true;
+            canAccessFull = true;
+        }
+        // Group members can access assignments in the group
+        else if (group.Members.Any(m => m.Id == query.UserId))
+        {
+            canAccess = true;
+        }
 
         if (!canAccess)
         {
             throw new UnauthorizedException(query.UserId, query.GroupId, "StudyGroup");
         }
+
+        var totalCount = await _assignments.Where(a => a.GroupId == query.GroupId).CountAsync();
 
         var assignments = await _assignments
             .Where(a => a.GroupId == query.GroupId)
@@ -44,7 +70,7 @@ internal sealed class GetAssignmentForGroupHandler : IQueryHandler<GetAssignment
                 a.DueTime,
                 a.MaxScore,
                 a.Type,
-                a.Details.ToDto()
+                a.Details.ToDto(!canAccessFull)
             )).ToListAsync();
 
         return new PagedResult<AssignmentDto>(

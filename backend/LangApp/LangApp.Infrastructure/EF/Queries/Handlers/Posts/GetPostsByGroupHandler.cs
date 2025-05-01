@@ -4,8 +4,6 @@ using LangApp.Application.Common.Exceptions;
 using LangApp.Application.Common.Queries.Abstractions;
 using LangApp.Application.Posts.Dto;
 using LangApp.Application.Posts.Queries;
-using LangApp.Application.StudyGroups.Exceptions;
-using LangApp.Application.StudyGroups.Services.PolicyServices;
 using LangApp.Infrastructure.EF.Context;
 using LangApp.Infrastructure.EF.Models.Posts;
 using LangApp.Infrastructure.EF.Models.StudyGroups;
@@ -17,26 +15,46 @@ internal sealed class GetPostsByGroupHandler : IQueryHandler<GetPostsByGroup, Pa
 {
     private readonly DbSet<PostReadModel> _posts;
     private readonly DbSet<StudyGroupReadModel> _groups;
-    private readonly IStudyGroupAccessPolicyService _policy;
 
-    public GetPostsByGroupHandler(ReadDbContext context, IStudyGroupAccessPolicyService policy)
+    public GetPostsByGroupHandler(ReadDbContext context)
     {
-        _policy = policy;
         _posts = context.Posts;
         _groups = context.StudyGroups;
     }
 
     public async Task<PagedResult<PostSlimDto>?> HandleAsync(GetPostsByGroup query)
     {
-        const int contentPreviewLength = 50;
-        var totalCount = await _posts.Where(p => p.GroupId == query.GroupId).CountAsync();
+        var group = await _groups
+            .Include(g => g.Members)
+            .AsNoTracking()
+            .SingleOrDefaultAsync(g => g.Id == query.GroupId);
 
-        var isAllowed = await _policy.IsSatisfiedBy(query.GroupId, query.UserId);
+        if (group is null)
+        {
+            return null;
+        }
+
+        // Direct permission check
+        bool isAllowed = false;
+
+        // Group owner can access all posts in their group
+        if (group.OwnerId == query.UserId)
+        {
+            isAllowed = true;
+        }
+        // Group members can access posts in the group
+        else if (group.Members.Any(m => m.Id == query.UserId))
+        {
+            isAllowed = true;
+        }
 
         if (!isAllowed)
         {
             throw new UnauthorizedException(query.UserId);
         }
+
+        const int contentPreviewLength = 30;
+        var totalCount = await _posts.Where(p => p.GroupId == query.GroupId).CountAsync();
 
         var posts = await _posts
             .Where(p => p.GroupId == query.GroupId && !p.Archived)
@@ -47,7 +65,7 @@ internal sealed class GetPostsByGroupHandler : IQueryHandler<GetPostsByGroup, Pa
                 p.AuthorId,
                 p.Type,
                 p.Title,
-                ToPreview(p.Content, 30),
+                ToPreview(p.Content, contentPreviewLength),
                 p.CreatedAt,
                 p.IsEdited,
                 p.Media.Count)
@@ -65,7 +83,7 @@ internal sealed class GetPostsByGroupHandler : IQueryHandler<GetPostsByGroup, Pa
     private static string ToPreview(string value, int previewLength)
     {
         var builder = new StringBuilder(value.Substring(0, Math.Min(previewLength, value.Length)));
-        if (builder.Length != value.Length)
+        if (builder.Length < value.Length)
         {
             builder.Append("...");
         }

@@ -26,31 +26,57 @@ internal sealed class GetPostHandler : IQueryHandler<GetPost, PostDto>
     public async Task<PostDto?> HandleAsync(GetPost query)
     {
         var post = await _posts
-            .Where(p => p.Id == query.Id && !p.Archived)
-            .Select(p => new PostDto
-            (
-                p.Id,
-                p.Type,
-                p.AuthorId,
-                p.GroupId,
-                p.Title,
-                p.Content,
-                p.CreatedAt,
-                p.IsEdited,
-                p.Media ?? new List<string>()
-            )).AsNoTracking().SingleOrDefaultAsync();
+            .Include(p => p.Group)
+            .ThenInclude(g => g.Members)
+            .Where(p => p.Id == query.Id &&
+                        (!p.Archived ||
+                         p.AuthorId == query.UserId)) // return archived posts only if the user is the author
+            .AsNoTracking()
+            .SingleOrDefaultAsync();
+
         if (post is null)
         {
             return null;
         }
 
-        var isAllowed = await _policy.IsSatisfiedBy(post.Id, post.GroupId, query.UserId);
+        // TODO: Access checking in the query handler is not ideal, but I don't see any better
+        // and faster (performance-wise) way to do it.
+
+        // Direct permission check
+        var isAllowed = false;
+
+        // Group owner can access all posts in their group
+        if (post.Group.OwnerId == query.UserId)
+        {
+            isAllowed = true;
+        }
+        // Post author can access their own post
+        else if (post.AuthorId == query.UserId)
+        {
+            isAllowed = true;
+        }
+        // Group members can access posts in the group
+        else if (post.Group.Members.Any(m => m.Id == query.UserId))
+        {
+            isAllowed = true;
+        }
 
         if (!isAllowed)
         {
             throw new UnauthorizedException(query.UserId);
         }
 
-        return post;
+        // Map to DTO after access check
+        return new PostDto(
+            post.Id,
+            post.Type,
+            post.AuthorId,
+            post.GroupId,
+            post.Title,
+            post.Content,
+            post.CreatedAt,
+            post.IsEdited,
+            post.Media
+        );
     }
 }
