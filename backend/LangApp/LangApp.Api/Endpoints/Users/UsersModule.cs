@@ -1,5 +1,6 @@
 using LangApp.Api.Common.Endpoints;
 using LangApp.Api.Endpoints.Users.Models;
+using LangApp.Application.Common;
 using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.Common.Queries.Abstractions;
 using LangApp.Application.Users.Commands;
@@ -16,6 +17,7 @@ public class UsersModule : IEndpointModule
     {
         var group = app.MapVersionedGroup("users").WithTags("Users");
         group.MapGet("{id:guid}", Get).WithName("GetUser");
+        group.MapGet("", Search).WithName("SearchUsers");
         group.MapGet("me", GetAuthenticated).WithName("GetCurrentUser");
         group.MapPut("me", UpdateInfo).WithName("UpdateUserInfo");
     }
@@ -41,6 +43,16 @@ public class UsersModule : IEndpointModule
         var user = await dispatcher.QueryAsync(query);
 
         return ApplicationTypedResults.OkOrNotFound(user);
+    }
+
+    private async Task<Results<Ok<PagedResult<UserDto>>, NotFound>> Search(
+        [AsParameters] SearchUsersRequest request,
+        [FromServices] IQueryDispatcher dispatcher)
+    {
+        var query = new SearchUsers(request.SearchTerm);
+
+        var result = await dispatcher.QueryAsync(query);
+        return ApplicationTypedResults.OkOrNotFound(result);
     }
 
     private async Task<NoContent> UpdateInfo(

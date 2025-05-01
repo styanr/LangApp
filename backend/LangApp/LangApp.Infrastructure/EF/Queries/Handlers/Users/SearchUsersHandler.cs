@@ -22,8 +22,7 @@ internal sealed class SearchUsersHandler : IQueryHandler<SearchUsers, PagedResul
         // TODO: implement trigram search
         var users = await _users
             .Where(u =>
-                Microsoft.EntityFrameworkCore.EF.Functions.ILike($"{u.FullName.FirstName} {u.FullName.LastName}",
-                    $"%{query.SearchTerm}"))
+                Microsoft.EntityFrameworkCore.EF.Functions.ILike(u.Username, $"%{query.SearchTerm}%"))
             .TakePage(query.PageNumber, query.PageSize)
             .Select(u => u.ToDto())
             .AsNoTracking()
@@ -31,8 +30,8 @@ internal sealed class SearchUsersHandler : IQueryHandler<SearchUsers, PagedResul
 
         var count = await _users
             .Where(u =>
-                Microsoft.EntityFrameworkCore.EF.Functions.ILike($"{u.FullName.FirstName} {u.FullName.LastName}",
-                    $"%{query.SearchTerm}")).CountAsync();
+                Microsoft.EntityFrameworkCore.EF.Functions.ILike(u.Username, $"%{query.SearchTerm}%"))
+            .CountAsync();
 
         return new(
             users,
