@@ -1,6 +1,4 @@
-using LangApp.Core.Entities.Lexicons;
 using LangApp.Core.Enums;
-using LangApp.Infrastructure.EF.Models.Lexicons;
 using LangApp.Infrastructure.EF.Models.StudyGroups;
 
 namespace LangApp.Infrastructure.EF.Models.Users;
@@ -30,5 +28,4 @@ public class UserReadModel
     public virtual int AccessFailedCount { get; set; }
     public ICollection<StudyGroupReadModel> StudyGroups { get; set; }
     public ICollection<StudyGroupReadModel> ManagedGroups { get; set; }
-    public ICollection<LexiconReadModel> Lexicons { get; set; }
 }

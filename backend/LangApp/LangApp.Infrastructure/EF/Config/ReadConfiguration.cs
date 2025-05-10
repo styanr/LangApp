@@ -3,7 +3,6 @@ using LangApp.Infrastructure.EF.Config.Exceptions;
 using LangApp.Infrastructure.EF.Config.JsonConfig.ReadContext;
 using LangApp.Infrastructure.EF.Models.Assignments;
 using LangApp.Infrastructure.EF.Models.Identity;
-using LangApp.Infrastructure.EF.Models.Lexicons;
 using LangApp.Infrastructure.EF.Models.Posts;
 using LangApp.Infrastructure.EF.Models.StudyGroups;
 using LangApp.Infrastructure.EF.Models.Submissions;
@@ -19,9 +18,6 @@ internal sealed class ReadConfiguration :
     IEntityTypeConfiguration<MemberReadModel>,
     IEntityTypeConfiguration<PostReadModel>,
     IEntityTypeConfiguration<PostCommentReadModel>,
-    IEntityTypeConfiguration<LexiconReadModel>,
-    IEntityTypeConfiguration<LexiconEntryReadModel>,
-    IEntityTypeConfiguration<LexiconEntryDefinitionReadModel>,
     IEntityTypeConfiguration<AssignmentReadModel>,
     IEntityTypeConfiguration<SubmissionReadModel>,
     IEntityTypeConfiguration<SubmissionGradeReadModel>,
@@ -42,8 +38,6 @@ internal sealed class ReadConfiguration :
             .WithMany(g => g.Members).UsingEntity<MemberReadModel>();
         builder.HasMany(u => u.ManagedGroups)
             .WithOne(g => g.Owner).HasForeignKey(g => g.OwnerId);
-        builder.HasMany(u => u.Lexicons)
-            .WithOne(l => l.Owner).HasForeignKey(l => l.UserId);
 
         builder.HasIndex(u => u.Username).IsUnique();
         builder.HasIndex(u => u.Email).IsUnique();
@@ -109,47 +103,6 @@ internal sealed class ReadConfiguration :
             .HasForeignKey("AuthorId");
     }
 
-    public void Configure(EntityTypeBuilder<LexiconReadModel> builder)
-    {
-        builder.ToTable("Lexicons");
-        builder.HasKey(l => l.Id);
-
-        builder.Property(l => l.Language).IsRequired();
-        builder.Property(l => l.Title).IsRequired();
-
-        builder.HasOne(l => l.Owner)
-            .WithMany(u => u.Lexicons)
-            .HasForeignKey(l => l.UserId)
-            .IsRequired();
-    }
-
-    public void Configure(EntityTypeBuilder<LexiconEntryReadModel> builder)
-    {
-        builder.ToTable("LexiconEntries");
-        builder.HasKey(e => e.Id);
-
-        builder.Property(e => e.Term).IsRequired();
-
-        builder.HasOne(e => e.Lexicon)
-            .WithMany(l => l.Entries)
-            .HasForeignKey(e => e.LexiconId)
-            .IsRequired();
-
-        builder.HasMany(e => e.Definitions)
-            .WithOne(d => d.Entry)
-            .HasForeignKey(d => d.LexiconEntryId)
-            .IsRequired();
-    }
-
-    public void Configure(EntityTypeBuilder<LexiconEntryDefinitionReadModel> builder)
-    {
-        builder.ToTable("LexiconEntryDefinitions");
-        builder.HasKey(d => d.Id);
-        builder.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
-
-        builder.Property(d => d.LexiconEntryId).IsRequired();
-        builder.Property(d => d.Value).IsRequired();
-    }
 
     public void Configure(EntityTypeBuilder<AssignmentReadModel> builder)
     {

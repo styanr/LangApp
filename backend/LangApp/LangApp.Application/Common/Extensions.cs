@@ -7,7 +7,6 @@ using LangApp.Application.Posts.Services;
 using LangApp.Application.StudyGroups.Services;
 using LangApp.Core.Common;
 using LangApp.Core.Factories.Assignments;
-using LangApp.Core.Factories.Lexicons;
 using LangApp.Core.Factories.Posts;
 using LangApp.Core.Factories.StudyGroups;
 using LangApp.Core.Factories.Submissions;
@@ -42,8 +41,6 @@ public static class Extensions
 
         services.AddTransient<IKeyGenerator, KeyGenerator>();
         services.AddTransient<IApplicationUserFactory, ApplicationUserFactory>();
-        services.AddTransient<ILexiconFactory, LexiconFactory>();
-        services.AddTransient<ILexiconEntryFactory, LexiconEntryFactory>();
         services.AddTransient<IPostFactory, PostFactory>();
         services.AddTransient<IPostCommentFactory, PostCommentFactory>();
         services.AddTransient<IStudyGroupFactory, StudyGroupFactory>();

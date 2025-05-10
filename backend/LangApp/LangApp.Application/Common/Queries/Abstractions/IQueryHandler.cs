@@ -1,5 +1,3 @@
-using LangApp.Application.Lexicons.Dto;
-
 namespace LangApp.Application.Common.Queries.Abstractions;
 
 public interface IQueryHandler<TQuery, TResult> where TQuery : class, IQuery<TResult>

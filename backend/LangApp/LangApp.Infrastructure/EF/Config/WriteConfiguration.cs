@@ -1,6 +1,5 @@
 using System.Text.Json;
 using LangApp.Core.Entities.Assignments;
-using LangApp.Core.Entities.Lexicons;
 using LangApp.Core.Entities.Posts;
 using LangApp.Core.Entities.StudyGroups;
 using LangApp.Core.Entities.Submissions;
@@ -8,7 +7,6 @@ using LangApp.Core.ValueObjects;
 using LangApp.Core.ValueObjects.Assignments;
 using LangApp.Core.ValueObjects.Submissions;
 using LangApp.Infrastructure.EF.Config.Exceptions;
-using LangApp.Infrastructure.EF.Config.JsonConfig;
 using LangApp.Infrastructure.EF.Config.JsonConfig.WriteContext;
 using LangApp.Infrastructure.EF.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -23,8 +21,6 @@ internal sealed class WriteConfiguration :
     IEntityTypeConfiguration<Member>,
     IEntityTypeConfiguration<Post>,
     IEntityTypeConfiguration<PostComment>,
-    IEntityTypeConfiguration<Lexicon>,
-    IEntityTypeConfiguration<LexiconEntry>,
     IEntityTypeConfiguration<Assignment>,
     IEntityTypeConfiguration<Submission>,
     IEntityTypeConfiguration<IdentityRole<Guid>>,
@@ -114,52 +110,6 @@ internal sealed class WriteConfiguration :
             .WithMany()
             .HasForeignKey(p => p.GroupId)
             .OnDelete(DeleteBehavior.Cascade);
-    }
-
-    public void Configure(EntityTypeBuilder<Lexicon> builder)
-    {
-        builder.ToTable("Lexicons");
-        builder.HasKey(l => l.Id);
-
-        builder.Property(l => l.Language)
-            .HasConversion(g => g.Code, s => Language.FromString(s));
-        builder.Property(l => l.Title)
-            .HasConversion(g => g.ToString(), s => new LexiconTitle(s));
-
-        builder.HasOne<IdentityApplicationUser>()
-            .WithMany()
-            .HasForeignKey(l => l.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
-    }
-
-    public void Configure(EntityTypeBuilder<LexiconEntry> builder)
-    {
-        builder.ToTable("LexiconEntries");
-        builder.HasKey(e => e.Id);
-
-        builder.Property(e => e.Id).ValueGeneratedNever();
-        builder.Property(e => e.Term)
-            .HasConversion(term => term.ToString(), value => new Term(value))
-            .HasColumnName("Term")
-            .IsRequired();
-
-        builder.Navigation(e => e.Definitions).HasField("_definitions");
-
-        builder.HasOne<Lexicon>()
-            .WithMany(l => l.Entries)
-            .HasForeignKey(e => e.LexiconId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.OwnsMany(e => e.Definitions, definitionsBuilder =>
-        {
-            definitionsBuilder.ToTable("LexiconEntryDefinitions");
-            definitionsBuilder.WithOwner().HasForeignKey("LexiconEntryId");
-
-            definitionsBuilder.Property<Guid>("Id").HasColumnType("uuid");
-            definitionsBuilder.HasKey("Id");
-
-            definitionsBuilder.Property(d => d.Value).IsRequired();
-        });
     }
 
     public void Configure(EntityTypeBuilder<Assignment> builder)

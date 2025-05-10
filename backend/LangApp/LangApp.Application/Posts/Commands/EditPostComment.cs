@@ -1,9 +1,7 @@
 using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.Common.Exceptions;
 using LangApp.Application.Posts.Exceptions;
-using LangApp.Application.Posts.Services.PolicyServices;
 using LangApp.Core.Exceptions.Posts;
-using LangApp.Core.Factories.Posts;
 using LangApp.Core.Repositories;
 
 namespace LangApp.Application.Posts.Commands;
