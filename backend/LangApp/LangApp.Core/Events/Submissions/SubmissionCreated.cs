@@ -3,4 +3,4 @@ using LangApp.Core.Entities.Submissions;
 
 namespace LangApp.Core.Events.Submissions;
 
-public record SubmissionCreated(Submission Submission) : IDomainEvent;
+public record SubmissionCreated(AssignmentSubmission Submission) : IDomainEvent;

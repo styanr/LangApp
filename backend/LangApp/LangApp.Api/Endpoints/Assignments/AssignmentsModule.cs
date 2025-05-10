@@ -7,6 +7,7 @@ using LangApp.Application.Assignments.Queries;
 using LangApp.Application.Common;
 using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.Common.Queries.Abstractions;
+using MediatR.Wrappers;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,11 +18,9 @@ public class AssignmentsModule : IEndpointModule
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {
         var group = app.MapVersionedGroup("assignments").WithTags("Assignments");
-        group.MapPost("/multiple-choice/", CreateMultipleChoice).WithName("CreateMultipleChoiceAssignment");
-        group.MapPost("/fill-in-the-blank/", CreateFillInTheBlank).WithName("CreateFillInTheBlankAssignment");
-        group.MapPost("/pronunciation/", CreatePronunciation).WithName("CreatePronunciationAssignment");
 
         group.MapGet("/{id:guid}", Get).WithName("GetAssignment");
+        group.MapPost("/", Create).WithName("CreateAssignment");
 
         app.MapVersionedGroup("groups").WithTags("Assignments").MapGet("/{groupId:guid}/assignments", GetByGroup)
             .WithName("GetAssignmentsByGroup");
@@ -46,63 +45,25 @@ public class AssignmentsModule : IEndpointModule
         HttpContext context)
     {
         var userId = context.User.GetUserId();
-        var query = new GetAssignmentByGroup(request.GroupId, userId);
+        var query = new GetAssignmentsByGroup(request.GroupId, userId);
         var assignment = await dispatcher.QueryAsync(query);
 
         return ApplicationTypedResults.OkOrNotFound(assignment);
     }
 
-    private async Task<CreatedAtRoute> CreateMultipleChoice(
-        [FromBody] CreateMultipleChoiceAssignmentRequest request,
+    private async Task<CreatedAtRoute> Create(
+        [FromBody] CreateAssignmentRequest request,
         [FromServices] ICommandDispatcher dispatcher,
         HttpContext context)
     {
         var userId = context.User.GetUserId();
 
-        var command = new CreateMultipleChoiceAssignment(
+        var command = new CreateAssignment(
+            request.Name,
             userId,
             request.GroupId,
-            request.DueTime,
-            request.MaxScore,
-            request.Details
-        );
-
-        var id = await dispatcher.DispatchWithResultAsync(command);
-        return TypedResults.CreatedAtRoute("GetAssignment", new { id });
-    }
-
-    private async Task<CreatedAtRoute> CreateFillInTheBlank(
-        [FromBody] CreateFillInTheBlankAssignmentRequest request,
-        [FromServices] ICommandDispatcher dispatcher,
-        HttpContext context)
-    {
-        var userId = context.User.GetUserId();
-
-        var command = new CreateFillInTheBlankAssignment(
-            userId,
-            request.GroupId,
-            request.DueTime,
-            request.MaxScore,
-            request.Details
-        );
-
-        var id = await dispatcher.DispatchWithResultAsync(command);
-        return TypedResults.CreatedAtRoute("GetAssignment", new { id });
-    }
-
-    private async Task<CreatedAtRoute> CreatePronunciation(
-        [FromBody] CreatePronunciationAssignmentRequest request,
-        [FromServices] ICommandDispatcher dispatcher,
-        HttpContext context)
-    {
-        var userId = context.User.GetUserId();
-
-        var command = new CreatePronunciationAssignment(
-            userId,
-            request.GroupId,
-            request.DueTime,
-            request.MaxScore,
-            request.Details
+            request.DueDate,
+            request.Activities
         );
 
         var id = await dispatcher.DispatchWithResultAsync(command);

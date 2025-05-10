@@ -14,7 +14,7 @@ public class AssignmentDetailsReadModelTypeResolver : DefaultJsonTypeInfoResolve
     {
         JsonTypeInfo jsonTypeInfo = base.GetTypeInfo(type, options);
 
-        if (jsonTypeInfo.Type == typeof(AssignmentDetailsReadModel))
+        if (jsonTypeInfo.Type == typeof(ActivityDetailsReadModel))
         {
             jsonTypeInfo.PolymorphismOptions = new JsonPolymorphismOptions
             {
@@ -24,12 +24,12 @@ public class AssignmentDetailsReadModelTypeResolver : DefaultJsonTypeInfoResolve
                 DerivedTypes =
                 {
                     // TODO: could probably do some trickery with the names (compare to read model without ReadModel)
-                    new(typeof(MultipleChoiceAssignmentDetailsReadModel),
-                        "MultipleChoiceAssignmentDetails"),
-                    new(typeof(FillInTheBlankAssignmentDetailsReadModel),
-                        "FillInTheBlankAssignmentDetails"),
-                    new(typeof(PronunciationAssignmentDetailsReadModel),
-                        "PronunciationAssignmentDetails"),
+                    new(typeof(MultipleChoiceActivityDetailsReadModel),
+                        "MultipleChoiceActivityDetails"),
+                    new(typeof(FillInTheBlankActivityDetailsReadModel),
+                        "FillInTheBlankActivityDetails"),
+                    new(typeof(PronunciationActivityDetailsReadModel),
+                        "PronunciationActivityDetails"),
                 }
             };
         }

@@ -22,22 +22,22 @@ internal sealed class PostgresAssignmentRepository : IAssignmentRepository
             .SingleOrDefaultAsync(a => a.Id == id);
     }
 
-    public async Task AddAsync(Assignment assignment)
+    public async Task AddAsync(Assignment activity)
     {
-        await _assignments.AddAsync(assignment);
+        await _assignments.AddAsync(activity);
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateAsync(Assignment assignment)
+    public async Task UpdateAsync(Assignment activity)
     {
-        _assignments.Update(assignment);
+        _assignments.Update(activity);
 
         await _context.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(Assignment assignment)
+    public async Task DeleteAsync(Assignment activity)
     {
-        _assignments.Remove(assignment);
+        _assignments.Remove(activity);
 
         await _context.SaveChangesAsync();
     }

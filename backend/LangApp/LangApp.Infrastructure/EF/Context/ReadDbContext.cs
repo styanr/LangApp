@@ -14,8 +14,10 @@ internal sealed class ReadDbContext : DbContext
     public DbSet<UserReadModel> Users { get; set; }
     public DbSet<StudyGroupReadModel> StudyGroups { get; set; }
     public DbSet<PostReadModel> Posts { get; set; }
+
+    public DbSet<ActivityReadModel> Activities { get; set; }
     public DbSet<AssignmentReadModel> Assignments { get; set; }
-    public DbSet<SubmissionReadModel> Submissions { get; set; }
+    public DbSet<AssignmentSubmissionReadModel> Submissions { get; set; }
 
     public ReadDbContext(DbContextOptions<ReadDbContext> options) : base(options)
     {
@@ -33,7 +35,9 @@ internal sealed class ReadDbContext : DbContext
         modelBuilder.ApplyConfiguration<PostReadModel>(configuration);
         modelBuilder.ApplyConfiguration<PostCommentReadModel>(configuration);
         modelBuilder.ApplyConfiguration<AssignmentReadModel>(configuration);
-        modelBuilder.ApplyConfiguration<SubmissionReadModel>(configuration);
+        modelBuilder.ApplyConfiguration<ActivityReadModel>(configuration);
+        modelBuilder.ApplyConfiguration<AssignmentSubmissionReadModel>(configuration);
+        modelBuilder.ApplyConfiguration<ActivitySubmissionReadModel>(configuration);
         modelBuilder.ApplyConfiguration<SubmissionGradeReadModel>(configuration);
         modelBuilder.ApplyConfiguration<IdentityRoleReadModel>(configuration);
         modelBuilder.ApplyConfiguration<IdentityUserClaimReadModel>(configuration);

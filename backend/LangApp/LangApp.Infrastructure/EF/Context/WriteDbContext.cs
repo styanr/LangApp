@@ -17,7 +17,11 @@ internal sealed class WriteDbContext : IdentityDbContext<IdentityApplicationUser
     public DbSet<Post> Posts { get; set; }
     public DbSet<PostComment> PostComments { get; set; }
     public DbSet<Assignment> Assignments { get; set; }
-    public DbSet<Submission> Submissions { get; set; }
+    public DbSet<Activity> Activities { get; set; }
+
+    public DbSet<AssignmentSubmission> AssignmentSubmissions { get; set; }
+    public DbSet<ActivitySubmission> ActivitySubmissions { get; set; }
+
 
     public WriteDbContext(DbContextOptions<WriteDbContext> options) : base(options)
     {
@@ -27,6 +31,7 @@ internal sealed class WriteDbContext : IdentityDbContext<IdentityApplicationUser
     {
         base.OnModelCreating(modelBuilder);
 
+
         modelBuilder.HasDefaultSchema("application");
         var configuration = new WriteConfiguration();
 
@@ -35,13 +40,17 @@ internal sealed class WriteDbContext : IdentityDbContext<IdentityApplicationUser
         modelBuilder.ApplyConfiguration<Member>(configuration);
         modelBuilder.ApplyConfiguration<Post>(configuration);
         modelBuilder.ApplyConfiguration<PostComment>(configuration);
+        modelBuilder.ApplyConfiguration<Activity>(configuration);
         modelBuilder.ApplyConfiguration<Assignment>(configuration);
-        modelBuilder.ApplyConfiguration<Submission>(configuration);
+        modelBuilder.ApplyConfiguration<AssignmentSubmission>(configuration);
+        modelBuilder.ApplyConfiguration<ActivitySubmission>(configuration);
         modelBuilder.ApplyConfiguration<IdentityRole<Guid>>(configuration);
         modelBuilder.ApplyConfiguration<IdentityUserClaim<Guid>>(configuration);
         modelBuilder.ApplyConfiguration<IdentityUserRole<Guid>>(configuration);
         modelBuilder.ApplyConfiguration<IdentityUserLogin<Guid>>(configuration);
         modelBuilder.ApplyConfiguration<IdentityUserToken<Guid>>(configuration);
         modelBuilder.ApplyConfiguration<IdentityRoleClaim<Guid>>(configuration);
+        var model = modelBuilder.Model;
+        Console.WriteLine(model.ToDebugString());
     }
 }

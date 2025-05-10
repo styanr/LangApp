@@ -24,23 +24,17 @@ namespace LangApp.Infrastructure.EF.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("LangApp.Core.Entities.Assignments.Assignment", b =>
+            modelBuilder.Entity("LangApp.Core.Entities.Assignments.Activity", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AuthorId")
+                    b.Property<Guid>("AssignmentId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Details")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<DateTime>("DueTime")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<Guid>("GroupId")
-                        .HasColumnType("uuid");
 
                     b.Property<int>("MaxScore")
                         .HasColumnType("integer");
@@ -50,55 +44,39 @@ namespace LangApp.Infrastructure.EF.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AssignmentId");
+
+                    b.ToTable("Activities", "application");
+                });
+
+            modelBuilder.Entity("LangApp.Core.Entities.Assignments.Assignment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("StudyGroupId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
                     b.HasIndex("AuthorId");
 
-                    b.HasIndex("GroupId");
+                    b.HasIndex("StudyGroupId");
 
                     b.ToTable("Assignments", "application");
-                });
-
-            modelBuilder.Entity("LangApp.Core.Entities.Lexicons.Lexicon", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Language")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Lexicons", "application");
-                });
-
-            modelBuilder.Entity("LangApp.Core.Entities.Lexicons.LexiconEntry", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("LexiconId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Term")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Term");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LexiconId");
-
-                    b.ToTable("LexiconEntries", "application");
                 });
 
             modelBuilder.Entity("LangApp.Core.Entities.Posts.Post", b =>
@@ -201,7 +179,32 @@ namespace LangApp.Infrastructure.EF.Migrations
                     b.ToTable("StudyGroups", "application");
                 });
 
-            modelBuilder.Entity("LangApp.Core.Entities.Submissions.Submission", b =>
+            modelBuilder.Entity("LangApp.Core.Entities.Submissions.ActivitySubmission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AssignmentSubmissionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Details")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignmentSubmissionId");
+
+                    b.ToTable("ActivitySubmissions", "application");
+                });
+
+            modelBuilder.Entity("LangApp.Core.Entities.Submissions.AssignmentSubmission", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -209,9 +212,8 @@ namespace LangApp.Infrastructure.EF.Migrations
                     b.Property<Guid>("AssignmentId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Details")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<double>("Score")
+                        .HasColumnType("double precision");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -222,16 +224,13 @@ namespace LangApp.Infrastructure.EF.Migrations
                     b.Property<DateTime>("SubmittedAt")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AssignmentId");
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("Submissions", "application");
+                    b.ToTable("AssignmentSubmissions", "application");
                 });
 
             modelBuilder.Entity("LangApp.Core.ValueObjects.Member", b =>
@@ -460,6 +459,15 @@ namespace LangApp.Infrastructure.EF.Migrations
                     b.ToTable("UserTokens", "application");
                 });
 
+            modelBuilder.Entity("LangApp.Core.Entities.Assignments.Activity", b =>
+                {
+                    b.HasOne("LangApp.Core.Entities.Assignments.Assignment", null)
+                        .WithMany("Activities")
+                        .HasForeignKey("AssignmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("LangApp.Core.Entities.Assignments.Assignment", b =>
                 {
                     b.HasOne("LangApp.Infrastructure.EF.Identity.IdentityApplicationUser", null)
@@ -470,52 +478,9 @@ namespace LangApp.Infrastructure.EF.Migrations
 
                     b.HasOne("LangApp.Core.Entities.StudyGroups.StudyGroup", null)
                         .WithMany()
-                        .HasForeignKey("GroupId")
+                        .HasForeignKey("StudyGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("LangApp.Core.Entities.Lexicons.Lexicon", b =>
-                {
-                    b.HasOne("LangApp.Infrastructure.EF.Identity.IdentityApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("LangApp.Core.Entities.Lexicons.LexiconEntry", b =>
-                {
-                    b.HasOne("LangApp.Core.Entities.Lexicons.Lexicon", null)
-                        .WithMany("Entries")
-                        .HasForeignKey("LexiconId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsMany("LangApp.Core.ValueObjects.Definition", "Definitions", b1 =>
-                        {
-                            b1.Property<Guid>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("uuid");
-
-                            b1.Property<Guid>("LexiconEntryId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("LexiconEntryId");
-
-                            b1.ToTable("LexiconEntryDefinitions", "application");
-
-                            b1.WithOwner()
-                                .HasForeignKey("LexiconEntryId");
-                        });
-
-                    b.Navigation("Definitions");
                 });
 
             modelBuilder.Entity("LangApp.Core.Entities.Posts.Post", b =>
@@ -551,9 +516,37 @@ namespace LangApp.Infrastructure.EF.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("LangApp.Core.Entities.Submissions.Submission", b =>
+            modelBuilder.Entity("LangApp.Core.Entities.Submissions.ActivitySubmission", b =>
                 {
-                    b.HasOne("LangApp.Core.Entities.Assignments.Assignment", null)
+                    b.HasOne("LangApp.Core.Entities.Submissions.AssignmentSubmission", null)
+                        .WithMany("ActivitySubmissions")
+                        .HasForeignKey("AssignmentSubmissionId");
+
+                    b.OwnsOne("LangApp.Core.ValueObjects.SubmissionGrade", "Grade", b1 =>
+                        {
+                            b1.Property<Guid>("SubmissionId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Feedback")
+                                .HasColumnType("text");
+
+                            b1.Property<double>("ScorePercentage")
+                                .HasColumnType("double precision");
+
+                            b1.HasKey("SubmissionId");
+
+                            b1.ToTable("SubmissionGrades", "application");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SubmissionId");
+                        });
+
+                    b.Navigation("Grade");
+                });
+
+            modelBuilder.Entity("LangApp.Core.Entities.Submissions.AssignmentSubmission", b =>
+                {
+                    b.HasOne("LangApp.Core.Entities.Assignments.Activity", null)
                         .WithMany()
                         .HasForeignKey("AssignmentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -564,44 +557,6 @@ namespace LangApp.Infrastructure.EF.Migrations
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.OwnsOne("LangApp.Core.ValueObjects.SubmissionGrade", "Grade", b1 =>
-                        {
-                            b1.Property<Guid>("SubmissionId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Feedback")
-                                .HasColumnType("text");
-
-                            b1.HasKey("SubmissionId");
-
-                            b1.ToTable("SubmissionGrades", "application");
-
-                            b1.WithOwner()
-                                .HasForeignKey("SubmissionId");
-
-                            b1.OwnsOne("LangApp.Core.ValueObjects.Percentage", "ScorePercentage", b2 =>
-                                {
-                                    b2.Property<Guid>("SubmissionGradeSubmissionId")
-                                        .HasColumnType("uuid");
-
-                                    b2.Property<double>("Value")
-                                        .HasColumnType("double precision")
-                                        .HasColumnName("ScorePercentage");
-
-                                    b2.HasKey("SubmissionGradeSubmissionId");
-
-                                    b2.ToTable("SubmissionGrades", "application");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("SubmissionGradeSubmissionId");
-                                });
-
-                            b1.Navigation("ScorePercentage")
-                                .IsRequired();
-                        });
-
-                    b.Navigation("Grade");
                 });
 
             modelBuilder.Entity("LangApp.Core.ValueObjects.Member", b =>
@@ -670,9 +625,9 @@ namespace LangApp.Infrastructure.EF.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("LangApp.Core.Entities.Lexicons.Lexicon", b =>
+            modelBuilder.Entity("LangApp.Core.Entities.Assignments.Assignment", b =>
                 {
-                    b.Navigation("Entries");
+                    b.Navigation("Activities");
                 });
 
             modelBuilder.Entity("LangApp.Core.Entities.Posts.Post", b =>
@@ -683,6 +638,11 @@ namespace LangApp.Infrastructure.EF.Migrations
             modelBuilder.Entity("LangApp.Core.Entities.StudyGroups.StudyGroup", b =>
                 {
                     b.Navigation("Members");
+                });
+
+            modelBuilder.Entity("LangApp.Core.Entities.Submissions.AssignmentSubmission", b =>
+                {
+                    b.Navigation("ActivitySubmissions");
                 });
 #pragma warning restore 612, 618
         }

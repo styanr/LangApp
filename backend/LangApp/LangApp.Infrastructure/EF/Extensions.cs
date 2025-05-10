@@ -25,7 +25,7 @@ internal static class Extensions
         services.AddScoped<IAssignmentRepository, PostgresAssignmentRepository>();
         services.AddScoped<IPostRepository, PostgresPostRepository>();
         services.AddScoped<IStudyGroupRepository, PostgresStudyGroupRepository>();
-        services.AddScoped<ISubmissionRepository, PostgresSubmissionRepository>();
+        services.AddScoped<IAssignmentSubmissionRepository, PostgresAssignmentSubmissionRepository>();
 
         services.AddScoped<IApplicationUserReadService, ApplicationUserReadService>();
 

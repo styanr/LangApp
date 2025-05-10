@@ -5,8 +5,8 @@ namespace LangApp.Core.Services.Policies.StudyGroups;
 
 public class GroupAccessPolicy : IGroupAccessPolicy
 {
-    public bool IsSatisfiedBy(StudyGroup resource, ApplicationUser user)
+    public bool IsSatisfiedBy(StudyGroup assignment, ApplicationUser user)
     {
-        return resource.ContainsMember(user.Id) || resource.CanBeModifiedBy(user.Id);
+        return assignment.ContainsMember(user.Id) || assignment.CanBeModifiedBy(user.Id);
     }
 }

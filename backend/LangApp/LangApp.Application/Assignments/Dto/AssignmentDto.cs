@@ -1,13 +1,9 @@
-using LangApp.Core.Enums;
-
 namespace LangApp.Application.Assignments.Dto;
 
 public record AssignmentDto(
     Guid Id,
     Guid AuthorId,
-    Guid GroupId,
+    Guid StudyGroupId,
     DateTime DueTime,
-    int MaxScore,
-    AssignmentType Type,
-    AssignmentDetailsDto Details
+    List<ActivityDto> Activities
 );

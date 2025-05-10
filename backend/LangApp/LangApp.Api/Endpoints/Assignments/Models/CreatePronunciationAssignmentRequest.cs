@@ -6,5 +6,5 @@ public record CreatePronunciationAssignmentRequest(
     Guid GroupId,
     DateTime DueTime,
     int MaxScore,
-    PronunciationAssignmentDetailsDto Details
+    PronunciationActivityDetailsDto Details
 );

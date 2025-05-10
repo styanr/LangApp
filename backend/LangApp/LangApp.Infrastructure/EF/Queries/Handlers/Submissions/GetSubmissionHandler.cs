@@ -11,9 +11,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LangApp.Infrastructure.EF.Queries.Handlers.Submissions;
 
-internal sealed class GetSubmissionHandler : IQueryHandler<GetSubmission, SubmissionDto>
+internal sealed class GetSubmissionHandler : IQueryHandler<GetSubmission, AssignmentSubmissionDto>
 {
-    private readonly DbSet<SubmissionReadModel> _submissions;
+    private readonly DbSet<AssignmentSubmissionReadModel> _submissions;
     private readonly DbSet<AssignmentReadModel> _assignments;
     private readonly DbSet<StudyGroupReadModel> _groups;
 
@@ -24,11 +24,12 @@ internal sealed class GetSubmissionHandler : IQueryHandler<GetSubmission, Submis
         _groups = context.StudyGroups;
     }
 
-    public async Task<SubmissionDto?> HandleAsync(GetSubmission query)
+    public async Task<AssignmentSubmissionDto?> HandleAsync(GetSubmission query)
     {
         var submission = await _submissions
             .Where(s => s.Id == query.Id)
-            .Include(s => s.Grade)
+            .Include(s => s.ActivitySubmissions)
+            .ThenInclude(asub => asub.Grade)
             .AsNoTracking()
             .SingleOrDefaultAsync();
 
@@ -50,7 +51,7 @@ internal sealed class GetSubmissionHandler : IQueryHandler<GetSubmission, Submis
 
         var group = await _groups
             .Include(g => g.Members)
-            .Where(g => g.Id == assignment.GroupId)
+            .Where(g => g.Id == assignment.StudyGroupId)
             .AsNoTracking()
             .SingleOrDefaultAsync();
 
@@ -59,20 +60,16 @@ internal sealed class GetSubmissionHandler : IQueryHandler<GetSubmission, Submis
             return null;
         }
 
-        // Direct permission check
         bool isAllowed = false;
 
-        // Assignment author can access all submissions
         if (assignment.AuthorId == query.UserId)
         {
             isAllowed = true;
         }
-        // Student can access their own submission
         else if (submission.StudentId == query.UserId)
         {
             isAllowed = true;
         }
-        // Group owner can access all submissions in their group
         else if (group.OwnerId == query.UserId)
         {
             isAllowed = true;
@@ -83,21 +80,23 @@ internal sealed class GetSubmissionHandler : IQueryHandler<GetSubmission, Submis
             throw new UnauthorizedException(query.UserId, submission.Id, "Submission");
         }
 
-        return new SubmissionDto(
+        return new AssignmentSubmissionDto(
             submission.Id,
             submission.AssignmentId,
             submission.StudentId,
-            submission.Type,
-            submission.Details.ToDto(),
-            submission.SubmittedAt,
-            submission.Status,
-            submission.Grade != null
-                ? new SubmissionGradeDto
-                {
-                    ScorePercentage = submission.Grade.ScorePercentage,
-                    Feedback = submission.Grade.Feedback
-                }
-                : null
+            submission.ActivitySubmissions.Select(asub => new ActivitySubmissionDto(
+                asub.Id,
+                asub.Type,
+                asub.Details.ToDto(),
+                asub.Status,
+                asub.Grade != null
+                    ? new SubmissionGradeDto
+                    {
+                        ScorePercentage = asub.Grade.ScorePercentage,
+                        Feedback = asub.Grade?.Feedback ?? ""
+                    }
+                    : null
+            )).ToList()
         );
     }
 }

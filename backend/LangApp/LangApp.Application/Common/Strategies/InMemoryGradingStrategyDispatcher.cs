@@ -17,7 +17,7 @@ public class InMemoryGradingStrategyDispatcher : IGradingStrategyDispatcher
 
     public async Task<SubmissionGrade> Grade<TAssignmentDetails>(TAssignmentDetails assignmentDetails,
         SubmissionDetails submissionDetails, CancellationToken cancellationToken = default(CancellationToken))
-        where TAssignmentDetails : AssignmentDetails
+        where TAssignmentDetails : ActivityDetails
     {
         using var scope = _serviceProvider.CreateScope();
 

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LangApp.Infrastructure.EF.Queries.Handlers.Assignments;
 
-internal sealed class GetAssignmentForGroupHandler : IQueryHandler<GetAssignmentByGroup, PagedResult<AssignmentDto>>
+internal sealed class GetAssignmentForGroupHandler : IQueryHandler<GetAssignmentsByGroup, PagedResult<AssignmentDto>>
 {
     private readonly DbSet<AssignmentReadModel> _assignments;
     private readonly DbSet<StudyGroupReadModel> _groups;
@@ -22,8 +22,7 @@ internal sealed class GetAssignmentForGroupHandler : IQueryHandler<GetAssignment
         _groups = context.StudyGroups;
     }
 
-    // todo: maybe extract access check to a separate method
-    public async Task<PagedResult<AssignmentDto>?> HandleAsync(GetAssignmentByGroup query)
+    public async Task<PagedResult<AssignmentDto>?> HandleAsync(GetAssignmentsByGroup query)
     {
         // Get the group with its members for permission checking
         var group = await _groups
@@ -57,21 +56,24 @@ internal sealed class GetAssignmentForGroupHandler : IQueryHandler<GetAssignment
             throw new UnauthorizedException(query.UserId, query.GroupId, "StudyGroup");
         }
 
-        var totalCount = await _assignments.Where(a => a.GroupId == query.GroupId).CountAsync();
+        var totalCount = await _assignments.Where(a => a.StudyGroupId == query.GroupId).CountAsync();
 
         var assignments = await _assignments
-            .Where(a => a.GroupId == query.GroupId)
+            .Where(a => a.StudyGroupId == query.GroupId)
             .TakePage(query.PageNumber, query.PageSize)
             .AsNoTracking()
             .Select(a => new AssignmentDto(
                 a.Id,
                 a.AuthorId,
-                a.GroupId,
-                a.DueTime,
-                a.MaxScore,
-                a.Type,
-                a.Details.ToDto(!canAccessFull)
-            )).ToListAsync();
+                a.StudyGroupId,
+                a.DueDate,
+                a.Activities.Select(ac =>
+                    new ActivityDto(
+                        ac.Id,
+                        ac.MaxScore,
+                        ac.Details.ToDto(!canAccessFull)
+                    )
+                ).ToList())).ToListAsync();
 
         return new PagedResult<AssignmentDto>(
             assignments,

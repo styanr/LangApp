@@ -19,7 +19,9 @@ internal sealed class ReadConfiguration :
     IEntityTypeConfiguration<PostReadModel>,
     IEntityTypeConfiguration<PostCommentReadModel>,
     IEntityTypeConfiguration<AssignmentReadModel>,
-    IEntityTypeConfiguration<SubmissionReadModel>,
+    IEntityTypeConfiguration<ActivityReadModel>,
+    IEntityTypeConfiguration<AssignmentSubmissionReadModel>,
+    IEntityTypeConfiguration<ActivitySubmissionReadModel>,
     IEntityTypeConfiguration<SubmissionGradeReadModel>,
     IEntityTypeConfiguration<IdentityRoleReadModel>,
     IEntityTypeConfiguration<IdentityUserClaimReadModel>,
@@ -110,8 +112,18 @@ internal sealed class ReadConfiguration :
         builder.HasKey(a => a.Id);
         builder.Property(a => a.Id).ValueGeneratedNever();
         builder.Property(a => a.AuthorId);
-        builder.Property(a => a.GroupId);
-        builder.Property(a => a.DueTime);
+        builder.Property(a => a.StudyGroupId);
+
+        builder.HasMany(a => a.Activities)
+            .WithOne()
+            .HasForeignKey(ac => ac.AssignmentId);
+    }
+
+    public void Configure(EntityTypeBuilder<ActivityReadModel> builder)
+    {
+        builder.ToTable("Activities");
+        builder.HasKey(a => a.Id);
+        builder.Property(a => a.Id).ValueGeneratedNever();
         builder.Property(a => a.MaxScore);
         builder.Property(a => a.Type);
 
@@ -124,19 +136,31 @@ internal sealed class ReadConfiguration :
     }
 
 
-    public void Configure(EntityTypeBuilder<SubmissionReadModel> builder)
+    public void Configure(EntityTypeBuilder<AssignmentSubmissionReadModel> builder)
     {
-        builder.ToTable("Submissions");
+        builder.ToTable("AssignmentSubmissions");
         builder.HasKey(s => s.Id);
         builder.Property(s => s.Id).ValueGeneratedNever();
         builder.Property(s => s.AssignmentId);
         builder.Property(s => s.StudentId);
-        builder.Property(s => s.Type);
         builder.Property(s => s.SubmittedAt);
         builder.Property(s => s.Status);
 
+        builder.HasMany(a => a.ActivitySubmissions)
+            .WithOne()
+            .HasForeignKey(asub => asub.AssignmentSubmissionId);
+    }
+
+    public void Configure(EntityTypeBuilder<ActivitySubmissionReadModel> builder)
+    {
+        builder.ToTable("ActivitySubmissions");
+        builder.HasKey(s => s.Id);
+        builder.Property(s => s.Id).ValueGeneratedNever();
+        builder.Property(s => s.Type);
+        builder.Property(s => s.Status);
+
         builder.HasOne(s => s.Grade).WithOne()
-            .HasForeignKey<SubmissionGradeReadModel>("SubmissionId");
+            .HasForeignKey<SubmissionGradeReadModel>(g => g.SubmissionId);
 
         builder.Property(s => s.Details)
             .HasConversion(
@@ -145,21 +169,20 @@ internal sealed class ReadConfiguration :
             );
     }
 
-
     public void Configure(EntityTypeBuilder<SubmissionGradeReadModel> builder)
     {
         builder.ToTable("SubmissionGrades");
-        builder.HasKey("SubmissionId");
+        builder.HasKey(g => g.SubmissionId);
     }
 
-    private static AssignmentDetailsReadModel DeserializeAssignmentDetails(string json)
+    private static ActivityDetailsReadModel DeserializeAssignmentDetails(string json)
     {
-        return JsonSerializer.Deserialize<AssignmentDetailsReadModel>(json, new JsonSerializerOptions
+        return JsonSerializer.Deserialize<ActivityDetailsReadModel>(json, new JsonSerializerOptions
                {
                    TypeInfoResolver = new AssignmentDetailsReadModelTypeResolver(),
                    PropertyNameCaseInsensitive = true
                })
-               ?? throw new DeserializationException(typeof(AssignmentDetailsReadModel), json);
+               ?? throw new DeserializationException(typeof(ActivityDetailsReadModel), json);
     }
 
     private static SubmissionDetailsReadModel DeserializeSubmissionDetails(string json)

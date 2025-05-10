@@ -45,7 +45,9 @@ public static class Extensions
         services.AddTransient<IPostCommentFactory, PostCommentFactory>();
         services.AddTransient<IStudyGroupFactory, StudyGroupFactory>();
         services.AddTransient<IAssignmentFactory, AssignmentFactory>();
-        services.AddTransient<ISubmissionFactory, SubmissionFactory>();
+        services.AddTransient<IActivityFactory, ActivityFactory>();
+        services.AddTransient<IActivitySubmissionFactory, ActivitySubmissionFactory>();
+        services.AddTransient<IAssignmentSubmissionFactory, AssignmentSubmissionFactory>();
 
         // TODO move to separate methods
         services.AddSingleton<IDomainEventDispatcher, DomainEventDispatcher>();

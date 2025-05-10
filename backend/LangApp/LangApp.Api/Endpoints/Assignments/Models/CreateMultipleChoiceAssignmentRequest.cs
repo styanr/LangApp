@@ -8,5 +8,5 @@ public record CreateMultipleChoiceAssignmentRequest(
     Guid GroupId,
     DateTime DueTime,
     int MaxScore,
-    MultipleChoiceAssignmentDetailsDto Details
+    MultipleChoiceActivityDetailsDto Details
 );

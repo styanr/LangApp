@@ -8,6 +8,6 @@ public class AssignmentRestrictedPolicy : IAssignmentRestrictedPolicy
 {
     public bool IsSatisfiedBy(Assignment assignment, StudyGroup studyGroup, ApplicationUser user)
     {
-        return studyGroup.ContainsMember(user.Id) || assignment.CanBeFullyAccessedBy(user.Id);
+        return studyGroup.ContainsMember(user.Id) || assignment.CanBeModifiedBy(user.Id);
     }
 }

@@ -3,6 +3,7 @@ using LangApp.Application.Common.Jobs;
 using LangApp.Application.Common.Strategies;
 using LangApp.Application.Submissions.Exceptions;
 using LangApp.Core.Repositories;
+using LangApp.Core.ValueObjects;
 using Microsoft.Extensions.Logging;
 
 namespace LangApp.Application.Submissions.Jobs;
@@ -11,16 +12,17 @@ public record SubmissionGradingJobData(Guid SubmissionId) : IJobData;
 
 public class SubmissionGradingJob : IJob<SubmissionGradingJobData>
 {
-    private readonly ISubmissionRepository _submissionRepository;
+    private readonly IAssignmentSubmissionRepository _assignmentSubmissionRepository;
     private readonly IAssignmentRepository _assignmentRepository;
     private readonly IGradingStrategyDispatcher _dispatcher;
     private readonly ILogger<SubmissionGradingJob> _logger;
 
 
-    public SubmissionGradingJob(ISubmissionRepository submissionRepository, IAssignmentRepository assignmentRepository,
+    public SubmissionGradingJob(IAssignmentSubmissionRepository assignmentSubmissionRepository,
+        IAssignmentRepository assignmentRepository,
         ILogger<SubmissionGradingJob> logger, IGradingStrategyDispatcher dispatcher)
     {
-        _submissionRepository = submissionRepository;
+        _assignmentSubmissionRepository = assignmentSubmissionRepository;
         _assignmentRepository = assignmentRepository;
         _logger = logger;
         _dispatcher = dispatcher;
@@ -28,26 +30,46 @@ public class SubmissionGradingJob : IJob<SubmissionGradingJobData>
 
     public async Task ExecuteAsync(SubmissionGradingJobData data)
     {
+        var submissionId = data.SubmissionId;
+        _logger.LogInformation("RECEIVED SubmissionCreated. ID={SubmissionId}", submissionId);
+
         try
         {
-            var id = data.SubmissionId;
-            _logger.LogInformation("RECEIVED SubmissionCreated\nID={}", id);
+            var submission = await _assignmentSubmissionRepository.GetAsync(submissionId)
+                             ?? throw new SubmissionNotFound(submissionId);
 
+            var assignment = await _assignmentRepository.GetAsync(submission.AssignmentId)
+                             ?? throw new AssignmentNotFound(submission.AssignmentId);
 
-            // TODO Submission deserialization wrong
-            var submission = await _submissionRepository.GetAsync(id) ?? throw new SubmissionNotFound(id);
-            var assignment = await _assignmentRepository.GetAsync(submission.AssignmentId) ??
-                             throw new AssignmentNotFound(submission.AssignmentId);
+            foreach (var activitySubmission in submission.ActivitySubmissions)
+            {
+                try
+                {
+                    var activity = assignment.Activities.FirstOrDefault(ac => ac.Id == activitySubmission.Id)
+                                   ?? throw new ActivityNotFound(activitySubmission.Id);
 
-            var grade = await _dispatcher.Grade(assignment.Details, submission.Details);
-            submission.UpdateGrade(grade);
-            await _submissionRepository.UpdateAsync(submission);
+                    var grade = await _dispatcher.Grade(activity.Details, activitySubmission.Details);
 
-            _logger.LogInformation("Grading successful: {}", grade);
+                    submission.GradeActivitySubmission(activitySubmission, grade);
+
+                    var scoreContribution = grade.ScorePercentage * activity.MaxScore / 100;
+                    submission.UpdateScore(submission.Score + scoreContribution);
+
+                    _logger.LogInformation("Grading successful: {@Grade}", grade);
+                }
+                catch (Exception gradingEx)
+                {
+                    _logger.LogError(gradingEx, "Error grading activity submission ID={ActivitySubmissionId}",
+                        activitySubmission.Id);
+                    submission.FailActivitySubmission(activitySubmission);
+                }
+            }
+
+            await _assignmentSubmissionRepository.UpdateAsync(submission);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            _logger.LogError("Error encountered during grading process: {}", e);
+            _logger.LogError(ex, "Error encountered during grading of submission ID={SubmissionId}", submissionId);
         }
     }
 }

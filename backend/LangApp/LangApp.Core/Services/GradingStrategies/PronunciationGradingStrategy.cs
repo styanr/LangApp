@@ -8,7 +8,7 @@ using LangApp.Core.ValueObjects.Submissions.Pronunciation;
 
 namespace LangApp.Core.Services.GradingStrategies;
 
-public class PronunciationGradingStrategy : IGradingStrategy<PronunciationAssignmentDetails>
+public class PronunciationGradingStrategy : IGradingStrategy<PronunciationActivityDetails>
 {
     private readonly IPronunciationAssessmentService _assessmentService;
 
@@ -17,19 +17,19 @@ public class PronunciationGradingStrategy : IGradingStrategy<PronunciationAssign
         _assessmentService = assessmentService;
     }
 
-    public async Task<SubmissionGrade> Grade(PronunciationAssignmentDetails assignment, SubmissionDetails submission,
+    public async Task<SubmissionGrade> Grade(PronunciationActivityDetails activity, SubmissionDetails submission,
         CancellationToken cancellationToken = default(CancellationToken))
     {
         if (submission is not PronunciationSubmissionDetails pronunciationSubmission)
         {
             throw new LangAppException(
-                $"Provided submission {submission.GetType()} is not compatible with the assignment {assignment.GetType()}");
+                $"Provided submission {submission.GetType()} is not compatible with the assignment {activity.GetType()}");
         }
 
-        var score = await _assessmentService.Assess(pronunciationSubmission.FileUri, assignment.ReferenceText,
-            assignment.Language);
+        var score = await _assessmentService.Assess(pronunciationSubmission.FileUri, activity.ReferenceText,
+            activity.Language);
 
         // todo create a proper feedback message
-        return new(score, "good job!");
+        return new(score.Value, "good job!");
     }
 }

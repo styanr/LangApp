@@ -6,5 +6,5 @@ public record CreateFillInTheBlankAssignmentRequest(
     Guid GroupId,
     DateTime DueTime,
     int MaxScore,
-    FillInTheBlankAssignmentDetailsDto Details
+    FillInTheBlankActivityDetailsDto Details
 );

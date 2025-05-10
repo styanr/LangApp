@@ -8,19 +8,19 @@ namespace LangApp.Infrastructure.EF.Queries.Handlers.Submissions.Extensions;
 
 public static class SubmissionDetailsReadModelExtensions
 {
-    public static SubmissionDetailsDto ToDto(this SubmissionDetailsReadModel details)
+    public static ActivitySubmissionDetailsDto ToDto(this SubmissionDetailsReadModel details)
     {
         return details switch
         {
             MultipleChoiceSubmissionDetailsReadModel multipleChoiceDetails =>
-                new MultipleChoiceSubmissionDetailsDto(multipleChoiceDetails.Answers
+                new MultipleChoiceActivitySubmissionDetailsDto(multipleChoiceDetails.Answers
                     .Select(a =>
                         new MultipleChoiceSubmissionAnswerDto(a.ChosenOptionIndex))
                     .ToList()
                 ),
 
             PronunciationSubmissionDetailsReadModel pronunciationDetails =>
-                new PronunciationSubmissionDetailsDto(pronunciationDetails.FileUri),
+                new PronunciationActivitySubmissionDetailsDto(pronunciationDetails.FileUri),
             _ => throw new LangAppException("Wrong submission details type")
         };
     }

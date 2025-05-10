@@ -13,32 +13,32 @@ namespace LangApp.Infrastructure.EF.Queries.Handlers.Assignments.Extensions;
 
 public static class AssignmentDetailsReadModelExtensions
 {
-    public static AssignmentDetailsDto ToDto(this AssignmentDetailsReadModel details, bool restricted = false)
+    public static ActivityDetailsDto ToDto(this ActivityDetailsReadModel details, bool restricted = false)
     {
         return details switch
         {
-            MultipleChoiceAssignmentDetailsReadModel multipleChoiceDetails =>
+            MultipleChoiceActivityDetailsReadModel multipleChoiceDetails =>
                 CreateMultipleChoiceDto(multipleChoiceDetails, restricted),
-            FillInTheBlankAssignmentDetailsReadModel fillInTheBlankDetails =>
+            FillInTheBlankActivityDetailsReadModel fillInTheBlankDetails =>
                 CreateFillInTheBlankDto(fillInTheBlankDetails, restricted),
-            PronunciationAssignmentDetailsReadModel pronunciationDetails =>
+            PronunciationActivityDetailsReadModel pronunciationDetails =>
                 CreatePronunciationDto(pronunciationDetails, restricted),
             _ => throw new LangAppException("Wrong assignment details type")
         };
     }
 
-    private static AssignmentDetailsDto CreateMultipleChoiceDto(
-        MultipleChoiceAssignmentDetailsReadModel details,
+    private static ActivityDetailsDto CreateMultipleChoiceDto(
+        MultipleChoiceActivityDetailsReadModel details,
         bool restricted)
     {
         return restricted
-            ? new MultipleChoiceAssignmentRestrictedDetailsDto(
+            ? new MultipleChoiceActivityRestrictedDetailsDto(
                 details.Questions
                     .Select(q => new MultipleChoiceRestrictedQuestionDto(
                         q.Question,
                         q.Options.Select(o => o.OptionDescription).ToList()))
                     .ToList())
-            : new MultipleChoiceAssignmentDetailsDto(
+            : new MultipleChoiceActivityDetailsDto(
                 details.Questions
                     .Select(q => new MultipleChoiceQuestionDto(
                         q.Question,
@@ -47,16 +47,16 @@ public static class AssignmentDetailsReadModelExtensions
                     .ToList());
     }
 
-    private static AssignmentDetailsDto CreateFillInTheBlankDto(
-        FillInTheBlankAssignmentDetailsReadModel details,
+    private static ActivityDetailsDto CreateFillInTheBlankDto(
+        FillInTheBlankActivityDetailsReadModel details,
         bool restricted)
     {
         return restricted
-            ? new FillInTheBlankAssignmentRestrictedDetailsDto(
+            ? new FillInTheBlankActivityRestrictedDetailsDto(
                 details.Questions
                     .Select(q => new FillInTheBlankRestrictedQuestionDto(q.TemplateText))
                     .ToList())
-            : new FillInTheBlankAssignmentDetailsDto(
+            : new FillInTheBlankActivityDetailsDto(
                 details.Questions
                     .Select(q => new FillInTheBlankQuestionDto(
                         q.TemplateText,
@@ -64,12 +64,11 @@ public static class AssignmentDetailsReadModelExtensions
                     .ToList());
     }
 
-    private static AssignmentDetailsDto CreatePronunciationDto(
-        PronunciationAssignmentDetailsReadModel details,
+    private static ActivityDetailsDto CreatePronunciationDto(
+        PronunciationActivityDetailsReadModel details,
         bool restricted)
     {
-        // For pronunciation, both DTOs have the same structure
-        return new PronunciationAssignmentDetailsDto(
+        return new PronunciationActivityDetailsDto(
             details.Language.Code,
             details.ReferenceText);
     }

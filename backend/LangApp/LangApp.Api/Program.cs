@@ -1,9 +1,11 @@
 using LangApp.Api.Auth;
+using LangApp.Api.Common.Configuration;
 using LangApp.Api.Common.Endpoints;
 using LangApp.Api.Middlewares;
 using LangApp.Api.OpenApi;
 using LangApp.Application.Common;
 using LangApp.Infrastructure;
+using Microsoft.AspNetCore.Http.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,8 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddJwtBearerAuthentication(builder.Configuration);
 
 builder.Services.AddExceptionMiddleware();
+builder.Services.Configure<JsonOptions>(opt => { opt.SerializerOptions.Converters.Add(new ActivityJsonConverter()); }
+);
 
 var app = builder.Build();
 

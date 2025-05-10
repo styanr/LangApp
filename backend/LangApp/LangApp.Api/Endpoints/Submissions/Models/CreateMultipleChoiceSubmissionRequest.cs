@@ -5,5 +5,5 @@ namespace LangApp.Api.Endpoints.Submissions.Models;
 
 public record CreateMultipleChoiceSubmissionRequest(
     Guid AssignmentId,
-    MultipleChoiceSubmissionDetailsDto Details
+    MultipleChoiceActivitySubmissionDetailsDto Details
 );

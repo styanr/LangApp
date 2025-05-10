@@ -25,6 +25,7 @@ internal sealed class GetAssignmentHandler : IQueryHandler<GetAssignment, Assign
     {
         var assignment = await _assignments
             .Where(a => a.Id == query.Id)
+            .Include(a => a.Activities)
             .AsNoTracking()
             .SingleOrDefaultAsync();
 
@@ -42,7 +43,7 @@ internal sealed class GetAssignmentHandler : IQueryHandler<GetAssignment, Assign
             var group = await _groups
                 .Include(g => g.Members)
                 .AsNoTracking()
-                .SingleOrDefaultAsync(g => g.Id == assignment.GroupId);
+                .SingleOrDefaultAsync(g => g.Id == assignment.StudyGroupId);
 
             if (group is not null)
             {
@@ -59,11 +60,15 @@ internal sealed class GetAssignmentHandler : IQueryHandler<GetAssignment, Assign
         return new AssignmentDto(
             assignment.Id,
             assignment.AuthorId,
-            assignment.GroupId,
-            assignment.DueTime,
-            assignment.MaxScore,
-            assignment.Type,
-            assignment.Details.ToDto(!isAuthor)
+            assignment.StudyGroupId,
+            assignment.DueDate,
+            assignment.Activities.Select(ac =>
+                new ActivityDto(
+                    ac.Id,
+                    ac.MaxScore,
+                    ac.Details.ToDto(!isAuthor)
+                )
+            ).ToList()
         );
     }
 }

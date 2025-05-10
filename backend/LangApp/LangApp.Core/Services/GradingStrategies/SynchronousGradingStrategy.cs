@@ -6,7 +6,7 @@ namespace LangApp.Core.Services.GradingStrategies;
 
 // TODO: is this "async" code a good choice?
 public abstract class SynchronousGradingStrategy<TAssignmentDetails> : IGradingStrategy<TAssignmentDetails>
-    where TAssignmentDetails : AssignmentDetails
+    where TAssignmentDetails : ActivityDetails
 {
     public Task<SubmissionGrade> Grade(TAssignmentDetails assignment, SubmissionDetails submission,
         CancellationToken cancellationToken = default(CancellationToken))

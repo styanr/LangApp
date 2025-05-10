@@ -7,6 +7,6 @@ public class AssignmentFullAccessPolicy : IAssignmentFullAccessPolicy
 {
     public bool IsSatisfiedBy(Assignment assignment, ApplicationUser user)
     {
-        return assignment.CanBeFullyAccessedBy(user.Id);
+        return assignment.CanBeModifiedBy(user.Id);
     }
 }

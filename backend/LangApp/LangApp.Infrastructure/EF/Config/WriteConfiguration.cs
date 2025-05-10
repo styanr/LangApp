@@ -22,7 +22,9 @@ internal sealed class WriteConfiguration :
     IEntityTypeConfiguration<Post>,
     IEntityTypeConfiguration<PostComment>,
     IEntityTypeConfiguration<Assignment>,
-    IEntityTypeConfiguration<Submission>,
+    IEntityTypeConfiguration<Activity>,
+    IEntityTypeConfiguration<AssignmentSubmission>,
+    IEntityTypeConfiguration<ActivitySubmission>,
     IEntityTypeConfiguration<IdentityRole<Guid>>,
     IEntityTypeConfiguration<IdentityUserClaim<Guid>>,
     IEntityTypeConfiguration<IdentityUserRole<Guid>>,
@@ -116,9 +118,7 @@ internal sealed class WriteConfiguration :
     {
         builder.ToTable("Assignments");
         builder.HasKey(e => e.Id);
-
         builder.Property(e => e.Id).ValueGeneratedNever();
-
         builder.HasOne<IdentityApplicationUser>()
             .WithMany()
             .HasForeignKey(a => a.AuthorId)
@@ -126,22 +126,35 @@ internal sealed class WriteConfiguration :
 
         builder.HasOne<StudyGroup>()
             .WithMany()
-            .HasForeignKey(a => a.GroupId)
+            .HasForeignKey(a => a.StudyGroupId)
             .OnDelete(DeleteBehavior.Cascade);
+    }
+
+    public void Configure(EntityTypeBuilder<Activity> builder)
+    {
+        builder.ToTable("Activities");
+        builder.HasKey(e => e.Id);
+
+        builder.Property(e => e.Id).ValueGeneratedNever();
+        builder.Property<Guid>("AssignmentId");
+
+        builder.HasOne<Assignment>()
+            .WithMany(a => a.Activities)
+            .HasForeignKey("AssignmentId");
 
         builder.Property(a => a.Details).HasConversion(entry =>
                 JsonSerializer.Serialize(entry,
                     new JsonSerializerOptions
                     {
-                        TypeInfoResolver = new PolymorphicTypeResolver<AssignmentDetails>(),
+                        TypeInfoResolver = new PolymorphicTypeResolver<ActivityDetails>(),
                         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                     }),
-            value => DeserializePolymorphic<AssignmentDetails>(value));
+            value => DeserializePolymorphic<ActivityDetails>(value));
     }
 
-    public void Configure(EntityTypeBuilder<Submission> builder)
+    public void Configure(EntityTypeBuilder<AssignmentSubmission> builder)
     {
-        builder.ToTable("Submissions");
+        builder.ToTable("AssignmentSubmissions");
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id).ValueGeneratedNever();
@@ -151,22 +164,36 @@ internal sealed class WriteConfiguration :
             .HasForeignKey(a => a.StudentId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne<Assignment>()
+        builder.HasOne<Activity>()
             .WithMany()
             .HasForeignKey(a => a.AssignmentId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasMany(a => a.ActivitySubmissions)
+            .WithOne()
+            .HasForeignKey("AssignmentSubmissionId");
+    }
+
+    public void Configure(EntityTypeBuilder<ActivitySubmission> builder)
+    {
+        builder.ToTable("ActivitySubmissions");
+        builder.HasKey(e => e.Id);
+
+        builder.Property(e => e.Id).ValueGeneratedNever();
+
+        // Replace the OwnsOne configuration with a regular relationship
         builder.OwnsOne(a => a.Grade, grade =>
         {
             grade.ToTable("SubmissionGrades");
 
             grade.WithOwner().HasForeignKey("SubmissionId");
 
-            grade.OwnsOne(g => g.ScorePercentage, perc =>
-            {
-                perc.Property(p => p.Value)
-                    .HasColumnName("ScorePercentage");
-            });
+            // grade.OwnsOne(g => g.ScorePercentage, perc =>
+            // {
+            //     perc.Property(p => p.Value)
+            //         .HasColumnName("ScorePercentage");
+            // });
+            grade.Property(g => g.ScorePercentage);
             grade.Property(g => g.Feedback);
         });
 
@@ -175,6 +202,7 @@ internal sealed class WriteConfiguration :
                     new JsonSerializerOptions { TypeInfoResolver = new PolymorphicTypeResolver<SubmissionDetails>() }),
             value => DeserializePolymorphic<SubmissionDetails>(value));
     }
+
 
     private static T DeserializePolymorphic<T>(string json)
     {

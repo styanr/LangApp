@@ -15,12 +15,10 @@ public class SubmissionsModule : IEndpointModule
     public void RegisterEndpoints(IEndpointRouteBuilder app)
     {
         var group = app.MapVersionedGroup("submissions").WithTags("Submissions");
-        group.MapPost("/multiple-choice/", CreateMultipleChoice).WithName("CreateMultipleChoiceSubmission");
-        group.MapPost("/pronunciation/", CreatePronunciation).WithName("CreatePronunciationSubmission");
         group.MapGet("{id:guid}", Get).WithName("GetSubmission");
     }
 
-    private async Task<Results<Ok<SubmissionDto>, NotFound>> Get(
+    private async Task<Results<Ok<AssignmentSubmissionDto>, NotFound>> Get(
         [AsParameters] GetSubmissionRequest request,
         [FromServices] IQueryDispatcher dispatcher,
         HttpContext context)
@@ -32,42 +30,17 @@ public class SubmissionsModule : IEndpointModule
         return ApplicationTypedResults.OkOrNotFound(submission);
     }
 
-    private async Task<CreatedAtRoute> CreateMultipleChoice(
-        [FromBody] CreateMultipleChoiceSubmissionRequest request,
+    private async Task<CreatedAtRoute> Create(
+        [FromRoute] Guid assignmentId,
+        [FromBody] CreateAssignmentSubmissionRequest request,
         [FromServices] ICommandDispatcher dispatcher,
         HttpContext context)
     {
         var userId = context.User.GetUserId();
-        var command = new CreateMultipleChoiceSubmission(
-            request.AssignmentId,
-            request.Details,
-            userId
-        );
-
-        var id = await dispatcher.DispatchWithResultAsync(command);
-        return TypedResults.CreatedAtRoute("GetSubmission", new { id });
-    }
-
-    // TODO Could use streaming approach if storage is used up
-    private async Task<CreatedAtRoute> CreatePronunciation(
-        [FromForm] CreatePronunciationSubmissionRequest request,
-        [FromServices] ICommandDispatcher dispatcher,
-        HttpContext context)
-    {
-        var userId = context.User.GetUserId();
-
-        var stream = request.File.OpenReadStream();
-        var fileContentType = request.File.ContentType;
-
-        var details = new CreatePronunciationSubmissionDetailsDto(
-            stream, fileContentType
-        );
-
-
-        var command = new CreatePronunciationSubmission(
-            request.AssignmentId,
-            details,
-            userId
+        var command = new CreateAssignmentSubmission(
+            assignmentId,
+            userId,
+            request.ActivitySubmissionDtos
         );
 
         var id = await dispatcher.DispatchWithResultAsync(command);

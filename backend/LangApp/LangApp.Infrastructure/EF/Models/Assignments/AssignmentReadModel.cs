@@ -1,15 +1,12 @@
-using LangApp.Core.Enums;
-using LangApp.Core.ValueObjects.Assignments;
-
 namespace LangApp.Infrastructure.EF.Models.Assignments;
 
 public class AssignmentReadModel
 {
     public Guid Id { get; set; }
+    public List<ActivityReadModel> Activities { get; set; }
+    public string Name { get; set; }
     public Guid AuthorId { get; set; }
-    public Guid GroupId { get; set; }
-    public DateTime DueTime { get; set; }
-    public int MaxScore { get; set; }
-    public AssignmentType Type { get; set; }
-    public AssignmentDetailsReadModel Details { get; set; }
+    public Guid StudyGroupId { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime DueDate { get; set; }
 }
