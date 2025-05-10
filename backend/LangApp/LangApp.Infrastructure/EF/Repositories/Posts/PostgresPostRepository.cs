@@ -25,6 +25,7 @@ internal sealed class PostgresPostRepository : IPostRepository
     {
         return _posts
             .WhereShowArchived(showArchived)
+            .Include(p => p.Comments)
             .SingleOrDefaultAsync(p => p.Id == id);
     }
 

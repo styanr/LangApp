@@ -22,13 +22,25 @@ public class PostAccessPolicyService : IPostAccessPolicyService
         _policy = policy;
     }
 
-    public async Task<bool> IsSatisfiedBy(Guid postId, Guid groupId, Guid userId)
+    public async Task<bool> IsSatisfiedBy(Guid postId, Guid userId)
     {
         var post = await _postRepository.GetAsync(postId);
-        var group = await _groupRepository.GetAsync(groupId);
+
+        if (post is null)
+        {
+            return false;
+        }
+
+        var group = await _groupRepository.GetAsync(post.GroupId);
+
+        if (group is null)
+        {
+            return false;
+        }
+
         var user = await _userRepository.GetAsync(userId);
 
-        if (post is null || group is null || user is null)
+        if (user is null)
         {
             return false;
         }

@@ -11,6 +11,7 @@ namespace LangApp.Application.Posts.Commands;
 public record EditPost(
     Guid Id,
     string Content,
+    List<string>? Media,
     Guid UserId
 ) : ICommand;
 
@@ -38,7 +39,7 @@ public class EditPostHandler : ICommandHandler<EditPost>
             throw new UnauthorizedException(command.UserId, post);
         }
 
-        post.Edit(content);
+        post.Edit(content, command.Media ?? new List<string>());
         await _repository.UpdateAsync(post);
     }
 }

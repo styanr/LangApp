@@ -22,6 +22,7 @@ internal sealed class WriteConfiguration :
     IEntityTypeConfiguration<StudyGroup>,
     IEntityTypeConfiguration<Member>,
     IEntityTypeConfiguration<Post>,
+    IEntityTypeConfiguration<PostComment>,
     IEntityTypeConfiguration<Lexicon>,
     IEntityTypeConfiguration<LexiconEntry>,
     IEntityTypeConfiguration<Assignment>,
@@ -76,6 +77,19 @@ internal sealed class WriteConfiguration :
         builder.HasOne<StudyGroup>()
             .WithMany(g => g.Members)
             .HasForeignKey(m => m.GroupId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+
+    public void Configure(EntityTypeBuilder<PostComment> builder)
+    {
+        builder.ToTable("PostComments");
+        builder.HasKey(c => c.Id);
+
+        builder.Property(c => c.Id).ValueGeneratedNever();
+
+        builder.HasOne<Post>()
+            .WithMany(p => p.Comments)
+            .HasForeignKey("PostId")
             .OnDelete(DeleteBehavior.Cascade);
     }
 

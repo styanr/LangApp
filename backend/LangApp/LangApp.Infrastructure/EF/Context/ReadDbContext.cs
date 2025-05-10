@@ -33,6 +33,7 @@ internal sealed class ReadDbContext : DbContext
         modelBuilder.ApplyConfiguration<StudyGroupReadModel>(configuration);
         modelBuilder.ApplyConfiguration<MemberReadModel>(configuration);
         modelBuilder.ApplyConfiguration<PostReadModel>(configuration);
+        modelBuilder.ApplyConfiguration<PostCommentReadModel>(configuration);
         modelBuilder.ApplyConfiguration<LexiconReadModel>(configuration);
         modelBuilder.ApplyConfiguration<LexiconEntryReadModel>(configuration);
         modelBuilder.ApplyConfiguration<LexiconEntryDefinitionReadModel>(configuration);

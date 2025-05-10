@@ -18,6 +18,7 @@ public class PostReadModel : IIdentifiable
     public DateTime EditedAt { get; set; }
     public DateTime CreatedAt { get; set; }
     public List<string> Media { get; set; }
+    public List<PostCommentReadModel> Comments { get; set; }
 
     public UserReadModel Author { get; set; }
     public StudyGroupReadModel Group { get; set; }

@@ -16,6 +16,7 @@ internal sealed class WriteDbContext : IdentityDbContext<IdentityApplicationUser
 {
     public DbSet<StudyGroup> StudyGroups { get; set; }
     public DbSet<Post> Posts { get; set; }
+    public DbSet<PostComment> PostComments { get; set; }
     public DbSet<Lexicon> Lexicons { get; set; }
     public DbSet<LexiconEntry> LexiconEntries { get; set; }
     public DbSet<Assignment> Assignments { get; set; }
@@ -36,6 +37,7 @@ internal sealed class WriteDbContext : IdentityDbContext<IdentityApplicationUser
         modelBuilder.ApplyConfiguration<StudyGroup>(configuration);
         modelBuilder.ApplyConfiguration<Member>(configuration);
         modelBuilder.ApplyConfiguration<Post>(configuration);
+        modelBuilder.ApplyConfiguration<PostComment>(configuration);
         modelBuilder.ApplyConfiguration<Lexicon>(configuration);
         modelBuilder.ApplyConfiguration<LexiconEntry>(configuration);
         modelBuilder.ApplyConfiguration<Assignment>(configuration);

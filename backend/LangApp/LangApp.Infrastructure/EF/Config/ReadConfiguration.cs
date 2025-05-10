@@ -18,6 +18,7 @@ internal sealed class ReadConfiguration :
     IEntityTypeConfiguration<StudyGroupReadModel>,
     IEntityTypeConfiguration<MemberReadModel>,
     IEntityTypeConfiguration<PostReadModel>,
+    IEntityTypeConfiguration<PostCommentReadModel>,
     IEntityTypeConfiguration<LexiconReadModel>,
     IEntityTypeConfiguration<LexiconEntryReadModel>,
     IEntityTypeConfiguration<LexiconEntryDefinitionReadModel>,
@@ -89,6 +90,23 @@ internal sealed class ReadConfiguration :
 
         builder.HasOne(p => p.Group)
             .WithMany(g => g.Posts);
+    }
+
+    public void Configure(EntityTypeBuilder<PostCommentReadModel> builder)
+    {
+        builder.ToTable("PostComments");
+        builder.HasKey(c => c.Id);
+
+        builder.Property(c => c.Content);
+        builder.Property(c => c.CreatedAt);
+
+        builder.HasOne<PostReadModel>()
+            .WithMany(p => p.Comments)
+            .HasForeignKey("PostId");
+
+        builder.HasOne<UserReadModel>()
+            .WithMany()
+            .HasForeignKey("AuthorId");
     }
 
     public void Configure(EntityTypeBuilder<LexiconReadModel> builder)

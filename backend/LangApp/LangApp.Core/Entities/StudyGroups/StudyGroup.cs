@@ -9,7 +9,6 @@ public class StudyGroup : AggregateRoot
 {
     private readonly HashSet<Member> _members = new();
 
-    // TODO name validation
     public string Name { get; private set; }
     public Language Language { get; private set; }
 

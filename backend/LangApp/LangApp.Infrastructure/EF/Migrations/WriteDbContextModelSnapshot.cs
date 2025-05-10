@@ -149,6 +149,34 @@ namespace LangApp.Infrastructure.EF.Migrations
                     b.ToTable("Posts", "application");
                 });
 
+            modelBuilder.Entity("LangApp.Core.Entities.Posts.PostComment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("EditedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("PostComments", "application");
+                });
+
             modelBuilder.Entity("LangApp.Core.Entities.StudyGroups.StudyGroup", b =>
                 {
                     b.Property<Guid>("Id")
@@ -505,6 +533,15 @@ namespace LangApp.Infrastructure.EF.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("LangApp.Core.Entities.Posts.PostComment", b =>
+                {
+                    b.HasOne("LangApp.Core.Entities.Posts.Post", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("LangApp.Core.Entities.StudyGroups.StudyGroup", b =>
                 {
                     b.HasOne("LangApp.Infrastructure.EF.Identity.IdentityApplicationUser", null)
@@ -636,6 +673,11 @@ namespace LangApp.Infrastructure.EF.Migrations
             modelBuilder.Entity("LangApp.Core.Entities.Lexicons.Lexicon", b =>
                 {
                     b.Navigation("Entries");
+                });
+
+            modelBuilder.Entity("LangApp.Core.Entities.Posts.Post", b =>
+                {
+                    b.Navigation("Comments");
                 });
 
             modelBuilder.Entity("LangApp.Core.Entities.StudyGroups.StudyGroup", b =>

@@ -28,6 +28,7 @@ internal sealed class GetPostHandler : IQueryHandler<GetPost, PostDto>
         var post = await _posts
             .Include(p => p.Group)
             .ThenInclude(g => g.Members)
+            .Include(p => p.Comments)
             .Where(p => p.Id == query.Id &&
                         (!p.Archived ||
                          p.AuthorId == query.UserId)) // return archived posts only if the user is the author
@@ -76,6 +77,8 @@ internal sealed class GetPostHandler : IQueryHandler<GetPost, PostDto>
             post.Content,
             post.CreatedAt,
             post.IsEdited,
+            post.Comments.Select(c => new PostCommentDto(c.Id, c.AuthorId, c.Content, c.CreatedAt, c.EditedAt))
+                .ToList(),
             post.Media
         );
     }

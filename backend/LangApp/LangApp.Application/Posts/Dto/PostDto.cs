@@ -11,4 +11,5 @@ public record PostDto(
     string Content,
     DateTime CreatedAt,
     bool IsEdited,
+    List<PostCommentDto> Comments,
     IEnumerable<string> Media);

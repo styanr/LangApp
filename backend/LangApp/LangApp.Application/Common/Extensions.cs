@@ -45,6 +45,7 @@ public static class Extensions
         services.AddTransient<ILexiconFactory, LexiconFactory>();
         services.AddTransient<ILexiconEntryFactory, LexiconEntryFactory>();
         services.AddTransient<IPostFactory, PostFactory>();
+        services.AddTransient<IPostCommentFactory, PostCommentFactory>();
         services.AddTransient<IStudyGroupFactory, StudyGroupFactory>();
         services.AddTransient<IAssignmentFactory, AssignmentFactory>();
         services.AddTransient<ISubmissionFactory, SubmissionFactory>();
