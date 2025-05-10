@@ -47,9 +47,11 @@ public class UsersModule : IEndpointModule
 
     private async Task<Results<Ok<PagedResult<UserDto>>, NotFound>> Search(
         [AsParameters] SearchUsersRequest request,
-        [FromServices] IQueryDispatcher dispatcher)
+        [FromServices] IQueryDispatcher dispatcher,
+        HttpContext context)
     {
-        var query = new SearchUsers(request.SearchTerm);
+        var userId = context.User.GetUserId();
+        var query = new SearchUsers(request.SearchTerm, userId);
 
         var result = await dispatcher.QueryAsync(query);
         return ApplicationTypedResults.OkOrNotFound(result);

@@ -87,8 +87,12 @@ internal sealed class WriteConfiguration :
 
         builder.HasOne<Post>()
             .WithMany(p => p.Comments)
-            .HasForeignKey("PostId")
+            .HasForeignKey(c => c.PostId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne<IdentityApplicationUser>()
+            .WithMany()
+            .HasForeignKey(c => c.AuthorId);
     }
 
     public void Configure(EntityTypeBuilder<Post> builder)

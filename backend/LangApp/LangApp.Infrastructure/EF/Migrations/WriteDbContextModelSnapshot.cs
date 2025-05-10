@@ -150,6 +150,8 @@ namespace LangApp.Infrastructure.EF.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AuthorId");
+
                     b.HasIndex("PostId");
 
                     b.ToTable("PostComments", "application");
@@ -500,6 +502,12 @@ namespace LangApp.Infrastructure.EF.Migrations
 
             modelBuilder.Entity("LangApp.Core.Entities.Posts.PostComment", b =>
                 {
+                    b.HasOne("LangApp.Infrastructure.EF.Identity.IdentityApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("LangApp.Core.Entities.Posts.Post", null)
                         .WithMany("Comments")
                         .HasForeignKey("PostId")
