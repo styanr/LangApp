@@ -53,15 +53,10 @@ public static class AssignmentDetailsReadModelExtensions
     {
         return restricted
             ? new FillInTheBlankActivityRestrictedDetailsDto(
-                details.Questions
-                    .Select(q => new FillInTheBlankRestrictedQuestionDto(q.TemplateText))
-                    .ToList())
+                details.TemplateText)
             : new FillInTheBlankActivityDetailsDto(
-                details.Questions
-                    .Select(q => new FillInTheBlankQuestionDto(
-                        q.TemplateText,
-                        q.Answers.Select(a => new FillInTheBlankAnswerDto(a.AcceptableAnswers)).ToList()))
-                    .ToList());
+                details.TemplateText,
+                details.Answers.Select(a => new FillInTheBlankAnswerDto(a.AcceptableAnswers)).ToList());
     }
 
     private static ActivityDetailsDto CreatePronunciationDto(

@@ -8,6 +8,7 @@ public class Assignment : AggregateRoot
     private readonly List<Activity> _activities = [];
 
     public string Name { get; private set; }
+    public string? Description { get; private set; }
     public IReadOnlyList<Activity> Activities => _activities;
     public Guid AuthorId { get; private set; }
     public Guid StudyGroupId { get; private set; }
@@ -18,9 +19,11 @@ public class Assignment : AggregateRoot
     {
     }
 
-    internal Assignment(Guid id, string name, Guid authorId, Guid studyGroupId, DateTime dueDate) : base(id)
+    internal Assignment(Guid id, string name, string? description, Guid authorId, Guid studyGroupId,
+        DateTime dueDate) : base(id)
     {
         ValidateName(name);
+        ValidateDescription(description);
         ValidateAuthorId(authorId);
         ValidateStudyGroupId(studyGroupId);
         ValidateDueDate(dueDate);
@@ -32,10 +35,22 @@ public class Assignment : AggregateRoot
         DueDate = dueDate;
     }
 
-    internal Assignment(Guid id, string name, Guid authorId, Guid studyGroupId, DateTime dueDate,
-        IEnumerable<Activity> activities) : this(id, name, authorId, studyGroupId, dueDate)
+    internal Assignment(Guid id, string name, string? description, Guid authorId, Guid studyGroupId, DateTime dueDate,
+        IEnumerable<Activity> activities) : this(id, name, description, authorId, studyGroupId, dueDate)
     {
         _activities.AddRange(activities);
+    }
+
+    internal static Assignment Create(Guid id, string name, string? description, Guid authorId, Guid studyGroupId,
+        DateTime dueDate)
+    {
+        return new Assignment(id, name, description, authorId, studyGroupId, dueDate);
+    }
+
+    internal static Assignment Create(Guid id, string name, string? description, Guid authorId, Guid studyGroupId,
+        DateTime dueDate, IEnumerable<Activity> activities)
+    {
+        return new Assignment(id, name, description, authorId, studyGroupId, dueDate, activities);
     }
 
     public void AddActivity(Activity activity)
@@ -70,6 +85,14 @@ public class Assignment : AggregateRoot
         if (name.Length > 100)
         {
             throw new LangAppException("Name cannot be longer than 100 characters");
+        }
+    }
+
+    private static void ValidateDescription(string? description)
+    {
+        if (description is not null && description.Length > 500)
+        {
+            throw new LangAppException("Description cannot be longer than 500 characters");
         }
     }
 

@@ -13,7 +13,7 @@ public static class SubmissionDetailsExtensions
         {
             MultipleChoiceActivitySubmissionDetailsDto multipleChoice =>
                 new MultipleChoiceSubmissionDetails(multipleChoice.Answers
-                    .Select(a => new MultipleChoiceAnswer(a.ChosenOptionIndex))
+                    .Select(a => new MultipleChoiceAnswer(a.QuestionIndex, a.ChosenOptionIndex))
                     .ToList()),
 
             PronunciationActivitySubmissionDetailsDto pronunciation =>

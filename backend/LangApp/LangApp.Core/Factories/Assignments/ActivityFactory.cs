@@ -5,6 +5,8 @@ using LangApp.Core.ValueObjects.Assignments;
 using LangApp.Core.ValueObjects.Assignments.FillInTheBlank;
 using LangApp.Core.ValueObjects.Assignments.MultipleChoice;
 using LangApp.Core.ValueObjects.Assignments.Pronunciation;
+using LangApp.Core.ValueObjects.Assignments.Question;
+using LangApp.Core.ValueObjects.Assignments.Writing;
 
 namespace LangApp.Core.Factories.Assignments;
 
@@ -35,6 +37,8 @@ public class ActivityFactory : IActivityFactory
             FillInTheBlankActivityDetails fillInTheBlankDetails =>
                 CreateFillInTheBlank(fillInTheBlankDetails, maxScore),
             PronunciationActivityDetails pronunciationDetails => CreatePronunciation(pronunciationDetails, maxScore),
+            QuestionActivityDetails questionDetails => CreateQuestion(questionDetails, maxScore),
+            WritingActivityDetails writingDetails => CreateWriting(writingDetails, maxScore),
             _ => throw new ArgumentException($"Unsupported activity details type: {details.GetType().Name}",
                 nameof(details))
         };
@@ -63,4 +67,10 @@ public class ActivityFactory : IActivityFactory
             activityDetails,
             maxScore,
             ActivityType.Pronunciation);
+
+    public Activity CreateQuestion(QuestionActivityDetails activityDetails, int maxScore)
+        => CreateActivity(activityDetails, maxScore, ActivityType.Question);
+
+    public Activity CreateWriting(WritingActivityDetails activityDetails, int maxScore)
+        => CreateActivity(activityDetails, maxScore, ActivityType.Writing);
 }

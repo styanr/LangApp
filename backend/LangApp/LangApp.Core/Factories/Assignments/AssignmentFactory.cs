@@ -4,14 +4,14 @@ namespace LangApp.Core.Factories.Assignments;
 
 public class AssignmentFactory : IAssignmentFactory
 {
-    public Assignment Create(string name, Guid authorId, Guid studyGroupId, DateTime dueDate)
+    public Assignment Create(string name, string? description, Guid authorId, Guid studyGroupId, DateTime dueDate)
     {
-        return new Assignment(Guid.NewGuid(), name, authorId, studyGroupId, dueDate);
+        return Assignment.Create(Guid.NewGuid(), name, description, authorId, studyGroupId, dueDate);
     }
 
-    public Assignment Create(string name, Guid authorId, Guid studyGroupId, DateTime dueDate,
+    public Assignment Create(string name, string? description, Guid authorId, Guid studyGroupId, DateTime dueDate,
         IEnumerable<Activity> activities)
     {
-        return new Assignment(Guid.NewGuid(), name, authorId, studyGroupId, dueDate, activities);
+        return Assignment.Create(Guid.NewGuid(), name, description, authorId, studyGroupId, dueDate, activities);
     }
 }

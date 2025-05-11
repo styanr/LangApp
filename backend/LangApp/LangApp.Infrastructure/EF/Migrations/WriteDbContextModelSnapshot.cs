@@ -60,6 +60,9 @@ namespace LangApp.Infrastructure.EF.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("timestamp without time zone");
 

@@ -12,6 +12,7 @@ namespace LangApp.Application.Assignments.Commands;
 
 public record CreateAssignment(
     string Name,
+    string? Description,
     Guid AuthorId,
     Guid GroupId,
     DateTime DueDate,
@@ -36,7 +37,7 @@ public class CreateAssignmentHandler : ICommandHandler<CreateAssignment, Guid>
 
     public async Task<Guid> HandleAsync(CreateAssignment command, CancellationToken cancellationToken)
     {
-        var (name, authorId, groupId, dueDate, activities) = command;
+        var (name, description, authorId, groupId, dueDate, activities) = command;
 
         if (activities.Count == 0)
         {
@@ -61,7 +62,7 @@ public class CreateAssignmentHandler : ICommandHandler<CreateAssignment, Guid>
             activitiesDomainModel.Add(activity);
         }
 
-        var assignment = _factory.Create(name, authorId, groupId, dueDate, activitiesDomainModel);
+        var assignment = _factory.Create(name, description, authorId, groupId, dueDate, activitiesDomainModel);
         await _repository.AddAsync(assignment);
 
         return assignment.Id;

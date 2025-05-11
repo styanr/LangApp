@@ -15,7 +15,7 @@ public static class SubmissionDetailsReadModelExtensions
             MultipleChoiceSubmissionDetailsReadModel multipleChoiceDetails =>
                 new MultipleChoiceActivitySubmissionDetailsDto(multipleChoiceDetails.Answers
                     .Select(a =>
-                        new MultipleChoiceSubmissionAnswerDto(a.ChosenOptionIndex))
+                        new MultipleChoiceSubmissionAnswerDto(a.QuestionIndex, a.ChosenOptionIndex))
                     .ToList()
                 ),
 

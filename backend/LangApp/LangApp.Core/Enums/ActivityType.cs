@@ -4,5 +4,7 @@ public enum ActivityType
 {
     MultipleChoice,
     FillInTheBlank,
-    Pronunciation
+    Pronunciation,
+    Writing,
+    Question
 }

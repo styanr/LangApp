@@ -17,19 +17,23 @@ public class PronunciationGradingStrategy : IGradingStrategy<PronunciationActivi
         _assessmentService = assessmentService;
     }
 
-    public async Task<SubmissionGrade> Grade(PronunciationActivityDetails activity, SubmissionDetails submission,
-        CancellationToken cancellationToken = default(CancellationToken))
+    public async Task<SubmissionGrade> Grade(
+        PronunciationActivityDetails activity,
+        SubmissionDetails submission,
+        CancellationToken cancellationToken = default)
     {
         if (submission is not PronunciationSubmissionDetails pronunciationSubmission)
         {
             throw new LangAppException(
-                $"Provided submission {submission.GetType()} is not compatible with the assignment {activity.GetType()}");
+                $"Invalid submission type '{submission.GetType().Name}' for pronunciation activity.");
         }
 
-        var score = await _assessmentService.Assess(pronunciationSubmission.FileUri, activity.ReferenceText,
-            activity.Language);
+        var score = await _assessmentService.Assess(
+            pronunciationSubmission.FileUri,
+            activity.ReferenceText,
+            activity.Language
+        );
 
-        // todo create a proper feedback message
-        return new(score.Value, "good job!");
+        return score;
     }
 }

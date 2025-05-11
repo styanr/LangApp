@@ -14,6 +14,7 @@ public class ActivitySubmission : BaseEntity
 
     public GradeStatus Status { get; private set; } = GradeStatus.Pending;
     public SubmissionGrade? Grade { get; private set; }
+    public string? FailureReason { get; private set; }
 
     private ActivitySubmission()
     {
@@ -37,6 +38,10 @@ public class ActivitySubmission : BaseEntity
         SubmissionDetails details, ActivityType type, Guid id)
     {
         var submission = new ActivitySubmission(details, type, id);
+        if (submission.Type == ActivityType.Writing)
+        {
+            submission.Status = GradeStatus.NeedsReview;
+        }
 
         return submission;
     }
@@ -47,8 +52,9 @@ public class ActivitySubmission : BaseEntity
         Status = GradeStatus.Completed;
     }
 
-    public void Fail()
+    public void Fail(string? reason)
     {
+        FailureReason = reason;
         Status = GradeStatus.Failed;
     }
 }

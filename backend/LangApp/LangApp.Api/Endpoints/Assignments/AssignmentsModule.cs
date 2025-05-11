@@ -1,13 +1,11 @@
 using LangApp.Api.Common.Endpoints;
 using LangApp.Api.Endpoints.Assignments.Models;
-using LangApp.Api.Endpoints.Posts.Models;
 using LangApp.Application.Assignments.Commands;
 using LangApp.Application.Assignments.Dto;
 using LangApp.Application.Assignments.Queries;
 using LangApp.Application.Common;
 using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.Common.Queries.Abstractions;
-using MediatR.Wrappers;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -60,6 +58,7 @@ public class AssignmentsModule : IEndpointModule
 
         var command = new CreateAssignment(
             request.Name,
+            request.Description,
             userId,
             request.GroupId,
             request.DueDate,

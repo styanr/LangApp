@@ -4,6 +4,7 @@ namespace LangApp.Api.Endpoints.Assignments.Models;
 
 public record CreateAssignmentRequest(
     string Name,
+    string? Description,
     Guid GroupId,
     DateTime DueDate,
     List<ActivityDto> Activities

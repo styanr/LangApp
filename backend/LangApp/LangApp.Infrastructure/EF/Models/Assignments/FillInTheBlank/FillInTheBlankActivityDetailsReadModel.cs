@@ -2,5 +2,6 @@ namespace LangApp.Infrastructure.EF.Models.Assignments.FillInTheBlank;
 
 public class FillInTheBlankActivityDetailsReadModel : ActivityDetailsReadModel
 {
-    public List<FillInTheBlankAssignmentQuestionReadModel> Questions { get; set; }
+    public string TemplateText { get; set; }
+    public List<FillInTheBlankAnswerReadModel> Answers { get; set; }
 }

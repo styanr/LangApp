@@ -1,4 +1,5 @@
 using LangApp.Core.Common;
+using LangApp.Core.Entities.Assignments;
 using LangApp.Core.Enums;
 using LangApp.Core.Events.Submissions;
 using LangApp.Core.ValueObjects;
@@ -59,18 +60,49 @@ public class AssignmentSubmission : AggregateRoot
         var index = _activitySubmissions.IndexOf(activitySubmission);
         _activitySubmissions[index].UpdateGrade(submissionGrade);
 
-        // if (_activitySubmissions.All(a => a.Status == GradeStatus.Completed))
-        // {
-        //     Status = GradeStatus.Completed;
-        // }
-        //
-        // if (_activitySubmissions.Any(a => a.Status == GradeStatus.Failed))
-        // {
-        //     Status = GradeStatus.Failed;
-        // }
+        if (_activitySubmissions.All(a => a.Status == GradeStatus.Completed))
+        {
+            Status = GradeStatus.Completed;
+        }
+
+        if (_activitySubmissions.Any(a => a.Status == GradeStatus.Failed))
+        {
+            Fail();
+        }
     }
 
-    public void UpdateScore(double score)
+    public void RecalculateTotalScore(IEnumerable<Activity> assignmentActivities)
+    {
+        if (!ActivitySubmissions.Any())
+        {
+            UpdateScore(0);
+            return;
+        }
+
+        var activityLookup = assignmentActivities.ToDictionary(a => a.Id);
+        double totalScore = 0;
+
+        foreach (var gradedActivity in ActivitySubmissions.Where(a => a.Status == GradeStatus.Completed))
+        {
+            if (!activityLookup.TryGetValue(gradedActivity.Id, out var activity))
+            {
+                continue;
+            }
+
+            var percentage = gradedActivity.Grade?.ScorePercentage;
+            if (percentage is null)
+                continue;
+
+            // Specify rounding mode explicitly
+            var contribution = Math.Round(percentage.Value * activity.MaxScore / 100,
+                MidpointRounding.AwayFromZero);
+            totalScore += contribution;
+        }
+
+        UpdateScore(totalScore);
+    }
+
+    private void UpdateScore(double score)
     {
         Score = score;
     }
@@ -80,9 +112,9 @@ public class AssignmentSubmission : AggregateRoot
         Status = GradeStatus.Failed;
     }
 
-    public void FailActivitySubmission(ActivitySubmission activitySubmission)
+    public void FailActivitySubmission(ActivitySubmission activitySubmission, string? reason = null)
     {
-        activitySubmission.Fail();
+        activitySubmission.Fail(reason);
         Fail();
     }
 }

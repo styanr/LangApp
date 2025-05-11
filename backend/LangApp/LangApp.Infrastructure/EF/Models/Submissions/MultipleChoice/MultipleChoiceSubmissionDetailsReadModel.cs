@@ -7,5 +7,6 @@ public class MultipleChoiceSubmissionDetailsReadModel : SubmissionDetailsReadMod
 
 public class MultipleChoiceAnswerReadModel
 {
+    public int QuestionIndex { get; set; }
     public int ChosenOptionIndex { get; set; }
 }

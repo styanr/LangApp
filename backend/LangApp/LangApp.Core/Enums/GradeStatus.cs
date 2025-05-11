@@ -4,5 +4,6 @@ public enum GradeStatus
 {
     Pending,
     Completed,
-    Failed
+    Failed,
+    NeedsReview
 }

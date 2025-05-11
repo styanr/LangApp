@@ -8,13 +8,7 @@ public static class FillInTheBlankActivityDetailsExtensions
 {
     public static FillInTheBlankActivityDetails ToValueObject(this FillInTheBlankActivityDetailsDto dto)
     {
-        var questions = dto.Questions
-            .Select(q => new FillInTheBlankQuestion(
-                q.TemplateText,
-                q.Answers
-                    .Select(a => new FillInTheBlankAnswer(a.AcceptableAnswers))
-                    .ToList())).ToList();
-
-        return new FillInTheBlankActivityDetails(questions);
+        return new FillInTheBlankActivityDetails(dto.TemplateText,
+            dto.Answers.Select(a => new FillInTheBlankAnswer(a.AcceptableAnswers)).ToList());
     }
 }
