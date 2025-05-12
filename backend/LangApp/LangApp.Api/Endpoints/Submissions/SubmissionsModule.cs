@@ -6,6 +6,7 @@ using LangApp.Application.Common.Queries.Abstractions;
 using LangApp.Application.Submissions.Commands;
 using LangApp.Application.Submissions.Dto;
 using LangApp.Application.Submissions.Queries;
+using LangApp.Core.ValueObjects;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,8 @@ public class SubmissionsModule : IEndpointModule
     {
         var group = app.MapVersionedGroup("submissions").WithTags("Submissions");
         group.MapGet("{id:guid}", Get).WithName("GetSubmission");
+        group.MapPut("{submissionId:guid}/activities/{activityId:guid}", EditSubmissionGrade)
+            .WithName("EditSubmissionGrade");
 
         var assignmentGroup = app.MapVersionedGroup("assignments/{assignmentId:guid}/submissions")
             .WithTags("Submissions");
@@ -70,5 +73,25 @@ public class SubmissionsModule : IEndpointModule
 
         var id = await dispatcher.DispatchWithResultAsync(command);
         return TypedResults.CreatedAtRoute("GetSubmission", new { id });
+    }
+
+    private async Task<NoContent> EditSubmissionGrade(
+        [FromRoute] Guid submissionId,
+        [FromRoute] Guid activityId,
+        [FromBody] SubmissionGradeDto grade,
+        [FromServices] ICommandDispatcher dispatcher,
+        HttpContext context
+    )
+    {
+        var userId = context.User.GetUserId();
+        var command = new EditActivitySubmissionGrade(
+            submissionId,
+            activityId,
+            grade,
+            userId
+        );
+
+        await dispatcher.DispatchAsync(command);
+        return TypedResults.NoContent();
     }
 }
