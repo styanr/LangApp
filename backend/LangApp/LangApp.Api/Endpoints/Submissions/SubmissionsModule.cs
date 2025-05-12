@@ -1,5 +1,6 @@
 using LangApp.Api.Common.Endpoints;
 using LangApp.Api.Endpoints.Submissions.Models;
+using LangApp.Application.Common;
 using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.Common.Queries.Abstractions;
 using LangApp.Application.Submissions.Commands;
@@ -20,6 +21,7 @@ public class SubmissionsModule : IEndpointModule
         var assignmentGroup = app.MapVersionedGroup("assignments/{assignmentId:guid}/submissions")
             .WithTags("Submissions");
         assignmentGroup.MapPost("/", Create).WithName("CreateAssignmentSubmission");
+        assignmentGroup.MapGet("", GetByAssignment).WithName("GetSubmissionsByAssignment");
     }
 
     private async Task<Results<Ok<AssignmentSubmissionDto>, NotFound>> Get(
@@ -29,6 +31,18 @@ public class SubmissionsModule : IEndpointModule
     {
         var userId = context.User.GetUserId();
         var query = new GetSubmission(request.Id, userId);
+        var submission = await dispatcher.QueryAsync(query);
+
+        return ApplicationTypedResults.OkOrNotFound(submission);
+    }
+
+    private async Task<Results<Ok<PagedResult<AssignmentSubmissionDto>>, NotFound>> GetByAssignment(
+        [AsParameters] GetSubmissionsByAssignmentRequest request,
+        [FromServices] IQueryDispatcher dispatcher,
+        HttpContext context)
+    {
+        var userId = context.User.GetUserId();
+        var query = new GetSubmissionsByAssignment(request.AssignmentId, userId);
         var submission = await dispatcher.QueryAsync(query);
 
         return ApplicationTypedResults.OkOrNotFound(submission);

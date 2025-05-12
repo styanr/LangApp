@@ -93,7 +93,6 @@ public class AssignmentSubmission : AggregateRoot
             if (percentage is null)
                 continue;
 
-            // Specify rounding mode explicitly
             var contribution = Math.Round(percentage.Value * activity.MaxScore / 100,
                 MidpointRounding.AwayFromZero);
             totalScore += contribution;

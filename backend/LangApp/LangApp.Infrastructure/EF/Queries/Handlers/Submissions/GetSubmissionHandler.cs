@@ -38,7 +38,6 @@ internal sealed class GetSubmissionHandler : IQueryHandler<GetSubmission, Assign
             return null;
         }
 
-        // Get assignment and group info needed for permission check
         var assignment = await _assignments
             .Where(a => a.Id == submission.AssignmentId)
             .AsNoTracking()
@@ -96,7 +95,8 @@ internal sealed class GetSubmissionHandler : IQueryHandler<GetSubmission, Assign
                         ScorePercentage = asub.Grade.ScorePercentage,
                         Feedback = asub.Grade?.Feedback ?? ""
                     }
-                    : null
+                    : null,
+                asub.FailureReason
             )).ToList()
         );
     }

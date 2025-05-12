@@ -13,7 +13,8 @@ public record ActivitySubmissionDto(
     ActivityType Type,
     ActivitySubmissionDetailsDto Details,
     GradeStatus Status,
-    SubmissionGradeDto? Grade
+    SubmissionGradeDto? Grade,
+    string? FailureReason
 );
 
 public class SubmissionGradeDto

@@ -117,6 +117,10 @@ internal sealed class ReadConfiguration :
         builder.HasMany(a => a.Activities)
             .WithOne()
             .HasForeignKey(ac => ac.AssignmentId);
+
+        builder.HasOne(a => a.StudyGroup)
+            .WithMany()
+            .HasForeignKey(a => a.StudyGroupId);
     }
 
     public void Configure(EntityTypeBuilder<ActivityReadModel> builder)

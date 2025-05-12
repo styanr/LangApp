@@ -24,7 +24,6 @@ internal sealed class GetAssignmentForGroupHandler : IQueryHandler<GetAssignment
 
     public async Task<PagedResult<AssignmentDto>?> HandleAsync(GetAssignmentsByGroup query)
     {
-        // Get the group with its members for permission checking
         var group = await _groups
             .Include(g => g.Members)
             .AsNoTracking()
@@ -35,17 +34,14 @@ internal sealed class GetAssignmentForGroupHandler : IQueryHandler<GetAssignment
             return null;
         }
 
-        // Direct permission check
         var canAccess = false;
         var canAccessFull = false;
 
-        // Group owner can access all assignments in their group
         if (group.OwnerId == query.UserId)
         {
             canAccess = true;
             canAccessFull = true;
         }
-        // Group members can access assignments in the group
         else if (group.Members.Any(m => m.Id == query.UserId))
         {
             canAccess = true;

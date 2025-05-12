@@ -19,6 +19,7 @@ internal class PostgresAssignmentSubmissionRepository : IAssignmentSubmissionRep
     public Task<AssignmentSubmission?> GetAsync(Guid id)
     {
         return _submissions
+            .Include(s => s.ActivitySubmissions)
             .SingleOrDefaultAsync(s => s.Id == id);
     }
 

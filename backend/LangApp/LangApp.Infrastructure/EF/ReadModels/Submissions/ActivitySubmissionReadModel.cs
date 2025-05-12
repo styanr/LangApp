@@ -10,6 +10,7 @@ public class ActivitySubmissionReadModel
     public Guid AssignmentSubmissionId { get; set; }
     public ActivityType Type { get; set; }
     public GradeStatus Status { get; set; }
+    public string? FailureReason { get; set; }
     public SubmissionGradeReadModel? Grade { get; set; }
     public SubmissionDetailsReadModel Details { get; set; }
 }

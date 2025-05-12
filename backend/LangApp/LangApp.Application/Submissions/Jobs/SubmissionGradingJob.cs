@@ -88,7 +88,7 @@ public class SubmissionGradingJob : IJob<SubmissionGradingJobData>
 
         foreach (var submittedActivity in submission.ActivitySubmissions)
         {
-            if (!activityLookup.TryGetValue(submittedActivity.Id, out var activity))
+            if (!activityLookup.TryGetValue(submittedActivity.ActivityId, out var activity))
             {
                 _logger.LogWarning("Activity not found for submission. ActivityId={ActivityId}", submittedActivity.Id);
                 submission.FailActivitySubmission(submittedActivity, reason: "Missing activity in assignment");

@@ -34,12 +34,26 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
 
     public async Task<SubmissionGrade> Assess(string fileUri, string referenceText, Language language)
     {
-        var uri = new Uri(fileUri);
+        Uri? uri = null;
+        try
+        {
+            uri = new Uri(fileUri);
+        }
+        catch (UriFormatException e)
+        {
+            throw new LangAppException("Invalid fileUri format.");
+        }
+
         var blobName = uri.Segments.Last();
         var containerName = uri.Segments
                                 .Skip(1)
                                 .FirstOrDefault()?.TrimEnd('/')
                             ?? throw new LangAppException("Invalid fileUri format: container segment missing");
+
+        if (!await _blobStorageService.Exists(containerName, blobName))
+        {
+            throw new LangAppException("File not found in blob storage.");
+        }
 
         await using var audioStream = await _blobStorageService.DownloadFileAsync(containerName, blobName);
 
