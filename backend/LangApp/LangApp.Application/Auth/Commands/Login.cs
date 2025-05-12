@@ -25,14 +25,13 @@ public class LoginHandler : ICommandHandler<Login, TokenResponse>
 
     public async Task<TokenResponse> HandleAsync(Login command, CancellationToken cancellationToken)
     {
-        var token = await _authService.Authenticate(command.Username, command.Password);
-        // TODO: Error handling
+        var tokenResponse = await _authService.Authenticate(command.Username, command.Password);
 
-        if (token is null)
+        if (tokenResponse is null)
         {
             throw new InvalidCredentialsException();
         }
 
-        return new(token.Token);
+        return tokenResponse;
     }
 }

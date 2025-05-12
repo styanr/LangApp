@@ -17,6 +17,7 @@ namespace LangApp.Infrastructure.EF.Config;
 
 internal sealed class WriteConfiguration :
     IEntityTypeConfiguration<IdentityApplicationUser>,
+    IEntityTypeConfiguration<RefreshToken>,
     IEntityTypeConfiguration<StudyGroup>,
     IEntityTypeConfiguration<Member>,
     IEntityTypeConfiguration<Post>,
@@ -43,6 +44,18 @@ internal sealed class WriteConfiguration :
 
         builder.HasIndex(u => u.UserName).IsUnique();
         builder.HasIndex(u => u.Email).IsUnique();
+    }
+
+    public void Configure(EntityTypeBuilder<RefreshToken> builder)
+    {
+        builder.ToTable("RefreshTokens");
+        builder.HasKey(r => r.Id);
+
+        builder.Property(r => r.Token).HasMaxLength(200);
+        builder.HasIndex(r => r.Token).IsUnique();
+        builder.HasOne(r => r.User)
+            .WithMany()
+            .HasForeignKey(r => r.UserId);
     }
 
     public void Configure(EntityTypeBuilder<StudyGroup> builder)

@@ -1,6 +1,7 @@
 namespace LangApp.Application.Auth.Models;
 
-public record TokenResponse(string Token)
+public record TokenResponse(string AccessToken, string RefreshToken)
 {
-    public string Token { get; init; } = Token;
+    public string AccessToken { get; init; } = AccessToken;
+    public string RefreshToken { get; init; } = RefreshToken;
 }

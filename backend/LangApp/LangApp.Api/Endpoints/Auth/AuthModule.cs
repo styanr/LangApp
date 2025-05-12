@@ -21,6 +21,9 @@ public class AuthModule : IEndpointModule
         group.MapPost("/login", Login)
             .AllowAnonymous()
             .WithName("Login");
+        group.MapPost("/refresh", Refresh)
+            .AllowAnonymous()
+            .WithName("Refresh");
     }
 
 
@@ -40,5 +43,13 @@ public class AuthModule : IEndpointModule
     {
         var token = await dispatcher.DispatchWithResultAsync(command);
         return TypedResults.Ok(token);
+    }
+
+    private async Task<Ok<TokenResponse>> Refresh(
+        [FromBody] Refresh command,
+        [FromServices] ICommandDispatcher dispatcher)
+    {
+        var tokenResponse = await dispatcher.DispatchWithResultAsync(command);
+        return TypedResults.Ok(tokenResponse);
     }
 }

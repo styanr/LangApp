@@ -24,6 +24,8 @@ internal sealed class WriteDbContext : IdentityDbContext<IdentityApplicationUser
     public DbSet<ActivitySubmission> ActivitySubmissions { get; set; }
 
 
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
+
     public WriteDbContext(DbContextOptions<WriteDbContext> options) : base(options)
     {
     }
@@ -37,6 +39,7 @@ internal sealed class WriteDbContext : IdentityDbContext<IdentityApplicationUser
         var configuration = new WriteConfiguration();
 
         modelBuilder.ApplyConfiguration<IdentityApplicationUser>(configuration);
+        modelBuilder.ApplyConfiguration<RefreshToken>(configuration);
         modelBuilder.ApplyConfiguration<StudyGroup>(configuration);
         modelBuilder.ApplyConfiguration<Member>(configuration);
         modelBuilder.ApplyConfiguration<Post>(configuration);

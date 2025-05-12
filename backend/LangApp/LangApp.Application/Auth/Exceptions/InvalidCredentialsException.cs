@@ -2,4 +2,4 @@ using LangApp.Core.Exceptions;
 
 namespace LangApp.Application.Auth.Exceptions;
 
-public class InvalidCredentialsException() : LangAppException("You have provided invalid credentials.");
+public class InvalidCredentialsException() : LangAppException("Invalid credentials provided");
