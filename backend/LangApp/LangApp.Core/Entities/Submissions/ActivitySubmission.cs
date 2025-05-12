@@ -8,6 +8,7 @@ namespace LangApp.Core.Entities.Submissions;
 
 public class ActivitySubmission : BaseEntity
 {
+    public Guid ActivityId { get; private set; }
     public ActivityType Type { get; private set; }
 
     public SubmissionDetails Details { get; private set; }
@@ -20,24 +21,27 @@ public class ActivitySubmission : BaseEntity
     {
     }
 
-    protected ActivitySubmission(SubmissionDetails details, ActivityType type)
+    protected ActivitySubmission(Guid activityId, SubmissionDetails details, ActivityType type)
     {
+        ActivityId = activityId;
         Details = details;
         Type = type;
     }
 
-    internal ActivitySubmission(SubmissionDetails details, ActivityType type,
+    internal ActivitySubmission(Guid activityId, SubmissionDetails details, ActivityType type,
         Guid id) :
         base(id)
     {
+        ActivityId = activityId;
         Details = details;
         Type = type;
     }
 
     internal static ActivitySubmission Create(
+        Guid activityId,
         SubmissionDetails details, ActivityType type, Guid id)
     {
-        var submission = new ActivitySubmission(details, type, id);
+        var submission = new ActivitySubmission(activityId, details, type, id);
         if (submission.Type == ActivityType.Writing)
         {
             submission.Status = GradeStatus.NeedsReview;

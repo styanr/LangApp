@@ -25,7 +25,7 @@ internal sealed class GetAssignmentHandler : IQueryHandler<GetAssignment, Assign
     {
         var assignment = await _assignments
             .Where(a => a.Id == query.Id)
-            .Include(a => a.Activities)
+            .Include(a => a.Activities.OrderBy(ac => ac.Order))
             .AsNoTracking()
             .SingleOrDefaultAsync();
 
@@ -59,6 +59,7 @@ internal sealed class GetAssignmentHandler : IQueryHandler<GetAssignment, Assign
 
         return new AssignmentDto(
             assignment.Id,
+            assignment.Name,
             assignment.AuthorId,
             assignment.StudyGroupId,
             assignment.DueDate,

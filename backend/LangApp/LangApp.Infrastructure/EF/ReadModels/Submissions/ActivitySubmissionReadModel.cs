@@ -6,8 +6,8 @@ namespace LangApp.Infrastructure.EF.Models.Submissions;
 public class ActivitySubmissionReadModel
 {
     public Guid Id { get; set; }
-    public Guid AssignmentSubmissionId { get; set; }
     public Guid ActivityId { get; set; }
+    public Guid AssignmentSubmissionId { get; set; }
     public ActivityType Type { get; set; }
     public GradeStatus Status { get; set; }
     public SubmissionGradeReadModel? Grade { get; set; }

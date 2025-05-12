@@ -2,12 +2,17 @@ using LangApp.Application.Assignments.Dto;
 using LangApp.Application.Assignments.Dto.FillInTheBlank;
 using LangApp.Application.Assignments.Dto.MultipleChoice;
 using LangApp.Application.Assignments.Dto.Pronunciation;
+using LangApp.Application.Assignments.Dto.Question;
+using LangApp.Application.Assignments.Dto.Writing;
 using LangApp.Core.Exceptions;
 using LangApp.Core.ValueObjects.Assignments.FillInTheBlank;
+using LangApp.Core.ValueObjects.Assignments.Writing;
 using LangApp.Infrastructure.EF.Models.Assignments;
 using LangApp.Infrastructure.EF.Models.Assignments.FillInTheBlank;
 using LangApp.Infrastructure.EF.Models.Assignments.MultipleChoice;
 using LangApp.Infrastructure.EF.Models.Assignments.Pronunciation;
+using LangApp.Infrastructure.EF.Models.Assignments.Question;
+using LangApp.Infrastructure.EF.Models.Assignments.Writing;
 
 namespace LangApp.Infrastructure.EF.Queries.Handlers.Assignments.Extensions;
 
@@ -23,6 +28,10 @@ public static class AssignmentDetailsReadModelExtensions
                 CreateFillInTheBlankDto(fillInTheBlankDetails, restricted),
             PronunciationActivityDetailsReadModel pronunciationDetails =>
                 CreatePronunciationDto(pronunciationDetails, restricted),
+            QuestionActivityDetailsReadModel questionDetails =>
+                CreateQuestionDto(questionDetails, restricted),
+            WritingActivityDetailsReadModel writingDetails =>
+                CreateWritingDto(writingDetails, restricted),
             _ => throw new LangAppException("Wrong assignment details type")
         };
     }
@@ -66,5 +75,26 @@ public static class AssignmentDetailsReadModelExtensions
         return new PronunciationActivityDetailsDto(
             details.Language.Code,
             details.ReferenceText);
+    }
+
+    private static ActivityDetailsDto CreateQuestionDto(
+        QuestionActivityDetailsReadModel details,
+        bool restricted)
+    {
+        return restricted
+            ? new QuestionActivityRestrictedDetailsDto(
+                details.Question,
+                details.MaxLength)
+            : new QuestionActivityDetailsDto(
+                details.Question,
+                details.Answers,
+                details.MaxLength);
+    }
+
+    private static ActivityDetailsDto CreateWritingDto(
+        WritingActivityDetailsReadModel details,
+        bool restricted)
+    {
+        return new WritingActivityDetailsDto(details.Prompt, details.MaxWords);
     }
 }

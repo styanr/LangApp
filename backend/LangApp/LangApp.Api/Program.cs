@@ -7,6 +7,7 @@ using LangApp.Application.Common;
 using LangApp.Infrastructure;
 using Microsoft.AspNetCore.Http.Json;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.ClearProviders();
@@ -21,7 +22,11 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddJwtBearerAuthentication(builder.Configuration);
 
 builder.Services.AddExceptionMiddleware();
-builder.Services.Configure<JsonOptions>(opt => { opt.SerializerOptions.Converters.Add(new ActivityJsonConverter()); }
+builder.Services.Configure<JsonOptions>(opt =>
+    {
+        opt.SerializerOptions.Converters.Add(new ActivityJsonConverter());
+        opt.SerializerOptions.Converters.Add(new SubmissionJsonConverter());
+    }
 );
 
 var app = builder.Build();
@@ -47,3 +52,8 @@ app.UseAuthorization();
 app.UseInfrastructureEndpoints();
 
 app.Run();
+
+// For testing
+public partial class Program
+{
+}

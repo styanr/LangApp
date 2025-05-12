@@ -7,5 +7,5 @@ public record CreateAssignmentRequest(
     string? Description,
     Guid GroupId,
     DateTime DueDate,
-    List<ActivityDto> Activities
+    List<CreateActivityDto> Activities
 );

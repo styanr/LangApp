@@ -7,6 +7,11 @@ public class AssignmentSubmissionFactory : IAssignmentSubmissionFactory
 {
     private readonly IKeyGenerator _keyGenerator;
 
+    public AssignmentSubmissionFactory(IKeyGenerator keyGenerator)
+    {
+        _keyGenerator = keyGenerator;
+    }
+
     public AssignmentSubmission Create(Guid assignmentId, Guid userId, List<ActivitySubmission> activitySubmissions)
     {
         var id = _keyGenerator.NewKey();

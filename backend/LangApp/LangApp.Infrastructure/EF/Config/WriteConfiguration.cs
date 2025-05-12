@@ -142,6 +142,8 @@ internal sealed class WriteConfiguration :
         builder.Property(e => e.Id).ValueGeneratedNever();
         builder.Property<Guid>("AssignmentId");
 
+        builder.HasIndex(a => a.Order);
+
         builder.HasOne<Assignment>()
             .WithMany(a => a.Activities)
             .HasForeignKey("AssignmentId");
@@ -168,7 +170,7 @@ internal sealed class WriteConfiguration :
             .HasForeignKey(a => a.StudentId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne<Activity>()
+        builder.HasOne<Assignment>()
             .WithMany()
             .HasForeignKey(a => a.AssignmentId)
             .OnDelete(DeleteBehavior.Cascade);
@@ -192,14 +194,18 @@ internal sealed class WriteConfiguration :
 
             grade.WithOwner().HasForeignKey("SubmissionId");
 
-            // grade.OwnsOne(g => g.ScorePercentage, perc =>
-            // {
-            //     perc.Property(p => p.Value)
-            //         .HasColumnName("ScorePercentage");
-            // });
-            grade.Property(g => g.ScorePercentage);
+            grade.OwnsOne(g => g.ScorePercentage, perc =>
+            {
+                perc.Property(p => p.Value)
+                    .HasColumnName("ScorePercentage");
+            });
+
             grade.Property(g => g.Feedback);
         });
+
+        builder.HasOne<Activity>()
+            .WithMany()
+            .HasForeignKey(a => a.ActivityId);
 
         builder.Property(a => a.Details).HasConversion(entry =>
                 JsonSerializer.Serialize(entry,

@@ -20,9 +20,9 @@ public record QuestionActivityDetails : ActivityDetails
             throw new LangAppException("Question cannot be empty");
         }
 
-        if (answers.Count < 2)
+        if (answers.Count < 1)
         {
-            throw new LangAppException("Question must have at least 2 answers");
+            throw new LangAppException("Question must have at least one answer");
         }
 
         foreach (var answer in answers)

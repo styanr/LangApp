@@ -4,6 +4,8 @@ using LangApp.Application.Assignments.Dto;
 using LangApp.Application.Assignments.Dto.FillInTheBlank;
 using LangApp.Application.Assignments.Dto.MultipleChoice;
 using LangApp.Application.Assignments.Dto.Pronunciation;
+using LangApp.Application.Assignments.Dto.Question;
+using LangApp.Application.Assignments.Dto.Writing;
 using LangApp.Application.Submissions.Dto;
 using LangApp.Core.Enums;
 using LangApp.Core.ValueObjects.Assignments;
@@ -40,6 +42,12 @@ public class ActivityJsonConverter : JsonConverter<ActivityDetailsDto>
                 root.GetRawText(),
                 options),
             ActivityType.Pronunciation => JsonSerializer.Deserialize<PronunciationActivityDetailsDto>(
+                root.GetRawText(),
+                options),
+            ActivityType.Question => JsonSerializer.Deserialize<QuestionActivityDetailsDto>(
+                root.GetRawText(),
+                options),
+            ActivityType.Writing => JsonSerializer.Deserialize<WritingActivityDetailsDto>(
                 root.GetRawText(),
                 options),
             _ => throw new JsonException($"Unknown activity type: {type}")

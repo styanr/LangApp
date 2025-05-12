@@ -64,6 +64,7 @@ internal sealed class GetAssignmentForGroupHandler : IQueryHandler<GetAssignment
             .AsNoTracking()
             .Select(a => new AssignmentDto(
                 a.Id,
+                a.Name,
                 a.AuthorId,
                 a.StudyGroupId,
                 a.DueDate,

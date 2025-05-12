@@ -35,12 +35,6 @@ public class Assignment : AggregateRoot
         DueDate = dueDate;
     }
 
-    internal Assignment(Guid id, string name, string? description, Guid authorId, Guid studyGroupId, DateTime dueDate,
-        IEnumerable<Activity> activities) : this(id, name, description, authorId, studyGroupId, dueDate)
-    {
-        _activities.AddRange(activities);
-    }
-
     internal static Assignment Create(Guid id, string name, string? description, Guid authorId, Guid studyGroupId,
         DateTime dueDate)
     {
@@ -50,17 +44,28 @@ public class Assignment : AggregateRoot
     internal static Assignment Create(Guid id, string name, string? description, Guid authorId, Guid studyGroupId,
         DateTime dueDate, IEnumerable<Activity> activities)
     {
-        return new Assignment(id, name, description, authorId, studyGroupId, dueDate, activities);
+        var assignment = new Assignment(id, name, description, authorId, studyGroupId, dueDate);
+
+        assignment.AddMultipleActivities(activities);
+        return assignment;
+    }
+
+    public void AddMultipleActivities(IEnumerable<Activity> activities)
+    {
+        _activities.AddRange(activities);
+        ReorderActivities();
     }
 
     public void AddActivity(Activity activity)
     {
         _activities.Add(activity);
+        ReorderActivities();
     }
 
     public void RemoveActivity(Activity activity)
     {
         _activities.Remove(activity);
+        ReorderActivities();
     }
 
     public void UpdateName(string name)
@@ -114,7 +119,7 @@ public class Assignment : AggregateRoot
 
     private static void ValidateDueDate(DateTime dueDate)
     {
-        if (dueDate < DateTime.UtcNow)
+        if (dueDate <= DateTime.UtcNow)
         {
             throw new LangAppException("Due date cannot be in the past");
         }
@@ -123,5 +128,13 @@ public class Assignment : AggregateRoot
     public bool CanBeModifiedBy(Guid userId)
     {
         return AuthorId == userId;
+    }
+
+    private void ReorderActivities()
+    {
+        for (var i = 0; i < _activities.Count; i++)
+        {
+            _activities[i].UpdateOrder(i);
+        }
     }
 }

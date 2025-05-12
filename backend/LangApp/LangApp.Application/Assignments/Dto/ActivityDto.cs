@@ -10,3 +10,8 @@ public record ActivityDto(
 {
     public ActivityDetailsDto Details { get; set; } = Details;
 }
+
+public record CreateActivityDto(
+    int MaxScore,
+    ActivityDetailsDto Details
+);

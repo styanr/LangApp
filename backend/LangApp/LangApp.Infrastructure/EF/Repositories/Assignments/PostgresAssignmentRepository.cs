@@ -19,6 +19,7 @@ internal sealed class PostgresAssignmentRepository : IAssignmentRepository
     public Task<Assignment?> GetAsync(Guid id)
     {
         return _assignments
+            .Include(a => a.Activities)
             .SingleOrDefaultAsync(a => a.Id == id);
     }
 

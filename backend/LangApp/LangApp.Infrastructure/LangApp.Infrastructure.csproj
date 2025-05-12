@@ -32,8 +32,9 @@
 
     <ItemGroup>
         <Folder Include="EF\Migrations\"/>
-        <Folder Include="EF\Models\Assignments\Question\"/>
-        <Folder Include="EF\Models\Assignments\Writing\"/>
+    </ItemGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="LangApp.Tests.Integration"/>
     </ItemGroup>
 
 </Project>

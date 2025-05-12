@@ -39,12 +39,17 @@ namespace LangApp.Infrastructure.EF.Migrations
                     b.Property<int>("MaxScore")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AssignmentId");
+
+                    b.HasIndex("Order");
 
                     b.ToTable("Activities", "application");
                 });
@@ -189,11 +194,17 @@ namespace LangApp.Infrastructure.EF.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("ActivityId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid?>("AssignmentSubmissionId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Details")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FailureReason")
                         .HasColumnType("text");
 
                     b.Property<int>("Status")
@@ -203,6 +214,8 @@ namespace LangApp.Infrastructure.EF.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ActivityId");
 
                     b.HasIndex("AssignmentSubmissionId");
 
@@ -529,6 +542,12 @@ namespace LangApp.Infrastructure.EF.Migrations
 
             modelBuilder.Entity("LangApp.Core.Entities.Submissions.ActivitySubmission", b =>
                 {
+                    b.HasOne("LangApp.Core.Entities.Assignments.Activity", null)
+                        .WithMany()
+                        .HasForeignKey("ActivityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("LangApp.Core.Entities.Submissions.AssignmentSubmission", null)
                         .WithMany("ActivitySubmissions")
                         .HasForeignKey("AssignmentSubmissionId");
@@ -541,15 +560,32 @@ namespace LangApp.Infrastructure.EF.Migrations
                             b1.Property<string>("Feedback")
                                 .HasColumnType("text");
 
-                            b1.Property<double>("ScorePercentage")
-                                .HasColumnType("double precision");
-
                             b1.HasKey("SubmissionId");
 
                             b1.ToTable("SubmissionGrades", "application");
 
                             b1.WithOwner()
                                 .HasForeignKey("SubmissionId");
+
+                            b1.OwnsOne("LangApp.Core.ValueObjects.Percentage", "ScorePercentage", b2 =>
+                                {
+                                    b2.Property<Guid>("SubmissionGradeSubmissionId")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<double>("Value")
+                                        .HasColumnType("double precision")
+                                        .HasColumnName("ScorePercentage");
+
+                                    b2.HasKey("SubmissionGradeSubmissionId");
+
+                                    b2.ToTable("SubmissionGrades", "application");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("SubmissionGradeSubmissionId");
+                                });
+
+                            b1.Navigation("ScorePercentage")
+                                .IsRequired();
                         });
 
                     b.Navigation("Grade");
@@ -557,7 +593,7 @@ namespace LangApp.Infrastructure.EF.Migrations
 
             modelBuilder.Entity("LangApp.Core.Entities.Submissions.AssignmentSubmission", b =>
                 {
-                    b.HasOne("LangApp.Core.Entities.Assignments.Activity", null)
+                    b.HasOne("LangApp.Core.Entities.Assignments.Assignment", null)
                         .WithMany()
                         .HasForeignKey("AssignmentId")
                         .OnDelete(DeleteBehavior.Cascade)

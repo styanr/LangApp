@@ -3,7 +3,7 @@ using LangApp.Core.Services.WordCounting;
 
 namespace LangApp.Core.ValueObjects.Submissions.Writing;
 
-public record WritingSubmissionDetails
+public record WritingSubmissionDetails : SubmissionDetails
 {
     public string Text { get; init; }
     private const int WordLimit = 500;

@@ -16,6 +16,10 @@ public class SubmissionsModule : IEndpointModule
     {
         var group = app.MapVersionedGroup("submissions").WithTags("Submissions");
         group.MapGet("{id:guid}", Get).WithName("GetSubmission");
+
+        var assignmentGroup = app.MapVersionedGroup("assignments/{assignmentId:guid}/submissions")
+            .WithTags("Submissions");
+        assignmentGroup.MapPost("/", Create).WithName("CreateAssignmentSubmission");
     }
 
     private async Task<Results<Ok<AssignmentSubmissionDto>, NotFound>> Get(

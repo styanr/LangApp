@@ -13,7 +13,7 @@ namespace LangApp.Application.Submissions.Commands;
 public record CreateAssignmentSubmission(
     Guid AssignmentId,
     Guid UserId,
-    List<ActivitySubmissionDetailsDto> ActivitySubmissionDtos
+    List<CreateActivitySubmissionDto> ActivitySubmissionDtos
 ) : ICommand<Guid>;
 
 public class CreateAssignmentSubmissionHandler : ICommandHandler<CreateAssignmentSubmission, Guid>
@@ -52,9 +52,15 @@ public class CreateAssignmentSubmissionHandler : ICommandHandler<CreateAssignmen
 
         foreach (var activitySubmissionDto in activitySubmissionDtos)
         {
-            var detailsDomainModel = activitySubmissionDto.ToValueObject();
+            var detailsDomainModel = activitySubmissionDto.Details.ToValueObject();
 
-            var activitySubmissionDomainModel = _activitySubmissionFactory.Create(detailsDomainModel);
+            if (assignment.Activities.All(a => a.Id != activitySubmissionDto.ActivityId))
+            {
+                throw new ActivityNotFound(activitySubmissionDto.ActivityId);
+            }
+
+            var activitySubmissionDomainModel =
+                _activitySubmissionFactory.Create(activitySubmissionDto.ActivityId, detailsDomainModel);
 
             activitySubmissions.Add(activitySubmissionDomainModel);
         }

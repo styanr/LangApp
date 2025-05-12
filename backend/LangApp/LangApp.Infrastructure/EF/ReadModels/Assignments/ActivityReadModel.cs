@@ -10,4 +10,5 @@ public class ActivityReadModel
     public ActivityType Type { get; set; }
     public ActivityDetailsReadModel Details { get; set; }
     public Guid AssignmentId { get; set; }
+    public int Order { get; set; }
 }

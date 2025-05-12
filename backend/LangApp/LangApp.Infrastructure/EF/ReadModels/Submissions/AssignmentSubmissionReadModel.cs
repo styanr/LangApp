@@ -9,7 +9,7 @@ public class AssignmentSubmissionReadModel
     public Guid StudentId { get; set; }
     public DateTime SubmittedAt { get; set; }
     public GradeStatus Status { get; set; }
-    public int Score { get; set; }
+    public double Score { get; set; }
 
     public List<ActivitySubmissionReadModel> ActivitySubmissions { get; set; }
 }

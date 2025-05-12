@@ -31,4 +31,10 @@ public class Activity : BaseEntity
     public int MaxScore { get; private set; }
     public ActivityType Type { get; private set; }
     public ActivityDetails Details { get; private set; }
+    public int Order { get; private set; } = 0;
+
+    public void UpdateOrder(int order)
+    {
+        Order = order;
+    }
 }

@@ -16,7 +16,7 @@ public record CreateAssignment(
     Guid AuthorId,
     Guid GroupId,
     DateTime DueDate,
-    List<ActivityDto> Activities
+    List<CreateActivityDto> Activities
 ) : ICommand<Guid>;
 
 public class CreateAssignmentHandler : ICommandHandler<CreateAssignment, Guid>
