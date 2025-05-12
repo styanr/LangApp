@@ -1,4 +1,5 @@
 using LangApp.Core.Common;
+using LangApp.Infrastructure.EF.Models.Assignments;
 using LangApp.Infrastructure.EF.Models.Posts;
 using LangApp.Infrastructure.EF.Models.Users;
 
@@ -13,4 +14,5 @@ public class StudyGroupReadModel : IIdentifiable
     public UserReadModel Owner { get; set; }
     public ICollection<UserReadModel> Members { get; set; }
     public ICollection<PostReadModel> Posts { get; set; }
+    public ICollection<AssignmentReadModel> Assignments { get; set; }
 }

@@ -22,6 +22,9 @@ public class AssignmentsModule : IEndpointModule
 
         app.MapVersionedGroup("groups").WithTags("Assignments").MapGet("/{groupId:guid}/assignments", GetByGroup)
             .WithName("GetAssignmentsByGroup");
+
+        app.MapVersionedGroup("users").WithTags("Assignments").MapGet("/me/assignments", GetByUser)
+            .WithName("GetAssignmentsByUser");
     }
 
     private async Task<Results<Ok<AssignmentDto>, NotFound>> Get(
@@ -47,6 +50,24 @@ public class AssignmentsModule : IEndpointModule
     {
         var userId = context.User.GetUserId();
         var query = new GetAssignmentsByGroup(request.GroupId, userId)
+        {
+            PageNumber = pageNumber ?? 1,
+            PageSize = pageSize ?? 10,
+        };
+        var assignment = await dispatcher.QueryAsync(query);
+
+        return ApplicationTypedResults.OkOrNotFound(assignment);
+    }
+
+    private async Task<Results<Ok<PagedResult<AssignmentDto>>, NotFound>> GetByUser(
+        [FromServices] IQueryDispatcher dispatcher,
+        HttpContext context,
+        int? pageNumber = null,
+        int? pageSize = null
+    )
+    {
+        var userId = context.User.GetUserId();
+        var query = new GetAssignmentsByUser(userId)
         {
             PageNumber = pageNumber ?? 1,
             PageSize = pageSize ?? 10,

@@ -65,6 +65,10 @@ internal sealed class ReadConfiguration :
 
         builder.HasMany(g => g.Posts)
             .WithOne(p => p.Group).HasForeignKey(p => p.GroupId);
+
+        builder.HasMany(g => g.Assignments)
+            .WithOne(a => a.StudyGroup)
+            .HasForeignKey(a => a.StudyGroupId);
     }
 
     public void Configure(EntityTypeBuilder<MemberReadModel> builder)
@@ -117,10 +121,6 @@ internal sealed class ReadConfiguration :
         builder.HasMany(a => a.Activities)
             .WithOne()
             .HasForeignKey(ac => ac.AssignmentId);
-
-        builder.HasOne(a => a.StudyGroup)
-            .WithMany()
-            .HasForeignKey(a => a.StudyGroupId);
     }
 
     public void Configure(EntityTypeBuilder<ActivityReadModel> builder)

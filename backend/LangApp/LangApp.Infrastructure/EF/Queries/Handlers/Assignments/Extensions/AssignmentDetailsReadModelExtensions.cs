@@ -18,6 +18,24 @@ namespace LangApp.Infrastructure.EF.Queries.Handlers.Assignments.Extensions;
 
 public static class AssignmentDetailsReadModelExtensions
 {
+    public static AssignmentDto ToDto(this AssignmentReadModel assignment, bool restricted = false)
+    {
+        return new AssignmentDto(
+            assignment.Id,
+            assignment.Name,
+            assignment.AuthorId,
+            assignment.StudyGroupId,
+            assignment.DueDate,
+            assignment.Activities.Select(ac =>
+                new ActivityDto(
+                    ac.Id,
+                    ac.MaxScore,
+                    ac.Details.ToDto(restricted)
+                )
+            ).ToList()
+        );
+    }
+
     public static ActivityDetailsDto ToDto(this ActivityDetailsReadModel details, bool restricted = false)
     {
         return details switch
