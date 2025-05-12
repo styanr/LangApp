@@ -39,10 +39,17 @@ public class SubmissionsModule : IEndpointModule
     private async Task<Results<Ok<PagedResult<AssignmentSubmissionDto>>, NotFound>> GetByAssignment(
         [AsParameters] GetSubmissionsByAssignmentRequest request,
         [FromServices] IQueryDispatcher dispatcher,
-        HttpContext context)
+        HttpContext context,
+        int? pageNumber = null,
+        int? pageSize = null
+    )
     {
         var userId = context.User.GetUserId();
-        var query = new GetSubmissionsByAssignment(request.AssignmentId, userId);
+        var query = new GetSubmissionsByAssignment(request.AssignmentId, userId)
+        {
+            PageNumber = pageNumber ?? 1,
+            PageSize = pageSize ?? 10,
+        };
         var submission = await dispatcher.QueryAsync(query);
 
         return ApplicationTypedResults.OkOrNotFound(submission);
