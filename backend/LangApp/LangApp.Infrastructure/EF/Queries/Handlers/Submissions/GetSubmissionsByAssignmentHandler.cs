@@ -56,6 +56,9 @@ internal class
                 s.Id,
                 s.AssignmentId,
                 s.StudentId,
+                s.SubmittedAt,
+                s.Status,
+                s.Score,
                 s.ActivitySubmissions.Select(asub =>
                 {
                     var gradeDto = asub.Grade != null

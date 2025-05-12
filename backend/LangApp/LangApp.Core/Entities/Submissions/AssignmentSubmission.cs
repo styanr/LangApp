@@ -84,7 +84,7 @@ public class AssignmentSubmission : AggregateRoot
 
         foreach (var gradedActivity in ActivitySubmissions.Where(a => a.Status == GradeStatus.Completed))
         {
-            if (!activityLookup.TryGetValue(gradedActivity.Id, out var activity))
+            if (!activityLookup.TryGetValue(gradedActivity.ActivityId, out var activity))
             {
                 continue;
             }

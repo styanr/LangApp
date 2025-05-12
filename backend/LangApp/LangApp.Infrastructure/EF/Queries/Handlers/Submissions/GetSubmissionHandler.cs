@@ -83,6 +83,9 @@ internal sealed class GetSubmissionHandler : IQueryHandler<GetSubmission, Assign
             submission.Id,
             submission.AssignmentId,
             submission.StudentId,
+            submission.SubmittedAt,
+            submission.Status,
+            submission.Score,
             submission.ActivitySubmissions.Select(asub => new ActivitySubmissionDto(
                 asub.Id,
                 asub.ActivityId,
