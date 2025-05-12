@@ -2,6 +2,7 @@ using LangApp.Infrastructure.BlobStorage;
 using LangApp.Infrastructure.EF;
 using LangApp.Infrastructure.EF.Identity;
 using LangApp.Infrastructure.EF.Services;
+using LangApp.Infrastructure.Email;
 using LangApp.Infrastructure.Hangfire;
 using LangApp.Infrastructure.PronunciationAssessment;
 using Microsoft.AspNetCore.Builder;
@@ -21,6 +22,7 @@ public static class Extensions
         services.AddHangfire();
         services.AddAzureBlobStorage(configuration);
         services.AddPronunciationAssessment(configuration);
+        services.AddEmail(configuration);
 
         services.AddHostedService<AppInitializer>();
 
