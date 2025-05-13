@@ -44,7 +44,7 @@ public class StudyGroup : AggregateRoot
     public void AddMembers(IEnumerable<Member> members)
     {
         var incoming = members as ICollection<Member> ?? members.ToList();
-        if (!incoming.Any()) return;
+        if (incoming.Count == 0) return;
 
         var intersect = _members.Intersect(incoming).ToList();
         if (intersect.Count != 0)

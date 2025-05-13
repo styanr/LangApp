@@ -3,6 +3,7 @@ using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.Common.Exceptions;
 using LangApp.Application.StudyGroups.Services.PolicyServices;
 using LangApp.Application.Submissions.Dto;
+using LangApp.Application.Submissions.Exceptions;
 using LangApp.Application.Submissions.Extensions;
 using LangApp.Core.Entities.Submissions;
 using LangApp.Core.Factories.Submissions;
@@ -46,6 +47,13 @@ public class CreateAssignmentSubmissionHandler : ICommandHandler<CreateAssignmen
         if (!canAccessGroup)
         {
             throw new UnauthorizedException(userId, assignment.StudyGroupId, "StudyGroup");
+        }
+
+        var submissionExists = await _repository.ExistsForAssignmentAsync(assignmentId, userId);
+
+        if (submissionExists)
+        {
+            throw new SubmissionAlreadyExists(assignmentId, userId);
         }
 
         List<ActivitySubmission> activitySubmissions = new();

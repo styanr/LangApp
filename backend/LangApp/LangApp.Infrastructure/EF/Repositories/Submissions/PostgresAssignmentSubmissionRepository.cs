@@ -23,6 +23,14 @@ internal class PostgresAssignmentSubmissionRepository : IAssignmentSubmissionRep
             .SingleOrDefaultAsync(s => s.Id == id);
     }
 
+    public Task<bool> ExistsForAssignmentAsync(Guid assignmentId, Guid userId)
+    {
+        return _submissions
+            .Where(s => s.AssignmentId == assignmentId)
+            .Where(s => s.StudentId == userId)
+            .AnyAsync();
+    }
+
     public async Task AddAsync(AssignmentSubmission submission)
     {
         _submissions.Add(submission);
