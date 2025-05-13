@@ -1,5 +1,6 @@
 using System.Net;
 using LangApp.Application.Auth.Options;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 
 namespace LangApp.Infrastructure.Email.DeepLinks;
@@ -17,9 +18,13 @@ public class DeepLinkGenerator : IDeepLinkGenerator
     {
         var apiUrl = _publicOptions.Value.BaseUrl;
 
-        var encodedToken = WebUtility.UrlEncode(token);
-        var encodedEmail = WebUtility.UrlEncode(email);
+        var queryParams = new Dictionary<string, string?>
+        {
+            { "email", email },
+            { "token", token }
+        };
 
-        return $"{apiUrl}/client/deep-link?link=reset-password?token={encodedToken}&email={encodedEmail}";
+        var query = QueryHelpers.AddQueryString($"{apiUrl}/client/deep-link", queryParams);
+        return query;
     }
 }

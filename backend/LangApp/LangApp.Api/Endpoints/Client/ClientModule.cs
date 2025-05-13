@@ -15,20 +15,21 @@ public class ClientModule : IEndpointModule
 
 
     private IResult RedirectToClientApp(
-        [FromQuery] string link,
         [FromServices] IOptions<ClientAppOptions> deepLinkOptions,
-        [FromServices] ILogger<ClientModule> logger)
+        [FromServices] ILogger<ClientModule> logger,
+        HttpContext context)
     {
-        if (string.IsNullOrWhiteSpace(link))
+        var queryString = context.Request.QueryString.Value;
+        if (string.IsNullOrWhiteSpace(queryString))
         {
-            logger.LogWarning("Redirect attempt with empty token parameter");
-            return Results.BadRequest("Token parameter is required");
+            logger.LogWarning("Cannot redirect to client app without a token");
+            return Results.BadRequest("Query string is required");
         }
 
         try
         {
             string appScheme = deepLinkOptions.Value.AppScheme ?? "testapp"; // Default fallback
-            string deepLink = $"{appScheme}://{Uri.EscapeDataString(link)}";
+            string deepLink = $"{appScheme}://{Uri.EscapeDataString(queryString)}";
             logger.LogInformation("Attempting to redirect to deep link: {DeepLink}", deepLink);
             var html = $@"
 <!DOCTYPE html>
@@ -76,7 +77,7 @@ public class ClientModule : IEndpointModule
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error processing redirect for token: {Token}", link);
+            logger.LogError(ex, "Error processing redirect for link: {QueryString}", queryString);
             return Results.BadRequest("Invalid request");
         }
     }
