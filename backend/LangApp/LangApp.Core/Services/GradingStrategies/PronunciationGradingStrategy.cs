@@ -17,7 +17,7 @@ public class PronunciationGradingStrategy : IGradingStrategy<PronunciationActivi
         _assessmentService = assessmentService;
     }
 
-    public async Task<SubmissionGrade> Grade(
+    public async Task<SubmissionGrade> GradeAsync(
         PronunciationActivityDetails activity,
         SubmissionDetails submission,
         CancellationToken cancellationToken = default)

@@ -22,7 +22,7 @@ public class MultipleChoiceGradingStrategyTests
             new(2, 1)
         ]);
 
-        var result = await _gradingStrategy.Grade(activity, submission);
+        var result = await _gradingStrategy.GradeAsync(activity, submission);
 
         Assert.Equal(100.0, result.ScorePercentage.Value, 2);
     }
@@ -37,7 +37,7 @@ public class MultipleChoiceGradingStrategyTests
             new(2, 3)
         ]);
 
-        var result = await _gradingStrategy.Grade(activity, submission);
+        var result = await _gradingStrategy.GradeAsync(activity, submission);
 
         Assert.Equal(33.33, Math.Round(result.ScorePercentage.Value, 2));
     }
@@ -49,7 +49,7 @@ public class MultipleChoiceGradingStrategyTests
         var submission = new MultipleChoiceSubmissionDetails([]);
 
         await Assert.ThrowsAsync<LangAppException>(() =>
-            _gradingStrategy.Grade(activity, submission));
+            _gradingStrategy.GradeAsync(activity, submission));
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class MultipleChoiceGradingStrategyTests
         var invalidSubmission = new SubmissionDetails();
 
         await Assert.ThrowsAsync<LangAppException>(() =>
-            _gradingStrategy.Grade(activity, invalidSubmission));
+            _gradingStrategy.GradeAsync(activity, invalidSubmission));
     }
 
     [Fact]
@@ -72,7 +72,7 @@ public class MultipleChoiceGradingStrategyTests
             new(-1, 0)
         ]);
 
-        var result = await _gradingStrategy.Grade(activity, submission);
+        var result = await _gradingStrategy.GradeAsync(activity, submission);
 
         Assert.Equal(33.33, Math.Round(result.ScorePercentage.Value, 2));
     }
@@ -83,7 +83,7 @@ public class MultipleChoiceGradingStrategyTests
         var activity = CreateSampleActivity();
         var submission = new MultipleChoiceSubmissionDetails([]);
 
-        var result = await _gradingStrategy.Grade(activity, submission);
+        var result = await _gradingStrategy.GradeAsync(activity, submission);
 
         Assert.Equal(0, result.ScorePercentage.Value);
     }

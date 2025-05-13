@@ -26,7 +26,7 @@ public class UpdateStudyGroupInfoCommandHandler : ICommandHandler<UpdateStudyGro
         var (studyGroupId, name, userId) = command;
 
         var studyGroup = await _repository.GetAsync(studyGroupId) ??
-                         throw new StudyGroupNotFoundException(studyGroupId);
+                         throw new StudyGroupNotFound(studyGroupId);
 
         if (!studyGroup.CanBeModifiedBy(userId))
         {

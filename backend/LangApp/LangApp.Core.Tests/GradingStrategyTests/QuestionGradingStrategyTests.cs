@@ -18,7 +18,7 @@ public class QuestionGradingStrategyTests
         var submission = new QuestionSubmissionDetails("Correct Answer");
 
         // Act
-        var result = await _gradingStrategy.Grade(activity, submission);
+        var result = await _gradingStrategy.GradeAsync(activity, submission);
 
         // Assert
         Assert.Equal(100, result.ScorePercentage.Value);
@@ -32,7 +32,7 @@ public class QuestionGradingStrategyTests
         var submission = new QuestionSubmissionDetails("correct answer");
 
         // Act
-        var result = await _gradingStrategy.Grade(activity, submission);
+        var result = await _gradingStrategy.GradeAsync(activity, submission);
 
         // Assert
         Assert.Equal(100, result.ScorePercentage.Value);
@@ -46,7 +46,7 @@ public class QuestionGradingStrategyTests
         var submission = new QuestionSubmissionDetails("  Correct Answer  ");
 
         // Act
-        var result = await _gradingStrategy.Grade(activity, submission);
+        var result = await _gradingStrategy.GradeAsync(activity, submission);
 
         // Assert
         Assert.Equal(100, result.ScorePercentage.Value);
@@ -60,7 +60,7 @@ public class QuestionGradingStrategyTests
         var submission = new QuestionSubmissionDetails("Wrong Answer");
 
         // Act
-        var result = await _gradingStrategy.Grade(activity, submission);
+        var result = await _gradingStrategy.GradeAsync(activity, submission);
 
         // Assert
         Assert.Equal(0, result.ScorePercentage.Value);
@@ -74,7 +74,7 @@ public class QuestionGradingStrategyTests
         var submission = new QuestionSubmissionDetails("Answer B");
 
         // Act
-        var result = await _gradingStrategy.Grade(activity, submission);
+        var result = await _gradingStrategy.GradeAsync(activity, submission);
 
         // Assert
         Assert.Equal(100, result.ScorePercentage.Value);
@@ -89,7 +89,7 @@ public class QuestionGradingStrategyTests
 
         // Act & Assert
         await Assert.ThrowsAsync<LangAppException>(() =>
-            _gradingStrategy.Grade(activity, incompatibleSubmission));
+            _gradingStrategy.GradeAsync(activity, incompatibleSubmission));
     }
 
     private QuestionActivityDetails CreateSampleActivity(List<string> answers)

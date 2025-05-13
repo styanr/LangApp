@@ -24,7 +24,7 @@ public class InMemoryGradingStrategyDispatcher : IGradingStrategyDispatcher
         var handlerType = typeof(IGradingStrategy<>).MakeGenericType(assignmentDetails.GetType());
         var handler = scope.ServiceProvider.GetRequiredService(handlerType);
 
-        var method = handlerType.GetMethod(nameof(IGradingStrategy<TAssignmentDetails>.Grade));
+        var method = handlerType.GetMethod(nameof(IGradingStrategy<TAssignmentDetails>.GradeAsync));
 
         return await (Task<SubmissionGrade>)method!.Invoke(handler,
             [assignmentDetails, submissionDetails, cancellationToken])!;

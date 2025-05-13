@@ -10,18 +10,6 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - pgdata:/var/lib/postgresql/data
-  test_db:
-    image: postgres
-    container_name: local_testpgdb
-    restart: always
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: test
-      POSTGRES_PASSWORD: test
-      POSTGRES_HOST_AUTH_METHOD: trust
-    volumes:
-      - testpgdata:/var/lib/postgresql/test-data
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin4_container
@@ -33,8 +21,12 @@ services:
       PGADMIN_DEFAULT_PASSWORD: pgadmin
     volumes:
       - pgadmin-data:/var/lib/pgadmin
-
+  aspire-dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard
+    container_name: dashboard
+    ports:
+      - 18888:18888
+      - 4317:18889
 volumes:
   pgdata:
-  testpgdata:
   pgadmin-data:

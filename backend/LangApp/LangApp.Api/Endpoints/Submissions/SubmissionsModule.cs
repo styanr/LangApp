@@ -25,6 +25,13 @@ public class SubmissionsModule : IEndpointModule
             .WithTags("Submissions");
         assignmentGroup.MapPost("/", Create).WithName("CreateAssignmentSubmission");
         assignmentGroup.MapGet("", GetByAssignment).WithName("GetSubmissionsByAssignment");
+
+        app.MapVersionedGroup("assignments/{assignmentId:guid}").WithTags("Submissions")
+            .MapPost("activities/{activityId:guid}/evaluate-pronunciation", EvaluatePronunciationSubmission)
+            .WithName("EvaluatePronunciationSubmission")
+            .WithDescription(
+                "This endpoint is used to evaluate pronunciation before actually submitting the assignment. " +
+                "It is used for receiving feedback to the student and giving them the opportunity to improve their pronunciation.");
     }
 
     private async Task<Results<Ok<AssignmentSubmissionDto>, NotFound>> Get(
@@ -93,5 +100,20 @@ public class SubmissionsModule : IEndpointModule
 
         await dispatcher.DispatchAsync(command);
         return TypedResults.NoContent();
+    }
+
+    private async Task<SubmissionGradeDto> EvaluatePronunciationSubmission(
+        [FromRoute] Guid assignmentId,
+        [FromRoute] Guid activityId,
+        [FromBody] EvaluatePronunciationSubmissionRequest request,
+        [FromServices] ICommandDispatcher dispatcher,
+        HttpContext context
+    )
+    {
+        var userId = context.User.GetUserId();
+
+        var command = new EvaluatePronunciation(request.FileUri, assignmentId, activityId, userId);
+        var result = await dispatcher.DispatchWithResultAsync(command);
+        return result;
     }
 }

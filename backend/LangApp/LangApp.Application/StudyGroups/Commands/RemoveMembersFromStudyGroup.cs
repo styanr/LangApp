@@ -29,7 +29,7 @@ public class RemoveMembersFromStudyGroupHandler : ICommandHandler<RemoveMembersF
         var members = membersModel.Select(m => new Member(m, studyGroupId));
 
         var studyGroup = await _repository.GetAsync(studyGroupId) ??
-                         throw new StudyGroupNotFoundException(studyGroupId);
+                         throw new StudyGroupNotFound(studyGroupId);
 
         if (!studyGroup.CanBeModifiedBy(userId))
         {

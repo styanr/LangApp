@@ -34,7 +34,7 @@ public class PronunciationGradingStrategyTests
             .ReturnsAsync(expectedGrade);
 
         // Act
-        var result = await _gradingStrategy.Grade(activity, submission);
+        var result = await _gradingStrategy.GradeAsync(activity, submission);
 
         // Assert
         Assert.Equal(expectedGrade.ScorePercentage.Value, result.ScorePercentage.Value);
@@ -52,7 +52,7 @@ public class PronunciationGradingStrategyTests
 
         // Act & Assert
         await Assert.ThrowsAsync<LangAppException>(() =>
-            _gradingStrategy.Grade(activity, invalidSubmission));
+            _gradingStrategy.GradeAsync(activity, invalidSubmission));
     }
 
     [Fact]

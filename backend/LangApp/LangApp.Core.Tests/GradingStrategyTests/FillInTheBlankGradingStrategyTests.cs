@@ -27,7 +27,7 @@ public class FillInTheBlankGradingStrategyTests
         ]);
 
         // Act
-        var result = await _gradingStrategy.Grade(activity, submission, CancellationToken.None);
+        var result = await _gradingStrategy.GradeAsync(activity, submission, CancellationToken.None);
 
         // Assert
         Assert.Equal(100.0, result.ScorePercentage.Value);
@@ -45,7 +45,7 @@ public class FillInTheBlankGradingStrategyTests
         ]);
 
         // Act
-        var result = await _gradingStrategy.Grade(activity, submission, CancellationToken.None);
+        var result = await _gradingStrategy.GradeAsync(activity, submission, CancellationToken.None);
 
         // Assert
         Assert.Equal(66.67, Math.Round(result.ScorePercentage.Value, 2));
@@ -62,7 +62,7 @@ public class FillInTheBlankGradingStrategyTests
         ]);
 
         // Act
-        var result = await _gradingStrategy.Grade(activity, submission, CancellationToken.None);
+        var result = await _gradingStrategy.GradeAsync(activity, submission, CancellationToken.None);
 
         // Assert
         // Only 2 out of 3 possible answers were provided, and both were correct
@@ -81,7 +81,7 @@ public class FillInTheBlankGradingStrategyTests
         ]);
 
         // Act
-        var result = await _gradingStrategy.Grade(activity, submission, CancellationToken.None);
+        var result = await _gradingStrategy.GradeAsync(activity, submission, CancellationToken.None);
 
         // Assert
         Assert.Equal(100.0, result.ScorePercentage.Value);
@@ -99,7 +99,7 @@ public class FillInTheBlankGradingStrategyTests
         ]);
 
         // Act
-        var result = await _gradingStrategy.Grade(activity, submission, CancellationToken.None);
+        var result = await _gradingStrategy.GradeAsync(activity, submission, CancellationToken.None);
 
         // Assert
         Assert.Equal(100.0, result.ScorePercentage.Value);
@@ -117,7 +117,7 @@ public class FillInTheBlankGradingStrategyTests
         ]);
 
         // Act
-        var result = await _gradingStrategy.Grade(activity, submission, CancellationToken.None);
+        var result = await _gradingStrategy.GradeAsync(activity, submission, CancellationToken.None);
 
         // Assert
         Assert.Equal(100.0, result.ScorePercentage.Value);
@@ -136,7 +136,7 @@ public class FillInTheBlankGradingStrategyTests
         ]);
 
         // Act
-        var result = await _gradingStrategy.Grade(activity, submission, CancellationToken.None);
+        var result = await _gradingStrategy.GradeAsync(activity, submission, CancellationToken.None);
 
         // Assert
         Assert.Equal(100.0, result.ScorePercentage.Value);
@@ -154,7 +154,7 @@ public class FillInTheBlankGradingStrategyTests
         ]);
 
         // Act
-        var result = await _gradingStrategy.Grade(activity, submission, CancellationToken.None);
+        var result = await _gradingStrategy.GradeAsync(activity, submission, CancellationToken.None);
 
         // Assert
         Assert.Equal(66.67, Math.Round(result.ScorePercentage.Value, 2));
@@ -172,7 +172,7 @@ public class FillInTheBlankGradingStrategyTests
         ]);
 
         // Act
-        var result = await _gradingStrategy.Grade(activity, submission, CancellationToken.None);
+        var result = await _gradingStrategy.GradeAsync(activity, submission, CancellationToken.None);
 
         // Assert
         Assert.Equal(66.67, Math.Round(result.ScorePercentage.Value, 2));
@@ -190,7 +190,7 @@ public class FillInTheBlankGradingStrategyTests
         ]);
 
         // Act
-        var result = await _gradingStrategy.Grade(activity, submission, CancellationToken.None);
+        var result = await _gradingStrategy.GradeAsync(activity, submission, CancellationToken.None);
 
         // Assert
         Assert.Equal(66.67, Math.Round(result.ScorePercentage.Value, 2));
@@ -205,7 +205,7 @@ public class FillInTheBlankGradingStrategyTests
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<LangAppException>(async () =>
-            await _gradingStrategy.Grade(activity, submission, CancellationToken.None));
+            await _gradingStrategy.GradeAsync(activity, submission, CancellationToken.None));
 
         Assert.Contains("not compatible with the assignment", exception.Message);
     }

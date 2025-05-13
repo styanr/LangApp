@@ -1,4 +1,5 @@
 using LangApp.Core.Services.PronunciationAssessment;
+using LangApp.Infrastructure.PronunciationAssessment.Audio;
 using LangApp.Infrastructure.PronunciationAssessment.Options;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
@@ -13,6 +14,7 @@ public static class Extensions
         IConfiguration configuration)
     {
         services.AddOptions<SpeechConfigOptions>(configuration, "Azure:Speech");
+        services.AddScoped<IAudioFetcher, AudioFetcher>();
         services.AddScoped<IPronunciationAssessmentService, PronunciationAssessmentService>();
 
         return services;

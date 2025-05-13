@@ -3,11 +3,11 @@ using LangApp.Core.Exceptions;
 
 namespace LangApp.Application.StudyGroups.Exceptions;
 
-public class StudyGroupNotFoundException : NotFoundException
+public class StudyGroupNotFound : NotFoundException
 {
     public Guid Id { get; }
 
-    public StudyGroupNotFoundException(Guid id) : base($"Study group with ID {id} was not found.")
+    public StudyGroupNotFound(Guid id) : base($"Study group with ID {id} was not found.")
     {
         Id = id;
     }

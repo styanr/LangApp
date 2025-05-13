@@ -45,7 +45,7 @@ public class CreateAssignmentHandler : ICommandHandler<CreateAssignment, Guid>
         }
 
         var group = await _groupRepository.GetAsync(groupId)
-                    ?? throw new StudyGroupNotFoundException(groupId);
+                    ?? throw new StudyGroupNotFound(groupId);
 
         if (!group.CanBeModifiedBy(authorId))
         {

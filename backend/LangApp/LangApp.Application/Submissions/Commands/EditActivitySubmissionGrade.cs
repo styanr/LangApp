@@ -40,7 +40,7 @@ public class EditActivitySubmissionGradeHandler : ICommandHandler<EditActivitySu
         var assignment = await _assignmentRepository.GetAsync(assignmentSubmission.AssignmentId) ??
                          throw new AssignmentNotFound(assignmentSubmission.AssignmentId);
         var studyGroup = await _studyGroupRepository.GetAsync(assignment.StudyGroupId) ??
-                         throw new StudyGroupNotFoundException(assignment.StudyGroupId);
+                         throw new StudyGroupNotFound(assignment.StudyGroupId);
 
 
         if (!assignment.CanBeModifiedBy(command.UserId) || !studyGroup.CanBeModifiedBy(command.UserId))

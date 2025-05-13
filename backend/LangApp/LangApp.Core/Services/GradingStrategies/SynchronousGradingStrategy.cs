@@ -8,7 +8,7 @@ namespace LangApp.Core.Services.GradingStrategies;
 public abstract class SynchronousGradingStrategy<TAssignmentDetails> : IGradingStrategy<TAssignmentDetails>
     where TAssignmentDetails : ActivityDetails
 {
-    public Task<SubmissionGrade> Grade(TAssignmentDetails assignment, SubmissionDetails submission,
+    public Task<SubmissionGrade> GradeAsync(TAssignmentDetails assignment, SubmissionDetails submission,
         CancellationToken cancellationToken = default(CancellationToken))
     {
         try

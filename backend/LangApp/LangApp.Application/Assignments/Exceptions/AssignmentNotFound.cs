@@ -14,10 +14,10 @@ public class AssignmentNotFound : NotFoundException
 
 public class ActivityNotFound : NotFoundException
 {
-    public Guid AssignmentId { get; }
+    public Guid ActivityId { get; }
 
-    public ActivityNotFound(Guid assignmentId) : base($"Assignment with id {assignmentId} not found.")
+    public ActivityNotFound(Guid activityId) : base($"Activity with id {activityId} not found.")
     {
-        AssignmentId = assignmentId;
+        ActivityId = activityId;
     }
 }

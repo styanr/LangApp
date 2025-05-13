@@ -42,6 +42,6 @@ internal sealed class GetStudyGroupHandler : IQueryHandler<GetStudyGroup, StudyG
                 )
             )).AsNoTracking().SingleOrDefaultAsync();
 
-        return group ?? throw new StudyGroupNotFoundException(query.Id);
+        return group ?? throw new StudyGroupNotFound(query.Id);
     }
 }

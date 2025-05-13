@@ -29,7 +29,7 @@ public class AssignmentCreatedEventHandler : IDomainEventHandler<AssignmentCreat
             var assignment = notification.Assignment;
 
             var studyGroup = await groupRepository.GetAsync(assignment.StudyGroupId)
-                             ?? throw new StudyGroupNotFoundException(assignment.StudyGroupId);
+                             ?? throw new StudyGroupNotFound(assignment.StudyGroupId);
 
             jobDataList = studyGroup.Members.Select(member => new NotifyUserNewAssignmentJobData(
                 member.UserId,
