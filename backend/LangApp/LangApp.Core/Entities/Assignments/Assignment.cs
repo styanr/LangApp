@@ -1,4 +1,5 @@
 using LangApp.Core.Common;
+using LangApp.Core.Events.Assignments;
 using LangApp.Core.Exceptions;
 
 namespace LangApp.Core.Entities.Assignments;
@@ -38,7 +39,11 @@ public class Assignment : AggregateRoot
     internal static Assignment Create(Guid id, string name, string? description, Guid authorId, Guid studyGroupId,
         DateTime dueDate)
     {
-        return new Assignment(id, name, description, authorId, studyGroupId, dueDate);
+        var assignment = new Assignment(id, name, description, authorId, studyGroupId, dueDate);
+
+        assignment.AddEvent(new AssignmentCreatedEvent(assignment));
+
+        return assignment;
     }
 
     internal static Assignment Create(Guid id, string name, string? description, Guid authorId, Guid studyGroupId,
@@ -47,6 +52,8 @@ public class Assignment : AggregateRoot
         var assignment = new Assignment(id, name, description, authorId, studyGroupId, dueDate);
 
         assignment.AddMultipleActivities(activities);
+
+        assignment.AddEvent(new AssignmentCreatedEvent(assignment));
         return assignment;
     }
 

@@ -1,5 +1,7 @@
 using LangApp.Application.Common.Services;
+using LangApp.Infrastructure.Email.DeepLinks;
 using LangApp.Infrastructure.Email.Options;
+using LangApp.Infrastructure.Email.TemplateRenderer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +16,8 @@ public static class Extensions
         IConfiguration configuration)
     {
         var sendGrid = configuration.GetOptions<SendGridOptions>("SendGrid");
+        services.AddTransient<IEmailTemplateRenderer, EmailTemplateRenderer>();
+        services.AddScoped<IDeepLinkGenerator, DeepLinkGenerator>();
         services.AddOptions<SendGridOptions>(configuration, "SendGrid");
 
         services.AddSendGrid(options => { options.ApiKey = sendGrid.ApiKey; });

@@ -89,7 +89,7 @@ public class AssignmentsModule : IEndpointModule
             request.Description,
             userId,
             request.GroupId,
-            request.DueDate,
+            request.DueDate.UtcDateTime,
             request.Activities
         );
 

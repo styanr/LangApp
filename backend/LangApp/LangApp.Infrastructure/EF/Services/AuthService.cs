@@ -1,3 +1,4 @@
+using LangApp.Application.Auth.Exceptions;
 using LangApp.Application.Auth.Models;
 using LangApp.Application.Auth.Services;
 using LangApp.Application.Common.Exceptions;
@@ -62,7 +63,7 @@ internal class AuthService : IAuthService
 
         if (token is null || token.IsRevoked || token.ExpiresAtUtc <= DateTime.UtcNow)
         {
-            throw new LangAppException("Refresh token expired");
+            throw new InvalidCredentialsException("Refresh token expired");
         }
 
         var user = token.User;
@@ -72,5 +73,23 @@ internal class AuthService : IAuthService
         await _context.SaveChangesAsync();
 
         return new TokenResponse(accessToken, token.Token);
+    }
+
+    public async Task<string?> RequestPasswordReset(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user is null) return null;
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        return token;
+    }
+
+    public async Task<bool> ResetPasswordAsync(string email, string token, string password)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user is null) return false;
+
+        var result = await _userManager.ResetPasswordAsync(user, token, password);
+        return result.Succeeded;
     }
 }

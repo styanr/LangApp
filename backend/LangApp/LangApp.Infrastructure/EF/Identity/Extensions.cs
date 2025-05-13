@@ -20,6 +20,10 @@ public static class Extensions
             configuration.GetSection(JwtOptions.Section)
         );
 
+        // todo get this from the config
+        services.Configure<DataProtectionTokenProviderOptions>(options =>
+            options.TokenLifespan = TimeSpan.FromHours(2));
+
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ITokenFactory, TokenFactory>();
 

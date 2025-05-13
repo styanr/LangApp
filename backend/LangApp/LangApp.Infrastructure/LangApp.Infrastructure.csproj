@@ -29,6 +29,7 @@
     <ItemGroup>
         <ProjectReference Include="..\LangApp.Application\LangApp.Application.csproj"/>
         <ProjectReference Include="..\LangApp.Core\LangApp.Core.csproj"/>
+        <ProjectReference Include="..\Shared.Queries\Shared.Queries.csproj"/>
         <ProjectReference Include="..\Shared\Shared.csproj"/>
     </ItemGroup>
 

@@ -1,5 +1,6 @@
 using System.Reflection;
 using LangApp.Application.Assignments.Services;
+using LangApp.Application.Auth.Options;
 using LangApp.Application.Common.Commands;
 using LangApp.Application.Common.DomainEvents;
 using LangApp.Application.Common.Strategies;
@@ -13,15 +14,17 @@ using LangApp.Core.Factories.Submissions;
 using LangApp.Core.Factories.Users;
 using LangApp.Core.Services.GradingStrategies;
 using LangApp.Core.Services.KeyGeneration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LangApp.Application.Common;
 
 public static class Extensions
 {
-    public static IServiceCollection AddApplication(this IServiceCollection services)
+    public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddCommands();
+        services.AddDeeplinkConfiguration(configuration);
         var assembly = Assembly.GetAssembly(typeof(IGradingStrategy<>))!;
 
         services.Scan(s => s.FromAssemblies(assembly)

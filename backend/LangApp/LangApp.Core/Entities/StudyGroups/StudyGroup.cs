@@ -60,13 +60,13 @@ public class StudyGroup : AggregateRoot
     public void RemoveMembers(IEnumerable<Member> members)
     {
         var list = members.ToList();
-        // var except = list.Except(Members).ToList();
-        //
-        // if (except.Count != 0) throw new CantRemoveMembersException(except);
+        var missing = list.Except(_members).ToList();
+
+        if (missing.Count != 0)
+            throw new CantRemoveMembersException(missing);
 
         _members.ExceptWith(list);
-
-        AddEvent(new StudyGroupRemovedMembers(this, list));
+        AddEvent(new StudyGroupMembersRemoved(this, list));
     }
 
     public void UpdateName(string name)

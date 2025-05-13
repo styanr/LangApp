@@ -16,7 +16,7 @@ builder.Logging.AddConsole();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwagger();
 
-builder.Services.AddApplication();
+builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddJwtBearerAuthentication(builder.Configuration);

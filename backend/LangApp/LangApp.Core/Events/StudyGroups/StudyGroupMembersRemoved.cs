@@ -4,4 +4,4 @@ using LangApp.Core.ValueObjects;
 
 namespace LangApp.Core.Events.StudyGroups;
 
-public record StudyGroupRemovedMembers(StudyGroup StudyGroup, List<Member> Members) : IDomainEvent;
+public record StudyGroupMembersRemoved(StudyGroup StudyGroup, List<Member> Members) : IDomainEvent;
