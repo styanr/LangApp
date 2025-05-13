@@ -43,6 +43,7 @@ public class CreateAssignmentSubmissionHandler : ICommandHandler<CreateAssignmen
         var assignment = await _assignmentRepository.GetAsync(assignmentId) ??
                          throw new AssignmentNotFound(assignmentId);
 
+
         var canAccessGroup = await _groupAccessPolicy.IsSatisfiedBy(assignment.StudyGroupId, userId);
         if (!canAccessGroup)
         {
@@ -54,6 +55,11 @@ public class CreateAssignmentSubmissionHandler : ICommandHandler<CreateAssignmen
         if (submissionExists)
         {
             throw new SubmissionAlreadyExists(assignmentId, userId);
+        }
+
+        if (assignment.DueDate < DateTime.UtcNow)
+        {
+            throw new AssignmentOverdue(assignmentId, assignment.DueDate);
         }
 
         List<ActivitySubmission> activitySubmissions = new();
