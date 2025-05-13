@@ -84,12 +84,16 @@ internal class AuthService : IAuthService
         return token;
     }
 
-    public async Task<bool> ResetPasswordAsync(string email, string token, string password)
+    public async Task ResetPasswordAsync(string email, string token, string password)
     {
         var user = await _userManager.FindByEmailAsync(email);
-        if (user is null) return false;
+        if (user is null) return;
 
         var result = await _userManager.ResetPasswordAsync(user, token, password);
-        return result.Succeeded;
+
+        if (!result.Succeeded)
+        {
+            throw new ValidationException(result.Errors.Select(e => e.Description));
+        }
     }
 }

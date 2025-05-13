@@ -48,7 +48,7 @@ internal sealed class IdentityUserRepository : IApplicationUserRepository
 
         if (!result.Succeeded)
         {
-            throw new RegisterValidationException(result.Errors.Select(e => e.Description));
+            throw new ValidationException(result.Errors.Select(e => e.Description));
         }
     }
 

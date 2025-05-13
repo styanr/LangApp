@@ -23,11 +23,6 @@ public class ResetPasswordHandler : ICommandHandler<ResetPassword>
     {
         var (email, token, password) = command;
 
-        var success = await _authService.ResetPasswordAsync(email, token, password);
-
-        if (!success)
-        {
-            throw new InvalidCredentialsException("Password reset failed");
-        }
+        await _authService.ResetPasswordAsync(email, token, password);
     }
 }

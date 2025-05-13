@@ -24,7 +24,7 @@ public class ExceptionMiddleware : IMiddleware
         {
             await CreateResponse(context, StatusCodes.Status404NotFound, e);
         }
-        catch (RegisterValidationException e)
+        catch (ValidationException e)
         {
             await CreateResponse(context, StatusCodes.Status400BadRequest, e,
                 e => new() { { "validation_errors", e.Errors } }
