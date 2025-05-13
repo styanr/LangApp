@@ -5,6 +5,11 @@ using LangApp.Core.ValueObjects;
 
 namespace LangApp.Core.Entities.StudyGroups;
 
+internal static class StudyGroupConstants
+{
+    public const int MaxMembers = 8;
+}
+
 public class StudyGroup : AggregateRoot
 {
     private readonly HashSet<Member> _members = new();
@@ -36,17 +41,20 @@ public class StudyGroup : AggregateRoot
         _members = [..members];
     }
 
-    // TODO: use a simple list here
     public void AddMembers(IEnumerable<Member> members)
     {
-        var list = members.ToList();
-        var intersect = Members.Intersect(list).ToList();
+        var incoming = members as ICollection<Member> ?? members.ToList();
+        if (!incoming.Any()) return;
 
-        if (intersect.Count != 0) throw new AlreadyContainsMembersException(intersect);
+        var intersect = _members.Intersect(incoming).ToList();
+        if (intersect.Count != 0)
+            throw new AlreadyContainsMembersException(intersect);
 
-        _members.UnionWith(list);
+        if (incoming.Count + _members.Count > StudyGroupConstants.MaxMembers)
+            throw new TooManyMembersException(incoming.Count + _members.Count, StudyGroupConstants.MaxMembers);
 
-        AddEvent(new StudyGroupMembersAdded(this, list));
+        _members.UnionWith(incoming);
+        AddEvent(new StudyGroupMembersAdded(this, incoming.ToList()));
     }
 
     public void RemoveMembers(IEnumerable<Member> members)
