@@ -20,11 +20,16 @@
         <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.12.0-beta.1"/>
         <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.12.0"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="8.1.1"/>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\LangApp.Application\LangApp.Application.csproj"/>
         <ProjectReference Include="..\LangApp.Infrastructure\LangApp.Infrastructure.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Common\Configuration\" />
     </ItemGroup>
 
 </Project>

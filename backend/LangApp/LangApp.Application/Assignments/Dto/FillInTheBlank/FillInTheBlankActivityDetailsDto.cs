@@ -8,7 +8,7 @@ public record FillInTheBlankAnswerDto(
 
 public record FillInTheBlankActivityDetailsDto(
     string TemplateText,
-    List<FillInTheBlankAnswerDto> Answers) : ActivityDetailsDto(ActivityType.FillInTheBlank);
+    List<FillInTheBlankAnswerDto> Answers) : ActivityDetailsDto();
 
 public record FillInTheBlankActivityRestrictedDetailsDto(
-    string TemplateText) : ActivityDetailsDto(ActivityType.FillInTheBlank);
+    string TemplateText) : ActivityDetailsDto();

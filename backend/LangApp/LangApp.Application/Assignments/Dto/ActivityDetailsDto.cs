@@ -8,14 +8,13 @@ using LangApp.Core.Enums;
 
 namespace LangApp.Application.Assignments.Dto;
 
-[JsonDerivedType(typeof(MultipleChoiceActivityDetailsDto))]
-[JsonDerivedType(typeof(MultipleChoiceActivityRestrictedDetailsDto))]
-[JsonDerivedType(typeof(FillInTheBlankActivityDetailsDto))]
-[JsonDerivedType(typeof(FillInTheBlankActivityRestrictedDetailsDto))]
-[JsonDerivedType(typeof(PronunciationActivityDetailsDto))]
-[JsonDerivedType(typeof(QuestionActivityDetailsDto))]
-[JsonDerivedType(typeof(QuestionActivityRestrictedDetailsDto))]
-[JsonDerivedType(typeof(WritingActivityDetailsDto))]
-public record ActivityDetailsDto(
-    ActivityType Type
-);
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "activityType")]
+[JsonDerivedType(typeof(MultipleChoiceActivityDetailsDto), typeDiscriminator: "MultipleChoice")]
+[JsonDerivedType(typeof(MultipleChoiceActivityRestrictedDetailsDto), typeDiscriminator: "MultipleChoiceRestricted")]
+[JsonDerivedType(typeof(FillInTheBlankActivityDetailsDto), typeDiscriminator: "FillInTheBlank")]
+[JsonDerivedType(typeof(FillInTheBlankActivityRestrictedDetailsDto), typeDiscriminator: "FillInTheBlankRestricted")]
+[JsonDerivedType(typeof(PronunciationActivityDetailsDto), typeDiscriminator: "Pronunciation")]
+[JsonDerivedType(typeof(QuestionActivityDetailsDto), typeDiscriminator: "Question")]
+[JsonDerivedType(typeof(QuestionActivityRestrictedDetailsDto), typeDiscriminator: "QuestionRestricted")]
+[JsonDerivedType(typeof(WritingActivityDetailsDto), typeDiscriminator: "Writing")]
+public record ActivityDetailsDto;

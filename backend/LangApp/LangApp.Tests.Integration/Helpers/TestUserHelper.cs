@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using LangApp.Application.Auth.Commands;
+using LangApp.Application.Auth.Models;
 using LangApp.Application.Users.Dto;
 using LangApp.Application.Users.Models;
 using LangApp.Core.Enums;
@@ -39,10 +40,9 @@ public class TestUserHelper
         loginResponse.EnsureSuccessStatusCode();
 
         var content = await loginResponse.Content.ReadAsStringAsync();
-        var schema = new { Token = "" };
-        var tokenResponse = JsonConvert.DeserializeAnonymousType(content, schema)!;
+        var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(content)!;
 
-        var authHeader = new AuthenticationHeaderValue("Bearer", tokenResponse.Token);
+        var authHeader = new AuthenticationHeaderValue("Bearer", tokenResponse.AccessToken);
         _client.DefaultRequestHeaders.Authorization = authHeader;
 
         var meResponse = await _client.GetAsync("/api/v1/users/me");
@@ -52,6 +52,6 @@ public class TestUserHelper
             await meResponse.Content.ReadAsStringAsync()
         )!;
 
-        return (tokenResponse.Token, user.Id);
+        return (tokenResponse.AccessToken, user.Id);
     }
 }

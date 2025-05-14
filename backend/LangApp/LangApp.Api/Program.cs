@@ -1,5 +1,4 @@
 using LangApp.Api.Auth;
-using LangApp.Api.Common.Configuration;
 using LangApp.Api.Common.Endpoints;
 using LangApp.Api.Middlewares;
 using LangApp.Api.OpenApi;
@@ -45,11 +44,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddJwtBearerAuthentication(builder.Configuration);
 
 builder.Services.AddExceptionMiddleware();
-builder.Services.Configure<JsonOptions>(opt =>
-    {
-        opt.SerializerOptions.Converters.Add(new ActivityJsonConverter());
-        opt.SerializerOptions.Converters.Add(new SubmissionJsonConverter());
-    }
+builder.Services.Configure<JsonOptions>(opt => { opt.SerializerOptions.PropertyNameCaseInsensitive = true; }
 );
 
 var app = builder.Build();

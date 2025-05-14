@@ -3,7 +3,7 @@ using LangApp.Core.Enums;
 namespace LangApp.Application.Assignments.Dto.Question;
 
 public record QuestionActivityDetailsDto(string Question, List<string> Answers, int MaxLength)
-    : ActivityDetailsDto(ActivityType.Question);
+    : ActivityDetailsDto;
 
 public record QuestionActivityRestrictedDetailsDto(string Question, int MaxLength)
-    : ActivityDetailsDto(ActivityType.Question);
+    : ActivityDetailsDto;

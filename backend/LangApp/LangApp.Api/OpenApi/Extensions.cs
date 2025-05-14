@@ -31,6 +31,7 @@ public static class Extensions
                     new List<string>()
                 }
             });
+            options.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
         });
 
         return services;

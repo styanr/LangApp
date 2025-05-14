@@ -1,7 +1,6 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using FluentAssertions;
-using LangApp.Api.Common.Configuration;
 using LangApp.Api.Endpoints.Assignments.Models;
 using LangApp.Application.Assignments.Dto;
 using LangApp.Application.Assignments.Dto.MultipleChoice;
@@ -68,6 +67,13 @@ public class AssignmentCreationTests : IClassFixture<LangAppApplicationFactory>,
             ]
         );
 
+        var json = JsonSerializer.Serialize(createDto, new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        });
+        Console.WriteLine(json);
+
         var response = await _client.PostAsJsonAsync("/api/v1/assignments", createDto);
         response.EnsureSuccessStatusCode();
 
@@ -83,7 +89,6 @@ public class AssignmentCreationTests : IClassFixture<LangAppApplicationFactory>,
         {
             PropertyNameCaseInsensitive = true
         };
-        serializerOptions.Converters.Add(new ActivityJsonConverter());
 
         var assignment = JsonSerializer.Deserialize<AssignmentDto>(content, serializerOptions);
 
@@ -91,7 +96,7 @@ public class AssignmentCreationTests : IClassFixture<LangAppApplicationFactory>,
         assignment.Activities.Should().SatisfyRespectively(
             first =>
             {
-                first.Details.Type.Should().Be(ActivityType.Question);
+                first.Details.Should().BeOfType<QuestionActivityDetailsDto>();
                 var question = first.Details as QuestionActivityDetailsDto;
                 question.Should().NotBeNull();
                 question.Question.Should().Be("Complete the sentence...");
@@ -99,7 +104,7 @@ public class AssignmentCreationTests : IClassFixture<LangAppApplicationFactory>,
             },
             second =>
             {
-                second.Details.Type.Should().Be(ActivityType.MultipleChoice);
+                second.Details.Should().BeOfType<MultipleChoiceActivityDetailsDto>();
                 var mc = second.Details as MultipleChoiceActivityDetailsDto;
                 mc.Should().NotBeNull();
                 mc.Questions.Should().HaveCount(1);

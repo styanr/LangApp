@@ -1,7 +1,6 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using FluentAssertions;
-using LangApp.Api.Common.Configuration;
 using LangApp.Api.Endpoints.Assignments.Models;
 using LangApp.Api.Endpoints.Submissions.Models;
 using LangApp.Application.Assignments.Dto;
@@ -89,7 +88,6 @@ public class SubmissionCreationTests : IClassFixture<LangAppApplicationFactory>,
         {
             PropertyNameCaseInsensitive = true
         };
-        serializerOptions.Converters.Add(new SubmissionJsonConverter());
 
         var submission = JsonSerializer.Deserialize<AssignmentSubmissionDto>(content, serializerOptions);
 
@@ -106,14 +104,14 @@ public class SubmissionCreationTests : IClassFixture<LangAppApplicationFactory>,
         submissions.Should().SatisfyRespectively(
             first =>
             {
-                first.Details.Type.Should().Be(ActivityType.Question);
+                first.Details.Should().BeOfType<QuestionActivitySubmissionDetailsDto>();
                 var answer = first.Details as QuestionActivitySubmissionDetailsDto;
                 answer.Should().NotBeNull();
                 answer.Answer.Should().Be("sun");
             },
             second =>
             {
-                second.Details.Type.Should().Be(ActivityType.MultipleChoice);
+                second.Details.Should().BeOfType<MultipleChoiceActivitySubmissionDetailsDto>();
                 var mc = second.Details as MultipleChoiceActivitySubmissionDetailsDto;
                 ;
                 mc.Should().NotBeNull();
@@ -161,7 +159,6 @@ public class SubmissionCreationTests : IClassFixture<LangAppApplicationFactory>,
         {
             PropertyNameCaseInsensitive = true
         };
-        serializerOptions.Converters.Add(new ActivityJsonConverter());
 
         var assignment = JsonSerializer.Deserialize<AssignmentDto>(content, serializerOptions);
         assignment.Should().NotBeNull();
