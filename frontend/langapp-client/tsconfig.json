@@ -14,5 +14,5 @@
     "**/*.ts",
     "**/*.tsx",
     "nativewind-env.d.ts"
-  ]
+, "orval.config.js"  ]
 }

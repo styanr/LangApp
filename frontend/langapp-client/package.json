@@ -8,9 +8,11 @@
     "prebuild": "expo prebuild",
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" && prettier -c \"**/*.{js,jsx,ts,tsx,json}\"",
     "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "generate:api": "orval"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native-community/netinfo": "11.4.1",
     "@tanstack/react-query": "^5.76.1",
     "expo": "^53.0.9",
@@ -29,12 +31,14 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@openapitools/openapi-generator-cli": "^2.20.0",
     "@types/react": "~19.0.10",
     "babel-plugin-module-resolver": "^5.0.2",
     "eslint": "^9.25.1",
     "eslint-config-expo": "^9.2.0",
     "eslint-config-prettier": "^10.1.2",
-    "prettier": "^3.2.5",
+    "orval": "^7.9.0",
+    "prettier": "3.5.3",
     "prettier-plugin-tailwindcss": "^0.5.11",
     "tailwindcss": "^3.4.0",
     "typescript": "~5.8.3"

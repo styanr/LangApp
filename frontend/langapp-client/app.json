@@ -29,6 +29,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
+    },
+    "extra": {
+      "apiUrl": "http://localhost:5000",
+      "specUrl": "http://localhost:5000/swagger/v1/swagger.json"
     }
   }
 }
