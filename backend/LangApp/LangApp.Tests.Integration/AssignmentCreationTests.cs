@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using FluentAssertions;
 using LangApp.Api.Endpoints.Assignments.Models;
 using LangApp.Application.Assignments.Dto;
@@ -72,7 +73,6 @@ public class AssignmentCreationTests : IClassFixture<LangAppApplicationFactory>,
             WriteIndented = true,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         });
-        Console.WriteLine(json);
 
         var response = await _client.PostAsJsonAsync("/api/v1/assignments", createDto);
         response.EnsureSuccessStatusCode();
@@ -89,6 +89,7 @@ public class AssignmentCreationTests : IClassFixture<LangAppApplicationFactory>,
         {
             PropertyNameCaseInsensitive = true
         };
+        serializerOptions.Converters.Add(new JsonStringEnumConverter());
 
         var assignment = JsonSerializer.Deserialize<AssignmentDto>(content, serializerOptions);
 

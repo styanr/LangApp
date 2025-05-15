@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using FluentAssertions;
 using LangApp.Api.Endpoints.Assignments.Models;
 using LangApp.Api.Endpoints.Submissions.Models;
@@ -88,6 +89,7 @@ public class SubmissionCreationTests : IClassFixture<LangAppApplicationFactory>,
         {
             PropertyNameCaseInsensitive = true
         };
+        serializerOptions.Converters.Add(new JsonStringEnumConverter());
 
         var submission = JsonSerializer.Deserialize<AssignmentSubmissionDto>(content, serializerOptions);
 

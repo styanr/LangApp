@@ -10,7 +10,6 @@ public record CreateActivitySubmissionDto(
 public record ActivitySubmissionDto(
     Guid Id,
     Guid ActivityId,
-    ActivityType Type,
     ActivitySubmissionDetailsDto Details,
     GradeStatus Status,
     SubmissionGradeDto? Grade,

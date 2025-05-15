@@ -89,7 +89,6 @@ internal sealed class GetSubmissionHandler : IQueryHandler<GetSubmission, Assign
             submission.ActivitySubmissions.Select(asub => new ActivitySubmissionDto(
                 asub.Id,
                 asub.ActivityId,
-                asub.Type,
                 asub.Details.ToDto(),
                 asub.Status,
                 asub.Grade != null

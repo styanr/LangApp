@@ -72,7 +72,6 @@ internal class
                     return new ActivitySubmissionDto(
                         asub.Id,
                         asub.ActivityId,
-                        asub.Type,
                         asub.Details.ToDto(),
                         asub.Status,
                         gradeDto,

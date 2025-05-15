@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using LangApp.Api.Auth;
 using LangApp.Api.Common.Endpoints;
 using LangApp.Api.Middlewares;
@@ -44,8 +45,13 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddJwtBearerAuthentication(builder.Configuration);
 
 builder.Services.AddExceptionMiddleware();
-builder.Services.Configure<JsonOptions>(opt => { opt.SerializerOptions.PropertyNameCaseInsensitive = true; }
-);
+builder.Services.Configure<JsonOptions>(opt =>
+{
+    opt.SerializerOptions.PropertyNameCaseInsensitive = true;
+    opt.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
+
+builder.Services.AddCors();
 
 var app = builder.Build();
 
@@ -64,10 +70,13 @@ app.MapGroup("/api")
     .RequireAuthorization()
     .AddApplicationEndpoints();
 
+app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()); // testing
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseInfrastructureEndpoints();
+
 
 app.Run();
 
