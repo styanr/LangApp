@@ -16,9 +16,13 @@ public class ExceptionMiddleware : IMiddleware
         {
             await next(context);
         }
-        catch (LangAppException e) when (e is InvalidCredentialsException or UnauthorizedException)
+        catch (InvalidCredentialsException e)
         {
             await CreateResponse(context, StatusCodes.Status401Unauthorized, e);
+        }
+        catch (UnauthorizedException e)
+        {
+            await CreateResponse(context, StatusCodes.Status403Forbidden, e);
         }
         catch (NotFoundException e)
         {
