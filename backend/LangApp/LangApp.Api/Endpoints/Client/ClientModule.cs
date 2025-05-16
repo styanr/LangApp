@@ -29,7 +29,7 @@ public class ClientModule : IEndpointModule
         try
         {
             string appScheme = deepLinkOptions.Value.AppScheme ?? "testapp"; // Default fallback
-            string deepLink = $"{appScheme}://{Uri.EscapeDataString(queryString)}";
+            string deepLink = $"{appScheme}{Uri.EscapeDataString(queryString)}";
             logger.LogInformation("Attempting to redirect to deep link: {DeepLink}", deepLink);
             var html = $@"
 <!DOCTYPE html>
