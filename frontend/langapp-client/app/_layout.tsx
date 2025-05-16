@@ -9,6 +9,7 @@ import { useColorScheme } from '~/lib/useColorScheme';
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import Toast from 'react-native-toast-message';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
@@ -52,7 +53,9 @@ const RootLayout = () => {
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-          <Stack screenOptions={{ headerShown: false }} />
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack>
           <Toast />
         </AuthProvider>
       </QueryClientProvider>

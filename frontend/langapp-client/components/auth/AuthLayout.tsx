@@ -19,7 +19,7 @@ export function AuthLayout({ title, subtitle, Icon, iconSize = 54, children }: A
   const { floatingStyle, pulseStyle, cardAnimatedStyle } = useAuthAnimations();
 
   return (
-    <View className="flex-1 bg-gray-50">
+    <View className="bg-background-primary flex-1 bg-fuchsia-50">
       <LoginBackground />
 
       <View className="absolute left-6 top-12 z-10">

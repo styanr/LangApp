@@ -71,8 +71,7 @@ export default function ResetPasswordScreen() {
       title="Reset Password"
       subtitle="Enter a new password to finish resetting"
       Icon={ShieldCheck}
-      iconSize={54}
-    >
+      iconSize={54}>
       {error && <FormError message={error} />}
 
       <View className="px-6">
@@ -82,7 +81,7 @@ export default function ResetPasswordScreen() {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
-          className="h-12 mb-4"
+          className="mb-4 h-12"
         />
 
         <Text className="text-sm font-medium text-gray-700">Confirm Password</Text>
@@ -91,7 +90,7 @@ export default function ResetPasswordScreen() {
           value={confirmPassword}
           onChangeText={setConfirmPassword}
           secureTextEntry
-          className="h-12 mb-6"
+          className="mb-6 h-12"
         />
 
         <Button onPress={handleSubmit} disabled={isSubmitting} className="h-12">

@@ -14,6 +14,8 @@ import {
   useRequestPasswordReset,
   useResetPassword,
 } from '@/api/orval/authentication';
+import { useGetCurrentUser } from '@/api/orval/users';
+import type { UserDto } from '@/api/orval/langAppApi.schemas';
 import type {
   RegisterMutationBody,
   LoginMutationBody,
@@ -35,6 +37,7 @@ type AuthContextValue = {
   requestPasswordReset: (data: RequestPasswordResetMutationBody) => Promise<void>;
   resetPassword: (data: ResetPasswordMutationBody) => Promise<void>;
   logout: () => Promise<void>;
+  user: UserDto | null;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -48,6 +51,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { mutateAsync: refreshMutate } = useRefresh();
   const { mutateAsync: requestResetMutate } = useRequestPasswordReset();
   const { mutateAsync: resetPwdMutate } = useResetPassword();
+
+  const { data: userResponse, isLoading: isUserLoading } = useGetCurrentUser({
+    query: { enabled: !!tokens?.accessToken },
+  });
+
+  const user = userResponse?.data ?? null;
 
   useEffect(() => {
     (async () => {
@@ -96,13 +105,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const value: AuthContextValue = {
     tokens,
     isAuthenticated: !!tokens?.accessToken,
-    isLoading,
+    isLoading: isLoading || isUserLoading,
     register,
     login,
     refreshSession,
     requestPasswordReset,
     resetPassword,
     logout,
+    user,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
