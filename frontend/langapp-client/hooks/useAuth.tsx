@@ -15,6 +15,7 @@ import {
   useResetPassword,
 } from '@/api/orval/authentication';
 import { useGetCurrentUser } from '@/api/orval/users';
+import { useUsers } from './useUsers';
 import type { UserDto } from '@/api/orval/langAppApi.schemas';
 import type {
   RegisterMutationBody,
@@ -38,6 +39,10 @@ type AuthContextValue = {
   resetPassword: (data: ResetPasswordMutationBody) => Promise<void>;
   logout: () => Promise<void>;
   user: UserDto | null;
+  updateUserInfo: (data: {
+    username?: string;
+    fullName?: { firstName?: string; lastName?: string };
+  }) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -51,6 +56,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { mutateAsync: refreshMutate } = useRefresh();
   const { mutateAsync: requestResetMutate } = useRequestPasswordReset();
   const { mutateAsync: resetPwdMutate } = useResetPassword();
+  const { updateUserInfo: updateUserInfoMutation } = useUsers();
 
   const { data: userResponse, isLoading: isUserLoading } = useGetCurrentUser({
     query: { enabled: !!tokens?.accessToken },
@@ -102,6 +108,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await AsyncStorage.removeItem('@langapp:tokens');
   };
 
+  const updateUserInfo = async (data: {
+    username?: string;
+    fullName?: { firstName?: string; lastName?: string };
+  }) => {
+    await updateUserInfoMutation(data);
+  };
+
   const value: AuthContextValue = {
     tokens,
     isAuthenticated: !!tokens?.accessToken,
@@ -113,6 +126,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     resetPassword,
     logout,
     user,
+    updateUserInfo,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
