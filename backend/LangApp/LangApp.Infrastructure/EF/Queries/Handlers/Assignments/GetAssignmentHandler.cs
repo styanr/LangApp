@@ -57,19 +57,6 @@ internal sealed class GetAssignmentHandler : IQueryHandler<GetAssignment, Assign
             throw new UnauthorizedException(query.UserId);
         }
 
-        return new AssignmentDto(
-            assignment.Id,
-            assignment.Name,
-            assignment.AuthorId,
-            assignment.StudyGroupId,
-            assignment.DueDate,
-            assignment.Activities.Select(ac =>
-                new ActivityDto(
-                    ac.Id,
-                    ac.MaxScore,
-                    ac.Details.ToDto(!isAuthor)
-                )
-            ).ToList()
-        );
+        return assignment.ToDto();
     }
 }

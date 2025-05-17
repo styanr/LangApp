@@ -100,11 +100,7 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
             fluencyScores.Add(pronResult.FluencyScore);
             prosodyScores.Add(pronResult.ProsodyScore);
 
-            foreach (var word in pronResult.Words)
-            {
-                var newWord = new Word(word.Word, word.ErrorType, word.AccuracyScore);
-                pronWords.Add(newWord);
-            }
+            pronWords.AddRange(pronResult.Words.Select(word => new Word(word.Word, word.ErrorType, word.AccuracyScore)));
 
             foreach (var result in e.Result.Best())
             {

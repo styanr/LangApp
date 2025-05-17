@@ -30,6 +30,7 @@ public class Assignment : AggregateRoot
         ValidateDueDate(dueDate);
 
         Name = name;
+        Description = description;
         AuthorId = authorId;
         StudyGroupId = studyGroupId;
         CreatedAt = DateTime.UtcNow;
@@ -102,7 +103,7 @@ public class Assignment : AggregateRoot
 
     private static void ValidateDescription(string? description)
     {
-        if (description is not null && description.Length > 500)
+        if (string.IsNullOrWhiteSpace(description) || description.Length > 500)
         {
             throw new LangAppException("Description cannot be longer than 500 characters");
         }

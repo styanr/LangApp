@@ -23,6 +23,7 @@ public static class AssignmentDetailsReadModelExtensions
         return new AssignmentDto(
             assignment.Id,
             assignment.Name,
+            assignment.Description,
             assignment.AuthorId,
             assignment.StudyGroupId,
             assignment.DueDate,

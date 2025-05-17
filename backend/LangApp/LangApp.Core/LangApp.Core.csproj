@@ -10,4 +10,7 @@
         <PackageReference Include="MediatR.Contracts" Version="2.0.1"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="LangApp.Core.Tests"/>
+    </ItemGroup>
 </Project>

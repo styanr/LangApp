@@ -58,19 +58,7 @@ internal sealed class GetAssignmentForGroupHandler : IQueryHandler<GetAssignment
             .Where(a => a.StudyGroupId == query.GroupId)
             .TakePage(query.PageNumber, query.PageSize)
             .AsNoTracking()
-            .Select(a => new AssignmentDto(
-                a.Id,
-                a.Name,
-                a.AuthorId,
-                a.StudyGroupId,
-                a.DueDate,
-                a.Activities.Select(ac =>
-                    new ActivityDto(
-                        ac.Id,
-                        ac.MaxScore,
-                        ac.Details.ToDto(!canAccessFull)
-                    )
-                ).ToList())).ToListAsync();
+            .Select(a => a.ToDto(!canAccessFull)).ToListAsync();
 
         return new PagedResult<AssignmentDto>(
             assignments,
