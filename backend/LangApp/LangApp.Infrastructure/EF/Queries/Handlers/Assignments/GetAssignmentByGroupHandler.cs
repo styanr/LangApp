@@ -11,7 +11,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LangApp.Infrastructure.EF.Queries.Handlers.Assignments;
 
-internal sealed class GetAssignmentForGroupHandler : IQueryHandler<GetAssignmentsByGroup, PagedResult<AssignmentDto>>
+internal sealed class
+    GetAssignmentForGroupHandler : IQueryHandler<GetAssignmentsByGroup, PagedResult<AssignmentSlimDto>>
 {
     private readonly DbSet<AssignmentReadModel> _assignments;
     private readonly DbSet<StudyGroupReadModel> _groups;
@@ -22,7 +23,7 @@ internal sealed class GetAssignmentForGroupHandler : IQueryHandler<GetAssignment
         _groups = context.StudyGroups;
     }
 
-    public async Task<PagedResult<AssignmentDto>?> HandleAsync(GetAssignmentsByGroup query)
+    public async Task<PagedResult<AssignmentSlimDto>?> HandleAsync(GetAssignmentsByGroup query)
     {
         var group = await _groups
             .Include(g => g.Members)
@@ -34,33 +35,34 @@ internal sealed class GetAssignmentForGroupHandler : IQueryHandler<GetAssignment
             return null;
         }
 
-        var canAccess = false;
-        var canAccessFull = false;
-
-        if (group.OwnerId == query.UserId)
-        {
-            canAccess = true;
-            canAccessFull = true;
-        }
-        else if (group.Members.Any(m => m.Id == query.UserId))
-        {
-            canAccess = true;
-        }
+        bool canAccess = group.OwnerId == query.UserId || group.Members.Any(m => m.Id == query.UserId);
 
         if (!canAccess)
         {
             throw new UnauthorizedException(query.UserId, query.GroupId, "StudyGroup");
         }
 
-        var totalCount = await _assignments.Where(a => a.StudyGroupId == query.GroupId).CountAsync();
-
-        var assignments = await _assignments
+        // Get all assignments for the group
+        var baseQuery = _assignments
             .Where(a => a.StudyGroupId == query.GroupId)
-            .TakePage(query.PageNumber, query.PageSize)
-            .AsNoTracking()
-            .Select(a => a.ToDto(!canAccessFull)).ToListAsync();
+            .Include(a => a.Activities.OrderBy(ac => ac.Order))
+            .Include(a => a.Submissions)
+            .AsNoTracking();
 
-        return new PagedResult<AssignmentDto>(
+        // If showSubmitted is false or not set, filter out assignments already submitted by the user
+        if (!query.ShowSubmitted)
+        {
+            baseQuery = baseQuery.Where(a => a.Submissions.All(s => s.StudentId != query.UserId));
+        }
+
+        var totalCount = await baseQuery.CountAsync();
+
+        var assignments = await baseQuery
+            .TakePage(query.PageNumber, query.PageSize)
+            .Select(a => a.ToSlimDto())
+            .ToListAsync();
+
+        return new PagedResult<AssignmentSlimDto>(
             assignments,
             totalCount,
             query.PageNumber,

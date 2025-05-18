@@ -1,4 +1,5 @@
 using LangApp.Core.Enums;
+using LangApp.Infrastructure.EF.Models.Users;
 
 namespace LangApp.Infrastructure.EF.Models.Submissions;
 
@@ -12,4 +13,5 @@ public class AssignmentSubmissionReadModel
     public double Score { get; set; }
 
     public List<ActivitySubmissionReadModel> ActivitySubmissions { get; set; }
+    public UserReadModel Student { get; set; }
 }

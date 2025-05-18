@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LangApp.Infrastructure.EF.Queries.Handlers.Assignments;
 
-internal class GetAssignmentsByUserHandler : IQueryHandler<GetAssignmentsByUser, PagedResult<AssignmentDto>>
+internal class GetAssignmentsByUserHandler : IQueryHandler<GetAssignmentsByUser, PagedResult<AssignmentSlimDto>>
 {
     private readonly DbSet<AssignmentReadModel> _assignments;
     private readonly DbSet<UserReadModel> _users;
@@ -25,7 +25,7 @@ internal class GetAssignmentsByUserHandler : IQueryHandler<GetAssignmentsByUser,
         _groups = context.StudyGroups;
     }
 
-    public async Task<PagedResult<AssignmentDto>?> HandleAsync(GetAssignmentsByUser query)
+    public async Task<PagedResult<AssignmentSlimDto>?> HandleAsync(GetAssignmentsByUser query)
     {
         var userExists = await _users.AnyAsync(u => u.Id == query.UserId);
         if (!userExists)
@@ -35,16 +35,23 @@ internal class GetAssignmentsByUserHandler : IQueryHandler<GetAssignmentsByUser,
             .AsNoTracking()
             .Where(a => a.StudyGroup.Members.Any(u => u.Id == query.UserId));
 
+        // If ShowSubmitted is false or not set, filter out assignments already submitted by the user
+        if (!query.ShowSubmitted)
+        {
+            assignmentsQuery = assignmentsQuery.Where(a => a.Submissions.All(s => s.StudentId != query.UserId));
+        }
+
         var totalCount = await assignmentsQuery.CountAsync();
 
         var pagedAssignments = await assignmentsQuery
             .Include(a => a.Activities.OrderBy(ac => ac.Order))
+            .Include(a => a.Submissions)
             .Where(a => a.DueDate >= DateTime.UtcNow)
             .OrderBy(a => a.DueDate)
             .TakePage(query.PageNumber, query.PageSize)
-            .Select(a => a.ToDto(true))
+            .Select(a => a.ToSlimDto())
             .ToListAsync();
 
-        return new PagedResult<AssignmentDto>(pagedAssignments, totalCount, query.PageNumber, query.PageSize);
+        return new PagedResult<AssignmentSlimDto>(pagedAssignments, totalCount, query.PageNumber, query.PageSize);
     }
 }

@@ -5,8 +5,8 @@ namespace LangApp.Core.Services.Policies.Posts;
 
 public class PostModificationPolicy : IPostModificationPolicy
 {
-    public bool IsSatisfiedBy(Post assignment, ApplicationUser user)
+    public bool IsSatisfiedBy(Post post, ApplicationUser user)
     {
-        return assignment.CanBeModifiedBy(user.Id);
+        return post.CanBeModifiedBy(user.Id);
     }
 }

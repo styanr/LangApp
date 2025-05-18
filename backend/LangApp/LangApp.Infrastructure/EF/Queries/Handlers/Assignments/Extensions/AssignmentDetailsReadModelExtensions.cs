@@ -27,6 +27,7 @@ public static class AssignmentDetailsReadModelExtensions
             assignment.AuthorId,
             assignment.StudyGroupId,
             assignment.DueDate,
+            assignment.Activities.Aggregate(0, (acc, ac) => acc + ac.MaxScore),
             assignment.Activities.Select(ac =>
                 new ActivityDto(
                     ac.Id,
@@ -34,6 +35,20 @@ public static class AssignmentDetailsReadModelExtensions
                     ac.Details.ToDto(restricted)
                 )
             ).ToList()
+        );
+    }
+
+    public static AssignmentSlimDto ToSlimDto(this AssignmentReadModel assignment)
+    {
+        return new AssignmentSlimDto(
+            assignment.Id,
+            assignment.Name,
+            assignment.Description,
+            assignment.AuthorId,
+            assignment.StudyGroupId,
+            assignment.DueDate,
+            assignment.Activities.Aggregate(0, (acc, ac) => acc + ac.MaxScore),
+            assignment.Activities.Count
         );
     }
 

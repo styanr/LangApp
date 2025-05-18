@@ -4,4 +4,5 @@ using LangApp.Application.Common.Queries.Abstractions;
 
 namespace LangApp.Application.Assignments.Queries;
 
-public record GetAssignmentsByUser(Guid UserId) : PagedQuery<PagedResult<AssignmentDto>>;
+public record GetAssignmentsByUser(Guid UserId, bool ShowSubmitted = false)
+    : PagedQuery<PagedResult<AssignmentSlimDto>>;

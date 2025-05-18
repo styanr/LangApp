@@ -40,7 +40,7 @@ public class AssignmentsModule : IEndpointModule
     }
 
 
-    private async Task<Results<Ok<PagedResult<AssignmentDto>>, NotFound>> GetByGroup(
+    private async Task<Results<Ok<PagedResult<AssignmentSlimDto>>, NotFound>> GetByGroup(
         [AsParameters] GetAssignmentByGroupRequest request,
         [FromServices] IQueryDispatcher dispatcher,
         HttpContext context,
@@ -49,7 +49,7 @@ public class AssignmentsModule : IEndpointModule
     )
     {
         var userId = context.User.GetUserId();
-        var query = new GetAssignmentsByGroup(request.GroupId, userId)
+        var query = new GetAssignmentsByGroup(request.GroupId, userId, request.ShowSubmitted)
         {
             PageNumber = pageNumber ?? 1,
             PageSize = pageSize ?? 10,
@@ -59,7 +59,8 @@ public class AssignmentsModule : IEndpointModule
         return ApplicationTypedResults.OkOrNotFound(assignment);
     }
 
-    private async Task<Results<Ok<PagedResult<AssignmentDto>>, NotFound>> GetByUser(
+    private async Task<Results<Ok<PagedResult<AssignmentSlimDto>>, NotFound>> GetByUser(
+        [FromQuery] bool showSubmitted,
         [FromServices] IQueryDispatcher dispatcher,
         HttpContext context,
         int? pageNumber = null,
@@ -67,7 +68,7 @@ public class AssignmentsModule : IEndpointModule
     )
     {
         var userId = context.User.GetUserId();
-        var query = new GetAssignmentsByUser(userId)
+        var query = new GetAssignmentsByUser(userId, showSubmitted)
         {
             PageNumber = pageNumber ?? 1,
             PageSize = pageSize ?? 10,

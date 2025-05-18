@@ -6,6 +6,7 @@ using LangApp.Api.OpenApi;
 using LangApp.Application.Common;
 using LangApp.Infrastructure;
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.AspNetCore.HttpLogging;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -45,6 +46,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddJwtBearerAuthentication(builder.Configuration);
 
 builder.Services.AddExceptionMiddleware();
+builder.Services.AddHttpLogging(options => { options.LoggingFields = HttpLoggingFields.RequestHeaders; });
 builder.Services.Configure<JsonOptions>(opt =>
 {
     opt.SerializerOptions.PropertyNameCaseInsensitive = true;
@@ -57,6 +59,7 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseHttpLogging();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -80,7 +83,7 @@ app.UseInfrastructureEndpoints();
 
 app.Run();
 
-// For testing
+// For tests
 public partial class Program
 {
 }
