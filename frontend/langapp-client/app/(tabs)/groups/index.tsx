@@ -5,7 +5,7 @@ import { IconBadge } from '@/components/ui/themed-icon';
 import { GraduationCap, Users } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
 import Animated, { FadeIn, FadeInUp } from 'react-native-reanimated';
-import { Link } from 'expo-router';
+import { Link, useGlobalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Paging } from '@/components/ui/paging';
 
@@ -13,7 +13,7 @@ export default function Groups() {
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const { getUserStudyGroups } = useStudyGroups();
-  const { data, isLoading, isError } = getUserStudyGroups({ pageNumber: page, pageSize });
+  const { data, isLoading, isError, error } = getUserStudyGroups({ pageNumber: page, pageSize });
   const groups = data?.data.items || [];
   const totalCount = data?.data.totalCount || 0;
 
@@ -56,7 +56,7 @@ export default function Groups() {
               key={group.id}
               entering={FadeInUp.delay(idx * 80).duration(500)}
               className="shadow-lg shadow-fuchsia-200/40">
-              <Link href={{ pathname: '/(tabs)/groups', params: { groupId: group.id } }} asChild>
+              <Link href={{ pathname: `/(tabs)/groups/${group.id}` }} asChild>
                 <Pressable className="active:scale-98">
                   <Card className="border-0 bg-white/90 dark:bg-zinc-900/80">
                     <CardHeader className="flex-row items-center gap-4 p-5">

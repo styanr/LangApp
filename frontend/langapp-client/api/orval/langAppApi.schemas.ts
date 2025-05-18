@@ -50,14 +50,29 @@ export interface ActivitySubmissionDto {
 export interface AssignmentDto {
   id?: string;
   name?: string;
+  /** @nullable */
+  description?: string | null;
   authorId?: string;
   studyGroupId?: string;
   dueTime?: string;
+  maxScore?: number;
   activities?: ActivityDto[];
 }
 
-export interface AssignmentDtoPagedResult {
-  items?: AssignmentDto[];
+export interface AssignmentSlimDto {
+  id?: string;
+  name?: string;
+  /** @nullable */
+  description?: string | null;
+  authorId?: string;
+  studyGroupId?: string;
+  dueTime?: string;
+  maxScore?: number;
+  activityCount?: number;
+}
+
+export interface AssignmentSlimDtoPagedResult {
+  items?: AssignmentSlimDto[];
   totalCount?: number;
   pageNumber?: number;
   pageSize?: number;
@@ -614,11 +629,13 @@ export type WritingActivitySubmissionDetailsDto = Omit<
 };
 
 export type GetAssignmentsByGroupParams = {
+  ShowSubmitted?: boolean;
   pageNumber?: number;
   pageSize?: number;
 };
 
 export type GetAssignmentsByUserParams = {
+  showSubmitted: boolean;
   pageNumber?: number;
   pageSize?: number;
 };

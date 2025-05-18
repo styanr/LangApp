@@ -69,6 +69,12 @@ export default function AuthenticatedLayout() {
           tabBarIcon: ({ color }) => <UserRound color={color} size={24} />,
         }}
       />
+      <Tabs.Screen
+        name="users/[id]"
+        options={{
+          href: null
+        }}
+      />
     </Tabs>
   );
 }

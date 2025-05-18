@@ -46,12 +46,16 @@ export function useAssignments() {
   const getGroupAssignments = (
     groupId: string,
     params?: GetAssignmentsByGroupParams,
-    options?: {
-      query?: any;
-      request?: any;
-    }
+    options?: { query?: any; request?: any }
   ) => {
-    return useGetAssignmentsByGroup(groupId, params, options);
+    const query = useGetAssignmentsByGroup(groupId, params, options);
+    return {
+      // all raw query properties (isLoading, isError, refetch, etc.)
+      ...query,
+      // unwrap slim DTO page
+      items: query.data?.data?.items || [],
+      totalCount: query.data?.data?.totalCount || 0,
+    };
   };
 
   /**
@@ -61,12 +65,15 @@ export function useAssignments() {
    */
   const getUserAssignments = (
     params?: GetAssignmentsByUserParams,
-    options?: {
-      query?: any;
-      request?: any;
-    }
+    options?: { query?: any; request?: any }
   ) => {
-    return useGetAssignmentsByUser(params, options);
+    const actualParams = params ?? { showSubmitted: false };
+    const query = useGetAssignmentsByUser(actualParams, options);
+    return {
+      ...query,
+      items: query.data?.data?.items || [],
+      totalCount: query.data?.data?.totalCount || 0,
+    };
   };
 
   /**
@@ -80,11 +87,21 @@ export function useAssignments() {
         // We need to invalidate by group if groupId is present, and always by user
         if (variables.data.groupId) {
           queryClient.invalidateQueries({
-            queryKey: getGetAssignmentsByGroupQueryKey(variables.data.groupId),
+            queryKey: getGetAssignmentsByGroupQueryKey(variables.data.groupId, {
+              ShowSubmitted: true,
+            }),
+          });
+          queryClient.invalidateQueries({
+            queryKey: getGetAssignmentsByGroupQueryKey(variables.data.groupId, {
+              ShowSubmitted: false,
+            }),
           });
         }
         queryClient.invalidateQueries({
-          queryKey: getGetAssignmentsByUserQueryKey(),
+          queryKey: getGetAssignmentsByUserQueryKey({ showSubmitted: true }),
+        });
+        queryClient.invalidateQueries({
+          queryKey: getGetAssignmentsByUserQueryKey({ showSubmitted: false }),
         });
         // Potentially invalidate a general assignments list if one exists
         // queryClient.invalidateQueries({ queryKey: ['assignments'] }); // Example

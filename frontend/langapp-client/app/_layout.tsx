@@ -1,4 +1,10 @@
-import { Theme, ThemeProvider, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import {
+  Theme,
+  ThemeProvider,
+  DefaultTheme,
+  DarkTheme,
+  NavigationContainer,
+} from '@react-navigation/native';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import '@/global.css';
@@ -9,7 +15,7 @@ import { useColorScheme } from '~/lib/useColorScheme';
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import Toast from 'react-native-toast-message';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { PortalHost } from '@rn-primitives/portal';
 
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
@@ -57,6 +63,7 @@ const RootLayout = () => {
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           </Stack>
           <Toast />
+          <PortalHost />
         </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>

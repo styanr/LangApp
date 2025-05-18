@@ -26,7 +26,7 @@ import type {
 
 import type {
   AssignmentDto,
-  AssignmentDtoPagedResult,
+  AssignmentSlimDtoPagedResult,
   CreateAssignmentRequest,
   GetAssignmentsByGroupParams,
   GetAssignmentsByUserParams,
@@ -337,7 +337,7 @@ export const getAssignmentsByGroup = (
   options?: SecondParameter<typeof customAxiosMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<AssignmentDtoPagedResult>(
+  return customAxiosMutator<AssignmentSlimDtoPagedResult>(
     { url: `/api/v1/groups/${groupId}/assignments`, method: 'GET', params, signal },
     options
   );
@@ -658,17 +658,17 @@ export function useGetAssignmentsByGroup<
 }
 
 export const getAssignmentsByUser = (
-  params?: GetAssignmentsByUserParams,
+  params: GetAssignmentsByUserParams,
   options?: SecondParameter<typeof customAxiosMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<AssignmentDtoPagedResult>(
+  return customAxiosMutator<AssignmentSlimDtoPagedResult>(
     { url: `/api/v1/users/me/assignments`, method: 'GET', params, signal },
     options
   );
 };
 
-export const getGetAssignmentsByUserQueryKey = (params?: GetAssignmentsByUserParams) => {
+export const getGetAssignmentsByUserQueryKey = (params: GetAssignmentsByUserParams) => {
   return [`/api/v1/users/me/assignments`, ...(params ? [params] : [])] as const;
 };
 
@@ -679,7 +679,7 @@ export const getGetAssignmentsByUserInfiniteQueryOptions = <
   >,
   TError = void,
 >(
-  params?: GetAssignmentsByUserParams,
+  params: GetAssignmentsByUserParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -731,7 +731,7 @@ export function useGetAssignmentsByUserInfinite<
   >,
   TError = void,
 >(
-  params: undefined | GetAssignmentsByUserParams,
+  params: GetAssignmentsByUserParams,
   options: {
     query: Partial<
       UseInfiniteQueryOptions<
@@ -763,7 +763,7 @@ export function useGetAssignmentsByUserInfinite<
   >,
   TError = void,
 >(
-  params?: GetAssignmentsByUserParams,
+  params: GetAssignmentsByUserParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -795,7 +795,7 @@ export function useGetAssignmentsByUserInfinite<
   >,
   TError = void,
 >(
-  params?: GetAssignmentsByUserParams,
+  params: GetAssignmentsByUserParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -819,7 +819,7 @@ export function useGetAssignmentsByUserInfinite<
   >,
   TError = void,
 >(
-  params?: GetAssignmentsByUserParams,
+  params: GetAssignmentsByUserParams,
   options?: {
     query?: Partial<
       UseInfiniteQueryOptions<
@@ -851,7 +851,7 @@ export const getGetAssignmentsByUserQueryOptions = <
   TData = Awaited<ReturnType<typeof getAssignmentsByUser>>,
   TError = void,
 >(
-  params?: GetAssignmentsByUserParams,
+  params: GetAssignmentsByUserParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAssignmentsByUser>>, TError, TData>
@@ -882,7 +882,7 @@ export function useGetAssignmentsByUser<
   TData = Awaited<ReturnType<typeof getAssignmentsByUser>>,
   TError = void,
 >(
-  params: undefined | GetAssignmentsByUserParams,
+  params: GetAssignmentsByUserParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAssignmentsByUser>>, TError, TData>
@@ -903,7 +903,7 @@ export function useGetAssignmentsByUser<
   TData = Awaited<ReturnType<typeof getAssignmentsByUser>>,
   TError = void,
 >(
-  params?: GetAssignmentsByUserParams,
+  params: GetAssignmentsByUserParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAssignmentsByUser>>, TError, TData>
@@ -924,7 +924,7 @@ export function useGetAssignmentsByUser<
   TData = Awaited<ReturnType<typeof getAssignmentsByUser>>,
   TError = void,
 >(
-  params?: GetAssignmentsByUserParams,
+  params: GetAssignmentsByUserParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAssignmentsByUser>>, TError, TData>
@@ -938,7 +938,7 @@ export function useGetAssignmentsByUser<
   TData = Awaited<ReturnType<typeof getAssignmentsByUser>>,
   TError = void,
 >(
-  params?: GetAssignmentsByUserParams,
+  params: GetAssignmentsByUserParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAssignmentsByUser>>, TError, TData>

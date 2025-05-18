@@ -1,8 +1,8 @@
 import { View, Text, Pressable, ActivityIndicator, ScrollView } from 'react-native';
 import { useAuth } from '@/hooks/useAuth';
-import { Link, Stack } from 'expo-router';
+import { Link, Stack, useGlobalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { User, Users, ClipboardList, RefreshCw, GraduationCap } from 'lucide-react-native';
+import { Users, ClipboardList, RefreshCw, GraduationCap } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useStudyGroups } from '@/hooks/useStudyGroups';
 import { useAssignments } from '@/hooks/useAssignments';
@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/card';
 import { ThemedIcon, IconBadge } from '@/components/ui/themed-icon';
 import type { StudyGroupSlimDto, AssignmentDto } from '@/api/orval/langAppApi.schemas';
+import { UserProfilePicture } from '@/components/ui/UserProfilePicture';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -50,7 +51,11 @@ export default function Dashboard() {
       entering={FadeInDown.delay(100).duration(600)}
       className="mb-6 rounded-lg bg-card shadow-sm">
       <View className="flex-row items-center p-5">
-        <IconBadge Icon={User} size={24} />
+        <UserProfilePicture
+          imageUrl={user?.pictureUrl}
+          size={48}
+          iconContainerClassName="bg-transparent"
+        />
         <View className="ml-3">
           <Text className="text-sm text-muted-foreground">Welcome back</Text>
           <Text className="text-xl font-bold text-card-foreground">

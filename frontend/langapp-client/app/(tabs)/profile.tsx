@@ -11,7 +11,8 @@ import {
 } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { User, LogOut } from 'lucide-react-native';
+import { LogOut } from 'lucide-react-native';
+import { UserProfilePicture } from '@/components/ui/UserProfilePicture';
 
 export default function Profile() {
   const { user, isLoading, updateUserInfo, logout } = useAuth();
@@ -60,7 +61,7 @@ export default function Profile() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <Card className="mx-auto w-full max-w-xl border-0 bg-white/90 shadow-lg dark:bg-zinc-900/80">
         <CardHeader className="flex-row items-center gap-4 p-6 pb-2">
-          <User size={40} className="text-primary" />
+          <UserProfilePicture imageUrl={user?.pictureUrl} size={40} />
           <CardTitle className="text-3xl font-bold text-primary">Profile</CardTitle>
         </CardHeader>
         <CardContent className="gap-4 p-6 pt-2">

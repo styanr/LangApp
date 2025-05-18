@@ -1,0 +1,62 @@
+import { View, Pressable } from 'react-native';
+import { Card, CardContent } from '@/components/ui/card';
+import { Text } from '@/components/ui/text';
+import { UserProfilePicture } from '@/components/ui/UserProfilePicture';
+import Animated, { FadeInUp } from 'react-native-reanimated';
+import { Crown } from 'lucide-react-native'; // Import an icon for the teacher
+
+type MemberProps = {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  imageUrl?: string | null;
+  onPress?: (userId: string) => void;
+  index?: number;
+};
+
+export const GroupMember = ({
+  id,
+  name,
+  email,
+  role,
+  imageUrl,
+  onPress,
+  index = 0,
+}: MemberProps) => {
+  const isOwner = role.toLowerCase() === 'owner'; 
+
+  return (
+    <Animated.View
+      entering={FadeInUp.delay(index * 80).duration(500)}
+      className="mb-3 shadow-sm shadow-indigo-200/40">
+      <Pressable className="active:scale-98" onPress={() => onPress?.(id)} disabled={!onPress}>
+        <Card
+          className={`border-0 bg-white/90 dark:bg-zinc-900/80 ${
+            isOwner ? 'border-2 border-yellow-500' : ''
+          }`}>
+          <CardContent className="flex-row items-center gap-3 p-4">
+            <UserProfilePicture imageUrl={imageUrl} iconContainerClassName="bg-indigo-100" />
+            <View className="flex-1 flex-row items-center">
+              <Text className="text-base font-semibold text-primary">{name}</Text>
+              {isOwner && <Crown size={16} color="gold" style={{ marginLeft: 4 }} />}
+            </View>
+            <View
+              className={`rounded-full px-2 py-1 ${
+                isOwner ? 'bg-yellow-400 dark:bg-yellow-600' : 'bg-indigo-100 dark:bg-indigo-900'
+              }`}>
+              <Text
+                className={`text-xs font-medium ${
+                  isOwner
+                    ? 'text-yellow-900 dark:text-yellow-100'
+                    : 'text-indigo-800 dark:text-indigo-200'
+                }`}>
+                {role}
+              </Text>
+            </View>
+          </CardContent>
+        </Card>
+      </Pressable>
+    </Animated.View>
+  );
+};
