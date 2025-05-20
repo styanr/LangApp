@@ -69,6 +69,11 @@ public class AssignmentSubmission : AggregateRoot
         {
             Fail();
         }
+
+        if (_activitySubmissions.Any(a => a.Status == GradeStatus.NeedsReview))
+        {
+            Status = GradeStatus.NeedsReview;
+        }
     }
 
     public void RecalculateTotalScore(IEnumerable<Activity> assignmentActivities)

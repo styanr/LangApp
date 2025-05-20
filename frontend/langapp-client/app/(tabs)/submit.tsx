@@ -10,6 +10,11 @@ import QuestionActivity from '@/components/activities/QuestionActivity';
 import WritingActivity from '@/components/activities/WritingActivity';
 import { useAssignments } from '@/hooks/useAssignments';
 import { useSubmissions } from '@/hooks/useSubmissions';
+import { useQueryClient } from '@tanstack/react-query';
+import {
+  getGetAssignmentsByGroupQueryKey,
+  getGetAssignmentsByUserQueryKey,
+} from '@/api/orval/assignments';
 
 export default function SubmitAssignmentPage() {
   const { assignmentId } = useLocalSearchParams();
@@ -33,6 +38,7 @@ export default function SubmitAssignmentPage() {
   }, [details]);
 
   const { createSubmission, mutationStatus } = useSubmissions();
+  const queryClient = useQueryClient();
 
   const handleChange = useCallback(
     (value: any) => {
@@ -59,7 +65,34 @@ export default function SubmitAssignmentPage() {
         details: details[i],
       })),
     });
-    router.push({ pathname: '/(tabs)/assignments/[assignmentId]', params: { assignmentId } });
+    // Invalidate assignment lists after submission
+    if (assignment?.studyGroupId) {
+      queryClient.invalidateQueries({
+        queryKey: getGetAssignmentsByGroupQueryKey(assignment.studyGroupId, {
+          ShowSubmitted: true,
+        }),
+      });
+      queryClient.invalidateQueries({
+        queryKey: getGetAssignmentsByGroupQueryKey(assignment.studyGroupId, {
+          ShowSubmitted: false,
+        }),
+      });
+    }
+    queryClient.invalidateQueries({
+      queryKey: getGetAssignmentsByUserQueryKey({ showSubmitted: true }),
+    });
+    queryClient.invalidateQueries({
+      queryKey: getGetAssignmentsByUserQueryKey({ showSubmitted: false }),
+    });
+    // Reset state after successful submission
+    setDetails(Array(activities.length).fill(null));
+    setIndex(0);
+    // Redirect to group page (assuming assignment.studyGroupId exists)
+    if (assignment?.studyGroupId) {
+      router.push({ pathname: '/(tabs)/groups/[id]', params: { id: assignment.studyGroupId } });
+    } else {
+      router.push({ pathname: '/(tabs)/assignments/[assignmentId]', params: { assignmentId } });
+    }
   };
 
   if (isLoading) {

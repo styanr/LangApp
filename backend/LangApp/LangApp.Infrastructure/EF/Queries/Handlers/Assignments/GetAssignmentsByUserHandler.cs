@@ -47,7 +47,7 @@ internal class GetAssignmentsByUserHandler : IQueryHandler<GetAssignmentsByUser,
             .Include(a => a.Activities.OrderBy(ac => ac.Order))
             .Include(a => a.Submissions)
             .Where(a => a.DueDate >= DateTime.UtcNow)
-            .OrderBy(a => a.DueDate)
+            .OrderByDescending(a => a.DueDate)
             .TakePage(query.PageNumber, query.PageSize)
             .Select(a => a.ToSlimDto())
             .ToListAsync();

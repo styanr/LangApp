@@ -2,6 +2,7 @@ using LangApp.Core.Entities.Submissions;
 using LangApp.Core.Enums;
 using LangApp.Core.Services.KeyGeneration;
 using LangApp.Core.ValueObjects.Submissions;
+using LangApp.Core.ValueObjects.Submissions.FillInTheBlank;
 using LangApp.Core.ValueObjects.Submissions.MultipleChoice;
 using LangApp.Core.ValueObjects.Submissions.Pronunciation;
 using LangApp.Core.ValueObjects.Submissions.Question;
@@ -35,6 +36,8 @@ public class ActivitySubmissionFactory : IActivitySubmissionFactory
                 CreatePronunciation(activityId, pronunciationDetails),
             QuestionSubmissionDetails questionDetails => CreateQuestion(activityId, questionDetails),
             WritingSubmissionDetails writingDetails => CreateWriting(activityId, writingDetails),
+            FillInTheBlankSubmissionDetails fillInTheBlankDetails =>
+                Create(activityId, fillInTheBlankDetails, ActivityType.FillInTheBlank),
             _ => throw new ArgumentException($"Unsupported activity details type: {details.GetType().Name}",
                 nameof(details))
         };

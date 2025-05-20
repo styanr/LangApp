@@ -46,14 +46,19 @@ export default function PronunciationActivity({ activity, submission, onChange }
   const { upload, isUploading, progress, uploadError, resetState: resetUpload } = useFileUpload();
   // evaluation hook and state
   const { assignmentId } = useLocalSearchParams();
-  const { evaluatePronunciation, mutationStatus: { evaluatePronunciation: evaluateState } } = useSubmissions();
+  const {
+    evaluatePronunciation,
+    mutationStatus: { evaluatePronunciation: evaluateState },
+  } = useSubmissions();
   const [evaluation, setEvaluation] = useState<SubmissionGradeDto | null>(null);
 
   // preemptive evaluation handler
   const handleEvaluate = async () => {
     if (!uploadedUrl) return;
     try {
-      const result = await evaluatePronunciation(String(assignmentId), activity.id ?? '', { fileUri: uploadedUrl });
+      const result = await evaluatePronunciation(String(assignmentId), activity.id ?? '', {
+        fileUri: uploadedUrl,
+      });
       setEvaluation(result);
     } catch (e) {
       console.error('Evaluation error:', e);
@@ -241,9 +246,7 @@ export default function PronunciationActivity({ activity, submission, onChange }
                 )}
               </Button>
               {evaluateState.isError && (
-                <Text className="mt-2 text-center text-sm text-destructive">
-                  Evaluation failed
-                </Text>
+                <Text className="mt-2 text-center text-sm text-destructive">Evaluation failed</Text>
               )}
             </View>
           )}
@@ -261,7 +264,10 @@ export default function PronunciationActivity({ activity, submission, onChange }
                 </Text>
               )}
               <View className="flex-row justify-end">
-                <Button onPress={handleReset} variant="outline" className="border-emerald-200 dark:border-emerald-800">
+                <Button
+                  onPress={handleReset}
+                  variant="outline"
+                  className="border-emerald-200 dark:border-emerald-800">
                   <Text className="text-emerald-700 dark:text-emerald-300">Record Again</Text>
                 </Button>
               </View>

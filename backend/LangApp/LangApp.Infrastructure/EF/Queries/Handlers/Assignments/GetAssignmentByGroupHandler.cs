@@ -59,6 +59,7 @@ internal sealed class
 
         var assignments = await baseQuery
             .TakePage(query.PageNumber, query.PageSize)
+            .OrderByDescending(a => a.DueDate)
             .Select(a => a.ToSlimDto())
             .ToListAsync();
 

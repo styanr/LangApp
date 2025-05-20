@@ -27,9 +27,11 @@
     "expo": "^53.0.9",
     "expo-av": "^15.1.4",
     "expo-constants": "~17.1.6",
+    "expo-dev-client": "~5.1.8",
     "expo-linking": "~7.1.5",
     "expo-router": "~5.0.7",
     "expo-status-bar": "~2.2.3",
+    "lodash": "^4.17.21",
     "lucide-react-native": "^0.511.0",
     "nativewind": "latest",
     "react": "19.0.0",
@@ -43,12 +45,12 @@
     "react-native-vector-icons": "^10.2.0",
     "react-native-web": "^0.20.0",
     "tailwind-merge": "^3.3.0",
-    "tailwindcss-animate": "^1.0.7",
-    "expo-dev-client": "~5.1.8"
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@openapitools/openapi-generator-cli": "^2.20.0",
+    "@types/lodash": "^4.17.16",
     "@types/react": "~19.0.10",
     "axios-logger": "^2.8.1",
     "babel-plugin-module-resolver": "^5.0.2",
