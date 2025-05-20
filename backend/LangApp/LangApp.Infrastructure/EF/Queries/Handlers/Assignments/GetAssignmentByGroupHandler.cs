@@ -25,42 +25,37 @@ internal sealed class
 
     public async Task<PagedResult<AssignmentSlimDto>?> HandleAsync(GetAssignmentsByGroup query)
     {
-        var group = await _groups
-            .Include(g => g.Members)
+        bool canAccess = await _groups
             .AsNoTracking()
-            .SingleOrDefaultAsync(g => g.Id == query.GroupId);
-
-        if (group is null)
-        {
-            return null;
-        }
-
-        bool canAccess = group.OwnerId == query.UserId || group.Members.Any(m => m.Id == query.UserId);
+            .Where(g => g.Id == query.GroupId)
+            .AnyAsync(g => g.OwnerId == query.UserId || g.Members.Any(m => m.Id == query.UserId));
 
         if (!canAccess)
-        {
             throw new UnauthorizedException(query.UserId, query.GroupId, "StudyGroup");
-        }
 
-        // Get all assignments for the group
         var baseQuery = _assignments
             .Where(a => a.StudyGroupId == query.GroupId)
-            .Include(a => a.Activities.OrderBy(ac => ac.Order))
-            .Include(a => a.Submissions)
             .AsNoTracking();
 
-        // If showSubmitted is false or not set, filter out assignments already submitted by the user
         if (!query.ShowSubmitted)
-        {
             baseQuery = baseQuery.Where(a => a.Submissions.All(s => s.StudentId != query.UserId));
-        }
 
-        var totalCount = await baseQuery.CountAsync();
+        int totalCount = await baseQuery.CountAsync();
 
         var assignments = await baseQuery
-            .TakePage(query.PageNumber, query.PageSize)
             .OrderByDescending(a => a.DueDate)
-            .Select(a => a.ToSlimDto())
+            .TakePage(query.PageNumber, query.PageSize)
+            .Select(a => new AssignmentSlimDto(
+                a.Id,
+                a.Name,
+                a.Description,
+                a.AuthorId,
+                a.StudyGroupId,
+                a.DueDate,
+                a.Activities.Sum(ac => ac.MaxScore),
+                a.Submissions.Any(s => s.StudentId == query.UserId),
+                a.Activities.Count
+            ))
             .ToListAsync();
 
         return new PagedResult<AssignmentSlimDto>(

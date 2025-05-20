@@ -8,6 +8,7 @@ public record AssignmentDto(
     Guid StudyGroupId,
     DateTime DueTime,
     int MaxScore,
+    bool Submitted,
     List<ActivityDto> Activities
 );
 
@@ -19,5 +20,6 @@ public record AssignmentSlimDto(
     Guid StudyGroupId,
     DateTime DueTime,
     int MaxScore,
+    bool Submitted,
     int ActivityCount
 );

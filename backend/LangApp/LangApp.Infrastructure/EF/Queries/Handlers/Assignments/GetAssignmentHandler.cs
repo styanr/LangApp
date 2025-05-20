@@ -23,40 +23,50 @@ internal sealed class GetAssignmentHandler : IQueryHandler<GetAssignment, Assign
 
     public async Task<AssignmentDto?> HandleAsync(GetAssignment query)
     {
-        var assignment = await _assignments
+        var data = await _assignments
             .Where(a => a.Id == query.Id)
             .Include(a => a.Activities.OrderBy(ac => ac.Order))
+            .Include(a => a.StudyGroup)
+            .ThenInclude(g => g.Members)
+            .Select(a => new
+            {
+                a.Id,
+                a.Name,
+                a.Description,
+                a.AuthorId,
+                a.StudyGroupId,
+                a.DueDate,
+                Activities = a.Activities
+                    .Select(ac => new { ac.Id, ac.MaxScore, ac.Details })
+                    .ToList(),
+                Submitted = a.Submissions.Any(s => s.StudentId == query.UserId),
+                IsAuthor = (a.AuthorId == query.UserId),
+                IsGroupMember = a.StudyGroup.OwnerId == query.UserId ||
+                                a.StudyGroup.Members.Any(m => m.Id == query.UserId),
+            })
             .AsNoTracking()
             .SingleOrDefaultAsync();
 
-        if (assignment is null)
-        {
+        if (data is null)
             return null;
-        }
 
-        // Direct permission check
-        bool isAuthor = assignment.AuthorId == query.UserId;
-        bool isGroupMember = false;
-
-        if (!isAuthor)
-        {
-            var group = await _groups
-                .Include(g => g.Members)
-                .AsNoTracking()
-                .SingleOrDefaultAsync(g => g.Id == assignment.StudyGroupId);
-
-            if (group is not null)
-            {
-                isGroupMember = group.OwnerId == query.UserId ||
-                                group.Members.Any(m => m.Id == query.UserId);
-            }
-        }
-
-        if (!isAuthor && !isGroupMember)
-        {
+        if (!data.IsAuthor && !data.IsGroupMember)
             throw new UnauthorizedException(query.UserId);
-        }
 
-        return assignment.ToDto();
+        var assignmentDto = new AssignmentDto(
+            data.Id,
+            data.Name,
+            data.Description,
+            data.AuthorId,
+            data.StudyGroupId,
+            data.DueDate,
+            data.Activities.Sum(ac => ac.MaxScore),
+            data.Submitted,
+            data.Activities
+                .Select(ac => new ActivityDto(ac.Id, ac.MaxScore, ac.Details.ToDto()))
+                .ToList()
+        );
+
+        return assignmentDto;
     }
 }

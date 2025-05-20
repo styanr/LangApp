@@ -3,6 +3,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { ScrollView, View, ActivityIndicator } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import MultipleChoiceActivity from '@/components/activities/MultipleChoiceActivity';
 import FillInTheBlankActivity from '@/components/activities/FillInTheBlankActivity';
 import PronunciationActivity from '@/components/activities/PronunciationActivity';
@@ -26,7 +27,6 @@ export default function SubmitAssignmentPage() {
   const [index, setIndex] = useState(0);
   const [details, setDetails] = useState<any[]>(() => Array(activities.length).fill(null));
 
-  // Update details when activities length changes
   React.useEffect(() => {
     if (activities.length > 0 && details.length !== activities.length) {
       setDetails(Array(activities.length).fill(null));
@@ -42,7 +42,6 @@ export default function SubmitAssignmentPage() {
 
   const handleChange = useCallback(
     (value: any) => {
-      // Only update if the value has actually changed
       setDetails((prevDetails) => {
         if (JSON.stringify(prevDetails[index]) === JSON.stringify(value)) {
           return prevDetails;
@@ -52,7 +51,7 @@ export default function SubmitAssignmentPage() {
         return newDetails;
       });
     },
-    [index] // Only depend on index, not on details
+    [index]
   );
 
   const handlePrev = () => setIndex((i) => Math.max(i - 1, 0));
@@ -87,7 +86,6 @@ export default function SubmitAssignmentPage() {
     // Reset state after successful submission
     setDetails(Array(activities.length).fill(null));
     setIndex(0);
-    // Redirect to group page (assuming assignment.studyGroupId exists)
     if (assignment?.studyGroupId) {
       router.push({ pathname: '/(tabs)/groups/[id]', params: { id: assignment.studyGroupId } });
     } else {
@@ -136,6 +134,11 @@ export default function SubmitAssignmentPage() {
         <Text className="text-xl font-semibold">
           Activity {index + 1} of {activities.length}
         </Text>
+        <Progress
+          value={((index + 1) / activities.length) * 100}
+          className="my-5"
+          indicatorClassName="bg-primary"
+        />
       </View>
       <ActivityComponent activity={activity} submission={details[index]} onChange={handleChange} />
       <View className="mt-6 flex-row justify-between">

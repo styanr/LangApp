@@ -7,6 +7,7 @@ import Animated, { FadeIn } from 'react-native-reanimated';
 import { useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { CheckCircle } from 'lucide-react-native';
 
 export default function AssignmentDetailPage() {
   const { assignmentId } = useLocalSearchParams();
@@ -43,6 +44,14 @@ export default function AssignmentDetailPage() {
           <View className="mb-3 flex-row items-center">
             <MaterialCommunityIcons name="book-education" size={28} className="text-primary" />
             <Text className="ml-2 text-3xl font-bold text-primary">{assignment.name}</Text>
+            {assignment.submitted && (
+              <View className="ml-auto flex-row items-center rounded-full bg-emerald-100 px-3 py-1 dark:bg-emerald-800">
+                <CheckCircle size={16} className="mr-1 text-emerald-600 dark:text-emerald-300" />
+                <Text className="text-sm font-medium text-emerald-700 dark:text-emerald-200">
+                  Submitted
+                </Text>
+              </View>
+            )}
           </View>
 
           {assignment.description != null && (
@@ -84,10 +93,15 @@ export default function AssignmentDetailPage() {
             </View>
           </View>
 
-          <Button className="mt-8 py-3" onPress={handleBeginSubmission}>
+          <Button
+            className="mt-8 py-3"
+            onPress={handleBeginSubmission}
+            disabled={assignment.submitted}>
             <View className="flex-row items-center">
               <MaterialCommunityIcons name="pencil" size={20} color={'white'} />
-              <Text className="ml-2 font-medium text-white">Begin Submission</Text>
+              <Text className="ml-2 font-medium text-white">
+                {assignment.submitted ? 'Already Submitted' : 'Begin Submission'}
+              </Text>
             </View>
           </Button>
         </Card>

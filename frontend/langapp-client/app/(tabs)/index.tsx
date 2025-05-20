@@ -2,7 +2,7 @@ import { View, Text, Pressable, ActivityIndicator, ScrollView } from 'react-nati
 import { useAuth } from '@/hooks/useAuth';
 import { Link, Stack, useGlobalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Users, ClipboardList, RefreshCw, GraduationCap } from 'lucide-react-native';
+import { Users, ClipboardList, RefreshCw, GraduationCap, CheckCircle } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useStudyGroups } from '@/hooks/useStudyGroups';
 import { useAssignments } from '@/hooks/useAssignments';
@@ -20,6 +20,7 @@ import {
 import { ThemedIcon, IconBadge } from '@/components/ui/themed-icon';
 import type { StudyGroupSlimDto, AssignmentDto } from '@/api/orval/langAppApi.schemas';
 import { UserProfilePicture } from '@/components/ui/UserProfilePicture';
+import { AssignmentCard } from '@/components/assignments/AssignmentCard';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -173,26 +174,16 @@ export default function Dashboard() {
     return (
       <View className="px-4">
         {assignments.slice(0, 3).map((assignment: AssignmentDto, index) => (
-          <Link
+          <AssignmentCard
             key={assignment.id}
-            href={{ pathname: '/(tabs)/assignments', params: { assignmentId: assignment.id } }}
-            asChild>
-            <Pressable>
-              <Animated.View entering={FadeInDown.delay(300 + index * 100).duration(400)}>
-                <CardContent className="mb-2 rounded-md border border-border bg-card/50 p-4">
-                  <Text className="font-semibold text-card-foreground">{assignment.name}</Text>
-                  {assignment.dueTime && (
-                    <View className="mt-1 flex-row items-center">
-                      <View className="mr-1 h-2 w-2 rounded-full bg-primary" />
-                      <Text className="text-xs text-muted-foreground">
-                        Due: {new Date(assignment.dueTime).toLocaleDateString()}
-                      </Text>
-                    </View>
-                  )}
-                </CardContent>
-              </Animated.View>
-            </Pressable>
-          </Link>
+            id={assignment.id || ''}
+            name={assignment.name || 'Untitled Assignment'}
+            dueTime={assignment.dueTime}
+            submitted={assignment.submitted}
+            index={index}
+            compact={true}
+            showDescription={false}
+          />
         ))}
       </View>
     );

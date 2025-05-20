@@ -2,7 +2,7 @@ import React from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { Paging } from '@/components/ui/paging';
-import { GroupAssignment } from '@/components/groups/GroupAssignment';
+import { AssignmentCard } from '@/components/assignments/AssignmentCard';
 import type { AssignmentDto } from '@/api/orval/langAppApi.schemas';
 
 interface GroupAssignmentsSectionProps {
@@ -59,14 +59,16 @@ const GroupAssignmentsSection: React.FC<GroupAssignmentsSectionProps> = ({
   return (
     <View className="flex-1">
       {assignments.map((assignment, idx) => (
-        <GroupAssignment
+        <AssignmentCard
           key={assignment.id || idx}
           id={assignment.id || ''}
-          name={assignment.name || 'Untitled'}
-          description={''}
+          name={assignment.name || 'Untitled Assignment'}
           dueTime={assignment.dueTime || ''}
-          onPress={onPress}
+          submitted={assignment.submitted}
           index={idx}
+          compact={true}
+          showDescription={false}
+          onPress={onPress}
         />
       ))}
       {totalCount > pageSize && (

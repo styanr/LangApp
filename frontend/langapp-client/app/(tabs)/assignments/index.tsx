@@ -1,14 +1,12 @@
 import { useAssignments } from '@/hooks/useAssignments';
-import { ScrollView, ActivityIndicator, Pressable, View as RNView } from 'react-native';
+import { ScrollView, ActivityIndicator, View as RNView } from 'react-native';
 import { Toggle, ToggleIcon } from '@/components/ui/toggle';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { IconBadge } from '@/components/ui/themed-icon';
-import { ClipboardList, CalendarDays, Eye, EyeOff } from 'lucide-react-native';
-import Animated, { FadeIn, FadeInUp } from 'react-native-reanimated';
-import { Link } from 'expo-router';
+import { Eye, EyeOff } from 'lucide-react-native';
+import Animated, { FadeIn } from 'react-native-reanimated';
 import { useState } from 'react';
 import { Paging } from '@/components/ui/paging';
 import { Text } from '@/components/ui/text';
+import { AssignmentCard } from '@/components/assignments/AssignmentCard';
 
 export default function Assignments() {
   const [page, setPage] = useState(1);
@@ -62,42 +60,14 @@ export default function Assignments() {
         )}
         <RNView className="gap-3">
           {assignments.map((assignment, idx) => (
-            <Animated.View
+            <AssignmentCard
               key={assignment.id}
-              entering={FadeInUp.delay(idx * 80).duration(500)}
-              className="shadow-lg shadow-indigo-200/40">
-              <Link href={{ pathname: `/(tabs)/assignments/${assignment.id}` }} asChild>
-                <Pressable className="active:scale-98">
-                  <Card className="border-0 bg-white/90 dark:bg-zinc-900/80">
-                    <CardHeader className="flex-row items-center gap-4 p-5">
-                      <IconBadge Icon={ClipboardList} size={32} className="text-fuchsia-500" />
-                      <RNView className="flex-1">
-                        <CardTitle className="text-2xl font-bold text-fuchsia-900 dark:text-white">
-                          {assignment.name}
-                        </CardTitle>
-                        <CardDescription className="mt-1 text-base text-fuchsia-700 dark:text-fuchsia-200">
-                          {assignment.dueTime ? (
-                            <RNView className="flex-row items-center gap-1">
-                              <CalendarDays size={16} className="text-fuchsia-400" />
-                              <Text className="text-xs text-fuchsia-700 dark:text-fuchsia-200">
-                                Due: {new Date(assignment.dueTime).toLocaleDateString()}
-                              </Text>
-                            </RNView>
-                          ) : (
-                            'No due date'
-                          )}
-                        </CardDescription>
-                      </RNView>
-                    </CardHeader>
-                    <CardContent className="px-5 pb-4 pt-0">
-                      <Text className="text-sm text-muted-foreground">
-                        Tap to view assignment details and activities.
-                      </Text>
-                    </CardContent>
-                  </Card>
-                </Pressable>
-              </Link>
-            </Animated.View>
+              id={assignment.id || ''}
+              name={assignment.name || 'Untitled Assignment'}
+              dueTime={assignment.dueTime}
+              submitted={assignment.submitted}
+              index={idx}
+            />
           ))}
         </RNView>
         {totalCount > pageSize && (

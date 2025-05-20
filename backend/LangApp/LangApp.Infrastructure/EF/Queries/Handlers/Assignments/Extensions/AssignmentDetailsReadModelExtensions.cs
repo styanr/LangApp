@@ -18,7 +18,7 @@ namespace LangApp.Infrastructure.EF.Queries.Handlers.Assignments.Extensions;
 
 public static class AssignmentDetailsReadModelExtensions
 {
-    public static AssignmentDto ToDto(this AssignmentReadModel assignment, bool restricted = false)
+    public static AssignmentDto ToDto(this AssignmentReadModel assignment, bool submitted, bool restricted = false)
     {
         return new AssignmentDto(
             assignment.Id,
@@ -28,6 +28,7 @@ public static class AssignmentDetailsReadModelExtensions
             assignment.StudyGroupId,
             assignment.DueDate,
             assignment.Activities.Aggregate(0, (acc, ac) => acc + ac.MaxScore),
+            submitted,
             assignment.Activities.Select(ac =>
                 new ActivityDto(
                     ac.Id,
@@ -38,7 +39,7 @@ public static class AssignmentDetailsReadModelExtensions
         );
     }
 
-    public static AssignmentSlimDto ToSlimDto(this AssignmentReadModel assignment)
+    public static AssignmentSlimDto ToSlimDto(this AssignmentReadModel assignment, bool submitted)
     {
         return new AssignmentSlimDto(
             assignment.Id,
@@ -48,6 +49,7 @@ public static class AssignmentDetailsReadModelExtensions
             assignment.StudyGroupId,
             assignment.DueDate,
             assignment.Activities.Aggregate(0, (acc, ac) => acc + ac.MaxScore),
+            submitted,
             assignment.Activities.Count
         );
     }

@@ -16,6 +16,7 @@
     "@react-native-community/netinfo": "11.4.1",
     "@rn-primitives/navigation-menu": "^1.1.0",
     "@rn-primitives/portal": "^1.2.0",
+    "@rn-primitives/progress": "^1.1.0",
     "@rn-primitives/slot": "^1.1.0",
     "@rn-primitives/toggle": "^1.1.0",
     "@rn-primitives/types": "^1.1.0",

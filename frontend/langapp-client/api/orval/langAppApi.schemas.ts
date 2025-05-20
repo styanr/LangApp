@@ -56,6 +56,7 @@ export interface AssignmentDto {
   studyGroupId?: string;
   dueTime?: string;
   maxScore?: number;
+  submitted?: boolean;
   activities?: ActivityDto[];
 }
 
@@ -68,6 +69,7 @@ export interface AssignmentSlimDto {
   studyGroupId?: string;
   dueTime?: string;
   maxScore?: number;
+  submitted?: boolean;
   activityCount?: number;
 }
 
