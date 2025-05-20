@@ -353,6 +353,7 @@ export interface PostDto {
   id?: string;
   type?: PostType;
   authorId?: string;
+  authorName?: string;
   groupId?: string;
   title?: string;
   content?: string;
@@ -365,6 +366,7 @@ export interface PostDto {
 export interface PostSlimDto {
   id?: string;
   authorId?: string;
+  authorName?: string;
   type?: PostType;
   title?: string;
   contentPreview?: string;

@@ -53,13 +53,17 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [tokens, setTokens] = useState<AuthTokens | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const failedQueueRef = useRef<
     {
       resolve: (value?: any) => void;
       reject: (error: any) => void;
     }[]
   >([]);
+
+  const isRefreshing = useRef(false);
+  const setIsRefreshing = (value: boolean) => {
+    isRefreshing.current = value;
+  };
 
   const { mutateAsync: registerMutate } = useRegister();
   const { mutateAsync: loginMutate } = useLogin();
@@ -152,7 +156,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           console.warn('[Response Interceptor] 401 received. Token might be expired.');
           originalRequest._retry = true;
 
-          if (isRefreshing) {
+          if (isRefreshing.current) {
             console.log('[Response Interceptor] Refresh already in progress. Queuing request...');
             return new Promise((resolve, reject) => {
               failedQueueRef.current.push({

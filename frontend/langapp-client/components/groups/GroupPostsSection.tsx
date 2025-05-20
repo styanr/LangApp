@@ -3,10 +3,10 @@ import { View, ActivityIndicator } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { Paging } from '@/components/ui/paging';
 import { GroupPost } from '@/components/groups/GroupPost';
-import type { PostDto } from '@/api/orval/langAppApi.schemas';
+import type { PostSlimDto } from '@/api/orval/langAppApi.schemas';
 
 interface GroupPostsSectionProps {
-  posts: PostDto[];
+  posts: PostSlimDto[];
   isLoading: boolean;
   isError: boolean;
   page: number;
@@ -63,11 +63,11 @@ const GroupPostsSection: React.FC<GroupPostsSectionProps> = ({
           key={post.id || idx}
           id={post.id || ''}
           title={post.title || 'Untitled'}
-          content={post.content || ''}
+          content={post.contentPreview || ''}
           createdAt={post.createdAt || ''}
           author={{
             id: post.authorId || '',
-            name: post.authorId ? `User ${post.authorId}` : 'Unknown',
+            name: post.authorName || 'Unknown',
           }}
           onPress={onPress}
           index={idx}

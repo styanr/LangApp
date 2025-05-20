@@ -4,6 +4,8 @@ import { Text } from '@/components/ui/text';
 import { MessageSquare, Calendar, MoreVertical } from 'lucide-react-native';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { formatDistanceToNow } from 'date-fns';
+import { UTCDate } from '@date-fns/utc';
+import { toUTCDate } from '@/lib/dateUtils';
 
 type PostProps = {
   id: string;
@@ -27,7 +29,8 @@ export const GroupPost = ({
   onPress,
   index = 0,
 }: PostProps) => {
-  const formattedDate = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
+  console.log(createdAt);
+  const formattedDate = formatDistanceToNow(toUTCDate(createdAt), { addSuffix: true });
 
   return (
     <Animated.View
@@ -38,7 +41,7 @@ export const GroupPost = ({
           <CardHeader className="flex-row items-center justify-between p-5">
             <View className="flex-1">
               <CardTitle className="text-xl font-bold text-indigo-900 dark:text-white">
-                {title}
+                <Text>{title}</Text>
               </CardTitle>
               <CardDescription className="mt-1 text-sm text-indigo-700 dark:text-indigo-200">
                 <View className="flex-row items-center gap-1">
@@ -52,7 +55,7 @@ export const GroupPost = ({
             <MoreVertical size={18} className="text-indigo-400" />
           </CardHeader>
           <CardContent className="px-5 pb-4 pt-0">
-            <Text className="text-sm text-muted-foreground" numberOfLines={3}>
+            <Text className="text-sm" numberOfLines={3}>
               {content}
             </Text>
           </CardContent>

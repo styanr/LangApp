@@ -19,6 +19,7 @@ import GroupMembersSection from '@/components/groups/GroupMembersSection';
 import { Paging } from '@/components/ui/paging';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { User, MessageCircle, ClipboardList, Eye, EyeOff } from 'lucide-react-native';
+import { Button } from '@/components/ui/button';
 
 type TabType = 'posts' | 'assignments' | 'members';
 
@@ -66,9 +67,9 @@ const GroupPage = () => {
     ShowSubmitted: showSubmitted,
   });
 
-  const group = groupData; // No .data needed if getStudyGroup returns T directly
+  const group = groupData;
   const owner = group?.owner;
-  const posts = postsData?.items || []; // Assuming getGroupPosts returns { items: [], totalCount: 0 }
+  const posts = postsData?.items || [];
   const totalPosts = postsData?.totalCount || 0;
   const assignments = assignmentsData?.items || []; // Assuming getGroupAssignments returns { items: [], totalCount: 0 }
   const totalAssignments = assignmentsData?.totalCount || 0;
@@ -171,16 +172,26 @@ const GroupPage = () => {
             refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}>
             {/* Posts Tab */}
             {activeTab === 'posts' && (
-              <GroupPostsSection
-                posts={posts}
-                isLoading={isLoadingPosts}
-                isError={isPostsError}
-                page={postsPage}
-                pageSize={pageSize}
-                totalCount={totalPosts}
-                onPress={navigateToPost}
-                onPageChange={setPostsPage}
-              />
+              <>
+                <View className="px-4 pb-2">
+                  <Button
+                    onPress={() =>
+                      router.push({ pathname: `/(tabs)/groups/${groupId}/posts/create` })
+                    }>
+                      <Text className="text-sm font-semibold">Create Post</Text>
+                    </Button>
+                </View>
+                <GroupPostsSection
+                  posts={posts}
+                  isLoading={isLoadingPosts}
+                  isError={isPostsError}
+                  page={postsPage}
+                  pageSize={pageSize}
+                  totalCount={totalPosts}
+                  onPress={navigateToPost}
+                  onPageChange={setPostsPage}
+                />
+              </>
             )}
 
             {/* Assignments Tab */}
@@ -221,60 +232,3 @@ const GroupPage = () => {
 };
 
 export default GroupPage;
-
-// import {
-//   NavigationMenu,
-//   NavigationMenuItem,
-//   NavigationMenuList,
-//   NavigationMenuTrigger,
-// } from '@/components/ui/navigation-menu';
-// import { useAssignments } from '@/hooks/useAssignments';
-// import { usePosts } from '@/hooks/usePosts';
-// import { useStudyGroups } from '@/hooks/useStudyGroups';
-// import { useLocalSearchParams } from 'expo-router';
-// import { ClipboardList, MessageCircle, User } from 'lucide-react-native';
-// import { useEffect, useState } from 'react';
-// import { ActivityIndicator, Text, View } from 'react-native';
-// import Animated, { FadeIn } from 'react-native-reanimated';
-// const Group = () => {
-//   const { id } = useLocalSearchParams();
-
-//   const { getStudyGroup } = useStudyGroups();
-//   const {
-//     data: groupData,
-//     isLoading: isLoadingGroup,
-//     isError: isGroupError,
-//     refetch: refetchGroup,
-//     error: groupError,
-//   } = getStudyGroup(id as string);
-
-//   const group = groupData?.data;
-
-//   return (
-//     <View className="flex-1 bg-gradient-to-b from-indigo-50 to-fuchsia-50">
-//       {isLoadingGroup ? (
-//         <View className="flex-1 items-center justify-center bg-background">
-//           <ActivityIndicator size="large" color="#a21caf" />
-//           <Text className="mt-4 text-lg text-muted-foreground">Loading group...</Text>
-//         </View>
-//       ) : (
-//         <>
-//           {/* Group Header */}
-//           <Animated.View entering={FadeIn.duration(600)} className="px-6 pb-2 pt-10">
-//             <Text className="text-4xl font-extrabold text-primary drop-shadow-lg">
-//               {group?.name || 'Group'}
-//             </Text>
-//             <View className="mt-2 flex-row items-center">
-//               <User size={16} className="mr-1 text-indigo-400" />
-//               <Text className="text-sm text-muted-foreground">
-//                 {group?.members?.length} {group?.members?.length === 1 ? 'member' : 'members'}
-//               </Text>
-//             </View>
-//           </Animated.View>
-//         </>
-//       )}
-//     </View>
-//   );
-// };
-
-// export default Group;

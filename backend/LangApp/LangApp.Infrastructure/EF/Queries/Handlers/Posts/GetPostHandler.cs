@@ -26,6 +26,7 @@ internal sealed class GetPostHandler : IQueryHandler<GetPost, PostDto>
     public async Task<PostDto?> HandleAsync(GetPost query)
     {
         var post = await _posts
+            .Include(p => p.Author)
             .Include(p => p.Group)
             .ThenInclude(g => g.Members)
             .Include(p => p.Comments)
@@ -72,6 +73,7 @@ internal sealed class GetPostHandler : IQueryHandler<GetPost, PostDto>
             post.Id,
             post.Type,
             post.AuthorId,
+            post.Author.Username,
             post.GroupId,
             post.Title,
             post.Content,

@@ -6,6 +6,7 @@ public record PostDto(
     Guid Id,
     PostType Type,
     Guid AuthorId,
+    string AuthorName,
     Guid GroupId,
     string Title,
     string Content,

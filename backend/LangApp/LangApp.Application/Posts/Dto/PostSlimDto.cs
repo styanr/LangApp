@@ -5,6 +5,7 @@ namespace LangApp.Application.Posts.Dto;
 public record PostSlimDto(
     Guid Id,
     Guid AuthorId,
+    string AuthorName,
     PostType Type,
     string Title,
     string ContentPreview,

@@ -190,7 +190,7 @@ export default function Dashboard() {
   };
 
   return (
-    <View className="bg-background-primary flex-1 bg-fuchsia-50">
+    <View className="bg-background-primary flex-1 bg-fuchsia-50 dark:bg-black">
       <ScrollView className="flex-1 px-4 pt-5">
         <Animated.View entering={FadeInDown.delay(100).duration(600)}>
           {renderGreeting()}

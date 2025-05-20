@@ -19,14 +19,14 @@ export function AuthLayout({ title, subtitle, Icon, iconSize = 54, children }: A
   const { floatingStyle, pulseStyle, cardAnimatedStyle } = useAuthAnimations();
 
   return (
-    <View className="bg-background-primary flex-1 bg-fuchsia-50">
+    <View className="flex-1 bg-fuchsia-50 dark:bg-zinc-900">
       <LoginBackground />
 
       <View className="absolute left-6 top-12 z-10">
         <Link href="/" asChild>
           <Pressable className="flex-row items-center gap-2">
             <GraduationCap color="#6366F1" size={26} />
-            <Text className="text-xl font-bold text-gray-800">LangApp</Text>
+            <Text className="text-xl font-bold text-gray-800 dark:text-gray-200">LangApp</Text>
           </Pressable>
         </Link>
       </View>
@@ -48,8 +48,8 @@ export function AuthLayout({ title, subtitle, Icon, iconSize = 54, children }: A
             </View>
 
             <View className="mb-4 items-center px-6">
-              <Text className="mb-1 text-2xl font-bold text-gray-800">{title}</Text>
-              <Text className="text-center text-sm text-gray-500">{subtitle}</Text>
+              <Text className="mb-1 text-2xl font-bold text-gray-800 dark:text-gray-200">{title}</Text>
+              <Text className="text-center text-sm text-gray-500 dark:text-gray-400">{subtitle}</Text>
             </View>
 
             {children}

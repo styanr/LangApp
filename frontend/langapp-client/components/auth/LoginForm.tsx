@@ -59,7 +59,7 @@ export function LoginForm({ onLogin, isSubmitting, error }: LoginFormProps) {
       <Button onPress={handleSubmit} disabled={isSubmitting} className="h-12">
         <View className="flex-row items-center justify-center gap-2">
           <LogIn color="white" size={20} />
-          <Text className="text-base font-semibold text-white">
+          <Text className="text-base font-semibold text-white dark:text-gray-900">
             {isSubmitting ? 'Logging in...' : 'Login'}
           </Text>
         </View>
