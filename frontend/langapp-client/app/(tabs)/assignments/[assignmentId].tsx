@@ -12,10 +12,7 @@ export default function AssignmentDetailPage() {
   const { assignmentId } = useLocalSearchParams();
   const router = useRouter();
   const { getAssignmentById } = useAssignments();
-  const { data: resp, isLoading, isError } = getAssignmentById(assignmentId as string);
-
-  // payload is in resp.data
-  const assignment = resp?.data;
+  const { data: assignment, isLoading, isError } = getAssignmentById(assignmentId as string);
 
   const handleBeginSubmission = useCallback(() => {
     // Navigate to submission flow (to be implemented)

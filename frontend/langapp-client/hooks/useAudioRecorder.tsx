@@ -1,10 +1,13 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Audio } from 'expo-av';
-import * as FileSystem from 'expo-file-system';
-import { Platform } from 'react-native';
 
-interface RecordingState {
-  isRecording: boolean;
+import {
+  AudioRecording,
+  RecordingConfig,
+  useAudioRecorder as useExpoAudioRecorder,
+} from '@siteed/expo-audio-studio';
+
+interface LocalRecordingState {
   isDoneRecording: boolean;
   recordingUri: string | null;
   durationMillis: number;
@@ -15,138 +18,142 @@ export function useAudioRecorder() {
   const [permissionResponse, setPermissionResponse] = useState<Audio.PermissionResponse | null>(
     null
   );
-  const [recordingState, setRecordingState] = useState<RecordingState>({
-    isRecording: false,
+  const [localState, setLocalState] = useState<LocalRecordingState>({
     isDoneRecording: false,
     recordingUri: null,
     durationMillis: 0,
     sound: null,
   });
 
-  const recording = useRef<Audio.Recording | null>(null);
-  const startTime = useRef<number>(0);
+  const {
+    startRecording: expoStartRecording,
+    stopRecording: expoStopRecording,
+    isRecording: expoIsRecording,
+  } = useExpoAudioRecorder();
 
-  // Request permissions on mount
+  // Request permissions on mount and set audio mode
   useEffect(() => {
-    const getPermissions = async () => {
+    const getPermissionsAndSetupAudioMode = async () => {
       const permission = await Audio.requestPermissionsAsync();
       setPermissionResponse(permission);
 
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
-        staysActiveInBackground: true,
-        shouldDuckAndroid: true,
-      });
-    };
-
-    getPermissions();
-
-    // Cleanup on unmount
-    return () => {
-      if (recording.current) {
-        recording.current.stopAndUnloadAsync();
-      }
-      if (recordingState.sound) {
-        recordingState.sound.unloadAsync();
-      }
-    };
-  }, []);
-
-  const startRecording = async () => {
-    try {
-      // Make sure we have permissions
-      if (!permissionResponse?.granted) {
-        const permission = await Audio.requestPermissionsAsync();
-        setPermissionResponse(permission);
-        if (!permission.granted) {
-          console.log('No recording permissions');
-          return;
+      if (permission.granted) {
+        try {
+          await Audio.setAudioModeAsync({
+            allowsRecordingIOS: true,
+            playsInSilentModeIOS: true,
+            staysActiveInBackground: true,
+            shouldDuckAndroid: true,
+            playThroughEarpieceAndroid: false,
+          });
+        } catch (error) {
+          console.error('Failed to set audio mode', error);
         }
       }
+    };
 
-      // Create recording object
-      const { recording: newRecording } = await Audio.Recording.createAsync(
-        Audio.RecordingOptionsPresets.HIGH_QUALITY
-      );
+    getPermissionsAndSetupAudioMode();
 
-      recording.current = newRecording;
-      startTime.current = Date.now();
+    // Cleanup sound object on unmount
+    return () => {
+      if (localState.sound) {
+        localState.sound.unloadAsync();
+      }
+      // @siteed/expo-audio-studio's useAudioRecorder hook should handle its own internal cleanup
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // localState.sound is not needed in dependency array
 
-      setRecordingState({
-        isRecording: true,
-        isDoneRecording: false,
-        recordingUri: null,
-        durationMillis: 0,
-        sound: null,
-      });
+  const startRecording = async () => {
+    if (!permissionResponse?.granted) {
+      const permission = await Audio.requestPermissionsAsync();
+      setPermissionResponse(permission);
+      if (!permission.granted) {
+        console.log('Recording permission not granted.');
+        return;
+      }
+    }
+
+    // Reset local state for a new recording
+    if (localState.sound) {
+      await localState.sound.unloadAsync();
+    }
+    setLocalState({
+      isDoneRecording: false,
+      recordingUri: null,
+      durationMillis: 0,
+      sound: null,
+    });
+
+    const config: RecordingConfig = {
+      sampleRate: 16000,
+      channels: 1,
+      encoding: 'pcm_16bit', // This encoding is generally WAV compatible
+      // onAudioStream can be omitted if not needed for real-time processing
+    };
+
+    try {
+      await expoStartRecording(config);
+      // expoIsRecording from useExpoAudioRecorder will now be true
     } catch (err) {
-      console.error('Failed to start recording', err);
+      console.error('Failed to start recording with @siteed/expo-audio-studio', err);
     }
   };
 
   const stopRecording = async () => {
+    if (!expoIsRecording) return;
+
     try {
-      if (!recording.current) return;
+      const audioFile: AudioRecording | undefined = await expoStopRecording();
+      // expoIsRecording from useExpoAudioRecorder will now be false
 
-      await recording.current.stopAndUnloadAsync();
-      const durationMillis = Date.now() - startTime.current;
-
-      // Get the URI of the recording
-      const uri = recording.current.getURI();
-
-      // On Android, create a .wav file since Expo returns .m4a that might not be compatible
-      let finalUri = uri;
-      if (Platform.OS === 'android' && uri) {
-        const info = await FileSystem.getInfoAsync(uri);
-        const newUri = FileSystem.documentDirectory + `recording-${Date.now()}.wav`;
-
-        // Copy file to new location with .wav extension
-        // This is a mock conversion - in real app you might need a converter library
-        await FileSystem.copyAsync({
-          from: uri,
-          to: newUri,
+      if (audioFile && audioFile.fileUri) {
+        const { sound } = await Audio.Sound.createAsync({ uri: audioFile.fileUri });
+        setLocalState({
+          isDoneRecording: true,
+          recordingUri: audioFile.fileUri,
+          durationMillis: audioFile.durationMs || 0, // Corrected property name
+          sound,
         });
-
-        finalUri = newUri;
+      } else {
+        console.error('Stopping recording did not return a valid audio file.');
+        setLocalState((prevState) => ({
+          ...prevState,
+          isDoneRecording: false,
+        }));
       }
-
-      // Create a sound object for playback
-      const { sound } = await Audio.Sound.createAsync({ uri: finalUri });
-
-      setRecordingState({
-        isRecording: false,
-        isDoneRecording: true,
-        recordingUri: finalUri,
-        durationMillis,
-        sound,
-      });
-
-      recording.current = null;
     } catch (err) {
-      console.error('Failed to stop recording', err);
+      console.error('Failed to stop recording with @siteed/expo-audio-studio', err);
+      setLocalState((prevState) => ({
+        ...prevState,
+        isDoneRecording: false,
+      }));
     }
   };
 
   const playRecording = async () => {
-    try {
-      if (recordingState.sound) {
-        // Reset to beginning first to allow replaying
-        await recordingState.sound.setPositionAsync(0);
-        await recordingState.sound.playAsync();
+    if (localState.sound && localState.isDoneRecording) {
+      try {
+        await localState.sound.setPositionAsync(0);
+        await localState.sound.playAsync();
+      } catch (err) {
+        console.error('Failed to play recording', err);
       }
-    } catch (err) {
-      console.error('Failed to play recording', err);
     }
   };
 
-  const resetRecording = () => {
-    if (recordingState.sound) {
-      recordingState.sound.unloadAsync();
+  const resetRecording = async () => {
+    if (expoIsRecording) {
+      try {
+        await expoStopRecording(); // Stop if currently recording
+      } catch (err) {
+        console.error('Error stopping recording on reset:', err);
+      }
     }
-
-    setRecordingState({
-      isRecording: false,
+    if (localState.sound) {
+      await localState.sound.unloadAsync();
+    }
+    setLocalState({
       isDoneRecording: false,
       recordingUri: null,
       durationMillis: 0,
@@ -162,12 +169,15 @@ export function useAudioRecorder() {
   };
 
   return {
-    ...recordingState,
+    isRecording: expoIsRecording, // Use directly from the @siteed hook
+    isDoneRecording: localState.isDoneRecording,
+    recordingUri: localState.recordingUri,
+    durationMillis: localState.durationMillis,
     hasPermission: permissionResponse?.granted ?? false,
     startRecording,
     stopRecording,
     playRecording,
     resetRecording,
-    formattedDuration: formatDuration(recordingState.durationMillis),
+    formattedDuration: formatDuration(localState.durationMillis),
   };
 }

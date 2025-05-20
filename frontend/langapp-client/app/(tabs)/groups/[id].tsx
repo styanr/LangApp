@@ -66,12 +66,12 @@ const GroupPage = () => {
     ShowSubmitted: showSubmitted,
   });
 
-  const group = groupData?.data;
+  const group = groupData; // No .data needed if getStudyGroup returns T directly
   const owner = group?.owner;
-  const posts = postsData?.data?.items || [];
-  const totalPosts = postsData?.data?.totalCount || 0;
-  const assignments = assignmentsData?.data?.items || [];
-  const totalAssignments = assignmentsData?.data?.totalCount || 0;
+  const posts = postsData?.items || []; // Assuming getGroupPosts returns { items: [], totalCount: 0 }
+  const totalPosts = postsData?.totalCount || 0;
+  const assignments = assignmentsData?.items || []; // Assuming getGroupAssignments returns { items: [], totalCount: 0 }
+  const totalAssignments = assignmentsData?.totalCount || 0;
   const members = group?.members || [];
 
   const onRefresh = async () => {
@@ -87,8 +87,7 @@ const GroupPage = () => {
 
   const navigateToAssignment = (assignmentId: string) => {
     router.push({
-      pathname: '/(tabs)/assignments',
-      params: { assignmentId },
+      pathname: `/(tabs)/assignments/${assignmentId}`,
     });
   };
 

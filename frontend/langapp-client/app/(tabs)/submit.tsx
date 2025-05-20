@@ -15,8 +15,7 @@ export default function SubmitAssignmentPage() {
   const { assignmentId } = useLocalSearchParams();
   const router = useRouter();
   const { getAssignmentById } = useAssignments();
-  const { data: resp, isLoading, isError } = getAssignmentById(String(assignmentId));
-  const assignment = resp?.data;
+  const { data: assignment, isLoading, isError } = getAssignmentById(String(assignmentId));
   const activities = assignment?.activities || [];
 
   const [index, setIndex] = useState(0);

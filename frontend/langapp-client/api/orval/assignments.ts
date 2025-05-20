@@ -32,16 +32,16 @@ import type {
   GetAssignmentsByUserParams,
 } from './langAppApi.schemas';
 
-import { customAxiosMutator } from '../axiosMutator';
+import { mainApiMutator } from '../axiosMutator';
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 export const getAssignment = (
   id: string,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<AssignmentDto>(
+  return mainApiMutator<AssignmentDto>(
     { url: `/api/v1/assignments/${id}`, method: 'GET', signal },
     options
   );
@@ -60,7 +60,7 @@ export const getGetAssignmentInfiniteQueryOptions = <
     query?: Partial<
       UseInfiniteQueryOptions<Awaited<ReturnType<typeof getAssignment>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -103,7 +103,7 @@ export function useGetAssignmentInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -124,7 +124,7 @@ export function useGetAssignmentInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -137,7 +137,7 @@ export function useGetAssignmentInfinite<
     query?: Partial<
       UseInfiniteQueryOptions<Awaited<ReturnType<typeof getAssignment>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -151,7 +151,7 @@ export function useGetAssignmentInfinite<
     query?: Partial<
       UseInfiniteQueryOptions<Awaited<ReturnType<typeof getAssignment>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -174,7 +174,7 @@ export const getGetAssignmentQueryOptions = <
   id: string,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getAssignment>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -206,7 +206,7 @@ export function useGetAssignment<TData = Awaited<ReturnType<typeof getAssignment
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -222,7 +222,7 @@ export function useGetAssignment<TData = Awaited<ReturnType<typeof getAssignment
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -230,7 +230,7 @@ export function useGetAssignment<TData = Awaited<ReturnType<typeof getAssignment
   id: string,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getAssignment>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -239,7 +239,7 @@ export function useGetAssignment<TData = Awaited<ReturnType<typeof getAssignment
   id: string,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getAssignment>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -256,10 +256,10 @@ export function useGetAssignment<TData = Awaited<ReturnType<typeof getAssignment
 
 export const createAssignment = (
   createAssignmentRequest: CreateAssignmentRequest,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<void>(
+  return mainApiMutator<void>(
     {
       url: `/api/v1/assignments`,
       method: 'POST',
@@ -278,7 +278,7 @@ export const getCreateAssignmentMutationOptions = <TError = unknown, TContext = 
     { data: CreateAssignmentRequest },
     TContext
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof createAssignment>>,
   TError,
@@ -318,7 +318,7 @@ export const useCreateAssignment = <TError = unknown, TContext = unknown>(
       { data: CreateAssignmentRequest },
       TContext
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<
@@ -334,10 +334,10 @@ export const useCreateAssignment = <TError = unknown, TContext = unknown>(
 export const getAssignmentsByGroup = (
   groupId: string,
   params?: GetAssignmentsByGroupParams,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<AssignmentSlimDtoPagedResult>(
+  return mainApiMutator<AssignmentSlimDtoPagedResult>(
     { url: `/api/v1/groups/${groupId}/assignments`, method: 'GET', params, signal },
     options
   );
@@ -370,7 +370,7 @@ export const getGetAssignmentsByGroupInfiniteQueryOptions = <
         GetAssignmentsByGroupParams['pageNumber']
       >
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -439,7 +439,7 @@ export function useGetAssignmentsByGroupInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -472,7 +472,7 @@ export function useGetAssignmentsByGroupInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -496,7 +496,7 @@ export function useGetAssignmentsByGroupInfinite<
         GetAssignmentsByGroupParams['pageNumber']
       >
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -521,7 +521,7 @@ export function useGetAssignmentsByGroupInfinite<
         GetAssignmentsByGroupParams['pageNumber']
       >
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -547,7 +547,7 @@ export const getGetAssignmentsByGroupQueryOptions = <
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAssignmentsByGroup>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -591,7 +591,7 @@ export function useGetAssignmentsByGroup<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -613,7 +613,7 @@ export function useGetAssignmentsByGroup<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -627,7 +627,7 @@ export function useGetAssignmentsByGroup<
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAssignmentsByGroup>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -642,7 +642,7 @@ export function useGetAssignmentsByGroup<
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAssignmentsByGroup>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -659,10 +659,10 @@ export function useGetAssignmentsByGroup<
 
 export const getAssignmentsByUser = (
   params: GetAssignmentsByUserParams,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<AssignmentSlimDtoPagedResult>(
+  return mainApiMutator<AssignmentSlimDtoPagedResult>(
     { url: `/api/v1/users/me/assignments`, method: 'GET', params, signal },
     options
   );
@@ -691,7 +691,7 @@ export const getGetAssignmentsByUserInfiniteQueryOptions = <
         GetAssignmentsByUserParams['pageNumber']
       >
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -752,7 +752,7 @@ export function useGetAssignmentsByUserInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -784,7 +784,7 @@ export function useGetAssignmentsByUserInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -807,7 +807,7 @@ export function useGetAssignmentsByUserInfinite<
         GetAssignmentsByUserParams['pageNumber']
       >
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -831,7 +831,7 @@ export function useGetAssignmentsByUserInfinite<
         GetAssignmentsByUserParams['pageNumber']
       >
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -856,7 +856,7 @@ export const getGetAssignmentsByUserQueryOptions = <
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAssignmentsByUser>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -895,7 +895,7 @@ export function useGetAssignmentsByUser<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -916,7 +916,7 @@ export function useGetAssignmentsByUser<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -929,7 +929,7 @@ export function useGetAssignmentsByUser<
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAssignmentsByUser>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -943,7 +943,7 @@ export function useGetAssignmentsByUser<
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getAssignmentsByUser>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {

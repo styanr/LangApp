@@ -1,11 +1,8 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import * as AxiosLogger from 'axios-logger';
 
-const baseURL = 'http://192.168.88.20:5000';
-
 // The interceptors will be set up in the useAuth hook
 export const axiosInstance = axios.create({
-  baseURL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -15,16 +12,38 @@ export const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(AxiosLogger.requestLogger);
 axiosInstance.interceptors.response.use(AxiosLogger.responseLogger);
 
-export const customAxiosMutator = <T>(
-  { url, method, params, headers, data }: any,
+const mainApiUrl = process.env.EXPO_PUBLIC_API_URL;
+const functionsApiUrl = process.env.EXPO_PUBLIC_FUNCTIONS_API_URL;
+
+if (!mainApiUrl) {
+  throw new Error('EXPO_PUBLIC_API_URL is not defined');
+}
+if (!functionsApiUrl) {
+  throw new Error('EXPO_PUBLIC_FUNCTIONS_API_URL is not defined');
+}
+
+const apiMutator = <T>(
+  config: AxiosRequestConfig,
+  baseURL: string,
   options?: AxiosRequestConfig
-): Promise<AxiosResponse<T>> => {
-  return axiosInstance({
-    url,
-    method,
-    params,
-    data,
-    headers,
+): Promise<T> => {
+  const source = axios.CancelToken.source();
+  const promise = axiosInstance({
+    ...config,
     ...options,
-  });
+    cancelToken: source.token,
+    baseURL,
+  }).then(({ data }) => data);
+
+  // @ts-ignore
+  promise.cancel = () => {
+    source.cancel('Query was cancelled');
+  };
+
+  return promise;
 };
+
+export const mainApiMutator = <T>(config: AxiosRequestConfig, options?: AxiosRequestConfig) =>
+  apiMutator<T>(config, mainApiUrl, options);
+export const functionsApiMutator = <T>(config: AxiosRequestConfig, options?: AxiosRequestConfig) =>
+  apiMutator<T>(config, functionsApiUrl, options);

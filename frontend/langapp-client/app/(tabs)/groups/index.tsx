@@ -14,8 +14,8 @@ export default function Groups() {
   const pageSize = 10;
   const { getUserStudyGroups } = useStudyGroups();
   const { data, isLoading, isError, error } = getUserStudyGroups({ pageNumber: page, pageSize });
-  const groups = data?.data.items || [];
-  const totalCount = data?.data.totalCount || 0;
+  const groups = data?.items || [];
+  const totalCount = data?.totalCount || 0;
 
   return (
     <View className="flex-1 bg-gradient-to-b from-fuchsia-100 to-indigo-100">

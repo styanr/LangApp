@@ -21,16 +21,16 @@ import type {
   TokenResponse,
 } from './langAppApi.schemas';
 
-import { customAxiosMutator } from '../axiosMutator';
+import { mainApiMutator } from '../axiosMutator';
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 export const register = (
   register: Register,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<void>(
+  return mainApiMutator<void>(
     {
       url: `/api/v1/auth/register`,
       method: 'POST',
@@ -49,7 +49,7 @@ export const getRegisterMutationOptions = <TError = unknown, TContext = unknown>
     { data: Register },
     TContext
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof register>>,
   TError,
@@ -86,7 +86,7 @@ export const useRegister = <TError = unknown, TContext = unknown>(
       { data: Register },
       TContext
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<
@@ -101,10 +101,10 @@ export const useRegister = <TError = unknown, TContext = unknown>(
 };
 export const login = (
   login: Login,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<TokenResponse>(
+  return mainApiMutator<TokenResponse>(
     {
       url: `/api/v1/auth/login`,
       method: 'POST',
@@ -123,7 +123,7 @@ export const getLoginMutationOptions = <TError = unknown, TContext = unknown>(op
     { data: Login },
     TContext
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }): UseMutationOptions<Awaited<ReturnType<typeof login>>, TError, { data: Login }, TContext> => {
   const mutationKey = ['login'];
   const { mutation: mutationOptions, request: requestOptions } = options
@@ -155,7 +155,7 @@ export const useLogin = <TError = unknown, TContext = unknown>(
       { data: Login },
       TContext
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<Awaited<ReturnType<typeof login>>, TError, { data: Login }, TContext> => {
@@ -165,10 +165,10 @@ export const useLogin = <TError = unknown, TContext = unknown>(
 };
 export const refresh = (
   refresh: Refresh,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<TokenResponse>(
+  return mainApiMutator<TokenResponse>(
     {
       url: `/api/v1/auth/refresh`,
       method: 'POST',
@@ -187,7 +187,7 @@ export const getRefreshMutationOptions = <TError = unknown, TContext = unknown>(
     { data: Refresh },
     TContext
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof refresh>>,
   TError,
@@ -224,7 +224,7 @@ export const useRefresh = <TError = unknown, TContext = unknown>(
       { data: Refresh },
       TContext
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<Awaited<ReturnType<typeof refresh>>, TError, { data: Refresh }, TContext> => {
@@ -237,10 +237,10 @@ export const useRefresh = <TError = unknown, TContext = unknown>(
  */
 export const requestPasswordReset = (
   requestPasswordReset: RequestPasswordReset,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<void>(
+  return mainApiMutator<void>(
     {
       url: `/api/v1/auth/request-password-reset`,
       method: 'POST',
@@ -262,7 +262,7 @@ export const getRequestPasswordResetMutationOptions = <
     { data: RequestPasswordReset },
     TContext
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof requestPasswordReset>>,
   TError,
@@ -302,7 +302,7 @@ export const useRequestPasswordReset = <TError = unknown, TContext = unknown>(
       { data: RequestPasswordReset },
       TContext
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<
@@ -317,10 +317,10 @@ export const useRequestPasswordReset = <TError = unknown, TContext = unknown>(
 };
 export const resetPassword = (
   resetPassword: ResetPassword,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<void>(
+  return mainApiMutator<void>(
     {
       url: `/api/v1/auth/reset-password`,
       method: 'POST',
@@ -339,7 +339,7 @@ export const getResetPasswordMutationOptions = <TError = unknown, TContext = unk
     { data: ResetPassword },
     TContext
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof resetPassword>>,
   TError,
@@ -377,7 +377,7 @@ export const useResetPassword = <TError = unknown, TContext = unknown>(
       { data: ResetPassword },
       TContext
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<

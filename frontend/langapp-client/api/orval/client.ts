@@ -21,18 +21,15 @@ import type {
   UseQueryResult,
 } from '@tanstack/react-query';
 
-import { customAxiosMutator } from '../axiosMutator';
+import { mainApiMutator } from '../axiosMutator';
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 export const redirectToClientApp = (
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<void>(
-    { url: `/api/v1/client/deep-link`, method: 'GET', signal },
-    options
-  );
+  return mainApiMutator<void>({ url: `/api/v1/client/deep-link`, method: 'GET', signal }, options);
 };
 
 export const getRedirectToClientAppQueryKey = () => {
@@ -46,7 +43,7 @@ export const getRedirectToClientAppInfiniteQueryOptions = <
   query?: Partial<
     UseInfiniteQueryOptions<Awaited<ReturnType<typeof redirectToClientApp>>, TError, TData>
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
@@ -83,7 +80,7 @@ export function useRedirectToClientAppInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -103,7 +100,7 @@ export function useRedirectToClientAppInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -115,7 +112,7 @@ export function useRedirectToClientAppInfinite<
     query?: Partial<
       UseInfiniteQueryOptions<Awaited<ReturnType<typeof redirectToClientApp>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -128,7 +125,7 @@ export function useRedirectToClientAppInfinite<
     query?: Partial<
       UseInfiniteQueryOptions<Awaited<ReturnType<typeof redirectToClientApp>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -149,7 +146,7 @@ export const getRedirectToClientAppQueryOptions = <
   TError = unknown,
 >(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof redirectToClientApp>>, TError, TData>>;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
@@ -186,7 +183,7 @@ export function useRedirectToClientApp<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -206,7 +203,7 @@ export function useRedirectToClientApp<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -218,7 +215,7 @@ export function useRedirectToClientApp<
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof redirectToClientApp>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -231,7 +228,7 @@ export function useRedirectToClientApp<
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof redirectToClientApp>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {

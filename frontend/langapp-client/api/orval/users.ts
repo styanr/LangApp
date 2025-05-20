@@ -31,19 +31,16 @@ import type {
   UserDtoPagedResult,
 } from './langAppApi.schemas';
 
-import { customAxiosMutator } from '../axiosMutator';
+import { mainApiMutator } from '../axiosMutator';
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 export const getUser = (
   id: string,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<UserDto>(
-    { url: `/api/v1/users/${id}`, method: 'GET', signal },
-    options
-  );
+  return mainApiMutator<UserDto>({ url: `/api/v1/users/${id}`, method: 'GET', signal }, options);
 };
 
 export const getGetUserQueryKey = (id: string) => {
@@ -57,7 +54,7 @@ export const getGetUserInfiniteQueryOptions = <
   id: string,
   options?: {
     query?: Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -96,7 +93,7 @@ export function useGetUserInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -115,7 +112,7 @@ export function useGetUserInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -126,7 +123,7 @@ export function useGetUserInfinite<
   id: string,
   options?: {
     query?: Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -138,7 +135,7 @@ export function useGetUserInfinite<
   id: string,
   options?: {
     query?: Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -158,7 +155,7 @@ export const getGetUserQueryOptions = <TData = Awaited<ReturnType<typeof getUser
   id: string,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -190,7 +187,7 @@ export function useGetUser<TData = Awaited<ReturnType<typeof getUser>>, TError =
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -206,7 +203,7 @@ export function useGetUser<TData = Awaited<ReturnType<typeof getUser>>, TError =
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -214,7 +211,7 @@ export function useGetUser<TData = Awaited<ReturnType<typeof getUser>>, TError =
   id: string,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -223,7 +220,7 @@ export function useGetUser<TData = Awaited<ReturnType<typeof getUser>>, TError =
   id: string,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -240,10 +237,10 @@ export function useGetUser<TData = Awaited<ReturnType<typeof getUser>>, TError =
 
 export const searchUsers = (
   params: SearchUsersParams,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<UserDtoPagedResult>(
+  return mainApiMutator<UserDtoPagedResult>(
     { url: `/api/v1/users`, method: 'GET', params, signal },
     options
   );
@@ -269,7 +266,7 @@ export const getSearchUsersInfiniteQueryOptions = <
         SearchUsersParams['pageNumber']
       >
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -325,7 +322,7 @@ export function useSearchUsersInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -354,7 +351,7 @@ export function useSearchUsersInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -374,7 +371,7 @@ export function useSearchUsersInfinite<
         SearchUsersParams['pageNumber']
       >
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -395,7 +392,7 @@ export function useSearchUsersInfinite<
         SearchUsersParams['pageNumber']
       >
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -418,7 +415,7 @@ export const getSearchUsersQueryOptions = <
   params: SearchUsersParams,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof searchUsers>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -450,7 +447,7 @@ export function useSearchUsers<TData = Awaited<ReturnType<typeof searchUsers>>, 
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -466,7 +463,7 @@ export function useSearchUsers<TData = Awaited<ReturnType<typeof searchUsers>>, 
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -474,7 +471,7 @@ export function useSearchUsers<TData = Awaited<ReturnType<typeof searchUsers>>, 
   params: SearchUsersParams,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof searchUsers>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -483,7 +480,7 @@ export function useSearchUsers<TData = Awaited<ReturnType<typeof searchUsers>>, 
   params: SearchUsersParams,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof searchUsers>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -499,10 +496,10 @@ export function useSearchUsers<TData = Awaited<ReturnType<typeof searchUsers>>, 
 }
 
 export const getCurrentUser = (
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<UserDto>({ url: `/api/v1/users/me`, method: 'GET', signal }, options);
+  return mainApiMutator<UserDto>({ url: `/api/v1/users/me`, method: 'GET', signal }, options);
 };
 
 export const getGetCurrentUserQueryKey = () => {
@@ -516,7 +513,7 @@ export const getGetCurrentUserInfiniteQueryOptions = <
   query?: Partial<
     UseInfiniteQueryOptions<Awaited<ReturnType<typeof getCurrentUser>>, TError, TData>
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
@@ -553,7 +550,7 @@ export function useGetCurrentUserInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -573,7 +570,7 @@ export function useGetCurrentUserInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -585,7 +582,7 @@ export function useGetCurrentUserInfinite<
     query?: Partial<
       UseInfiniteQueryOptions<Awaited<ReturnType<typeof getCurrentUser>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -598,7 +595,7 @@ export function useGetCurrentUserInfinite<
     query?: Partial<
       UseInfiniteQueryOptions<Awaited<ReturnType<typeof getCurrentUser>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -619,7 +616,7 @@ export const getGetCurrentUserQueryOptions = <
   TError = void,
 >(options?: {
   query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getCurrentUser>>, TError, TData>>;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
@@ -652,7 +649,7 @@ export function useGetCurrentUser<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -670,7 +667,7 @@ export function useGetCurrentUser<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -680,7 +677,7 @@ export function useGetCurrentUser<
 >(
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getCurrentUser>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -691,7 +688,7 @@ export function useGetCurrentUser<
 >(
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getCurrentUser>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -708,9 +705,9 @@ export function useGetCurrentUser<
 
 export const updateUserInfo = (
   updateUserInfoRequest: UpdateUserInfoRequest,
-  options?: SecondParameter<typeof customAxiosMutator>
+  options?: SecondParameter<typeof mainApiMutator>
 ) => {
-  return customAxiosMutator<void>(
+  return mainApiMutator<void>(
     {
       url: `/api/v1/users/me`,
       method: 'PUT',
@@ -728,7 +725,7 @@ export const getUpdateUserInfoMutationOptions = <TError = unknown, TContext = un
     { data: UpdateUserInfoRequest },
     TContext
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof updateUserInfo>>,
   TError,
@@ -766,7 +763,7 @@ export const useUpdateUserInfo = <TError = unknown, TContext = unknown>(
       { data: UpdateUserInfoRequest },
       TContext
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<

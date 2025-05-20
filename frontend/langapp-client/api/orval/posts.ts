@@ -34,19 +34,16 @@ import type {
   PostSlimDtoPagedResult,
 } from './langAppApi.schemas';
 
-import { customAxiosMutator } from '../axiosMutator';
+import { mainApiMutator } from '../axiosMutator';
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 export const getPost = (
   id: string,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<PostDto>(
-    { url: `/api/v1/posts/${id}`, method: 'GET', signal },
-    options
-  );
+  return mainApiMutator<PostDto>({ url: `/api/v1/posts/${id}`, method: 'GET', signal }, options);
 };
 
 export const getGetPostQueryKey = (id: string) => {
@@ -60,7 +57,7 @@ export const getGetPostInfiniteQueryOptions = <
   id: string,
   options?: {
     query?: Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getPost>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -99,7 +96,7 @@ export function useGetPostInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -118,7 +115,7 @@ export function useGetPostInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -129,7 +126,7 @@ export function useGetPostInfinite<
   id: string,
   options?: {
     query?: Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getPost>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -141,7 +138,7 @@ export function useGetPostInfinite<
   id: string,
   options?: {
     query?: Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getPost>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -161,7 +158,7 @@ export const getGetPostQueryOptions = <TData = Awaited<ReturnType<typeof getPost
   id: string,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getPost>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -193,7 +190,7 @@ export function useGetPost<TData = Awaited<ReturnType<typeof getPost>>, TError =
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -209,7 +206,7 @@ export function useGetPost<TData = Awaited<ReturnType<typeof getPost>>, TError =
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -217,7 +214,7 @@ export function useGetPost<TData = Awaited<ReturnType<typeof getPost>>, TError =
   id: string,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getPost>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -226,7 +223,7 @@ export function useGetPost<TData = Awaited<ReturnType<typeof getPost>>, TError =
   id: string,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getPost>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -244,9 +241,9 @@ export function useGetPost<TData = Awaited<ReturnType<typeof getPost>>, TError =
 export const editPost = (
   id: string,
   editPostRequest: EditPostRequest,
-  options?: SecondParameter<typeof customAxiosMutator>
+  options?: SecondParameter<typeof mainApiMutator>
 ) => {
-  return customAxiosMutator<void>(
+  return mainApiMutator<void>(
     {
       url: `/api/v1/posts/${id}`,
       method: 'PUT',
@@ -264,7 +261,7 @@ export const getEditPostMutationOptions = <TError = unknown, TContext = unknown>
     { id: string; data: EditPostRequest },
     TContext
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof editPost>>,
   TError,
@@ -302,7 +299,7 @@ export const useEditPost = <TError = unknown, TContext = unknown>(
       { id: string; data: EditPostRequest },
       TContext
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<
@@ -315,8 +312,8 @@ export const useEditPost = <TError = unknown, TContext = unknown>(
 
   return useMutation(mutationOptions, queryClient);
 };
-export const archivePost = (id: string, options?: SecondParameter<typeof customAxiosMutator>) => {
-  return customAxiosMutator<void>({ url: `/api/v1/posts/${id}`, method: 'PATCH' }, options);
+export const archivePost = (id: string, options?: SecondParameter<typeof mainApiMutator>) => {
+  return mainApiMutator<void>({ url: `/api/v1/posts/${id}`, method: 'PATCH' }, options);
 };
 
 export const getArchivePostMutationOptions = <TError = unknown, TContext = unknown>(options?: {
@@ -326,7 +323,7 @@ export const getArchivePostMutationOptions = <TError = unknown, TContext = unkno
     { id: string },
     TContext
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof archivePost>>,
   TError,
@@ -363,7 +360,7 @@ export const useArchivePost = <TError = unknown, TContext = unknown>(
       { id: string },
       TContext
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<Awaited<ReturnType<typeof archivePost>>, TError, { id: string }, TContext> => {
@@ -373,10 +370,10 @@ export const useArchivePost = <TError = unknown, TContext = unknown>(
 };
 export const createPost = (
   createPostRequest: CreatePostRequest,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<void>(
+  return mainApiMutator<void>(
     {
       url: `/api/v1/posts`,
       method: 'POST',
@@ -395,7 +392,7 @@ export const getCreatePostMutationOptions = <TError = unknown, TContext = unknow
     { data: CreatePostRequest },
     TContext
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof createPost>>,
   TError,
@@ -433,7 +430,7 @@ export const useCreatePost = <TError = unknown, TContext = unknown>(
       { data: CreatePostRequest },
       TContext
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<
@@ -449,10 +446,10 @@ export const useCreatePost = <TError = unknown, TContext = unknown>(
 export const createPostComment = (
   postId: string,
   createPostCommentRequest: CreatePostCommentRequest,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<void>(
+  return mainApiMutator<void>(
     {
       url: `/api/v1/posts/${postId}/comments`,
       method: 'POST',
@@ -474,7 +471,7 @@ export const getCreatePostCommentMutationOptions = <
     { postId: string; data: CreatePostCommentRequest },
     TContext
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof createPostComment>>,
   TError,
@@ -514,7 +511,7 @@ export const useCreatePostComment = <TError = unknown, TContext = unknown>(
       { postId: string; data: CreatePostCommentRequest },
       TContext
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<
@@ -531,9 +528,9 @@ export const updatePostComment = (
   postId: string,
   commentId: string,
   editPostCommentRequest: EditPostCommentRequest,
-  options?: SecondParameter<typeof customAxiosMutator>
+  options?: SecondParameter<typeof mainApiMutator>
 ) => {
-  return customAxiosMutator<void>(
+  return mainApiMutator<void>(
     {
       url: `/api/v1/posts/${postId}/comments/${commentId}`,
       method: 'PUT',
@@ -551,7 +548,7 @@ export const getUpdatePostCommentMutationOptions = <TError = void, TContext = un
     { postId: string; commentId: string; data: EditPostCommentRequest },
     TContext
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof updatePostComment>>,
   TError,
@@ -591,7 +588,7 @@ export const useUpdatePostComment = <TError = void, TContext = unknown>(
       { postId: string; commentId: string; data: EditPostCommentRequest },
       TContext
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<
@@ -607,9 +604,9 @@ export const useUpdatePostComment = <TError = void, TContext = unknown>(
 export const deletePostComment = (
   postId: string,
   commentId: string,
-  options?: SecondParameter<typeof customAxiosMutator>
+  options?: SecondParameter<typeof mainApiMutator>
 ) => {
-  return customAxiosMutator<void>(
+  return mainApiMutator<void>(
     { url: `/api/v1/posts/${postId}/comments/${commentId}`, method: 'DELETE' },
     options
   );
@@ -622,7 +619,7 @@ export const getDeletePostCommentMutationOptions = <TError = void, TContext = un
     { postId: string; commentId: string },
     TContext
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof deletePostComment>>,
   TError,
@@ -662,7 +659,7 @@ export const useDeletePostComment = <TError = void, TContext = unknown>(
       { postId: string; commentId: string },
       TContext
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<
@@ -678,10 +675,10 @@ export const useDeletePostComment = <TError = void, TContext = unknown>(
 export const getPostsByGroup = (
   groupId: string,
   params?: GetPostsByGroupParams,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<PostSlimDtoPagedResult>(
+  return mainApiMutator<PostSlimDtoPagedResult>(
     { url: `/api/v1/groups/${groupId}/posts`, method: 'GET', params, signal },
     options
   );
@@ -711,7 +708,7 @@ export const getGetPostsByGroupInfiniteQueryOptions = <
         GetPostsByGroupParams['pageNumber']
       >
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -780,7 +777,7 @@ export function useGetPostsByGroupInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -813,7 +810,7 @@ export function useGetPostsByGroupInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -837,7 +834,7 @@ export function useGetPostsByGroupInfinite<
         GetPostsByGroupParams['pageNumber']
       >
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -862,7 +859,7 @@ export function useGetPostsByGroupInfinite<
         GetPostsByGroupParams['pageNumber']
       >
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -886,7 +883,7 @@ export const getGetPostsByGroupQueryOptions = <
   params?: GetPostsByGroupParams,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getPostsByGroup>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -926,7 +923,7 @@ export function useGetPostsByGroup<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -946,7 +943,7 @@ export function useGetPostsByGroup<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -958,7 +955,7 @@ export function useGetPostsByGroup<
   params?: GetPostsByGroupParams,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getPostsByGroup>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -971,7 +968,7 @@ export function useGetPostsByGroup<
   params?: GetPostsByGroupParams,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getPostsByGroup>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {

@@ -12,6 +12,9 @@ import { Mic, Play, Square, RefreshCw, Upload, CheckCircle2 } from 'lucide-react
 import { IconBadge } from '@/components/ui/themed-icon';
 import { useAudioRecorder } from '@/hooks/useAudioRecorder';
 import { useFileUpload } from '@/hooks/useFileUpload';
+import { useLocalSearchParams } from 'expo-router';
+import { useSubmissions } from '@/hooks/useSubmissions';
+import type { SubmissionGradeDto } from '@/api/orval/langAppApi.schemas';
 import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
 
 interface Props {
@@ -41,6 +44,21 @@ export default function PronunciationActivity({ activity, submission, onChange }
   } = useAudioRecorder();
 
   const { upload, isUploading, progress, uploadError, resetState: resetUpload } = useFileUpload();
+  // evaluation hook and state
+  const { assignmentId } = useLocalSearchParams();
+  const { evaluatePronunciation, mutationStatus: { evaluatePronunciation: evaluateState } } = useSubmissions();
+  const [evaluation, setEvaluation] = useState<SubmissionGradeDto | null>(null);
+
+  // preemptive evaluation handler
+  const handleEvaluate = async () => {
+    if (!uploadedUrl) return;
+    try {
+      const result = await evaluatePronunciation(String(assignmentId), activity.id ?? '', { fileUri: uploadedUrl });
+      setEvaluation(result);
+    } catch (e) {
+      console.error('Evaluation error:', e);
+    }
+  };
 
   // Update parent component when recording URL changes
   useEffect(() => {
@@ -69,10 +87,11 @@ export default function PronunciationActivity({ activity, submission, onChange }
       const timestamp = new Date().getTime();
       const filename = `pronunciation_${timestamp}.wav`;
 
-      const url = await upload(recordingUri, filename);
+      const url = await upload(recordingUri, filename, 'recordings');
       setUploadedUrl(url);
     } catch (error) {
       console.error('Failed to upload recording:', error);
+      console.error(JSON.stringify(error, null, 2));
     }
   };
 
@@ -81,6 +100,7 @@ export default function PronunciationActivity({ activity, submission, onChange }
     resetRecording();
     resetUpload();
     setUploadedUrl(null);
+    setEvaluation(null);
 
     // Also reset the parent state
     const emptySubmission: PronunciationActivitySubmissionDetailsDto = {
@@ -210,25 +230,38 @@ export default function PronunciationActivity({ activity, submission, onChange }
             </View>
           )}
 
-          {/* Uploaded recording status */}
-          {uploadedUrl && (
+          {/* Preemptive pronunciation evaluation */}
+          {uploadedUrl && !evaluation && (
+            <View className="mt-4">
+              <Button onPress={handleEvaluate} variant="outline" disabled={evaluateState.isLoading}>
+                {evaluateState.isLoading ? (
+                  <ActivityIndicator size="small" color="#4ade80" />
+                ) : (
+                  <Text>Evaluate Pronunciation</Text>
+                )}
+              </Button>
+              {evaluateState.isError && (
+                <Text className="mt-2 text-center text-sm text-destructive">
+                  Evaluation failed
+                </Text>
+              )}
+            </View>
+          )}
+          {evaluation && (
             <View className="mt-4 rounded-lg bg-emerald-50 p-4 dark:bg-emerald-900/20">
               <View className="mb-2 flex-row items-center">
                 <CheckCircle2 size={20} className="mr-2 text-emerald-500" />
                 <Text className="text-base font-medium text-emerald-700 dark:text-emerald-300">
-                  Recording uploaded successfully
+                  Score: {evaluation.scorePercentage?.toFixed(2)}%
                 </Text>
               </View>
-
-              <Text className="mb-4 ml-7 text-sm text-muted-foreground">
-                Your pronunciation has been saved
-              </Text>
-
+              {evaluation.feedback && (
+                <Text className="mb-4 text-sm text-muted-foreground">
+                  Feedback: {evaluation.feedback}
+                </Text>
+              )}
               <View className="flex-row justify-end">
-                <Button
-                  onPress={handleReset}
-                  variant="outline"
-                  className="border-emerald-200 dark:border-emerald-800">
+                <Button onPress={handleReset} variant="outline" className="border-emerald-200 dark:border-emerald-800">
                   <Text className="text-emerald-700 dark:text-emerald-300">Record Again</Text>
                 </Button>
               </View>

@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import * as FileSystem from 'expo-file-system';
+import { getUploadSasUri } from '@/api/functions/orval/file-upload';
+import { getReadSasUri } from '@/api/functions/orval/file-access';
+import { Platform } from 'react-native';
 
 interface UploadProgress {
   totalBytes: number;
@@ -8,7 +11,7 @@ interface UploadProgress {
 }
 
 interface UseFileUploadReturn {
-  upload: (uri: string, fileName: string) => Promise<string>;
+  upload: (uri: string, fileName: string, containerName?: string) => Promise<string>;
   isUploading: boolean;
   progress: UploadProgress | null;
   uploadError: Error | null;
@@ -16,7 +19,7 @@ interface UseFileUploadReturn {
 }
 
 /**
- * A hook for uploading files to Azure Blob Storage (mock implementation)
+ * A hook for uploading files to Azure Blob Storage
  */
 export function useFileUpload(): UseFileUploadReturn {
   const [isUploading, setIsUploading] = useState(false);
@@ -29,8 +32,18 @@ export function useFileUpload(): UseFileUploadReturn {
     setUploadError(null);
   };
 
-  // Mock implementation that simulates uploading a file to Azure Blob Storage
-  const upload = async (uri: string, fileName: string): Promise<string> => {
+  /**
+   * Upload a file to Azure Blob Storage
+   * @param uri Local file URI to upload
+   * @param fileName Filename to use in blob storage
+   * @param containerName Container name (default: 'recordings' for audio files)
+   * @returns URL of the uploaded file
+   */
+  const upload = async (
+    uri: string,
+    fileName: string,
+    containerName: string = 'recordings'
+  ): Promise<string> => {
     try {
       setIsUploading(true);
       setUploadError(null);
@@ -42,39 +55,77 @@ export function useFileUpload(): UseFileUploadReturn {
         throw new Error(`File does not exist: ${uri}`);
       }
 
-      // Simulate upload progress with a delay
+      // 1. Get an upload SAS URI from the API
+      const uploadResponse = await getUploadSasUri({ fileName });
+
+      if (!uploadResponse?.uploadUri) {
+        throw new Error('Failed to obtain upload URL');
+      }
+
+      const { uploadUri, blobFileName } = uploadResponse;
       const totalBytes = fileInfo.size ?? 0;
-      const progressInterval = setInterval(() => {
+
+      // Set initial progress
+      setProgress({
+        totalBytes,
+        sentBytes: 0,
+        percent: 0,
+      });
+
+      // Track progress manually since Expo FileSystem's progress tracking is platform-specific
+      const progressTracker = setInterval(() => {
         setProgress((prev) => {
           if (!prev) return { totalBytes, sentBytes: 0, percent: 0 };
-
-          // Simulate 20% progress increase every interval
-          const newPercent = Math.min(prev.percent + 20, 100);
+          // Don't go to 100% until confirmed completion
+          const newPercent = Math.min(prev.percent + 10, 95);
           const newSentBytes = Math.floor((newPercent / 100) * totalBytes);
-
           return {
             totalBytes,
             sentBytes: newSentBytes,
             percent: newPercent,
           };
         });
-      }, 500);
+      }, 300);
 
-      // Mock upload delay - would be a real Azure SDK call in production
-      await new Promise((resolve) => setTimeout(resolve, 2500));
+      try {
+        // 2. Upload the file using Expo FileSystem
+        const uploadResult = await FileSystem.uploadAsync(uploadUri, uri, {
+          httpMethod: 'PUT',
+          uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+          headers: {
+            'Content-Type': Platform.OS === 'ios' ? 'audio/wav' : 'audio/x-wav',
+            'x-ms-blob-type': 'BlockBlob',
+          },
+        });
 
-      clearInterval(progressInterval);
+        // Check if upload was successful
+        if (uploadResult.status !== 200 && uploadResult.status !== 201) {
+          throw new Error(`Upload failed with status ${uploadResult.status}`);
+        }
+      } finally {
+        // Always clear the progress tracker
+        clearInterval(progressTracker);
+      }
 
+      // 3. Get a read SAS URI for the uploaded blob
+      const readResponse = await getReadSasUri({
+        containerName,
+        blobFileName: blobFileName || fileName,
+      });
+
+      if (!readResponse?.readUri) {
+        throw new Error('Failed to obtain read URL');
+      }
+
+      // Set final progress
       setProgress({
         totalBytes,
         sentBytes: totalBytes,
         percent: 100,
       });
 
-      // Return a mock Azure Blob Storage URL
-      const blobUrl = `https://mockstorageaccount.blob.core.windows.net/audio/${fileName}`;
       setIsUploading(false);
-      return blobUrl;
+      return readResponse.readUri;
     } catch (error) {
       setIsUploading(false);
       const err = error instanceof Error ? error : new Error('Unknown upload error');

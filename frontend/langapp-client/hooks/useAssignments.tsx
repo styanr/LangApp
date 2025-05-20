@@ -53,8 +53,8 @@ export function useAssignments() {
       // all raw query properties (isLoading, isError, refetch, etc.)
       ...query,
       // unwrap slim DTO page
-      items: query.data?.data?.items || [],
-      totalCount: query.data?.data?.totalCount || 0,
+      items: query.data?.items || [],
+      totalCount: query.data?.totalCount || 0,
     };
   };
 
@@ -71,8 +71,8 @@ export function useAssignments() {
     const query = useGetAssignmentsByUser(actualParams, options);
     return {
       ...query,
-      items: query.data?.data?.items || [],
-      totalCount: query.data?.data?.totalCount || 0,
+      items: query.data?.items || [],
+      totalCount: query.data?.totalCount || 0,
     };
   };
 

@@ -33,16 +33,16 @@ import type {
   SubmissionGradeDto,
 } from './langAppApi.schemas';
 
-import { customAxiosMutator } from '../axiosMutator';
+import { mainApiMutator } from '../axiosMutator';
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 export const getSubmission = (
   id: string,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<AssignmentSubmissionDto>(
+  return mainApiMutator<AssignmentSubmissionDto>(
     { url: `/api/v1/submissions/${id}`, method: 'GET', signal },
     options
   );
@@ -61,7 +61,7 @@ export const getGetSubmissionInfiniteQueryOptions = <
     query?: Partial<
       UseInfiniteQueryOptions<Awaited<ReturnType<typeof getSubmission>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -104,7 +104,7 @@ export function useGetSubmissionInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -125,7 +125,7 @@ export function useGetSubmissionInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -138,7 +138,7 @@ export function useGetSubmissionInfinite<
     query?: Partial<
       UseInfiniteQueryOptions<Awaited<ReturnType<typeof getSubmission>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -152,7 +152,7 @@ export function useGetSubmissionInfinite<
     query?: Partial<
       UseInfiniteQueryOptions<Awaited<ReturnType<typeof getSubmission>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -175,7 +175,7 @@ export const getGetSubmissionQueryOptions = <
   id: string,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getSubmission>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -207,7 +207,7 @@ export function useGetSubmission<TData = Awaited<ReturnType<typeof getSubmission
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -223,7 +223,7 @@ export function useGetSubmission<TData = Awaited<ReturnType<typeof getSubmission
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -231,7 +231,7 @@ export function useGetSubmission<TData = Awaited<ReturnType<typeof getSubmission
   id: string,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getSubmission>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -240,7 +240,7 @@ export function useGetSubmission<TData = Awaited<ReturnType<typeof getSubmission
   id: string,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getSubmission>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -259,9 +259,9 @@ export const editSubmissionGrade = (
   submissionId: string,
   activityId: string,
   submissionGradeDto: SubmissionGradeDto,
-  options?: SecondParameter<typeof customAxiosMutator>
+  options?: SecondParameter<typeof mainApiMutator>
 ) => {
-  return customAxiosMutator<void>(
+  return mainApiMutator<void>(
     {
       url: `/api/v1/submissions/${submissionId}/activities/${activityId}`,
       method: 'PUT',
@@ -282,7 +282,7 @@ export const getEditSubmissionGradeMutationOptions = <
     { submissionId: string; activityId: string; data: SubmissionGradeDto },
     TContext
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof editSubmissionGrade>>,
   TError,
@@ -322,7 +322,7 @@ export const useEditSubmissionGrade = <TError = unknown, TContext = unknown>(
       { submissionId: string; activityId: string; data: SubmissionGradeDto },
       TContext
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<
@@ -338,10 +338,10 @@ export const useEditSubmissionGrade = <TError = unknown, TContext = unknown>(
 export const createAssignmentSubmission = (
   assignmentId: string,
   createAssignmentSubmissionRequest: CreateAssignmentSubmissionRequest,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<void>(
+  return mainApiMutator<void>(
     {
       url: `/api/v1/assignments/${assignmentId}/submissions`,
       method: 'POST',
@@ -363,7 +363,7 @@ export const getCreateAssignmentSubmissionMutationOptions = <
     { assignmentId: string; data: CreateAssignmentSubmissionRequest },
     TContext
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof createAssignmentSubmission>>,
   TError,
@@ -403,7 +403,7 @@ export const useCreateAssignmentSubmission = <TError = unknown, TContext = unkno
       { assignmentId: string; data: CreateAssignmentSubmissionRequest },
       TContext
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<
@@ -419,10 +419,10 @@ export const useCreateAssignmentSubmission = <TError = unknown, TContext = unkno
 export const getSubmissionsByAssignment = (
   assignmentId: string,
   params?: GetSubmissionsByAssignmentParams,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<AssignmentSubmissionDtoPagedResult>(
+  return mainApiMutator<AssignmentSubmissionDtoPagedResult>(
     { url: `/api/v1/assignments/${assignmentId}/submissions`, method: 'GET', params, signal },
     options
   );
@@ -455,7 +455,7 @@ export const getGetSubmissionsByAssignmentInfiniteQueryOptions = <
         GetSubmissionsByAssignmentParams['pageNumber']
       >
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -525,7 +525,7 @@ export function useGetSubmissionsByAssignmentInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -558,7 +558,7 @@ export function useGetSubmissionsByAssignmentInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -582,7 +582,7 @@ export function useGetSubmissionsByAssignmentInfinite<
         GetSubmissionsByAssignmentParams['pageNumber']
       >
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -607,7 +607,7 @@ export function useGetSubmissionsByAssignmentInfinite<
         GetSubmissionsByAssignmentParams['pageNumber']
       >
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -637,7 +637,7 @@ export const getGetSubmissionsByAssignmentQueryOptions = <
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getSubmissionsByAssignment>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -683,7 +683,7 @@ export function useGetSubmissionsByAssignment<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -705,7 +705,7 @@ export function useGetSubmissionsByAssignment<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -719,7 +719,7 @@ export function useGetSubmissionsByAssignment<
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getSubmissionsByAssignment>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -734,7 +734,7 @@ export function useGetSubmissionsByAssignment<
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getSubmissionsByAssignment>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -756,10 +756,10 @@ export const evaluatePronunciationSubmission = (
   assignmentId: string,
   activityId: string,
   evaluatePronunciationSubmissionRequest: EvaluatePronunciationSubmissionRequest,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<SubmissionGradeDto>(
+  return mainApiMutator<SubmissionGradeDto>(
     {
       url: `/api/v1/assignments/${assignmentId}/activities/${activityId}/evaluate-pronunciation`,
       method: 'POST',
@@ -781,7 +781,7 @@ export const getEvaluatePronunciationSubmissionMutationOptions = <
     { assignmentId: string; activityId: string; data: EvaluatePronunciationSubmissionRequest },
     TContext
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof evaluatePronunciationSubmission>>,
   TError,
@@ -821,7 +821,7 @@ export const useEvaluatePronunciationSubmission = <TError = unknown, TContext = 
       { assignmentId: string; activityId: string; data: EvaluatePronunciationSubmissionRequest },
       TContext
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<

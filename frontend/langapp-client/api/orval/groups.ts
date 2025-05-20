@@ -33,16 +33,16 @@ import type {
   StudyGroupSlimDtoPagedResult,
 } from './langAppApi.schemas';
 
-import { customAxiosMutator } from '../axiosMutator';
+import { mainApiMutator } from '../axiosMutator';
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 export const getStudyGroup = (
   id: string,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<StudyGroupDto>(
+  return mainApiMutator<StudyGroupDto>(
     { url: `/api/v1/groups/${id}`, method: 'GET', signal },
     options
   );
@@ -61,7 +61,7 @@ export const getGetStudyGroupInfiniteQueryOptions = <
     query?: Partial<
       UseInfiniteQueryOptions<Awaited<ReturnType<typeof getStudyGroup>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -104,7 +104,7 @@ export function useGetStudyGroupInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -125,7 +125,7 @@ export function useGetStudyGroupInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -138,7 +138,7 @@ export function useGetStudyGroupInfinite<
     query?: Partial<
       UseInfiniteQueryOptions<Awaited<ReturnType<typeof getStudyGroup>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -152,7 +152,7 @@ export function useGetStudyGroupInfinite<
     query?: Partial<
       UseInfiniteQueryOptions<Awaited<ReturnType<typeof getStudyGroup>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -175,7 +175,7 @@ export const getGetStudyGroupQueryOptions = <
   id: string,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getStudyGroup>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -207,7 +207,7 @@ export function useGetStudyGroup<TData = Awaited<ReturnType<typeof getStudyGroup
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -223,7 +223,7 @@ export function useGetStudyGroup<TData = Awaited<ReturnType<typeof getStudyGroup
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -231,7 +231,7 @@ export function useGetStudyGroup<TData = Awaited<ReturnType<typeof getStudyGroup
   id: string,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getStudyGroup>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -240,7 +240,7 @@ export function useGetStudyGroup<TData = Awaited<ReturnType<typeof getStudyGroup
   id: string,
   options?: {
     query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getStudyGroup>>, TError, TData>>;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -258,9 +258,9 @@ export function useGetStudyGroup<TData = Awaited<ReturnType<typeof getStudyGroup
 export const updateStudyGroupInfo = (
   id: string,
   studyGroupInfoRequestModel: StudyGroupInfoRequestModel,
-  options?: SecondParameter<typeof customAxiosMutator>
+  options?: SecondParameter<typeof mainApiMutator>
 ) => {
-  return customAxiosMutator<void>(
+  return mainApiMutator<void>(
     {
       url: `/api/v1/groups/${id}`,
       method: 'PUT',
@@ -281,7 +281,7 @@ export const getUpdateStudyGroupInfoMutationOptions = <
     { id: string; data: StudyGroupInfoRequestModel },
     TContext
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof updateStudyGroupInfo>>,
   TError,
@@ -321,7 +321,7 @@ export const useUpdateStudyGroupInfo = <TError = unknown, TContext = unknown>(
       { id: string; data: StudyGroupInfoRequestModel },
       TContext
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<
@@ -336,10 +336,10 @@ export const useUpdateStudyGroupInfo = <TError = unknown, TContext = unknown>(
 };
 export const createStudyGroup = (
   createStudyGroupRequest: CreateStudyGroupRequest,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<void>(
+  return mainApiMutator<void>(
     {
       url: `/api/v1/groups`,
       method: 'POST',
@@ -358,7 +358,7 @@ export const getCreateStudyGroupMutationOptions = <TError = unknown, TContext = 
     { data: CreateStudyGroupRequest },
     TContext
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof createStudyGroup>>,
   TError,
@@ -398,7 +398,7 @@ export const useCreateStudyGroup = <TError = unknown, TContext = unknown>(
       { data: CreateStudyGroupRequest },
       TContext
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<
@@ -414,10 +414,10 @@ export const useCreateStudyGroup = <TError = unknown, TContext = unknown>(
 export const addMembersToStudyGroup = (
   id: string,
   membersBodyRequestModel: MembersBodyRequestModel,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<void>(
+  return mainApiMutator<void>(
     {
       url: `/api/v1/groups/${id}/members`,
       method: 'POST',
@@ -439,7 +439,7 @@ export const getAddMembersToStudyGroupMutationOptions = <
     { id: string; data: MembersBodyRequestModel },
     TContext
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof addMembersToStudyGroup>>,
   TError,
@@ -479,7 +479,7 @@ export const useAddMembersToStudyGroup = <TError = unknown, TContext = unknown>(
       { id: string; data: MembersBodyRequestModel },
       TContext
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<
@@ -495,9 +495,9 @@ export const useAddMembersToStudyGroup = <TError = unknown, TContext = unknown>(
 export const removeMembersFromStudyGroup = (
   id: string,
   membersBodyRequestModel: MembersBodyRequestModel,
-  options?: SecondParameter<typeof customAxiosMutator>
+  options?: SecondParameter<typeof mainApiMutator>
 ) => {
-  return customAxiosMutator<void>(
+  return mainApiMutator<void>(
     {
       url: `/api/v1/groups/${id}/members`,
       method: 'DELETE',
@@ -518,7 +518,7 @@ export const getRemoveMembersFromStudyGroupMutationOptions = <
     { id: string; data: MembersBodyRequestModel },
     TContext
   >;
-  request?: SecondParameter<typeof customAxiosMutator>;
+  request?: SecondParameter<typeof mainApiMutator>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof removeMembersFromStudyGroup>>,
   TError,
@@ -558,7 +558,7 @@ export const useRemoveMembersFromStudyGroup = <TError = unknown, TContext = unkn
       { id: string; data: MembersBodyRequestModel },
       TContext
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseMutationResult<
@@ -573,10 +573,10 @@ export const useRemoveMembersFromStudyGroup = <TError = unknown, TContext = unkn
 };
 export const getStudyGroupForUser = (
   params?: GetStudyGroupForUserParams,
-  options?: SecondParameter<typeof customAxiosMutator>,
+  options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return customAxiosMutator<StudyGroupSlimDtoPagedResult>(
+  return mainApiMutator<StudyGroupSlimDtoPagedResult>(
     { url: `/api/v1/users/me/groups`, method: 'GET', params, signal },
     options
   );
@@ -605,7 +605,7 @@ export const getGetStudyGroupForUserInfiniteQueryOptions = <
         GetStudyGroupForUserParams['pageNumber']
       >
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -666,7 +666,7 @@ export function useGetStudyGroupForUserInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -698,7 +698,7 @@ export function useGetStudyGroupForUserInfinite<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -721,7 +721,7 @@ export function useGetStudyGroupForUserInfinite<
         GetStudyGroupForUserParams['pageNumber']
       >
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -745,7 +745,7 @@ export function useGetStudyGroupForUserInfinite<
         GetStudyGroupForUserParams['pageNumber']
       >
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -770,7 +770,7 @@ export const getGetStudyGroupForUserQueryOptions = <
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getStudyGroupForUser>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   }
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
@@ -809,7 +809,7 @@ export function useGetStudyGroupForUser<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -830,7 +830,7 @@ export function useGetStudyGroupForUser<
         >,
         'initialData'
       >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -843,7 +843,7 @@ export function useGetStudyGroupForUser<
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getStudyGroupForUser>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -857,7 +857,7 @@ export function useGetStudyGroupForUser<
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getStudyGroupForUser>>, TError, TData>
     >;
-    request?: SecondParameter<typeof customAxiosMutator>;
+    request?: SecondParameter<typeof mainApiMutator>;
   },
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {

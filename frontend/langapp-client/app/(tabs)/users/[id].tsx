@@ -7,9 +7,7 @@ import { useGlobalSearchParams } from 'expo-router';
 const UserViewPage = () => {
   const { id: userId } = useGlobalSearchParams();
   const { getUserById } = useUsers();
-  const { data: userData, isLoading, isError, error } = getUserById(userId as string);
-
-  const user = userData?.data;
+  const { data: user, isLoading, isError, error } = getUserById(userId as string);
 
   if (isLoading) {
     return (

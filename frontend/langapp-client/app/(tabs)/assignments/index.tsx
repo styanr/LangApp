@@ -20,8 +20,8 @@ export default function Assignments() {
     pageSize,
     showSubmitted,
   });
-  const assignments = data?.data.items || [];
-  const totalCount = data?.data.totalCount || 0;
+  const assignments = data?.items || [];
+  const totalCount = data?.totalCount || 0;
 
   return (
     <RNView className="flex-1 bg-gradient-to-b from-indigo-50 to-fuchsia-100">

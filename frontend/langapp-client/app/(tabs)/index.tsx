@@ -38,12 +38,14 @@ export default function Dashboard() {
     isError: isErrorAssignments,
   } = getUserAssignments();
 
-  const groups = groupsResponse?.data.items;
-  const assignments = assignmentsResponse?.data.items;
+  const groups = groupsResponse?.items;
+  const assignments = assignmentsResponse?.items;
 
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: getGetStudyGroupForUserQueryKey() });
-    queryClient.invalidateQueries({ queryKey: getGetAssignmentsByUserQueryKey() });
+    queryClient.invalidateQueries({
+      queryKey: getGetAssignmentsByUserQueryKey({ showSubmitted: false }),
+    });
   };
 
   const renderGreeting = () => (

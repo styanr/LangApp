@@ -37,8 +37,8 @@ export function useSubmissions() {
     const query = useGetSubmissionsByAssignment(assignmentId, params, options);
     return {
       ...query,
-      items: query.data?.data?.items || [],
-      totalCount: query.data?.data?.totalCount || 0,
+      items: query.data?.items || [],
+      totalCount: query.data?.totalCount || 0,
     };
   };
 

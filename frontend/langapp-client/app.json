@@ -11,7 +11,9 @@
     "experiments": {
       "tsconfigPaths": true
     },
-    "plugins": ["expo-router"],
+    "plugins": [
+      "expo-router"
+    ],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -20,7 +22,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -28,11 +32,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.oleh_chaus.langappclient"
     },
     "extra": {
       "apiUrl": "http://localhost:5000",
-      "specUrl": "http://localhost:5000/swagger/v1/swagger.json"
-    }
+      "specUrl": "http://localhost:5000/swagger/v1/swagger.json",
+      "router": {},
+      "eas": {
+        "projectId": "f563c22b-5a7b-40b0-a04d-0f991577310b"
+      }
+    },
+    "owner": "oleh_chaus"
   }
 }

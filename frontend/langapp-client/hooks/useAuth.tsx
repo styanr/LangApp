@@ -29,7 +29,7 @@ import type {
 } from '@/api/orval/authentication';
 import { axiosInstance } from '@/api/axiosMutator';
 
-type AuthTokens = LoginMutationResult['data'];
+type AuthTokens = LoginMutationResult;
 
 type AuthContextValue = {
   tokens: AuthTokens | null;
@@ -72,7 +72,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     query: { enabled: !!tokens?.accessToken },
   });
 
-  const user = userResponse?.data ?? null;
+  const user = userResponse ?? null;
 
   const processQueue = useCallback((error: any, token: string | null = null) => {
     console.log('[Queue] Processing queue:', failedQueueRef.current.length, 'pending');
@@ -138,8 +138,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       (response) => response,
       async (error: AxiosError) => {
         const originalRequest: any = error.config;
-        const baseURL = axiosInstance.defaults.baseURL;
-
         // Prevent token refresh on invalid login requests
         const isLoginRequest =
           originalRequest?.url?.includes('/auth/login') &&
@@ -175,6 +173,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           console.log('[Response Interceptor] Starting token refresh...');
 
           try {
+            const baseURL = process.env.EXPO_PUBLIC_API_URL;
+
+            if (!baseURL) {
+              throw new Error('EXPO_PUBLIC_API_URL is not defined');
+            }
             const tokensStr = await AsyncStorage.getItem('@langapp:tokens');
             const storedTokens = tokensStr ? JSON.parse(tokensStr) : null;
 
@@ -242,13 +245,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (data: LoginMutationBody) => {
     const resp = await loginMutate({ data });
-    await persistTokens(resp.data);
+    await persistTokens(resp);
   };
 
   const refreshSession = async () => {
     if (!tokens?.refreshToken) throw new Error('no refresh token');
     const resp = await refreshMutate({ data: { refreshToken: tokens.refreshToken } });
-    await persistTokens(resp.data);
+    await persistTokens(resp);
   };
 
   const requestPasswordReset = async (data: RequestPasswordResetMutationBody) => {
