@@ -1,11 +1,23 @@
+using System.Net;
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
+using LangApp.Functions.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 
 namespace LangApp.Functions;
+
+public class ReadSasResponseModel
+{
+    public string BlobFileName { get; set; }
+    public string ContainerName { get; set; }
+    public string ReadUri { get; set; }
+}
 
 public class GetReadSasUri
 {
@@ -16,7 +28,25 @@ public class GetReadSasUri
         _logger = logger;
     }
 
+    [Authorize]
     [Function("GetReadSasUri")]
+    [OpenApiOperation(operationId: "GetReadSasUri", tags: ["File Access"])]
+    [OpenApiParameter(name: "containerName", In = ParameterLocation.Query, Required = true, Type = typeof(string),
+        Description = "The name of the container (must be 'images' or 'recordings')")]
+    [OpenApiParameter(name: "blobFileName", In = ParameterLocation.Query, Required = true, Type = typeof(string),
+        Description = "The name of the blob file to access")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
+        bodyType: typeof(ReadSasResponseModel),
+        Description = "Returns the blob file name, container name, and SAS URI for reading")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: "application/json",
+        bodyType: typeof(string),
+        Description = "Bad request - missing parameters or invalid container name")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.NotFound, contentType: "application/json",
+        bodyType: typeof(string),
+        Description = "Container or blob file not found")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.InternalServerError, contentType: "application/json",
+        bodyType: typeof(string),
+        Description = "Internal server error during SAS generation")]
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
         HttpRequest req,
@@ -51,7 +81,7 @@ public class GetReadSasUri
             var blobServiceClient = new BlobServiceClient(connectionString);
             var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
 
-            // Check if container exists
+            // Check if a container exists
             if (!await containerClient.ExistsAsync())
             {
                 _logger.LogWarning("Container '{ContainerName}' does not exist.", containerName);
@@ -71,11 +101,11 @@ public class GetReadSasUri
 
             _logger.LogInformation("Generated read SAS URI for blob: {BlobUri}", blobClient.Uri);
 
-            return new OkObjectResult(new
+            return new OkObjectResult(new ReadSasResponseModel
             {
-                blobFileName,
-                containerName,
-                readUri = sasUri
+                BlobFileName = blobFileName,
+                ContainerName = containerName,
+                ReadUri = sasUri.AbsoluteUri
             });
         }
         catch (Exception ex)

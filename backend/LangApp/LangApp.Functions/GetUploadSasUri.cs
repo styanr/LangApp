@@ -1,11 +1,23 @@
+using System.Net;
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
+using LangApp.Functions.Attributes;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
+using Microsoft.OpenApi.Models;
 
 namespace LangApp.Functions;
+
+public class ResponseModel
+{
+    public string OriginalFileName { get; set; }
+    public string BlobFileName { get; set; }
+    public string UploadUri { get; set; }
+}
 
 public class GetUploadSasUri
 {
@@ -19,7 +31,20 @@ public class GetUploadSasUri
         _logger = logger;
     }
 
+    [Authorize]
     [Function("GetUploadSasUri")]
+    [OpenApiOperation(operationId: "GetUploadSasUri", tags: ["File Upload"])]
+    [OpenApiParameter(name: "fileName", In = ParameterLocation.Query, Required = true, Type = typeof(string),
+        Description = "The name of the file to upload")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
+        bodyType: typeof(ResponseModel),
+        Description = "Returns the original file name, blob file name, and SAS URI for uploading")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: "application/json",
+        bodyType: typeof(string),
+        Description = "Bad request - missing fileName parameter or unsupported file type")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.InternalServerError, contentType: "application/json",
+        bodyType: typeof(string),
+        Description = "Internal server error during SAS generation")]
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
         HttpRequest req,
@@ -73,11 +98,12 @@ public class GetUploadSasUri
             _logger.LogInformation("Generated SAS URI for blob: {BlobUri}", blobClient.Uri);
 
             return new OkObjectResult(new
-            {
-                originalFileName,
-                blobFileName = guidFileName,
-                uploadUri = sasUri
-            });
+                ResponseModel
+                {
+                    OriginalFileName = originalFileName,
+                    BlobFileName = guidFileName,
+                    UploadUri = sasUri.AbsoluteUri
+                });
         }
         catch (Exception ex)
         {
