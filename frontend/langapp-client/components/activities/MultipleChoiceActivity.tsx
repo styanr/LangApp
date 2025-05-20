@@ -15,8 +15,8 @@ import { IconBadge } from '@/components/ui/themed-icon';
 
 interface Props {
   activity: ActivityDto;
-  submission?: ActivitySubmissionDto;
-  onChange: (details: any) => void;
+  submission?: MultipleChoiceActivitySubmissionDetailsDto | null;
+  onChange: (details: MultipleChoiceActivitySubmissionDetailsDto) => void;
 }
 
 export default function MultipleChoiceActivity({ activity, submission, onChange }: Props) {
@@ -27,14 +27,35 @@ export default function MultipleChoiceActivity({ activity, submission, onChange 
   );
 
   // State to track selected answers for each question
-  const [selectedAnswers, setSelectedAnswers] = useState<number[]>(() =>
-    new Array(mcQuestions.length).fill(-1)
-  );
+  const [selectedAnswers, setSelectedAnswers] = useState<number[]>(() => {
+    // Initialize from submission prop if available
+    if (submission?.answers) {
+      const initialAnswers = new Array(mcQuestions.length).fill(-1);
 
-  // Reset selectedAnswers if the number of questions changes
+      submission.answers.forEach((answer) => {
+        if (answer.questionIndex !== undefined && answer.chosenOptionIndex !== undefined) {
+          initialAnswers[answer.questionIndex] = answer.chosenOptionIndex;
+        }
+      });
+
+      return initialAnswers;
+    }
+    // Default to empty selections
+    return new Array(mcQuestions.length).fill(-1);
+  });
+
+  // Update selectedAnswers when submission prop changes
   useEffect(() => {
-    setSelectedAnswers(new Array(mcQuestions.length).fill(-1));
-  }, [mcQuestions.length]);
+    if (submission?.answers) {
+      const initialAnswers = new Array(mcQuestions.length).fill(-1);
+      submission.answers.forEach((answer) => {
+        if (answer.questionIndex !== undefined && answer.chosenOptionIndex !== undefined) {
+          initialAnswers[answer.questionIndex] = answer.chosenOptionIndex;
+        }
+      });
+      setSelectedAnswers(initialAnswers);
+    }
+  }, [submission, mcQuestions.length]);
 
   // Update parent component when selections change
   useEffect(() => {
@@ -59,7 +80,7 @@ export default function MultipleChoiceActivity({ activity, submission, onChange 
 
   return (
     <View className="mb-4">
-      <View className="mb-5 flex-row items-center">
+      <View className="mb-5 flex-row items-center gap-3">
         <IconBadge Icon={ListChecks} size={28} className="mr-2 text-fuchsia-500" />
         <Text className="text-xl font-bold text-fuchsia-900 dark:text-white">
           Multiple Choice Questions
@@ -72,7 +93,7 @@ export default function MultipleChoiceActivity({ activity, submission, onChange 
           className="mb-6">
           <Card className="overflow-hidden rounded-xl border border-border bg-white/90 shadow-sm dark:bg-zinc-900/80">
             <CardHeader className="border-b border-border bg-primary/5 pb-3 dark:bg-primary/10">
-              <Text className="text-lg font-semibold text-primary-foreground">
+              <Text className="text-lg font-semibold">
                 {qIndex + 1}. {question.question}
               </Text>
             </CardHeader>
@@ -80,10 +101,10 @@ export default function MultipleChoiceActivity({ activity, submission, onChange 
               {question.options?.map((option: string, oIndex: number) => (
                 <Pressable
                   key={oIndex}
-                  className={`mb-2 flex-row items-center rounded-lg p-3 ${
+                  className={`mb-2 flex-row items-center gap-2 rounded-lg p-3 ${
                     selectedAnswers[qIndex] === oIndex
                       ? 'bg-fuchsia-50 dark:bg-fuchsia-900/20'
-                      : 'bg-muted/30'
+                      : 'bg-muted/50'
                   }`}
                   onPress={() => handleSelectOption(qIndex, oIndex)}>
                   {selectedAnswers[qIndex] === oIndex ? (

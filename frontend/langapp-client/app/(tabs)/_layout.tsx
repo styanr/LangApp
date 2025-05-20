@@ -72,7 +72,13 @@ export default function AuthenticatedLayout() {
       <Tabs.Screen
         name="users/[id]"
         options={{
-          href: null
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="submit"
+        options={{
+          href: null,
         }}
       />
     </Tabs>

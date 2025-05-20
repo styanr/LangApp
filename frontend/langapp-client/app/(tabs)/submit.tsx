@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ScrollView, View, ActivityIndicator } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,6 @@ export default function SubmitAssignmentPage() {
   const activities = assignment?.activities || [];
 
   const [index, setIndex] = useState(0);
-  // Initialize details with empty values based on number of activities
   const [details, setDetails] = useState<any[]>(() => Array(activities.length).fill(null));
 
   // Update details when activities length changes
@@ -29,6 +28,10 @@ export default function SubmitAssignmentPage() {
       setDetails(Array(activities.length).fill(null));
     }
   }, [activities.length]);
+
+  useEffect(() => {
+    console.log('Details:', JSON.stringify(details, null, 2));
+  }, [details]);
 
   const { createSubmission, mutationStatus } = useSubmissions();
 
@@ -80,28 +83,20 @@ export default function SubmitAssignmentPage() {
   const activity = activities[index];
   const type = activity.details?.activityType;
 
-  let ActivityComponent = () => null;
-  switch (type) {
-    case 'MultipleChoice':
-      ActivityComponent = MultipleChoiceActivity;
-      break;
-    case 'FillInTheBlank':
-    case 'FillInTheBlankRestricted':
-      ActivityComponent = FillInTheBlankActivity;
-      break;
-    case 'Pronunciation':
-      ActivityComponent = PronunciationActivity;
-      break;
-    case 'Question':
-    case 'QuestionRestricted':
-      ActivityComponent = QuestionActivity;
-      break;
-    case 'Writing':
-      ActivityComponent = WritingActivity;
-      break;
-    default:
-      ActivityComponent = () => <Text>Unsupported activity type: {type}</Text>;
-  }
+  // Map activity types to corresponding components
+  const activityComponentMap: Record<string, React.ComponentType<any>> = {
+    MultipleChoice: MultipleChoiceActivity,
+    FillInTheBlank: FillInTheBlankActivity,
+    FillInTheBlankRestricted: FillInTheBlankActivity,
+    Pronunciation: PronunciationActivity,
+    Question: QuestionActivity,
+    QuestionRestricted: QuestionActivity,
+    Writing: WritingActivity,
+  };
+
+  // Select the component or fallback for unsupported types
+  const ActivityComponent =
+    activityComponentMap[type ?? ''] ?? (() => <Text>Unsupported activity type: {type}</Text>);
 
   return (
     <ScrollView className="flex-1 bg-background p-4" contentContainerStyle={{ paddingBottom: 32 }}>
@@ -110,16 +105,20 @@ export default function SubmitAssignmentPage() {
           Activity {index + 1} of {activities.length}
         </Text>
       </View>
-      <ActivityComponent activity={activity} submission={undefined} onChange={handleChange} />
+      <ActivityComponent activity={activity} submission={details[index]} onChange={handleChange} />
       <View className="mt-6 flex-row justify-between">
         <Button disabled={index === 0} onPress={handlePrev} variant="outline">
-          Previous
+          <Text>Previous</Text>
         </Button>
         {index < activities.length - 1 ? (
-          <Button onPress={handleNext}>Next</Button>
+          <Button onPress={handleNext}>
+            <Text>Next</Text>
+          </Button>
         ) : (
           <Button onPress={handleSubmit} disabled={mutationStatus.createSubmission.isLoading}>
-            {mutationStatus.createSubmission.isLoading ? 'Submitting...' : 'Submit Assignment'}
+            <Text>
+              {mutationStatus.createSubmission.isLoading ? 'Submitting...' : 'Submit Assignment'}
+            </Text>
           </Button>
         )}
       </View>
