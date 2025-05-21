@@ -55,18 +55,20 @@ const RootLayout = () => {
   }
 
   return (
-    <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          </Stack>
-          <Toast />
-          <PortalHost />
-        </AuthProvider>
-      </QueryClientProvider>
-    </ThemeProvider>
+    <>
+      <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            </Stack>
+            <Toast />
+            <PortalHost />
+          </AuthProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
+    </>
   );
 };
 

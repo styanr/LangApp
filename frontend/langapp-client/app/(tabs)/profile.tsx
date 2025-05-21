@@ -13,9 +13,18 @@ import { Text } from '@/components/ui/text';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LogOut } from 'lucide-react-native';
 import { UserProfilePicture } from '@/components/ui/UserProfilePicture';
+import * as ImagePicker from 'expo-image-picker';
+import { useFileUpload } from '@/hooks/useFileUpload';
 
 export default function Profile() {
   const { user, isLoading, updateUserInfo, logout } = useAuth();
+  const {
+    upload,
+    isUploading: isUploadingPic,
+    progress: uploadProgress,
+    uploadError,
+    resetState,
+  } = useFileUpload();
   const [editMode, setEditMode] = useState(false);
   const [firstName, setFirstName] = useState(user?.fullName?.firstName || '');
   const [lastName, setLastName] = useState(user?.fullName?.lastName || '');
@@ -46,6 +55,32 @@ export default function Profile() {
     ]);
   };
 
+  const handlePickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission required', 'Permission to access media library is required.');
+      return;
+    }
+    const pickerResult = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.8,
+      allowsEditing: true,
+      aspect: [1, 1],
+    });
+    if (pickerResult.canceled) return;
+    try {
+      const asset = pickerResult.assets[0];
+      const uri = asset.uri;
+      const fileName = asset.fileName ?? uri.split('/').pop() ?? `profile_${Date.now()}.jpg`;
+      const mimeType = 'image/jpeg';
+      const blobUrl = await upload(uri, fileName, mimeType);
+      await updateUserInfo({ username, fullName: { firstName, lastName }, pictureUrl: blobUrl });
+      resetState();
+    } catch (e: any) {
+      Alert.alert('Upload failed', e.message || 'Could not upload image');
+    }
+  };
+
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center">
@@ -61,7 +96,17 @@ export default function Profile() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <Card className="mx-auto w-full max-w-xl border-0 bg-white/90 shadow-lg dark:bg-zinc-900/80">
         <CardHeader className="flex-row items-center gap-4 p-6 pb-2">
-          <UserProfilePicture imageUrl={user?.pictureUrl} size={40} />
+          <Pressable
+            onPress={editMode ? handlePickImage : undefined}
+            disabled={!editMode || isUploadingPic}
+            className="relative">
+            <UserProfilePicture imageUrl={user?.pictureUrl} size={48} />
+            {isUploadingPic && (
+              <View className="absolute inset-0 items-center justify-center rounded-full bg-black/30">
+                <ActivityIndicator color="#fff" />
+              </View>
+            )}
+          </Pressable>
           <CardTitle className="text-3xl font-bold text-primary">Profile</CardTitle>
         </CardHeader>
         <CardContent className="gap-4 p-6 pt-2">

@@ -21,8 +21,9 @@ public class ResponseModel
 
 public class GetUploadSasUri
 {
-    private static readonly string[] AllowedImageExtensions = { ".jpg", ".jpeg", ".png", ".webp" };
-    private static readonly string[] AllowedAudioExtensions = { ".wav" };
+    private static readonly string[] AllowedImageExtensions = [".jpg", ".jpeg", ".png", ".webp"];
+    private static readonly string[] AllowedAudioExtensions = [".wav"];
+    private static readonly string[] AllowedDocumentExtensions = [".pdf"];
 
     private readonly ILogger<GetUploadSasUri> _logger;
 
@@ -72,6 +73,10 @@ public class GetUploadSasUri
         else if (AllowedAudioExtensions.Contains(extension))
         {
             containerName = "recordings";
+        }
+        else if (AllowedDocumentExtensions.Contains(extension))
+        {
+            containerName = "documents";
         }
         else
         {
@@ -123,7 +128,7 @@ public class GetUploadSasUri
             BlobContainerName = blobClient.BlobContainerName,
             BlobName = blobClient.Name,
             Resource = "b",
-            ExpiresOn = DateTimeOffset.UtcNow.Add(validFor)
+            ExpiresOn = DateTimeOffset.UtcNow.Add(validFor),
         };
 
         sasBuilder.SetPermissions(BlobSasPermissions.Create | BlobSasPermissions.Write);

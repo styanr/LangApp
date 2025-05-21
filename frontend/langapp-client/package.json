@@ -15,6 +15,7 @@
     "@date-fns/utc": "^2.1.0",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native-community/netinfo": "11.4.1",
+    "@rn-primitives/hover-card": "^1.1.0",
     "@rn-primitives/navigation-menu": "^1.1.0",
     "@rn-primitives/portal": "^1.2.0",
     "@rn-primitives/progress": "^1.1.0",

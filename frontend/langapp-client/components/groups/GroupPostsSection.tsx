@@ -65,9 +65,12 @@ const GroupPostsSection: React.FC<GroupPostsSectionProps> = ({
           title={post.title || 'Untitled'}
           content={post.contentPreview || ''}
           createdAt={post.createdAt || ''}
+          isEdited={post.isEdited || false}
+          mediaCount={post.mediaCount || 0}
           author={{
             id: post.authorId || '',
             name: post.authorName || 'Unknown',
+            profilePicture: null,
           }}
           onPress={onPress}
           index={idx}

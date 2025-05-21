@@ -66,7 +66,8 @@ public class GetReadSasUri
         _logger.LogInformation("Request for blob: {BlobFileName} in container: {ContainerName}",
             blobFileName, containerName);
 
-        if (containerName != "images" && containerName != "recordings")
+        string[] allowedContainers = ["images", "recordings", "documents"];
+        if (!allowedContainers.Contains(containerName.ToLowerInvariant()))
         {
             _logger.LogWarning("Invalid container requested: {ContainerName}", containerName);
             return new BadRequestObjectResult("Invalid container name.");

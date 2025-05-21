@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Pressable, ActivityIndicator } from 'react-native';
+import { View, Pressable, ActivityIndicator, Platform } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,6 +16,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { useSubmissions } from '@/hooks/useSubmissions';
 import type { SubmissionGradeDto } from '@/api/orval/langAppApi.schemas';
 import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
+import PronunciationAssessmentResult from './PronunciationAssessmentResult';
 
 interface Props {
   activity: ActivityDto;
@@ -92,7 +93,9 @@ export default function PronunciationActivity({ activity, submission, onChange }
       const timestamp = new Date().getTime();
       const filename = `pronunciation_${timestamp}.wav`;
 
-      const url = await upload(recordingUri, filename, 'recordings');
+      // Pass the audio MIME type for WAV files
+      const audioMimeType = Platform.OS === 'ios' ? 'audio/wav' : 'audio/x-wav';
+      const url = await upload(recordingUri, filename, 'recordings', audioMimeType);
       setUploadedUrl(url);
     } catch (error) {
       console.error('Failed to upload recording:', error);
@@ -258,11 +261,22 @@ export default function PronunciationActivity({ activity, submission, onChange }
                   Score: {evaluation.scorePercentage?.toFixed(2)}%
                 </Text>
               </View>
-              {evaluation.feedback && (
-                <Text className="mb-4 text-sm text-muted-foreground">
-                  Feedback: {evaluation.feedback}
-                </Text>
-              )}
+              {evaluation.feedback &&
+                (() => {
+                  try {
+                    const feedbackObj = JSON.parse(evaluation.feedback);
+                    if (Array.isArray(feedbackObj)) {
+                      return <PronunciationAssessmentResult words={feedbackObj} />;
+                    }
+                  } catch (e) {
+                    // fallback to plain text
+                  }
+                  return (
+                    <Text className="-muted-foreground mb-4 text-sm">
+                      Feedback: {evaluation.feedback}
+                    </Text>
+                  );
+                })()}
               <View className="flex-row justify-end">
                 <Button
                   onPress={handleReset}

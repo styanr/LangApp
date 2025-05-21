@@ -1,6 +1,7 @@
 using LangApp.Application.Common.Exceptions;
 using LangApp.Application.Common.Queries.Abstractions;
 using LangApp.Application.Posts.Dto;
+using LangApp.Application.Posts.Exceptions;
 using LangApp.Application.Posts.Queries;
 using LangApp.Application.Posts.Services.PolicyServices;
 using LangApp.Application.StudyGroups.Exceptions;
@@ -15,71 +16,76 @@ namespace LangApp.Infrastructure.EF.Queries.Handlers.Posts;
 internal sealed class GetPostHandler : IQueryHandler<GetPost, PostDto>
 {
     private readonly DbSet<PostReadModel> _posts;
-    private readonly IPostAccessPolicyService _policy;
+    private readonly DbSet<StudyGroupReadModel> _groups;
 
     public GetPostHandler(ReadDbContext context, IPostAccessPolicyService policy)
     {
-        _policy = policy;
         _posts = context.Posts;
+        _groups = context.StudyGroups;
     }
 
     public async Task<PostDto?> HandleAsync(GetPost query)
     {
-        var post = await _posts
-            .Include(p => p.Author)
-            .Include(p => p.Group)
-            .ThenInclude(g => g.Members)
-            .Include(p => p.Comments)
-            .Where(p => p.Id == query.Id &&
-                        (!p.Archived ||
-                         p.AuthorId == query.UserId)) // return archived posts only if the user is the author
+        // First, check if post exists and get minimal information needed for permission check
+        var postInfo = await _posts
+            .Where(p => p.Id == query.Id && (!p.Archived || p.AuthorId == query.UserId))
+            .Select(p => new { p.Id, p.GroupId, p.AuthorId })
             .AsNoTracking()
             .SingleOrDefaultAsync();
 
-        if (post is null)
+        if (postInfo is null)
         {
             return null;
         }
 
-        // TODO: Access checking in the query handler is not ideal, but I don't see any better
-        // and faster (performance-wise) way to do it.
+        var access = await _groups
+            .Where(g => g.Id == postInfo.GroupId)
+            .Select(g => new
+            {
+                IsOwner = g.OwnerId == query.UserId,
+                IsMember = g.Members.Any(m => m.Id == query.UserId)
+            })
+            .SingleOrDefaultAsync();
 
-        // Direct permission check
-        var isAllowed = false;
-
-        // Group owner can access all posts in their group
-        if (post.Group.OwnerId == query.UserId)
-        {
-            isAllowed = true;
-        }
-        // Post author can access their own post
-        else if (post.AuthorId == query.UserId)
-        {
-            isAllowed = true;
-        }
-        // Group members can access posts in the group
-        else if (post.Group.Members.Any(m => m.Id == query.UserId))
-        {
-            isAllowed = true;
-        }
-
-        if (!isAllowed)
+        if (access == null || (!access.IsOwner && !access.IsMember))
         {
             throw new UnauthorizedException(query.UserId);
         }
 
-        // Map to DTO after access check
+        var post = await _posts
+            .Include(p => p.Author)
+            .Include(p => p.Group)
+            .Include(p => p.Comments.OrderByDescending(c => c.CreatedAt))
+            .ThenInclude(c => c.Author)
+            .Where(p => p.Id == query.Id)
+            .AsNoTracking()
+            .AsSplitQuery()
+            .SingleOrDefaultAsync();
+
+        if (post is null)
+        {
+            throw new PostNotFoundException(query.Id);
+        }
+
         return new PostDto(
             post.Id,
             post.Type,
             post.AuthorId,
             post.Author.Username,
+            post.Author.PictureUrl,
             post.GroupId,
             post.Title,
             post.Content,
             post.CreatedAt,
             post.IsEdited,
-            post.Comments.Select(c => new PostCommentDto(c.Id, c.AuthorId, c.Content, c.CreatedAt, c.EditedAt))
+            post.Comments.Select(c => new PostCommentDto(
+                    c.Id,
+                    c.AuthorId,
+                    c.Author.Username,
+                    c.Author.PictureUrl,
+                    c.Content,
+                    c.CreatedAt,
+                    c.EditedAt))
                 .ToList(),
             post.Media
         );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, View } from 'react-native';
 import { LucideProps } from 'lucide-react-native';
 
@@ -20,6 +20,12 @@ export const ImageWithFallback = ({
   iconContainerClassName,
 }: ImageWithFallbackProps) => {
   const [error, setError] = useState(false);
+  const [errorData, setErrorData] = useState(null);
+
+  useEffect(() => {
+    console.error(errorData);
+    console.log(imageUrl);
+  }, [errorData]);
 
   if (!imageUrl || error) {
     return (
@@ -36,7 +42,10 @@ export const ImageWithFallback = ({
       source={{ uri: imageUrl }}
       style={{ width, height }}
       className={imageClassName}
-      onError={() => setError(true)}
+      onError={(e) => {
+        setError(true);
+        setErrorData(e.nativeEvent);
+      }}
     />
   );
 };

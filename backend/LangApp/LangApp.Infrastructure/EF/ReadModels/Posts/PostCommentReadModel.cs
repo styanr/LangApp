@@ -1,3 +1,5 @@
+using LangApp.Infrastructure.EF.Models.Users;
+
 namespace LangApp.Infrastructure.EF.Models.Posts;
 
 public class PostCommentReadModel
@@ -8,4 +10,6 @@ public class PostCommentReadModel
     public string Content { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? EditedAt { get; set; }
+
+    public UserReadModel Author { get; set; }
 }

@@ -82,8 +82,9 @@ const GroupPage = () => {
   };
 
   const navigateToPost = (postId: string) => {
-    // Navigate to post detail (this would need to be implemented)
-    console.log(`Navigate to post ${postId}`);
+    router.push({
+      pathname: `/(tabs)/posts/${postId}`,
+    });
   };
 
   const navigateToAssignment = (assignmentId: string) => {
@@ -178,8 +179,8 @@ const GroupPage = () => {
                     onPress={() =>
                       router.push({ pathname: `/(tabs)/groups/${groupId}/posts/create` })
                     }>
-                      <Text className="text-sm font-semibold">Create Post</Text>
-                    </Button>
+                    <Text className="text-sm font-semibold">Create Post</Text>
+                  </Button>
                 </View>
                 <GroupPostsSection
                   posts={posts}

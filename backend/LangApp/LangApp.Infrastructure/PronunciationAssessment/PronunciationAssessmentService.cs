@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using DiffPlex;
 using DiffPlex.Chunkers;
@@ -49,13 +50,16 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
         using var pushStream = AudioInputStream.CreatePushStream();
         using var audioInput = AudioConfig.FromStreamInput(pushStream);
 
+        bool enableProsody = language.Code == Language.EnglishUS.Code;
+
         return await ProcessAudioWithPronunciationAssessment(
             speechConfig,
             audioInput,
             language,
             stream.Stream,
             pushStream,
-            referenceText);
+            referenceText,
+            enableProsody);
     }
 
     private async Task<SubmissionGrade> ProcessAudioWithPronunciationAssessment(
@@ -64,12 +68,12 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
         Language language,
         Stream audioStream,
         PushAudioInputStream pushStream,
-        string referenceText)
+        string referenceText,
+        bool enableProsody)
     {
         var finalResult = new PronAssessmentResult();
         var recognizedWords = new List<string>();
         var pronWords = new List<Word>();
-        var finalWords = new List<Word>();
         var fluencyScores = new List<double>();
         var prosodyScores = new List<double>();
         var durations = new List<int>();
@@ -84,7 +88,10 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
             Granularity.Word,
             enableMiscue: true);
 
-        pronConfig.EnableProsodyAssessment();
+        if (enableProsody)
+        {
+            pronConfig.EnableProsodyAssessment();
+        }
 
         pronConfig.ApplyTo(recognizer);
 
@@ -97,10 +104,17 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
         {
             var pronResult = PronunciationAssessmentResult.FromResult(e.Result);
 
+            if (pronResult == null)
+            {
+                _logger.LogWarning("Pronunciation assessment result is null");
+                return;
+            }
+            
             fluencyScores.Add(pronResult.FluencyScore);
             prosodyScores.Add(pronResult.ProsodyScore);
 
-            pronWords.AddRange(pronResult.Words.Select(word => new Word(word.Word, word.ErrorType, word.AccuracyScore)));
+            pronWords.AddRange(pronResult.Words.Select(word =>
+                new Word(word.Word, word.ErrorType, word.AccuracyScore)));
 
             foreach (var result in e.Result.Best())
             {
@@ -129,10 +143,11 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
         await recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
         _logger.LogInformation("Pronunciation assessment complete");
         // Process results and calculate final scores
-        finalWords = ProcessFinalWordList(pronWords, recognizedWords, referenceText, true);
+        var finalWords = ProcessFinalWordList(pronWords, recognizedWords, referenceText, true);
 
         // Calculate scores
-        var scores = CalculateFinalScores(finalWords, fluencyScores, prosodyScores, durations, referenceText);
+        var scores = CalculateFinalScores(finalWords, fluencyScores, prosodyScores, durations, referenceText,
+            enableProsody);
 
         // return new PronAssessmentResult
         // {
@@ -146,7 +161,7 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
 
         return new SubmissionGrade(
             new Percentage(scores.accuracyScore),
-            "Accuracy Score: " + scores.accuracyScore + "%"
+            JsonSerializer.Serialize(finalWords)
         );
     }
 
@@ -226,7 +241,8 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
             List<double> fluencyScores,
             List<double> prosodyScores,
             List<int> durations,
-            string referenceText)
+            string referenceText,
+            bool enableProsody)
     {
         string[] referenceWords = referenceText.ToLower().Split(' ');
 
@@ -257,8 +273,23 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
         completenessScore = completenessScore <= 100 ? completenessScore : 100;
 
         // Calculate overall pronunciation score
-        var pronunciationScore =
-            accuracyScore * 0.4 + prosodyScore * 0.2 + fluencyScore * 0.2 + completenessScore * 0.2;
+        // the weights are taken from microsoft documentation
+        // https://github.com/Azure-Samples/cognitive-services-speech-sdk/blob/master/samples/csharp/sharedcontent/console/speech_recognition_samples.cs
+        var scoreComponents = new Dictionary<string, (double score, double weight)>
+        {
+            ["Accuracy"] = (accuracyScore, enableProsody ? 0.4 : 0.5),
+            ["Fluency"] = (fluencyScore, enableProsody ? 0.2 : 0.25),
+            ["Completeness"] = (completenessScore, enableProsody ? 0.2 : 0.25)
+        };
+
+        // Add prosody component only when enabled
+        if (enableProsody)
+        {
+            scoreComponents["Prosody"] = (prosodyScore, 0.2);
+        }
+
+        var pronunciationScore = scoreComponents.Sum(component =>
+            component.Value.score * component.Value.weight);
 
         return (accuracyScore, completenessScore, fluencyScore, prosodyScore, pronunciationScore);
     }

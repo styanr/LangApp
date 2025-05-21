@@ -81,6 +81,12 @@ export default function AuthenticatedLayout() {
           href: null,
         }}
       />
+      <Tabs.Screen
+        name="posts"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }

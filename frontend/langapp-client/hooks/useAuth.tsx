@@ -45,6 +45,7 @@ type AuthContextValue = {
   updateUserInfo: (data: {
     username?: string;
     fullName?: { firstName?: string; lastName?: string };
+    pictureUrl?: string | null;
   }) => Promise<void>;
 };
 
@@ -273,11 +274,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     delete axiosInstance.defaults.headers.common.Authorization;
   };
 
+  /**
+   * Update user info
+   */
   const updateUserInfo = async (data: {
     username?: string;
     fullName?: { firstName?: string; lastName?: string };
+    pictureUrl?: string | null;
   }) => {
-    await updateUserInfoMutation(data);
+    return await updateUserInfoMutation(data);
   };
 
   const value: AuthContextValue = {

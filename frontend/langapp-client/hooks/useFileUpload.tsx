@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import * as FileSystem from 'expo-file-system';
-import { getUploadSasUri } from '@/api/functions/orval/file-upload';
-import { getReadSasUri } from '@/api/functions/orval/file-access';
-import { Platform } from 'react-native';
+import { getUploadSasUri as getCustomUploadSasUri } from '@/api/functions/orval/file-upload';
+import {
+  GetUploadSasUriParams,
+  ResponseModel,
+} from '@/api/functions/orval/openAPIDocumentOnAzureFunctions.schemas';
+import { functionsApiMutator } from '@/api/axiosMutator';
+import { escapeNonAscii } from '@/lib/utils';
 
 interface UploadProgress {
   totalBytes: number;
@@ -11,7 +15,7 @@ interface UploadProgress {
 }
 
 interface UseFileUploadReturn {
-  upload: (uri: string, fileName: string, containerName?: string) => Promise<string>;
+  upload: (uri: string, fileName: string, mimeType?: string) => Promise<string>;
   isUploading: boolean;
   progress: UploadProgress | null;
   uploadError: Error | null;
@@ -36,14 +40,10 @@ export function useFileUpload(): UseFileUploadReturn {
    * Upload a file to Azure Blob Storage
    * @param uri Local file URI to upload
    * @param fileName Filename to use in blob storage
-   * @param containerName Container name (default: 'recordings' for audio files)
+   * @param mimeType MIME type of the file (default: 'application/octet-stream')
    * @returns URL of the uploaded file
    */
-  const upload = async (
-    uri: string,
-    fileName: string,
-    containerName: string = 'recordings'
-  ): Promise<string> => {
+  const upload = async (uri: string, fileName: string, mimeType?: string): Promise<string> => {
     try {
       setIsUploading(true);
       setUploadError(null);
@@ -56,13 +56,13 @@ export function useFileUpload(): UseFileUploadReturn {
       }
 
       // 1. Get an upload SAS URI from the API
-      const uploadResponse = await getUploadSasUri({ fileName });
+      const uploadResponse = await getCustomUploadSasUri({ fileName });
 
       if (!uploadResponse?.uploadUri) {
         throw new Error('Failed to obtain upload URL');
       }
 
-      const { uploadUri, blobFileName } = uploadResponse;
+      const { uploadUri } = uploadResponse; // blobFileName from response can be useful if API changes it
       const totalBytes = fileInfo.size ?? 0;
 
       // Set initial progress
@@ -93,8 +93,10 @@ export function useFileUpload(): UseFileUploadReturn {
           httpMethod: 'PUT',
           uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
           headers: {
-            'Content-Type': Platform.OS === 'ios' ? 'audio/wav' : 'audio/x-wav',
+            'Content-Type': mimeType || 'application/octet-stream',
             'x-ms-blob-type': 'BlockBlob',
+
+            'x-ms-meta-originalfilename': escapeNonAscii(fileName),
           },
         });
 
@@ -107,17 +109,7 @@ export function useFileUpload(): UseFileUploadReturn {
         clearInterval(progressTracker);
       }
 
-      // 3. Get a read SAS URI for the uploaded blob
-      const readResponse = await getReadSasUri({
-        containerName,
-        blobFileName: blobFileName || fileName,
-      });
-
-      if (!readResponse?.readUri) {
-        throw new Error('Failed to obtain read URL');
-      }
-
-      // Set final progress
+      // Upload successful, set final progress
       setProgress({
         totalBytes,
         sentBytes: totalBytes,
@@ -125,7 +117,9 @@ export function useFileUpload(): UseFileUploadReturn {
       });
 
       setIsUploading(false);
-      return readResponse.readUri;
+
+      const cleanBlobUrl = uploadUri.split('?')[0];
+      return cleanBlobUrl;
     } catch (error) {
       setIsUploading(false);
       const err = error instanceof Error ? error : new Error('Unknown upload error');

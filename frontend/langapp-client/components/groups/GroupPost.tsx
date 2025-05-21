@@ -1,11 +1,12 @@
 import { View, Pressable } from 'react-native';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
-import { MessageSquare, Calendar, MoreVertical } from 'lucide-react-native';
+import { MessageSquare, Calendar, MoreVertical, Paperclip } from 'lucide-react-native';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { formatDistanceToNow } from 'date-fns';
 import { UTCDate } from '@date-fns/utc';
 import { toUTCDate } from '@/lib/dateUtils';
+import { UserProfilePicture } from '@/components/ui/UserProfilePicture';
 
 type PostProps = {
   id: string;
@@ -15,7 +16,10 @@ type PostProps = {
   author: {
     id: string;
     name: string;
+    profilePicture?: string | null;
   };
+  isEdited?: boolean;
+  mediaCount?: number;
   onPress: (postId: string) => void;
   index?: number;
 };
@@ -26,6 +30,8 @@ export const GroupPost = ({
   content,
   createdAt,
   author,
+  isEdited = false,
+  mediaCount = 0,
   onPress,
   index = 0,
 }: PostProps) => {
@@ -44,11 +50,13 @@ export const GroupPost = ({
                 <Text>{title}</Text>
               </CardTitle>
               <CardDescription className="mt-1 text-sm text-indigo-700 dark:text-indigo-200">
-                <View className="flex-row items-center gap-1">
-                  <Calendar size={14} className="text-indigo-400" />
-                  <Text className="text-xs text-indigo-700 dark:text-indigo-200">
-                    {formattedDate} by {author.name}
-                  </Text>
+                <View className="flex-row items-center gap-2">
+                  <UserProfilePicture imageUrl={author.profilePicture} size={20} />
+                  <View className="flex-row items-center gap-1">
+                    <Text className="text-xs text-indigo-700 dark:text-indigo-200">
+                      {author.name} • {formattedDate} {isEdited && ' (edited)'}
+                    </Text>
+                  </View>
                 </View>
               </CardDescription>
             </View>
@@ -58,6 +66,15 @@ export const GroupPost = ({
             <Text className="text-sm" numberOfLines={3}>
               {content}
             </Text>
+
+            {mediaCount > 0 && (
+              <View className="mt-2 flex-row items-center">
+                <Paperclip size={14} className="mr-1 text-indigo-400" />
+                <Text className="text-xs text-indigo-500">
+                  {mediaCount} {mediaCount === 1 ? 'attachment' : 'attachments'}
+                </Text>
+              </View>
+            )}
           </CardContent>
         </Card>
       </Pressable>

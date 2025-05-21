@@ -107,6 +107,9 @@ internal sealed class ReadConfiguration :
         builder.HasOne<UserReadModel>()
             .WithMany()
             .HasForeignKey("AuthorId");
+
+        builder.HasOne(c => c.Author)
+            .WithMany().HasForeignKey(c => c.AuthorId);
     }
 
 

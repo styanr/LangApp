@@ -343,6 +343,9 @@ export interface MultipleChoiceSubmissionAnswerDto {
 export interface PostCommentDto {
   id?: string;
   authorId?: string;
+  authorName?: string;
+  /** @nullable */
+  authorProfilePicture?: string | null;
   content?: string;
   createdAt?: string;
   /** @nullable */
@@ -354,6 +357,8 @@ export interface PostDto {
   type?: PostType;
   authorId?: string;
   authorName?: string;
+  /** @nullable */
+  authorProfilePicture?: string | null;
   groupId?: string;
   title?: string;
   content?: string;
