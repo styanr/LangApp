@@ -1,5 +1,6 @@
 using LangApp.Core.Common;
 using System;
+using LangApp.Core.Exceptions.Posts;
 
 namespace LangApp.Core.Entities.Posts;
 
@@ -19,6 +20,9 @@ public class PostComment : BaseEntity
     {
         if (string.IsNullOrWhiteSpace(content))
             throw new ArgumentException("Comment content cannot be empty", nameof(content));
+
+        if (content.Length > 100)
+            throw new PostCommentLengthException(content.Length, 100);
 
         return new PostComment
         {
