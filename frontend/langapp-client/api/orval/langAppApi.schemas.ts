@@ -590,6 +590,18 @@ export interface UserDtoPagedResult {
   pageSize?: number;
 }
 
+export interface UserGroupSubmissionDto {
+  assignment?: AssignmentDto;
+  submission?: AssignmentSubmissionDto;
+}
+
+export interface UserGroupSubmissionDtoPagedResult {
+  items?: UserGroupSubmissionDto[];
+  totalCount?: number;
+  pageNumber?: number;
+  pageSize?: number;
+}
+
 export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -660,6 +672,11 @@ export type GetPostsByGroupParams = {
 };
 
 export type GetSubmissionsByAssignmentParams = {
+  pageNumber?: number;
+  pageSize?: number;
+};
+
+export type GetSubmissionsByUserGroupParams = {
   pageNumber?: number;
   pageSize?: number;
 };

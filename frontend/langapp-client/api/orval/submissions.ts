@@ -30,7 +30,9 @@ import type {
   CreateAssignmentSubmissionRequest,
   EvaluatePronunciationSubmissionRequest,
   GetSubmissionsByAssignmentParams,
+  GetSubmissionsByUserGroupParams,
   SubmissionGradeDto,
+  UserGroupSubmissionDtoPagedResult,
 } from './langAppApi.schemas';
 
 import { mainApiMutator } from '../axiosMutator';
@@ -739,6 +741,333 @@ export function useGetSubmissionsByAssignment<
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getGetSubmissionsByAssignmentQueryOptions(assignmentId, params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+export const getSubmissionsByUserGroup = (
+  groupId: string,
+  params?: GetSubmissionsByUserGroupParams,
+  options?: SecondParameter<typeof mainApiMutator>,
+  signal?: AbortSignal
+) => {
+  return mainApiMutator<UserGroupSubmissionDtoPagedResult>(
+    { url: `/api/v1/groups/${groupId}/submissions`, method: 'GET', params, signal },
+    options
+  );
+};
+
+export const getGetSubmissionsByUserGroupQueryKey = (
+  groupId: string,
+  params?: GetSubmissionsByUserGroupParams
+) => {
+  return [`/api/v1/groups/${groupId}/submissions`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetSubmissionsByUserGroupInfiniteQueryOptions = <
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+    GetSubmissionsByUserGroupParams['pageNumber']
+  >,
+  TError = void,
+>(
+  groupId: string,
+  params?: GetSubmissionsByUserGroupParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+        TError,
+        TData,
+        Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+        QueryKey,
+        GetSubmissionsByUserGroupParams['pageNumber']
+      >
+    >;
+    request?: SecondParameter<typeof mainApiMutator>;
+  }
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetSubmissionsByUserGroupQueryKey(groupId, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+    QueryKey,
+    GetSubmissionsByUserGroupParams['pageNumber']
+  > = ({ signal, pageParam }) =>
+    getSubmissionsByUserGroup(
+      groupId,
+      { ...params, pageNumber: pageParam || params?.['pageNumber'] },
+      requestOptions,
+      signal
+    );
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!groupId,
+    staleTime: 10000,
+    ...queryOptions,
+  } as UseInfiniteQueryOptions<
+    Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+    TError,
+    TData,
+    Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+    QueryKey,
+    GetSubmissionsByUserGroupParams['pageNumber']
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetSubmissionsByUserGroupInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getSubmissionsByUserGroup>>
+>;
+export type GetSubmissionsByUserGroupInfiniteQueryError = void;
+
+export function useGetSubmissionsByUserGroupInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+    GetSubmissionsByUserGroupParams['pageNumber']
+  >,
+  TError = void,
+>(
+  groupId: string,
+  params: undefined | GetSubmissionsByUserGroupParams,
+  options: {
+    query: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+        TError,
+        TData,
+        Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+        QueryKey,
+        GetSubmissionsByUserGroupParams['pageNumber']
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+          TError,
+          Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+          QueryKey
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof mainApiMutator>;
+  },
+  queryClient?: QueryClient
+): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetSubmissionsByUserGroupInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+    GetSubmissionsByUserGroupParams['pageNumber']
+  >,
+  TError = void,
+>(
+  groupId: string,
+  params?: GetSubmissionsByUserGroupParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+        TError,
+        TData,
+        Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+        QueryKey,
+        GetSubmissionsByUserGroupParams['pageNumber']
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+          TError,
+          Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+          QueryKey
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof mainApiMutator>;
+  },
+  queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetSubmissionsByUserGroupInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+    GetSubmissionsByUserGroupParams['pageNumber']
+  >,
+  TError = void,
+>(
+  groupId: string,
+  params?: GetSubmissionsByUserGroupParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+        TError,
+        TData,
+        Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+        QueryKey,
+        GetSubmissionsByUserGroupParams['pageNumber']
+      >
+    >;
+    request?: SecondParameter<typeof mainApiMutator>;
+  },
+  queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+export function useGetSubmissionsByUserGroupInfinite<
+  TData = InfiniteData<
+    Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+    GetSubmissionsByUserGroupParams['pageNumber']
+  >,
+  TError = void,
+>(
+  groupId: string,
+  params?: GetSubmissionsByUserGroupParams,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<
+        Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+        TError,
+        TData,
+        Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+        QueryKey,
+        GetSubmissionsByUserGroupParams['pageNumber']
+      >
+    >;
+    request?: SecondParameter<typeof mainApiMutator>;
+  },
+  queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetSubmissionsByUserGroupInfiniteQueryOptions(groupId, params, options);
+
+  const query = useInfiniteQuery(queryOptions, queryClient) as UseInfiniteQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+export const getGetSubmissionsByUserGroupQueryOptions = <
+  TData = Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+  TError = void,
+>(
+  groupId: string,
+  params?: GetSubmissionsByUserGroupParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getSubmissionsByUserGroup>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof mainApiMutator>;
+  }
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetSubmissionsByUserGroupQueryKey(groupId, params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getSubmissionsByUserGroup>>> = ({
+    signal,
+  }) => getSubmissionsByUserGroup(groupId, params, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!groupId,
+    staleTime: 10000,
+    ...queryOptions,
+  } as UseQueryOptions<Awaited<ReturnType<typeof getSubmissionsByUserGroup>>, TError, TData> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+};
+
+export type GetSubmissionsByUserGroupQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getSubmissionsByUserGroup>>
+>;
+export type GetSubmissionsByUserGroupQueryError = void;
+
+export function useGetSubmissionsByUserGroup<
+  TData = Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+  TError = void,
+>(
+  groupId: string,
+  params: undefined | GetSubmissionsByUserGroupParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getSubmissionsByUserGroup>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+          TError,
+          Awaited<ReturnType<typeof getSubmissionsByUserGroup>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof mainApiMutator>;
+  },
+  queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetSubmissionsByUserGroup<
+  TData = Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+  TError = void,
+>(
+  groupId: string,
+  params?: GetSubmissionsByUserGroupParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getSubmissionsByUserGroup>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+          TError,
+          Awaited<ReturnType<typeof getSubmissionsByUserGroup>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof mainApiMutator>;
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetSubmissionsByUserGroup<
+  TData = Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+  TError = void,
+>(
+  groupId: string,
+  params?: GetSubmissionsByUserGroupParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getSubmissionsByUserGroup>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof mainApiMutator>;
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+export function useGetSubmissionsByUserGroup<
+  TData = Awaited<ReturnType<typeof getSubmissionsByUserGroup>>,
+  TError = void,
+>(
+  groupId: string,
+  params?: GetSubmissionsByUserGroupParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getSubmissionsByUserGroup>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof mainApiMutator>;
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetSubmissionsByUserGroupQueryOptions(groupId, params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
     queryKey: DataTag<QueryKey, TData, TError>;

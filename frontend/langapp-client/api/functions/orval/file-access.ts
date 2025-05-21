@@ -59,7 +59,7 @@ export const getGetReadSasUriQueryOptions = <
   const queryFn: QueryFunction<Awaited<ReturnType<typeof getReadSasUri>>> = ({ signal }) =>
     getReadSasUri(params, requestOptions, signal);
 
-  return { queryKey, queryFn, staleTime: 10000, ...queryOptions } as UseQueryOptions<
+  return { queryKey, queryFn, staleTime: 1500000, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof getReadSasUri>>,
     TError,
     TData

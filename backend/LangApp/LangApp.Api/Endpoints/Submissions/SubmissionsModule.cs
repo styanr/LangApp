@@ -26,6 +26,11 @@ public class SubmissionsModule : IEndpointModule
         assignmentGroup.MapPost("/", Create).WithName("CreateAssignmentSubmission");
         assignmentGroup.MapGet("", GetByAssignment).WithName("GetSubmissionsByAssignment");
 
+        app.MapVersionedGroup("groups/{groupId:guid}/submissions")
+            .WithTags("Submissions")
+            .MapGet("", GetSubmissionsByUserGroup)
+            .WithName("GetSubmissionsByUserGroup");
+
         app.MapVersionedGroup("assignments/{assignmentId:guid}").WithTags("Submissions")
             .MapPost("activities/{activityId:guid}/evaluate-pronunciation", EvaluatePronunciationSubmission)
             .WithName("EvaluatePronunciationSubmission")
@@ -115,5 +120,23 @@ public class SubmissionsModule : IEndpointModule
         var command = new EvaluatePronunciation(request.FileUri, assignmentId, activityId, userId);
         var result = await dispatcher.DispatchWithResultAsync(command);
         return result;
+    }
+
+    private async Task<Results<Ok<PagedResult<UserGroupSubmissionDto>>, NotFound>> GetSubmissionsByUserGroup(
+        [FromRoute] Guid groupId,
+        int? pageNumber,
+        int? pageSize,
+        [FromServices] IQueryDispatcher dispatcher,
+        HttpContext context)
+    {
+        var userId = context.User.GetUserId();
+        var query = new GetSubmissionsByUserGroup(groupId, userId)
+        {
+            PageNumber = pageNumber ?? 1,
+            PageSize = pageSize ?? 10,
+        };
+        var submission = await dispatcher.QueryAsync(query);
+
+        return ApplicationTypedResults.OkOrNotFound(submission);
     }
 }

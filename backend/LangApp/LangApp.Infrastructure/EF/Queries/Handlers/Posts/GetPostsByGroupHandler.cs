@@ -59,6 +59,7 @@ internal sealed class GetPostsByGroupHandler : IQueryHandler<GetPostsByGroup, Pa
         var posts = await _posts
             .Where(p => p.GroupId == query.GroupId && !p.Archived)
             .Include(p => p.Author)
+            .OrderByDescending(p => p.CreatedAt)
             .TakePage(query.PageNumber, query.PageSize)
             .AsNoTracking()
             .Select(p => new PostSlimDto(

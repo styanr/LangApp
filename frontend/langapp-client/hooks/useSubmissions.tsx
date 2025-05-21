@@ -4,15 +4,18 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   useGetSubmission,
   useGetSubmissionsByAssignment,
+  useGetSubmissionsByUserGroup,
   useCreateAssignmentSubmission,
   useEditSubmissionGrade,
   useEvaluatePronunciationSubmission,
   getGetSubmissionQueryKey,
   getGetSubmissionsByAssignmentQueryKey,
+  getGetSubmissionsByUserGroupQueryKey,
 } from '@/api/orval/submissions';
 import type {
   CreateAssignmentSubmissionRequest,
   GetSubmissionsByAssignmentParams,
+  GetSubmissionsByUserGroupParams,
   SubmissionGradeDto,
   EvaluatePronunciationSubmissionRequest,
 } from '@/api/orval/langAppApi.schemas';
@@ -35,6 +38,21 @@ export function useSubmissions() {
     options?: { query?: any; request?: any }
   ) => {
     const query = useGetSubmissionsByAssignment(assignmentId, params, options);
+    return {
+      ...query,
+      items: query.data?.items || [],
+      totalCount: query.data?.totalCount || 0,
+    };
+  };
+
+  /** Fetch submissions for a user group with pagination support */
+  const getGroupSubmissions = (
+    groupId: string,
+    params?: GetSubmissionsByUserGroupParams,
+    options?: { query?: any; request?: any }
+  ) => {
+    const query = useGetSubmissionsByUserGroup(groupId, params, options);
+    console.log('Group submissions query:', query);
     return {
       ...query,
       items: query.data?.items || [],
@@ -141,6 +159,7 @@ export function useSubmissions() {
     // Query functions
     getSubmissionById,
     getAssignmentSubmissions,
+    getGroupSubmissions,
 
     // Mutation functions
     createSubmission,

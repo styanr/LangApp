@@ -22,10 +22,10 @@ export const ImageWithFallback = ({
   const [error, setError] = useState(false);
   const [errorData, setErrorData] = useState(null);
 
-  useEffect(() => {
-    console.error(errorData);
-    console.log(imageUrl);
-  }, [errorData]);
+  // useEffect(() => {
+  //   console.error(errorData);
+  //   console.log(imageUrl);
+  // }, [errorData]);
 
   if (!imageUrl || error) {
     return (

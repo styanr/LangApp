@@ -5,6 +5,7 @@ import { View, ScrollView, ActivityIndicator, RefreshControl } from 'react-nativ
 import { useStudyGroups } from '@/hooks/useStudyGroups';
 import { usePosts } from '@/hooks/usePosts';
 import { useAssignments } from '@/hooks/useAssignments';
+import { useSubmissions } from '@/hooks/useSubmissions';
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -16,12 +17,21 @@ import { Toggle, ToggleIcon } from '@/components/ui/toggle';
 import GroupPostsSection from '@/components/groups/GroupPostsSection';
 import GroupAssignmentsSection from '@/components/groups/GroupAssignmentsSection';
 import GroupMembersSection from '@/components/groups/GroupMembersSection';
+import GroupSubmissionsSection from '@/components/groups/GroupSubmissionsSection';
 import { Paging } from '@/components/ui/paging';
 import Animated, { FadeIn } from 'react-native-reanimated';
-import { User, MessageCircle, ClipboardList, Eye, EyeOff } from 'lucide-react-native';
+import {
+  User,
+  MessageCircle,
+  ClipboardList,
+  Eye,
+  EyeOff,
+  FileCheck,
+  ChevronLeft,
+} from 'lucide-react-native';
 import { Button } from '@/components/ui/button';
 
-type TabType = 'posts' | 'assignments' | 'members';
+type TabType = 'posts' | 'assignments' | 'members' | 'submissions';
 
 const GroupPage = () => {
   const { id: groupId } = useGlobalSearchParams();
@@ -32,6 +42,7 @@ const GroupPage = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [postsPage, setPostsPage] = useState(1);
   const [assignmentsPage, setAssignmentsPage] = useState(1);
+  const [submissionsPage, setSubmissionsPage] = useState(1);
   const [showSubmitted, setShowSubmitted] = useState(false);
   const pageSize = 10;
 
@@ -67,6 +78,15 @@ const GroupPage = () => {
     ShowSubmitted: showSubmitted,
   });
 
+  // Submissions
+  const { getGroupSubmissions } = useSubmissions();
+  const {
+    items: submissions,
+    isLoading: isLoadingSubmissions,
+    isError: isSubmissionsError,
+    refetch: refetchSubmissions,
+  } = getGroupSubmissions(groupId as string, { pageNumber: submissionsPage, pageSize }, {});
+
   const group = groupData;
   const owner = group?.owner;
   const posts = postsData?.items || [];
@@ -74,10 +94,11 @@ const GroupPage = () => {
   const assignments = assignmentsData?.items || []; // Assuming getGroupAssignments returns { items: [], totalCount: 0 }
   const totalAssignments = assignmentsData?.totalCount || 0;
   const members = group?.members || [];
+  const totalSubmissions = submissions?.length ? submissions.length : 0;
 
   const onRefresh = async () => {
     setIsRefreshing(true);
-    await Promise.all([refetchGroup(), refetchPosts(), refetchAssignments()]);
+    await Promise.all([refetchGroup(), refetchPosts(), refetchAssignments(), refetchSubmissions()]);
     setIsRefreshing(false);
   };
 
@@ -131,7 +152,12 @@ const GroupPage = () => {
           <NavigationMenu
             value={activeTab}
             onValueChange={(value) => {
-              if (value === 'posts' || value === 'assignments' || value === 'members')
+              if (
+                value === 'posts' ||
+                value === 'assignments' ||
+                value === 'members' ||
+                value === 'submissions'
+              )
                 setActiveTab(value);
             }}>
             <NavigationMenuList>
@@ -198,11 +224,20 @@ const GroupPage = () => {
             {/* Assignments Tab */}
             {activeTab === 'assignments' && (
               <>
-                <View className="flex-row items-center px-4 pb-2">
-                  <Toggle pressed={showSubmitted} onPressedChange={setShowSubmitted}>
-                    {showSubmitted ? <ToggleIcon icon={EyeOff} /> : <ToggleIcon icon={Eye} />}
-                  </Toggle>
-                  <Text className="ml-2">Show Submitted</Text>
+                <View className="mb-2 flex-row items-center justify-between px-4 pb-2">
+                  <View className="flex-row items-center">
+                    <Toggle pressed={showSubmitted} onPressedChange={setShowSubmitted}>
+                      {showSubmitted ? <ToggleIcon icon={EyeOff} /> : <ToggleIcon icon={Eye} />}
+                    </Toggle>
+                    <Text className="ml-2">Show Submitted</Text>
+                  </View>
+                  <Button
+                    variant="outline"
+                    className="border-indigo-200 bg-indigo-50"
+                    onPress={() => setActiveTab('submissions')}>
+                    <FileCheck size={16} className="mr-2 text-indigo-600" />
+                    <Text className="text-sm text-indigo-700">View Submissions</Text>
+                  </Button>
                 </View>
                 <GroupAssignmentsSection
                   assignments={assignments}
@@ -219,11 +254,31 @@ const GroupPage = () => {
 
             {/* Members Tab */}
             {activeTab === 'members' && (
-              <GroupMembersSection
-                owner={group?.owner}
-                members={members}
-                onPress={navigateToMember}
-              />
+              <GroupMembersSection members={members} owner={owner} onPress={navigateToMember} />
+            )}
+
+            {/* Submissions Tab */}
+            {activeTab === 'submissions' && (
+              <>
+                <View className="px-4 pb-4">
+                  <Button
+                    variant="outline"
+                    className="border-indigo-200 bg-indigo-50"
+                    onPress={() => setActiveTab('assignments')}>
+                    <ChevronLeft size={16} className="mr-2 text-indigo-600" />
+                    <Text className="text-sm text-indigo-700">Back to Assignments</Text>
+                  </Button>
+                </View>
+                <GroupSubmissionsSection
+                  items={submissions}
+                  isLoading={isLoadingSubmissions}
+                  isError={isSubmissionsError}
+                  page={submissionsPage}
+                  pageSize={pageSize}
+                  totalCount={totalSubmissions}
+                  onPageChange={setSubmissionsPage}
+                />
+              </>
             )}
           </ScrollView>
         </>

@@ -59,7 +59,7 @@ export const getGetUploadSasUriQueryOptions = <
   const queryFn: QueryFunction<Awaited<ReturnType<typeof getUploadSasUri>>> = ({ signal }) =>
     getUploadSasUri(params, requestOptions, signal);
 
-  return { queryKey, queryFn, staleTime: 10000, ...queryOptions } as UseQueryOptions<
+  return { queryKey, queryFn, staleTime: 1500000, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof getUploadSasUri>>,
     TError,
     TData

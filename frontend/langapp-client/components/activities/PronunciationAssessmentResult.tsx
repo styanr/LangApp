@@ -50,7 +50,7 @@ export const PronunciationAssessmentResult: React.FC<PronunciationAssessmentResu
   words,
 }) => {
   return (
-    <View className="w-full rounded-xl bg-white p-4 shadow-md dark:bg-zinc-900">
+    <View className="w-full rounded-xl bg-white p-4 dark:bg-zinc-900 mb-3">
       <Text className="mb-2 text-lg font-bold text-primary">Pronunciation Assessment</Text>
       <View className="flex flex-row flex-wrap gap-2">
         {words.map((word, idx) => (
@@ -71,7 +71,7 @@ export const PronunciationAssessmentResult: React.FC<PronunciationAssessmentResu
                   }
                 `}
                 style={{ minWidth: 40, minHeight: 36 }}>
-                <Text className="text-base font-semibold text-secondary">{word.WordText}</Text>
+                <Text className="text-base font-semibold dark:text-secondary">{word.WordText}</Text>
               </Pressable>
             </HoverCardTrigger>
             <HoverCardContent className="w-48 p-3">
