@@ -134,7 +134,7 @@ export default function TeacherAssignmentOverviewPage() {
   return (
     <ScrollView
       className="flex-1 bg-background"
-      contentContainerClassName='p-4 pb-8'
+      contentContainerClassName="p-4 pb-8"
       refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} />}>
       <Animated.View entering={FadeIn.duration(400)}>
         <SectionHeader
@@ -195,7 +195,8 @@ export default function TeacherAssignmentOverviewPage() {
         </View>
 
         {/* Pagination */}
-        {totalCount && totalCount > pageSize && (
+        {/* Avoid text not in text component error */}
+        {!!totalCount && totalCount > pageSize && (
           <Paging
             page={page}
             pageSize={pageSize}
