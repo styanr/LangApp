@@ -25,7 +25,7 @@ internal sealed class GetAssignmentHandler : IQueryHandler<GetAssignment, Assign
     {
         var data = await _assignments
             .Where(a => a.Id == query.Id)
-            .Include(a => a.Activities.OrderBy(ac => ac.Order))
+            .Include(a => a.Activities)
             .Include(a => a.StudyGroup)
             .ThenInclude(g => g.Members)
             .Select(a => new
@@ -37,7 +37,8 @@ internal sealed class GetAssignmentHandler : IQueryHandler<GetAssignment, Assign
                 a.StudyGroupId,
                 a.DueDate,
                 Activities = a.Activities
-                    .Select(ac => new { ac.Id, ac.MaxScore, ac.Details })
+                    .Select(ac => new { ac.Id, ac.MaxScore, ac.Details, ac.Order })
+                    .OrderBy(ac => ac.Order)
                     .ToList(),
                 Submitted = a.Submissions.Any(s => s.StudentId == query.UserId),
                 IsAuthor = (a.AuthorId == query.UserId),

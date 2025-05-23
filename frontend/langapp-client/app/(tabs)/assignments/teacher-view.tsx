@@ -81,8 +81,7 @@ export default function TeacherAssignmentOverviewPage() {
   }, [refetchAssignment, refetchSubmissions, refetchGroup, assignment?.studyGroupId, refetchStats]);
 
   const handleViewSubmission = (submissionId: string) => {
-    // router.push(`/(tabs)/submissions/${submissionId}`);
-    console.log(`Viewing submission: ${submissionId}`);
+    router.push(`/submissions/${submissionId}`);
   };
 
   const getStatusColor = (status?: GradeStatus): string => {

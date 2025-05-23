@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import type {
   ActivityDto,
   FillInTheBlankActivityDetailsDto,
@@ -13,6 +13,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Edit3 } from 'lucide-react-native';
 import { IconBadge } from '@/components/ui/themed-icon';
 import { isEqual } from 'lodash';
+import { useFillInTheBlankParser } from '@/hooks/useFillInTheBlankParser';
 
 interface Props {
   activity: ActivityDto;
@@ -24,42 +25,10 @@ export default function FillInTheBlankActivity({ activity, submission, onChange 
   const details = activity.details as FillInTheBlankActivityDetailsDto;
   const { templateText } = details;
 
-  const { parsedParts, blanksCount } = useMemo(() => {
-    const parts: Array<{ type: 'text'; content: string } | { type: 'blank'; localIndex: number }> =
-      [];
-    if (!templateText) return { parsedParts: [], blanksCount: 0 };
-
-    const jsRegex = /(?:^|\s)(_)(?=\s|$|\p{P})/gu;
-    let lastIndex = 0;
-    let blankLocalIndex = 0;
-    let match;
-
-    while ((match = jsRegex.exec(templateText)) !== null) {
-      const fullMatch = match[0];
-      const underscore = match[1];
-      const matchStart = match.index;
-      const underscoreStartInFullMatch = fullMatch.indexOf(underscore);
-      const underscoreAbsoluteStart = matchStart + underscoreStartInFullMatch;
-
-      if (underscoreAbsoluteStart > lastIndex) {
-        parts.push({
-          type: 'text',
-          content: templateText.substring(lastIndex, underscoreAbsoluteStart),
-        });
-      }
-      parts.push({ type: 'blank', localIndex: blankLocalIndex++ });
-      lastIndex = underscoreAbsoluteStart + underscore.length;
-    }
-
-    if (lastIndex < templateText.length) {
-      parts.push({ type: 'text', content: templateText.substring(lastIndex) });
-    }
-    return { parsedParts: parts, blanksCount: blankLocalIndex };
-  }, [templateText]);
+  const { parsedParts, blanksCount } = useFillInTheBlankParser(templateText);
 
   const [values, setValues] = useState<string[]>([]);
 
-  // Reset values only when the activity changes (e.g., activity.id or templateText changes)
   useEffect(() => {
     const newInitialValues = new Array(blanksCount).fill('');
     if (submission?.answers) {

@@ -92,6 +92,12 @@ export default function AuthenticatedLayout() {
           href: null,
         }}
       />
+      <Tabs.Screen
+        name="submissions/[submissionId]"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }

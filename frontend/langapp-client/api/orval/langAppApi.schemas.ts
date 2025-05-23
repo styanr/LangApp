@@ -419,6 +419,8 @@ export const PostType = {
 export type PronunciationActivityDetailsDtoAllOf = {
   language?: string;
   referenceText?: string;
+  allowAssessment?: boolean;
+  allowListening?: boolean;
 };
 
 export type PronunciationActivityDetailsDtoActivityType =

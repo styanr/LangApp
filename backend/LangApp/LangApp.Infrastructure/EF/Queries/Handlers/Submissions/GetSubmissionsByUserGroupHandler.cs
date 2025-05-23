@@ -29,6 +29,7 @@ internal class
         var totalCount = await submissionsQuery.CountAsync();
 
         var submissionsList = await submissionsQuery
+            .Include(s => s.Student)
             .Include(s => s.Assignment)
             .ThenInclude(a => a.Activities)
             .Include(s => s.ActivitySubmissions)

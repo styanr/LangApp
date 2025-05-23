@@ -275,16 +275,24 @@ const GroupPage = () => {
             {activeTab === 'assignments' && (
               <>
                 {isOwner ? (
-                  <GroupAssignmentsSection
-                    assignments={assignments}
-                    isLoading={isLoadingAssignments}
-                    isError={isAssignmentsError}
-                    page={assignmentsPage}
-                    pageSize={pageSize}
-                    totalCount={totalAssignments}
-                    isTeacher={isOwner}
-                    onPageChange={setAssignmentsPage}
-                  />
+                  <>
+                    <View className="px-4 pb-2">
+                      <Button
+                        onPress={() => router.push(`/(tabs)/groups/${groupId}/assignments/create`)}>
+                        <Text className="text-sm font-semibold">Create Assignment</Text>
+                      </Button>
+                    </View>
+                    <GroupAssignmentsSection
+                      assignments={assignments}
+                      isLoading={isLoadingAssignments}
+                      isError={isAssignmentsError}
+                      page={assignmentsPage}
+                      pageSize={pageSize}
+                      totalCount={totalAssignments}
+                      isTeacher={isOwner}
+                      onPageChange={setAssignmentsPage}
+                    />
+                  </>
                 ) : (
                   // Student view: show submitted filter and submissions link
                   <>
