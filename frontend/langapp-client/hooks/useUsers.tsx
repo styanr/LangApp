@@ -4,8 +4,10 @@ import {
   useUpdateUserInfo,
   getGetUserQueryKey,
   getGetCurrentUserQueryKey,
+  useSearchUsers,
+  getSearchUsersQueryKey,
 } from '@/api/orval/users';
-import type { UpdateUserInfoRequest } from '@/api/orval/langAppApi.schemas';
+import type { UpdateUserInfoRequest, SearchUsersParams } from '@/api/orval/langAppApi.schemas';
 
 /**
  * Custom hook for managing users (excluding current user, which is handled in auth)
@@ -41,9 +43,23 @@ export function useUsers() {
     return await updateUserInfoAsync({ data });
   };
 
+  /**
+   * Search users with pagination support
+   */
+  const searchUsers = (params: SearchUsersParams, options?: { query?: any; request?: any }) => {
+    const query = useSearchUsers(params, options);
+    return {
+      ...query,
+      items: query.data?.items || [],
+      totalCount: query.data?.totalCount || 0,
+    };
+  };
+
   return {
     getUserById,
     updateUserInfo,
     updateUserInfoStatus: updateUserInfoRest,
+    // Search users with pagination support
+    searchUsers,
   };
 }

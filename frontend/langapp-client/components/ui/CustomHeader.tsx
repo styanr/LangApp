@@ -1,13 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Image, Text } from 'react-native';
 import { UserProfilePicture } from './UserProfilePicture';
 import { Link } from 'expo-router';
 
-export default function CustomHeader({
-  user,
-}: {
-  user: { pictureUrl?: string; username?: string } | null;
-}) {
+function CustomHeader({ user }: { user: { pictureUrl?: string; username?: string } | null }) {
+
   return (
     <View className="w-full flex-row items-center justify-between bg-background">
       <View className="flex-row items-center gap-2">
@@ -24,3 +21,5 @@ export default function CustomHeader({
     </View>
   );
 }
+
+export default React.memo(CustomHeader);

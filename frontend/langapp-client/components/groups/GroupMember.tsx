@@ -4,15 +4,18 @@ import { Text } from '@/components/ui/text';
 import { UserProfilePicture } from '@/components/ui/UserProfilePicture';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { Crown } from 'lucide-react-native'; // Import an icon for the teacher
+import { cn } from '@/lib/utils';
 
-type MemberProps = {
+export type MemberProps = {
   id: string;
   name: string;
   email: string;
   role: string;
   imageUrl?: string | null;
   onPress?: (userId: string) => void;
+  onLongPress?: (userId: string) => void;
   index?: number;
+  className?: string;
 };
 
 export const GroupMember = ({
@@ -22,19 +25,30 @@ export const GroupMember = ({
   role,
   imageUrl,
   onPress,
+  onLongPress,
   index = 0,
+  className,
 }: MemberProps) => {
-  const isOwner = role.toLowerCase() === 'owner'; 
+  const isOwner = role.toLowerCase() === 'owner';
 
   return (
     <Animated.View
       entering={FadeInUp.delay(index * 80).duration(500)}
-      className="mb-3 shadow-sm shadow-indigo-200/40">
-      <Pressable className="active:scale-98" onPress={() => onPress?.(id)} disabled={!onPress}>
+      className={`mb-3 shadow-sm shadow-indigo-200/40`}>
+      <Pressable
+        className="active:scale-98"
+        onPress={() => onPress?.(id)}
+        onLongPress={() => onLongPress?.(id)}
+        disabled={!onPress && !onLongPress}>
         <Card
-          className={`border-0 bg-white/90 dark:bg-zinc-900/80 ${
-            isOwner ? 'border-2 border-yellow-500' : ''
-          }`}>
+          // className={`border-0 bg-white/90 dark:bg-zinc-900/80 ${
+          //   isOwner ? 'border-2 border-yellow-500' : ''
+          // }`}>
+          className={cn(
+            'border-0 bg-white/90 dark:bg-zinc-900/80',
+            isOwner ? 'border-2 border-yellow-500' : '',
+            className
+          )}>
           <CardContent className="flex-row items-center gap-3 p-4">
             <UserProfilePicture imageUrl={imageUrl} iconContainerClassName="bg-indigo-100" />
             <View className="flex-1 flex-row items-center">

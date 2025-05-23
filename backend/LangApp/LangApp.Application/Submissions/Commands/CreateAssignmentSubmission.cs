@@ -50,6 +50,11 @@ public class CreateAssignmentSubmissionHandler : ICommandHandler<CreateAssignmen
             throw new UnauthorizedException(userId, assignment.StudyGroupId, "StudyGroup");
         }
 
+        if (userId == assignment.AuthorId)
+        {
+            throw new UnauthorizedException(userId, assignment.AuthorId, "Assignment");
+        }
+
         var submissionExists = await _repository.ExistsForAssignmentAsync(assignmentId, userId);
 
         if (submissionExists)

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Redirect, Stack, Tabs } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
 import { ActivityIndicator, View, Image } from 'react-native';
@@ -15,6 +15,15 @@ export default function AuthenticatedLayout() {
 
   const theme = isDarkColorScheme ? NAV_THEME.dark : NAV_THEME.light;
 
+  const memoizedUser = useMemo(
+    () => (user ? { ...user, pictureUrl: user.pictureUrl ?? undefined } : null),
+    [user]
+  );
+
+  useEffect(() => {
+    console.log('User:', memoizedUser);
+  }, [memoizedUser]);
+
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center bg-gray-100">
@@ -30,11 +39,7 @@ export default function AuthenticatedLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerTitle: () => (
-          <CustomHeader
-            user={user ? { ...user, pictureUrl: user.pictureUrl ?? undefined } : null}
-          />
-        ),
+        headerTitle: () => <CustomHeader user={memoizedUser} />,
         tabBarActiveTintColor: theme.primary,
         tabBarStyle: { backgroundColor: theme.background, height: 70 },
         headerStyle: {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useFileAccess } from '@/hooks/useFileAccess';
 import { User } from 'lucide-react-native';
 import { ImageWithFallback } from './ImageWithFallback';
+import { Text } from './text';
 
 type UserProfilePictureProps = {
   imageUrl?: string | null;
@@ -32,18 +33,23 @@ export const UserProfilePicture = ({
     }
   }, [imageUrl]);
 
-  useEffect(() => {
-    console.log('Accessible URL:', accessibleUrl);
-  }, [accessibleUrl]);
+  // useEffect(() => {
+  //   console.log('Accessible URL:', accessibleUrl);
+  // }, [accessibleUrl]);
 
   return (
-    <ImageWithFallback
-      imageUrl={accessibleUrl || imageUrl}
-      fallbackIcon={<User className="text-indigo-600" />}
-      width={size}
-      height={size}
-      imageClassName={finalImageClassName}
-      iconContainerClassName={finalIconContainerClassName}
-    />
+    <>
+      <ImageWithFallback
+        imageUrl={accessibleUrl || imageUrl}
+        fallbackIcon={<User className="text-indigo-600" />}
+        width={size}
+        height={size}
+        imageClassName={finalImageClassName}
+        iconContainerClassName={finalIconContainerClassName}
+      />
+      {/* <Text>
+      {accessibleUrl}
+    </Text> */}
+    </>
   );
 };

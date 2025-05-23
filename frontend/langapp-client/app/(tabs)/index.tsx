@@ -1,8 +1,11 @@
-import { View, Text, Pressable, ActivityIndicator, ScrollView } from 'react-native';
+import { useState } from 'react';
+import { View, Text, Pressable, ActivityIndicator, ScrollView, TextInput } from 'react-native';
 import { useAuth } from '@/hooks/useAuth';
 import { Link, Stack, useGlobalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Users, ClipboardList, RefreshCw, GraduationCap, CheckCircle } from 'lucide-react-native';
+import { Button } from '@/components/ui/button';
+import { LanguageSelector } from '@/components/ui/language-selector';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useStudyGroups } from '@/hooks/useStudyGroups';
 import { useAssignments } from '@/hooks/useAssignments';
@@ -21,12 +24,16 @@ import { ThemedIcon, IconBadge } from '@/components/ui/themed-icon';
 import type { StudyGroupSlimDto, AssignmentDto } from '@/api/orval/langAppApi.schemas';
 import { UserProfilePicture } from '@/components/ui/UserProfilePicture';
 import { AssignmentCard } from '@/components/assignments/AssignmentCard';
+import { CreateStudyGroupModal } from '@/components/groups/CreateStudyGroupModal';
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const { getUserStudyGroups } = useStudyGroups();
+  const { getUserStudyGroups, createGroup } = useStudyGroups();
   const { getUserAssignments } = useAssignments();
   const queryClient = useQueryClient();
+  const [isCreatingGroup, setIsCreatingGroup] = useState(false);
+  const [newGroupName, setNewGroupName] = useState('');
+  const [newGroupLanguage, setNewGroupLanguage] = useState('');
 
   const {
     data: groupsResponse,
@@ -41,12 +48,33 @@ export default function Dashboard() {
 
   const groups = groupsResponse?.items;
   const assignments = assignmentsResponse?.items;
+  const isTeacher = user?.role === 'Teacher';
+  // const isTeacher = true;
 
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: getGetStudyGroupForUserQueryKey() });
-    queryClient.invalidateQueries({
-      queryKey: getGetAssignmentsByUserQueryKey({ showSubmitted: false }),
-    });
+    if (!isTeacher) {
+      queryClient.invalidateQueries({
+        queryKey: getGetAssignmentsByUserQueryKey({ showSubmitted: false }),
+      });
+    }
+  };
+
+  const handleCreateGroup = async () => {
+    if (!newGroupName) return;
+
+    try {
+      await createGroup({
+        name: newGroupName,
+        language: newGroupLanguage,
+      });
+      setIsCreatingGroup(false);
+      setNewGroupName('');
+      setNewGroupLanguage('');
+      queryClient.invalidateQueries({ queryKey: getGetStudyGroupForUserQueryKey() });
+    } catch (error) {
+      console.error('Failed to create study group:', error);
+    }
   };
 
   const renderGreeting = () => (
@@ -113,14 +141,26 @@ export default function Dashboard() {
       return (
         <View className="items-center py-8">
           <Text className="text-center text-muted-foreground">
-            No groups yet. Explore and join some!
+            {isTeacher
+              ? "You haven't created any groups yet. Create one to start teaching!"
+              : 'No groups yet. Explore and join some!'}
           </Text>
+          {isTeacher && (
+            <Button className="mt-4" onPress={() => setIsCreatingGroup(true)}>
+              <Text className="text-sm font-semibold text-white">New Study Group</Text>
+            </Button>
+          )}
         </View>
       );
     }
 
     return (
       <View className="px-4">
+        {isTeacher && (
+          <Button className="mb-4 w-full" onPress={() => setIsCreatingGroup(true)}>
+            <Text className="text-sm font-semibold text-white">New Study Group</Text>
+          </Button>
+        )}
         {groups.slice(0, 3).map((group: StudyGroupSlimDto, index) => (
           <Link
             key={group.id}
@@ -189,6 +229,18 @@ export default function Dashboard() {
     );
   };
 
+  // Modal for creating new study group
+  const renderCreateGroupModal = () => {
+    if (!isCreatingGroup) return null;
+
+    return (
+      <CreateStudyGroupModal
+        isVisible={isCreatingGroup}
+        onClose={() => setIsCreatingGroup(false)}
+        />
+    );
+  };
+
   return (
     <View className="bg-background-primary flex-1 bg-fuchsia-50 dark:bg-black">
       <ScrollView className="flex-1 px-4 pt-5">
@@ -197,7 +249,7 @@ export default function Dashboard() {
           <Card className="mb-6 overflow-hidden border-0 border-t-4 border-primary">
             {renderSectionHeader(
               'Study Groups',
-              'Your language learning communities',
+              isTeacher ? 'Manage your teaching groups' : 'Your language learning communities',
               <IconBadge Icon={Users} size={20} />,
               '/(tabs)/groups'
             )}
@@ -214,27 +266,31 @@ export default function Dashboard() {
           </Card>
         </Animated.View>
 
-        <Animated.View entering={FadeInDown.delay(300).duration(600)}>
-          <Card className="overflow-hidden border-0 border-t-4 border-primary">
-            {renderSectionHeader(
-              'Assignments',
-              'Your pending language tasks',
-              <IconBadge Icon={ClipboardList} size={20} />,
-              '/(tabs)/assignments'
-            )}
-            {renderAssignments()}
-            {assignments && assignments.length > 0 && (
-              <CardFooter className="border-t border-border pt-3">
-                <Link href="/(tabs)/assignments" asChild>
-                  <Pressable className="flex-1 items-center py-2">
-                    <Text className="text-sm text-primary">View All Assignments</Text>
-                  </Pressable>
-                </Link>
-              </CardFooter>
-            )}
-          </Card>
-        </Animated.View>
+        {!isTeacher && (
+          <Animated.View entering={FadeInDown.delay(300).duration(600)}>
+            <Card className="overflow-hidden border-0 border-t-4 border-primary">
+              {renderSectionHeader(
+                'Assignments',
+                'Your pending language tasks',
+                <IconBadge Icon={ClipboardList} size={20} />,
+                '/(tabs)/assignments'
+              )}
+              {renderAssignments()}
+              {assignments && assignments.length > 0 && (
+                <CardFooter className="border-t border-border pt-3">
+                  <Link href="/(tabs)/assignments" asChild>
+                    <Pressable className="flex-1 items-center py-2">
+                      <Text className="text-sm text-primary">View All Assignments</Text>
+                    </Pressable>
+                  </Link>
+                </CardFooter>
+              )}
+            </Card>
+          </Animated.View>
+        )}
       </ScrollView>
+
+      {renderCreateGroupModal()}
     </View>
   );
 }

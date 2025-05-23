@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Text } from '@/components/ui/text';
 import { useGlobalSearchParams, useLocalSearchParams, useRouter } from 'expo-router';
-import { View, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, ScrollView, ActivityIndicator, RefreshControl, Alert } from 'react-native';
 import { useStudyGroups } from '@/hooks/useStudyGroups';
 import { usePosts } from '@/hooks/usePosts';
 import { useAssignments } from '@/hooks/useAssignments';
@@ -30,6 +30,13 @@ import {
   ChevronLeft,
 } from 'lucide-react-native';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/useAuth';
+import { EditStudyGroupModal } from '@/components/groups/EditStudyGroupModal';
+import { useUsers } from '@/hooks/useUsers';
+import { SearchInput } from '@/components/ui/search-input';
+
+import { AxiosError } from 'axios';
+import { handleApiError } from '@/lib/errors';
 
 type TabType = 'posts' | 'assignments' | 'members' | 'submissions';
 
@@ -44,10 +51,14 @@ const GroupPage = () => {
   const [assignmentsPage, setAssignmentsPage] = useState(1);
   const [submissionsPage, setSubmissionsPage] = useState(1);
   const [showSubmitted, setShowSubmitted] = useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  // Search state for adding members
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchPage, setSearchPage] = useState(1);
   const pageSize = 10;
 
-  // Get group data
-  const { getStudyGroup } = useStudyGroups();
+  // Get group data and member management
+  const { getStudyGroup, addMembers, removeMembers } = useStudyGroups();
   const {
     data: groupData,
     isLoading: isLoadingGroup,
@@ -87,14 +98,24 @@ const GroupPage = () => {
     refetch: refetchSubmissions,
   } = getGroupSubmissions(groupId as string, { pageNumber: submissionsPage, pageSize }, {});
 
+  // Users search for adding to group
+  const { searchUsers } = useUsers();
+  const searchResult = searchUsers(
+    { SearchTerm: searchTerm, pageNumber: searchPage, pageSize },
+    { query: { enabled: !!searchTerm } }
+  );
+  const { items: searchItems, isLoading: isSearching } = searchResult;
+
+  const { user } = useAuth();
   const group = groupData;
   const owner = group?.owner;
   const posts = postsData?.items || [];
   const totalPosts = postsData?.totalCount || 0;
-  const assignments = assignmentsData?.items || []; // Assuming getGroupAssignments returns { items: [], totalCount: 0 }
+  const assignments = assignmentsData?.items || [];
   const totalAssignments = assignmentsData?.totalCount || 0;
   const members = group?.members || [];
   const totalSubmissions = submissions?.length ? submissions.length : 0;
+  const isOwner = owner?.id === user?.id;
 
   const onRefresh = async () => {
     setIsRefreshing(true);
@@ -120,6 +141,25 @@ const GroupPage = () => {
     });
   };
 
+  const handleAddMember = async (userId: string) => {
+    try {
+      await addMembers(groupId as string, { members: [userId] });
+    } catch (error) {
+      console.error('Error adding member:', error);
+
+      handleApiError(error);
+      setSearchTerm('');
+      refetchGroup();
+    }
+  };
+
+  /** Remove members from group */
+  const handleRemoveMembers = async (userIds: string[]) => {
+    await removeMembers(groupId as string, { members: userIds });
+    setSearchTerm('');
+    refetchGroup();
+  };
+
   return (
     <View className="flex-1 bg-gradient-to-b from-indigo-50 to-fuchsia-50">
       {isLoadingGroup ? (
@@ -136,9 +176,16 @@ const GroupPage = () => {
         <>
           {/* Group Header */}
           <Animated.View entering={FadeIn.duration(600)} className="px-6 pb-2 pt-10">
-            <Text className="text-4xl font-extrabold text-primary drop-shadow-lg">
-              {group?.name || 'Group'}
-            </Text>
+            <View className="flex-row items-center justify-between">
+              <Text className="flex-1 text-4xl font-extrabold text-primary drop-shadow-lg">
+                {group?.name || 'Group'}
+              </Text>
+              {isOwner && (
+                <Button variant="outline" onPress={() => setIsEditModalVisible(true)}>
+                  <Text className="text-sm font-semibold">Edit</Text>
+                </Button>
+              )}
+            </View>
             <View className="mt-2 flex-row items-center">
               <User size={16} className="mr-1 text-indigo-400" />
               <Text className="text-sm text-muted-foreground">
@@ -150,6 +197,7 @@ const GroupPage = () => {
 
           {/* Navigation Tabs */}
           <NavigationMenu
+            className="mt-2"
             value={activeTab}
             onValueChange={(value) => {
               if (
@@ -164,7 +212,7 @@ const GroupPage = () => {
               <NavigationMenuItem value="posts">
                 <NavigationMenuTrigger
                   className={activeTab === 'posts' ? 'bg-indigo-100 dark:bg-indigo-900' : ''}>
-                  <View className="flex-row items-center">
+                  <View className="flex-row items-center gap-1">
                     <MessageCircle size={16} className="mr-2 text-indigo-500" />
                     <Text>Posts</Text>
                   </View>
@@ -173,7 +221,7 @@ const GroupPage = () => {
               <NavigationMenuItem value="assignments">
                 <NavigationMenuTrigger
                   className={activeTab === 'assignments' ? 'bg-indigo-100 dark:bg-indigo-900' : ''}>
-                  <View className="flex-row items-center">
+                  <View className="flex-row items-center gap-1">
                     <ClipboardList size={16} className="mr-2 text-fuchsia-500" />
                     <Text>Assignments</Text>
                   </View>
@@ -182,7 +230,7 @@ const GroupPage = () => {
               <NavigationMenuItem value="members">
                 <NavigationMenuTrigger
                   className={activeTab === 'members' ? 'bg-indigo-100 dark:bg-indigo-900' : ''}>
-                  <View className="flex-row items-center">
+                  <View className="flex-row items-center gap-1">
                     <User size={16} className="mr-2 text-indigo-500" />
                     <Text>Members</Text>
                   </View>
@@ -224,37 +272,99 @@ const GroupPage = () => {
             {/* Assignments Tab */}
             {activeTab === 'assignments' && (
               <>
-                <View className="mb-2 flex-row items-center justify-between px-4 pb-2">
-                  <View className="flex-row items-center">
-                    <Toggle pressed={showSubmitted} onPressedChange={setShowSubmitted}>
-                      {showSubmitted ? <ToggleIcon icon={EyeOff} /> : <ToggleIcon icon={Eye} />}
-                    </Toggle>
-                    <Text className="ml-2">Show Submitted</Text>
-                  </View>
-                  <Button
-                    variant="outline"
-                    className="border-indigo-200 bg-indigo-50"
-                    onPress={() => setActiveTab('submissions')}>
-                    <FileCheck size={16} className="mr-2 text-indigo-600" />
-                    <Text className="text-sm text-indigo-700">View Submissions</Text>
-                  </Button>
-                </View>
-                <GroupAssignmentsSection
-                  assignments={assignments}
-                  isLoading={isLoadingAssignments}
-                  isError={isAssignmentsError}
-                  page={assignmentsPage}
-                  pageSize={pageSize}
-                  totalCount={totalAssignments}
-                  onPress={navigateToAssignment}
-                  onPageChange={setAssignmentsPage}
-                />
+                {isOwner ? (
+                  // Owner (teacher) view: only assignments list
+                  <GroupAssignmentsSection
+                    assignments={assignments}
+                    isLoading={isLoadingAssignments}
+                    isError={isAssignmentsError}
+                    page={assignmentsPage}
+                    pageSize={pageSize}
+                    totalCount={totalAssignments}
+                    onPress={navigateToAssignment}
+                    onPageChange={setAssignmentsPage}
+                  />
+                ) : (
+                  // Student view: show submitted filter and submissions link
+                  <>
+                    <View className="mb-2 flex-row items-center justify-between px-4 pb-2">
+                      <View className="flex-row items-center">
+                        <Toggle pressed={showSubmitted} onPressedChange={setShowSubmitted}>
+                          {showSubmitted ? <ToggleIcon icon={EyeOff} /> : <ToggleIcon icon={Eye} />}
+                        </Toggle>
+                        <Text className="ml-2">Show Submitted</Text>
+                      </View>
+                      <Button
+                        variant="outline"
+                        className="border-indigo-200 bg-indigo-50"
+                        onPress={() => setActiveTab('submissions')}>
+                        <FileCheck size={16} className="mr-2 text-indigo-600" />
+                        <Text className="text-sm text-indigo-700">View Submissions</Text>
+                      </Button>
+                    </View>
+                    <GroupAssignmentsSection
+                      assignments={assignments}
+                      isLoading={isLoadingAssignments}
+                      isError={isAssignmentsError}
+                      page={assignmentsPage}
+                      pageSize={pageSize}
+                      totalCount={totalAssignments}
+                      onPress={navigateToAssignment}
+                      onPageChange={setAssignmentsPage}
+                    />
+                  </>
+                )}
               </>
             )}
 
             {/* Members Tab */}
             {activeTab === 'members' && (
-              <GroupMembersSection members={members} owner={owner} onPress={navigateToMember} />
+              <View className="flex-1">
+                {/* Search for adding members (owner only) */}
+                {isOwner && (
+                  <View className="mb-4">
+                    <SearchInput
+                      placeholder="Add users to group"
+                      value={searchTerm}
+                      onChangeText={setSearchTerm}
+                    />
+                  </View>
+                )}
+                {searchTerm !== '' ? (
+                  <View className="mt-2 rounded-md bg-white">
+                    {isSearching ? (
+                      <ActivityIndicator size="small" color="#6b7280" />
+                    ) : (
+                      searchItems.map((u) => (
+                        <View
+                          key={u.id}
+                          className="flex-row items-center justify-between px-3 py-2">
+                          <Text>
+                            {(() => {
+                              const name =
+                                `${u.fullName?.firstName || ''} ${u.fullName?.lastName || ''}`.trim();
+                              return name
+                                ? `${name}${u.username ? ` (@${u.username})` : ''}`
+                                : u.username || '';
+                            })()}
+                          </Text>
+                          <Button size="sm" onPress={() => handleAddMember(u.id || '')}>
+                            <Text>Add</Text>
+                          </Button>
+                        </View>
+                      ))
+                    )}
+                  </View>
+                ) : (
+                  <GroupMembersSection
+                    members={members}
+                    owner={owner}
+                    onPress={navigateToMember}
+                    isOwner={isOwner}
+                    onRemove={handleRemoveMembers}
+                  />
+                )}
+              </View>
             )}
 
             {/* Submissions Tab */}
@@ -283,6 +393,14 @@ const GroupPage = () => {
           </ScrollView>
         </>
       )}
+
+      {/* Edit Modal */}
+      <EditStudyGroupModal
+        isVisible={isEditModalVisible}
+        onClose={() => setIsEditModalVisible(false)}
+        groupId={groupId as string}
+        currentName={group?.name || ''}
+      />
     </View>
   );
 };

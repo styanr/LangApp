@@ -1,29 +1,55 @@
 import { useStudyGroups } from '@/hooks/useStudyGroups';
+import { useAuth } from '@/hooks/useAuth';
 import { ScrollView, ActivityIndicator, Pressable, View } from 'react-native';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { IconBadge } from '@/components/ui/themed-icon';
-import { GraduationCap, Users } from 'lucide-react-native';
+import { GraduationCap, Users, ChevronRight, PlusCircle } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
+import { Button } from '@/components/ui/button';
 import Animated, { FadeIn, FadeInUp } from 'react-native-reanimated';
-import { Link, useGlobalSearchParams } from 'expo-router';
+import { Link, useGlobalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Paging } from '@/components/ui/paging';
+import { CreateStudyGroupModal } from '@/components/groups/CreateStudyGroupModal';
 
 export default function Groups() {
+  const { user } = useAuth();
+  const router = useRouter();
+  const isTeacher = user?.role === 'Teacher';
   const [page, setPage] = useState(1);
   const pageSize = 10;
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const { getUserStudyGroups } = useStudyGroups();
   const { data, isLoading, isError, error } = getUserStudyGroups({ pageNumber: page, pageSize });
   const groups = data?.items || [];
   const totalCount = data?.totalCount || 0;
 
+  const handleCreateGroup = () => {
+    setIsModalVisible(true);
+  };
+
   return (
     <View className="flex-1 bg-gradient-to-b from-fuchsia-100 to-indigo-100">
       <Animated.View entering={FadeIn.duration(600)} className="px-6 pb-4 pt-10">
-        <Text className="text-4xl font-extrabold text-primary drop-shadow-lg">My Groups</Text>
-        <Text className="mt-2 text-lg text-muted-foreground">
-          All your language learning communities
+        <Text className="text-4xl font-extrabold text-primary drop-shadow-lg">
+          {isTeacher ? 'Teaching Groups' : 'My Groups'}
         </Text>
+        <Text className="mt-2 text-lg text-muted-foreground">
+          {isTeacher
+            ? 'Manage your language teaching groups'
+            : 'All your language learning communities'}
+        </Text>
+
+        {isTeacher && (
+          <Animated.View entering={FadeInUp.delay(300).duration(400)}>
+            <Button
+              className="mt-4 flex-row items-center justify-center gap-2"
+              onPress={handleCreateGroup}>
+              <PlusCircle size={18} className="mr-1 text-white" color="white" />
+              <Text className="font-medium text-white">New Study Group</Text>
+            </Button>
+          </Animated.View>
+        )}
       </Animated.View>
       <ScrollView
         className="flex-1 px-2"
@@ -43,11 +69,21 @@ export default function Groups() {
         {!isLoading && !isError && groups.length === 0 && (
           <View className="items-center py-16">
             <Text className="text-center text-xl font-semibold text-muted-foreground">
-              You haven't joined any groups yet.
+              {isTeacher
+                ? "You haven't created any teaching groups yet."
+                : "You haven't joined any groups yet."}
             </Text>
             <Text className="mt-2 text-center text-base text-muted-foreground">
-              Join or create a group to start learning together!
+              {isTeacher
+                ? 'Create your first study group to start teaching!'
+                : 'Join or create a group to start learning together!'}
             </Text>
+            {isTeacher && (
+              <Button className="mt-4" onPress={() => setIsModalVisible(true)}>
+                <PlusCircle size={18} className="mr-1 gap-2 text-white" color="white" />
+                <Text className="font-medium text-white">New Study Group</Text>
+              </Button>
+            )}
           </View>
         )}
         <View className="gap-6">
@@ -68,12 +104,25 @@ export default function Groups() {
                         <CardDescription className="mt-1 text-base text-indigo-700 dark:text-indigo-200">
                           {group.language || 'Language not specified'}
                         </CardDescription>
+                        {isTeacher && (
+                          <View className="mt-1.5 flex-row items-center">
+                            <View className="mr-2 h-2 w-2 rounded-full bg-green-500" />
+                            <Text className="text-xs font-medium text-green-600">
+                              Teacher Managed
+                            </Text>
+                          </View>
+                        )}
                       </View>
-                      <Users size={28} className="text-indigo-400" />
+                      <View className="flex-row items-center">
+                        <Users size={24} className="mr-1 text-indigo-400" />
+                        <ChevronRight size={20} className="text-indigo-300" />
+                      </View>
                     </CardHeader>
                     <CardContent className="px-5 pb-4 pt-0">
                       <Text className="text-sm text-muted-foreground">
-                        Tap to view group details, posts, and members.
+                        {isTeacher
+                          ? 'Tap to manage this group, assignments, and students.'
+                          : 'Tap to view group details, posts, and members.'}
                       </Text>
                     </CardContent>
                   </Card>
@@ -86,6 +135,8 @@ export default function Groups() {
           <Paging page={page} pageSize={pageSize} totalCount={totalCount} onPageChange={setPage} />
         )}
       </ScrollView>
+
+      <CreateStudyGroupModal isVisible={isModalVisible} onClose={() => setIsModalVisible(false)} />
     </View>
   );
 }
