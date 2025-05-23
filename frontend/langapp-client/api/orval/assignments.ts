@@ -27,6 +27,7 @@ import type {
 import type {
   AssignmentDto,
   AssignmentSlimDtoPagedResult,
+  AssignmentSubmissionsStatisticsDto,
   CreateAssignmentRequest,
   GetAssignmentsByGroupParams,
   GetAssignmentsByUserParams,
@@ -244,6 +245,240 @@ export function useGetAssignment<TData = Awaited<ReturnType<typeof getAssignment
   queryClient?: QueryClient
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getGetAssignmentQueryOptions(id, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+export const getAssignmentStats = (
+  id: string,
+  options?: SecondParameter<typeof mainApiMutator>,
+  signal?: AbortSignal
+) => {
+  return mainApiMutator<AssignmentSubmissionsStatisticsDto>(
+    { url: `/api/v1/assignments/${id}/stats`, method: 'GET', signal },
+    options
+  );
+};
+
+export const getGetAssignmentStatsQueryKey = (id: string) => {
+  return [`/api/v1/assignments/${id}/stats`] as const;
+};
+
+export const getGetAssignmentStatsInfiniteQueryOptions = <
+  TData = InfiniteData<Awaited<ReturnType<typeof getAssignmentStats>>>,
+  TError = void,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<Awaited<ReturnType<typeof getAssignmentStats>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof mainApiMutator>;
+  }
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetAssignmentStatsQueryKey(id);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getAssignmentStats>>> = ({ signal }) =>
+    getAssignmentStats(id, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    staleTime: 10000,
+    ...queryOptions,
+  } as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getAssignmentStats>>, TError, TData> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+};
+
+export type GetAssignmentStatsInfiniteQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAssignmentStats>>
+>;
+export type GetAssignmentStatsInfiniteQueryError = void;
+
+export function useGetAssignmentStatsInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getAssignmentStats>>>,
+  TError = void,
+>(
+  id: string,
+  options: {
+    query: Partial<
+      UseInfiniteQueryOptions<Awaited<ReturnType<typeof getAssignmentStats>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAssignmentStats>>,
+          TError,
+          Awaited<ReturnType<typeof getAssignmentStats>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof mainApiMutator>;
+  },
+  queryClient?: QueryClient
+): DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetAssignmentStatsInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getAssignmentStats>>>,
+  TError = void,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<Awaited<ReturnType<typeof getAssignmentStats>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAssignmentStats>>,
+          TError,
+          Awaited<ReturnType<typeof getAssignmentStats>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof mainApiMutator>;
+  },
+  queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetAssignmentStatsInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getAssignmentStats>>>,
+  TError = void,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<Awaited<ReturnType<typeof getAssignmentStats>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof mainApiMutator>;
+  },
+  queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+export function useGetAssignmentStatsInfinite<
+  TData = InfiniteData<Awaited<ReturnType<typeof getAssignmentStats>>>,
+  TError = void,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseInfiniteQueryOptions<Awaited<ReturnType<typeof getAssignmentStats>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof mainApiMutator>;
+  },
+  queryClient?: QueryClient
+): UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetAssignmentStatsInfiniteQueryOptions(id, options);
+
+  const query = useInfiniteQuery(queryOptions, queryClient) as UseInfiniteQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+export const getGetAssignmentStatsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAssignmentStats>>,
+  TError = void,
+>(
+  id: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getAssignmentStats>>, TError, TData>>;
+    request?: SecondParameter<typeof mainApiMutator>;
+  }
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetAssignmentStatsQueryKey(id);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getAssignmentStats>>> = ({ signal }) =>
+    getAssignmentStats(id, requestOptions, signal);
+
+  return { queryKey, queryFn, enabled: !!id, staleTime: 10000, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAssignmentStats>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetAssignmentStatsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAssignmentStats>>
+>;
+export type GetAssignmentStatsQueryError = void;
+
+export function useGetAssignmentStats<
+  TData = Awaited<ReturnType<typeof getAssignmentStats>>,
+  TError = void,
+>(
+  id: string,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getAssignmentStats>>, TError, TData>> &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAssignmentStats>>,
+          TError,
+          Awaited<ReturnType<typeof getAssignmentStats>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof mainApiMutator>;
+  },
+  queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetAssignmentStats<
+  TData = Awaited<ReturnType<typeof getAssignmentStats>>,
+  TError = void,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getAssignmentStats>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAssignmentStats>>,
+          TError,
+          Awaited<ReturnType<typeof getAssignmentStats>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof mainApiMutator>;
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetAssignmentStats<
+  TData = Awaited<ReturnType<typeof getAssignmentStats>>,
+  TError = void,
+>(
+  id: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getAssignmentStats>>, TError, TData>>;
+    request?: SecondParameter<typeof mainApiMutator>;
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+export function useGetAssignmentStats<
+  TData = Awaited<ReturnType<typeof getAssignmentStats>>,
+  TError = void,
+>(
+  id: string,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getAssignmentStats>>, TError, TData>>;
+    request?: SecondParameter<typeof mainApiMutator>;
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetAssignmentStatsQueryOptions(id, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
     queryKey: DataTag<QueryKey, TData, TError>;

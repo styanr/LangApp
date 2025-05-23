@@ -30,9 +30,9 @@ internal class
 
         var submissionsList = await submissionsQuery
             .Include(s => s.Assignment)
-                .ThenInclude(a => a.Activities)
+            .ThenInclude(a => a.Activities)
             .Include(s => s.ActivitySubmissions)
-                .ThenInclude(acs => acs.Grade)
+            .ThenInclude(acs => acs.Grade)
             .TakePage(query.PageNumber, query.PageSize).ToListAsync();
         var submissions = submissionsList.Select(s => new UserGroupSubmissionDto(
             s.Assignment.ToDto(true, false),
@@ -40,6 +40,8 @@ internal class
                 s.Id,
                 s.AssignmentId,
                 s.StudentId,
+                s.Student.Username,
+                s.Student.PictureUrl,
                 s.SubmittedAt,
                 s.Status,
                 s.Score,

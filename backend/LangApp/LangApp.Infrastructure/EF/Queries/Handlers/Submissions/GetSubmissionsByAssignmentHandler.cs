@@ -47,7 +47,7 @@ internal class
             .Where(s => s.AssignmentId == query.AssignmentId)
             .Include(s => s.ActivitySubmissions)
             .ThenInclude(asub => asub.Grade)
-            .Include(s => s.ActivitySubmissions)
+            .Include(s => s.Student)
             .TakePage(query.PageNumber, query.PageSize)
             .ToList();
 
@@ -56,6 +56,8 @@ internal class
                 s.Id,
                 s.AssignmentId,
                 s.StudentId,
+                s.Student.Username,
+                s.Student.Email,
                 s.SubmittedAt,
                 s.Status,
                 s.Score,

@@ -273,7 +273,6 @@ const GroupPage = () => {
             {activeTab === 'assignments' && (
               <>
                 {isOwner ? (
-                  // Owner (teacher) view: only assignments list
                   <GroupAssignmentsSection
                     assignments={assignments}
                     isLoading={isLoadingAssignments}
@@ -281,7 +280,7 @@ const GroupPage = () => {
                     page={assignmentsPage}
                     pageSize={pageSize}
                     totalCount={totalAssignments}
-                    onPress={navigateToAssignment}
+                    isTeacher={isOwner}
                     onPageChange={setAssignmentsPage}
                   />
                 ) : (
@@ -309,7 +308,7 @@ const GroupPage = () => {
                       page={assignmentsPage}
                       pageSize={pageSize}
                       totalCount={totalAssignments}
-                      onPress={navigateToAssignment}
+                      isTeacher={isOwner}
                       onPageChange={setAssignmentsPage}
                     />
                   </>

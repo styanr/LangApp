@@ -5,9 +5,11 @@ import {
   useGetAssignmentsByGroup,
   useGetAssignmentsByUser,
   useCreateAssignment,
+  useGetAssignmentStats, // Added
   getGetAssignmentQueryKey,
   getGetAssignmentsByGroupQueryKey,
   getGetAssignmentsByUserQueryKey,
+  getGetAssignmentStatsQueryKey, // Added
 } from '@/api/orval/assignments';
 import type {
   CreateAssignmentRequest,
@@ -35,6 +37,21 @@ export function useAssignments() {
     }
   ) => {
     return useGetAssignment(id, options);
+  };
+
+  /**
+   * Get statistics for a specific assignment by ID
+   * @param id The ID of the assignment to fetch stats for
+   * @param options Optional query options
+   */
+  const getAssignmentStatsById = (
+    id: string,
+    options?: {
+      query?: any;
+      request?: any;
+    }
+  ) => {
+    return useGetAssignmentStats(id, options);
   };
 
   /**
@@ -138,6 +155,7 @@ export function useAssignments() {
     getAssignmentById,
     getGroupAssignments,
     getUserAssignments,
+    getAssignmentStatsById, // Added
 
     // Mutation functions
     createAssignment,

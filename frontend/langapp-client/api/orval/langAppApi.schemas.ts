@@ -84,6 +84,9 @@ export interface AssignmentSubmissionDto {
   id?: string;
   assignmentId?: string;
   studentId?: string;
+  studentName?: string;
+  /** @nullable */
+  studentPictureUrl?: string | null;
   submittedAt?: string;
   status?: GradeStatus;
   score?: number;
@@ -95,6 +98,24 @@ export interface AssignmentSubmissionDtoPagedResult {
   totalCount?: number;
   pageNumber?: number;
   pageSize?: number;
+}
+
+export interface AssignmentSubmissionInfoDto {
+  submissionId?: string;
+  studentId?: string;
+  studentName?: string;
+  /** @nullable */
+  studentPictureUrl?: string | null;
+}
+
+export interface AssignmentSubmissionsStatisticsDto {
+  assignmentId?: string;
+  submissionCount?: number;
+  pendingCount?: number;
+  failedCount?: number;
+  completedCount?: number;
+  needsReviewCount?: number;
+  submissions?: AssignmentSubmissionInfoDto[];
 }
 
 export type CreateActivityDtoDetails =

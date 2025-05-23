@@ -30,6 +30,7 @@ internal sealed class GetSubmissionHandler : IQueryHandler<GetSubmission, Assign
             .Where(s => s.Id == query.Id)
             .Include(s => s.ActivitySubmissions)
             .ThenInclude(asub => asub.Grade)
+            .Include(s => s.Student)
             .AsNoTracking()
             .SingleOrDefaultAsync();
 
@@ -83,6 +84,8 @@ internal sealed class GetSubmissionHandler : IQueryHandler<GetSubmission, Assign
             submission.Id,
             submission.AssignmentId,
             submission.StudentId,
+            submission.Student.Username,
+            submission.Student.PictureUrl,
             submission.SubmittedAt,
             submission.Status,
             submission.Score,

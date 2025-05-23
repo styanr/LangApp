@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { Paging } from '@/components/ui/paging';
 import { Text } from '@/components/ui/text';
 import { AssignmentCard } from '@/components/assignments/AssignmentCard';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function Assignments() {
   const [page, setPage] = useState(1);
@@ -20,6 +21,8 @@ export default function Assignments() {
   });
   const assignments = data?.items || [];
   const totalCount = data?.totalCount || 0;
+  const { user } = useAuth();
+  const isTeacher = user?.role === 'Teacher';
 
   return (
     <RNView className="flex-1 bg-gradient-to-b from-indigo-50 to-fuchsia-100">
@@ -67,6 +70,7 @@ export default function Assignments() {
               dueTime={assignment.dueTime}
               submitted={assignment.submitted}
               index={idx}
+              isTeacher={isTeacher}
             />
           ))}
         </RNView>

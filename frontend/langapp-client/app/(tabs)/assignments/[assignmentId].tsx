@@ -1,4 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useRoute } from '@react-navigation/native';
 import { ScrollView, View, ActivityIndicator } from 'react-native';
 import { useAssignments } from '@/hooks/useAssignments';
 import { Text } from '@/components/ui/text';
@@ -15,8 +16,10 @@ export default function AssignmentDetailPage() {
   const { getAssignmentById } = useAssignments();
   const { data: assignment, isLoading, isError } = getAssignmentById(assignmentId as string);
 
+  const route = useRoute();
+  console.log('Current route:', route.name);
+
   const handleBeginSubmission = useCallback(() => {
-    // Navigate to submission flow (to be implemented)
     router.push({ pathname: '/(tabs)/submit', params: { assignmentId } });
   }, [router, assignmentId]);
 

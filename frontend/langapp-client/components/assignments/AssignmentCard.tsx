@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Pressable, View as RNView } from 'react-native';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
@@ -16,6 +16,7 @@ interface AssignmentCardProps {
   index?: number;
   showDescription?: boolean;
   compact?: boolean;
+  isTeacher?: boolean;
   onPress?: (assignmentId: string) => void;
 }
 
@@ -28,6 +29,7 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({
   index = 0,
   showDescription = true,
   compact = false,
+  isTeacher = false,
   onPress,
 }) => {
   return (
@@ -78,7 +80,14 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({
           </Card>
         </Pressable>
       ) : (
-        <Link href={{ pathname: `/(tabs)/assignments/${id}` }} asChild>
+        <Link
+          href={{
+            pathname: isTeacher
+              ? `/(tabs)/assignments/teacher-view`
+              : `/(tabs)/assignments/[assignmentId]`,
+            params: { assignmentId: id },
+          }}
+          asChild>
           <Pressable className="active:scale-98">
             <Card
               className={`border-0 bg-white/90 dark:bg-zinc-900/80 ${submitted ? 'border-l-4 border-l-emerald-500' : ''}`}>

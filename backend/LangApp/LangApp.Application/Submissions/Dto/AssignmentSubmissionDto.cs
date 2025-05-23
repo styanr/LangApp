@@ -6,6 +6,8 @@ public record AssignmentSubmissionDto(
     Guid Id,
     Guid AssignmentId,
     Guid StudentId,
+    string StudentName,
+    string? StudentPictureUrl,
     DateTime SubmittedAt,
     GradeStatus Status,
     double Score,

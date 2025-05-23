@@ -12,7 +12,7 @@ interface GroupAssignmentsSectionProps {
   page: number;
   pageSize: number;
   totalCount: number;
-  onPress: (assignmentId: string) => void;
+  isTeacher?: boolean;
   onPageChange: (page: number) => void;
 }
 
@@ -23,7 +23,7 @@ const GroupAssignmentsSection: React.FC<GroupAssignmentsSectionProps> = ({
   page,
   pageSize,
   totalCount,
-  onPress,
+  isTeacher = false,
   onPageChange,
 }) => {
   if (isLoading) {
@@ -68,7 +68,7 @@ const GroupAssignmentsSection: React.FC<GroupAssignmentsSectionProps> = ({
           index={idx}
           compact={true}
           showDescription={false}
-          onPress={onPress}
+          isTeacher={isTeacher}
         />
       ))}
       {totalCount > pageSize && (

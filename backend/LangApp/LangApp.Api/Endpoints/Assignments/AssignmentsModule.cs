@@ -18,6 +18,7 @@ public class AssignmentsModule : IEndpointModule
         var group = app.MapVersionedGroup("assignments").WithTags("Assignments");
 
         group.MapGet("/{id:guid}", Get).WithName("GetAssignment");
+        group.MapGet("/{id:guid}/stats", GetStats).WithName("GetAssignmentStats");
         group.MapPost("/", Create).WithName("CreateAssignment");
 
         app.MapVersionedGroup("groups").WithTags("Assignments").MapGet("/{groupId:guid}/assignments", GetByGroup)
@@ -37,6 +38,17 @@ public class AssignmentsModule : IEndpointModule
         var assignment = await dispatcher.QueryAsync(query);
 
         return ApplicationTypedResults.OkOrNotFound(assignment);
+    }
+
+    private async Task<Results<Ok<AssignmentSubmissionsStatisticsDto>, NotFound>> GetStats(
+        [AsParameters] GetAssignmentRequest request,
+        [FromServices] IQueryDispatcher dispatcher,
+        HttpContext context)
+    {
+        var userId = context.User.GetUserId();
+        var query = new GetAssignmnentSubmissionsStatistics(request.Id, userId);
+        var stats = await dispatcher.QueryAsync(query);
+        return ApplicationTypedResults.OkOrNotFound(stats);
     }
 
 
