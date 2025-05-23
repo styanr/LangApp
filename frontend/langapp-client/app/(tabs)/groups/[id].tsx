@@ -144,6 +144,8 @@ const GroupPage = () => {
   const handleAddMember = async (userId: string) => {
     try {
       await addMembers(groupId as string, { members: [userId] });
+      setSearchTerm('');
+      setSearchPage(1);
     } catch (error) {
       console.error('Error adding member:', error);
 
@@ -347,9 +349,14 @@ const GroupPage = () => {
                                 : u.username || '';
                             })()}
                           </Text>
-                          <Button size="sm" onPress={() => handleAddMember(u.id || '')}>
-                            <Text>Add</Text>
-                          </Button>
+                          <View>
+                            <Button
+                              size="sm"
+                              onPress={() => handleAddMember(u.id || '')}
+                              disabled={u.role === 'Teacher'}>
+                              <Text>{u.role === 'Teacher' ? 'Cannot add teacher' : 'Add'}</Text>
+                            </Button>
+                          </View>
                         </View>
                       ))
                     )}

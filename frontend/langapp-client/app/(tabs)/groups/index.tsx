@@ -86,7 +86,7 @@ export default function Groups() {
             )}
           </View>
         )}
-        <View className="gap-6">
+        <View className="gap-1">
           {groups.map((group, idx) => (
             <Animated.View
               key={group.id}
