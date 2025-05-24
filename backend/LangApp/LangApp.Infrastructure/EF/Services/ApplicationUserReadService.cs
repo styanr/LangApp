@@ -10,7 +10,7 @@ internal sealed class ApplicationUserReadService : IApplicationUserReadService
 {
     private readonly DbSet<UserReadModel> _users;
 
-    public ApplicationUserReadService(ReadDbContext context)
+    public ApplicationUserReadService(ReadDbContext context, WriteDbContext writeDbContext)
     {
         _users = context.Users;
     }

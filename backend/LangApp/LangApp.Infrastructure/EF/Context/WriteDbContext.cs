@@ -55,6 +55,6 @@ internal sealed class WriteDbContext : IdentityDbContext<IdentityApplicationUser
         modelBuilder.ApplyConfiguration<IdentityUserToken<Guid>>(configuration);
         modelBuilder.ApplyConfiguration<IdentityRoleClaim<Guid>>(configuration);
         var model = modelBuilder.Model;
-        Console.WriteLine(model.ToDebugString());
+        // Console.WriteLine(model.ToDebugString());
     }
 }

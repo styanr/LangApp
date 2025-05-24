@@ -34,10 +34,6 @@
         <ProjectReference Include="..\Shared.Queries\Shared.Queries.csproj"/>
         <ProjectReference Include="..\Shared\Shared.csproj"/>
     </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="EF\Migrations\"/>
-    </ItemGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="LangApp.Tests.Integration"/>
         <InternalsVisibleTo Include="LangApp.Infrastructure.Tests"/>

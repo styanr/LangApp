@@ -43,6 +43,11 @@ internal static class Extensions
             opt.EnableSensitiveDataLogging();
         });
 
+        // var context = services.BuildServiceProvider().GetRequiredService<WriteDbContext>();
+        //
+        // context.Database.EnsureDeleted();
+
+
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
 

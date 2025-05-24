@@ -33,6 +33,8 @@ public class TestUserHelper
         );
 
         var regResponse = await _client.PostAsJsonAsync("/api/v1/auth/register", register);
+        var body = await regResponse.Content.ReadAsStringAsync();
+        Console.WriteLine(body);
         regResponse.EnsureSuccessStatusCode();
 
         return await LoginAsync(username, password);
