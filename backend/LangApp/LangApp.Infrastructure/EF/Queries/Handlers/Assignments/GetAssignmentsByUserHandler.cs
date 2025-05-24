@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LangApp.Infrastructure.EF.Queries.Handlers.Assignments;
 
-internal class GetAssignmentsByUserHandler : IQueryHandler<GetAssignmentsByUser, PagedResult<AssignmentSlimDto>>
+internal class GetAssignmentsByUserHandler : IQueryHandler<GetAssignmentsByUser, PagedResult<AssignmentByUserSlimDto>>
 {
     private readonly DbSet<AssignmentReadModel> _assignments;
     private readonly DbSet<UserReadModel> _users;
@@ -25,7 +25,7 @@ internal class GetAssignmentsByUserHandler : IQueryHandler<GetAssignmentsByUser,
         _groups = context.StudyGroups;
     }
 
-    public async Task<PagedResult<AssignmentSlimDto>?> HandleAsync(GetAssignmentsByUser query)
+    public async Task<PagedResult<AssignmentByUserSlimDto>?> HandleAsync(GetAssignmentsByUser query)
     {
         if (!await _users.AnyAsync(u => u.Id == query.UserId))
             throw new UserNotFoundException(query.UserId);
@@ -47,12 +47,14 @@ internal class GetAssignmentsByUserHandler : IQueryHandler<GetAssignmentsByUser,
         var assignments = await baseQuery
             .OrderByDescending(a => a.DueDate)
             .TakePage(query.PageNumber, query.PageSize)
-            .Select(a => new AssignmentSlimDto(
+            .Include(a => a.StudyGroup)
+            .Select(a => new AssignmentByUserSlimDto(
                 a.Id,
                 a.Name,
                 a.Description,
                 a.AuthorId,
                 a.StudyGroupId,
+                a.StudyGroup.Name,
                 a.DueDate,
                 a.Activities.Sum(ac => ac.MaxScore),
                 a.Submissions.Any(s => s.StudentId == query.UserId),
@@ -60,7 +62,7 @@ internal class GetAssignmentsByUserHandler : IQueryHandler<GetAssignmentsByUser,
             ))
             .ToListAsync();
 
-        return new PagedResult<AssignmentSlimDto>(
+        return new PagedResult<AssignmentByUserSlimDto>(
             assignments,
             totalCount,
             query.PageNumber,

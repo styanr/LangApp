@@ -76,6 +76,7 @@ export default function Assignments() {
               id={assignment.id || ''}
               name={assignment.name || 'Untitled Assignment'}
               dueTime={assignment.dueTime}
+              groupName={assignment.studyGroupName}
               submitted={assignment.submitted}
               overdue={
                 !assignment.submitted &&

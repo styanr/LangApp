@@ -25,6 +25,7 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  AssignmentByUserSlimDtoPagedResult,
   AssignmentDto,
   AssignmentSlimDtoPagedResult,
   AssignmentSubmissionsStatisticsDto,
@@ -897,7 +898,7 @@ export const getAssignmentsByUser = (
   options?: SecondParameter<typeof mainApiMutator>,
   signal?: AbortSignal
 ) => {
-  return mainApiMutator<AssignmentSlimDtoPagedResult>(
+  return mainApiMutator<AssignmentByUserSlimDtoPagedResult>(
     { url: `/api/v1/users/me/assignments`, method: 'GET', params, signal },
     options
   );

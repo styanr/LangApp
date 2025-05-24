@@ -61,7 +61,7 @@ public class AssignmentsModule : IEndpointModule
     )
     {
         var userId = context.User.GetUserId();
-        var query = new GetAssignmentsByGroup(request.GroupId, userId, request.ShowSubmitted, request.ShowOverdue)
+        var query = new GetAssignmentsByGroup(request.GroupId, userId, request.ShowSubmitted)
         {
             PageNumber = pageNumber ?? 1,
             PageSize = pageSize ?? 10,
@@ -71,7 +71,7 @@ public class AssignmentsModule : IEndpointModule
         return ApplicationTypedResults.OkOrNotFound(assignment);
     }
 
-    private async Task<Results<Ok<PagedResult<AssignmentSlimDto>>, NotFound>> GetByUser(
+    private async Task<Results<Ok<PagedResult<AssignmentByUserSlimDto>>, NotFound>> GetByUser(
         [FromQuery] bool showSubmitted,
         [FromQuery] bool showOverdue,
         [FromServices] IQueryDispatcher dispatcher,

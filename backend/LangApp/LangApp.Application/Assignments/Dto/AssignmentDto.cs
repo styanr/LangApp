@@ -23,3 +23,16 @@ public record AssignmentSlimDto(
     bool Submitted,
     int ActivityCount
 );
+
+public record AssignmentByUserSlimDto(
+    Guid Id,
+    string Name,
+    string? Description,
+    Guid AuthorId,
+    Guid StudyGroupId,
+    string StudyGroupName,
+    DateTime DueTime,
+    int MaxScore,
+    bool Submitted,
+    int ActivityCount
+);

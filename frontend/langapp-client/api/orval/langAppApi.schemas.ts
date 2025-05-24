@@ -47,6 +47,27 @@ export interface ActivitySubmissionDto {
   failureReason?: string | null;
 }
 
+export interface AssignmentByUserSlimDto {
+  id?: string;
+  name?: string;
+  /** @nullable */
+  description?: string | null;
+  authorId?: string;
+  studyGroupId?: string;
+  studyGroupName?: string;
+  dueTime?: string;
+  maxScore?: number;
+  submitted?: boolean;
+  activityCount?: number;
+}
+
+export interface AssignmentByUserSlimDtoPagedResult {
+  items?: AssignmentByUserSlimDto[];
+  totalCount?: number;
+  pageNumber?: number;
+  pageSize?: number;
+}
+
 export interface AssignmentDto {
   id?: string;
   name?: string;
