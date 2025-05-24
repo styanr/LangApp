@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, ActivityIndicator, Alert } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
@@ -24,6 +24,9 @@ import { FillInTheBlankSubmission } from './FillInTheBlankSubmission';
 import { PronunciationSubmission } from './PronunciationSubmission';
 import { QuestionSubmission } from './QuestionSubmission';
 import { WritingSubmission } from './WritingSubmission';
+import PronunciationAssessmentResult, {
+  PronunciationWordResult,
+} from '../activities/PronunciationAssessmentResult';
 
 interface ActivityCardProps {
   subActivity: ActivitySubmissionDto;
@@ -102,6 +105,17 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
   const details = subActivity.details!;
   const statusBg = getStatusBgColor(subActivity.status);
   const statusColor = getStatusColor(subActivity.status);
+  const pronunciationFeedback = useMemo(() => {
+    try {
+      var json = JSON.parse(subActivity.grade?.feedback || '');
+      if (Array.isArray(json) && json.length > 0 && json[0].WordText) {
+        return json as PronunciationWordResult[];
+      }
+    } catch (error) {
+      console.log('Feedback is a string');
+      return null;
+    }
+  }, [subActivity.grade?.feedback]);
 
   return (
     <Card className="mb-6 overflow-hidden rounded-xl border">
@@ -178,6 +192,9 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
                 <View className="rounded-md bg-muted p-2">
                   <Text>{subActivity.grade.feedback}</Text>
                 </View>
+                {pronunciationFeedback && (
+                  <PronunciationAssessmentResult words={pronunciationFeedback} />
+                )}
               </View>
             )}
             <Button className="mt-4" onPress={() => onEdit(subActivity)}>
