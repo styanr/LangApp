@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -43,7 +44,14 @@ public class AssignmentCreationTests : IClassFixture<LangAppApplicationFactory>,
         _testGroupId = group.Id;
     }
 
-    public Task DisposeAsync() => Task.CompletedTask;
+    public Task DisposeAsync()
+    {
+        // Clean up
+        _dbContext.StudyGroups.RemoveRange(_dbContext.StudyGroups.Where(g => g.Id == _testGroupId));
+        _dbContext.Users.RemoveRange(_dbContext.Users.Where(u => u.Id == _userId));
+        _dbContext.Assignments.RemoveRange(_dbContext.Assignments.Where(a => a.StudyGroupId == _testGroupId));
+        return _dbContext.SaveChangesAsync();
+    }
 
     [Fact]
     public async Task CreateAndFetchAssignment_ShouldSucceed()
@@ -114,5 +122,47 @@ public class AssignmentCreationTests : IClassFixture<LangAppApplicationFactory>,
                 mc.Questions[0].CorrectOptionIndex.Should().Be(1);
             }
         );
+    }
+
+    [Fact]
+    public async Task CreateAssignmentWithInvalidGroup_ShouldReturnNotFound()
+    {
+        var createDto = new CreateAssignmentRequest
+        (
+            "Invalid Group Assignment",
+            "This assignment should fail",
+            Guid.NewGuid(), // Invalid group ID
+            DateTime.UtcNow.AddDays(1),
+            [
+                new(
+                    10,
+                    new QuestionActivityDetailsDto("Complete the sentence...", ["sun"], 10)
+                )
+            ]
+        );
+
+        var response = await _client.PostAsJsonAsync("/api/v1/assignments", createDto);
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task CreateAssignmentInvalidActivityDetails_ShouldReturnBadRequest()
+    {
+        var createDto = new CreateAssignmentRequest
+        (
+            "Invalid Activity Assignment",
+            "This assignment has invalid activity details",
+            _testGroupId,
+            DateTime.UtcNow.AddDays(1),
+            [
+                new(
+                    10,
+                    new ActivityDetailsDto()
+                )
+            ]
+        );
+
+        var response = await _client.PostAsJsonAsync("/api/v1/assignments", createDto);
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 }

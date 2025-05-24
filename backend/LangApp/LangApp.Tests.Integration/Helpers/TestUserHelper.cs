@@ -35,6 +35,11 @@ public class TestUserHelper
         var regResponse = await _client.PostAsJsonAsync("/api/v1/auth/register", register);
         regResponse.EnsureSuccessStatusCode();
 
+        return await LoginAsync(username, password);
+    }
+
+    public async Task<(string Token, Guid UserId)> LoginAsync(string username, string password)
+    {
         var login = new Login(username, password);
         var loginResponse = await _client.PostAsJsonAsync("/api/v1/auth/login", login);
         loginResponse.EnsureSuccessStatusCode();

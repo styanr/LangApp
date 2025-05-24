@@ -3,7 +3,7 @@ using LangApp.Core.Exceptions;
 
 namespace LangApp.Application.Common.Exceptions;
 
-public class UnauthorizedRoleException<T> : LangAppException
+public class UnauthorizedRoleException<T> : UnauthorizedException
 {
     public Guid UserId { get; set; }
     public UserRole Role { get; set; }

@@ -27,6 +27,9 @@ public class SubmissionCreationTests : IClassFixture<LangAppApplicationFactory>,
     private Guid _userId;
     private AssignmentDto? _assignmentDto;
 
+    private Guid _testStudentId;
+    private Guid _testTeacherId;
+
     public SubmissionCreationTests(LangAppApplicationFactory factory)
     {
         _client = factory.CreateClient();
@@ -39,7 +42,9 @@ public class SubmissionCreationTests : IClassFixture<LangAppApplicationFactory>,
     {
         var (studentToken, studentId) =
             await _userHelper.RegisterAndLoginAsync("integrationTestUser2", "SuperSecure!1", UserRole.Student);
+        _testStudentId = studentId;
         var (teacherToken, teacherId) = await _userHelper.RegisterAndLoginAsync("integrationTestUser", "SuperSecure!1");
+        _testTeacherId = teacherId;
 
         _userId = teacherId;
 
@@ -54,7 +59,19 @@ public class SubmissionCreationTests : IClassFixture<LangAppApplicationFactory>,
         _studentClient = _client.CloneWithToken(studentToken);
     }
 
-    public Task DisposeAsync() => Task.CompletedTask;
+    public Task DisposeAsync()
+    {
+        _dbContext.RemoveRange(
+            _dbContext.StudyGroups.Where(g => g.Id == _testGroupId)
+        );
+        _dbContext.RemoveRange(
+            _dbContext.Users.Where(u => u.Id == _testTeacherId || u.Id == _testStudentId)
+        );
+        _dbContext.RemoveRange(
+            _dbContext.Assignments.Where(a => a.StudyGroupId == _testGroupId)
+        );
+        return _dbContext.SaveChangesAsync();
+    }
 
     [Fact]
     public async Task CreateAndFetchSubmission_ShouldSucceed()
