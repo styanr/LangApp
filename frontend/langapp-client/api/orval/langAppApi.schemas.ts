@@ -380,6 +380,7 @@ export interface PostDto {
   authorName?: string;
   /** @nullable */
   authorProfilePicture?: string | null;
+  authorRole?: UserRole;
   groupId?: string;
   title?: string;
   content?: string;
@@ -393,6 +394,9 @@ export interface PostSlimDto {
   id?: string;
   authorId?: string;
   authorName?: string;
+  /** @nullable */
+  authorProfilePicture?: string | null;
+  authorRole?: UserRole;
   type?: PostType;
   title?: string;
   contentPreview?: string;

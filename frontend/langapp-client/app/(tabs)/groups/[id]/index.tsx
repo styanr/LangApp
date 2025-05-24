@@ -387,7 +387,7 @@ const GroupPage = () => {
                 <View className="px-4 pb-4">
                   <Button
                     variant="outline"
-                    className="border-indigo-200 bg-indigo-50"
+                    className="border-indigo-200 bg-indigo-50 flex flex-row items-center gap-2 justify-center"
                     onPress={() => setActiveTab('assignments')}>
                     <ChevronLeft size={16} className="mr-2 text-indigo-600" />
                     <Text className="text-sm text-indigo-700">Back to Assignments</Text>

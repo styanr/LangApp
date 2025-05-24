@@ -70,7 +70,8 @@ const GroupPostsSection: React.FC<GroupPostsSectionProps> = ({
           author={{
             id: post.authorId || '',
             name: post.authorName || 'Unknown',
-            profilePicture: null,
+            profilePicture: post.authorProfilePicture || null,
+            role: post.authorRole || 'student',
           }}
           onPress={onPress}
           index={idx}

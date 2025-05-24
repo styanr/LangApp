@@ -73,6 +73,7 @@ internal sealed class GetPostHandler : IQueryHandler<GetPost, PostDto>
             post.AuthorId,
             post.Author.Username,
             post.Author.PictureUrl,
+            post.Author.Role,
             post.GroupId,
             post.Title,
             post.Content,

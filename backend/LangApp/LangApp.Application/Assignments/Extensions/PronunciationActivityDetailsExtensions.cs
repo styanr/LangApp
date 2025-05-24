@@ -10,7 +10,9 @@ public static class PronunciationActivityDetailsExtensions
     {
         return new PronunciationActivityDetails(
             dto.ReferenceText,
-            Language.FromString(dto.Language)
+            Language.FromString(dto.Language),
+            dto.AllowAssessment,
+            dto.AllowListening
         );
     }
 }

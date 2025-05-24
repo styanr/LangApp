@@ -8,6 +8,7 @@ public record PostDto(
     Guid AuthorId,
     string AuthorName,
     string? AuthorProfilePicture,
+    UserRole AuthorRole,
     Guid GroupId,
     string Title,
     string Content,

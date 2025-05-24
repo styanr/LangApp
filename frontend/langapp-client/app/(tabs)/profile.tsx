@@ -29,6 +29,7 @@ export default function Profile() {
   const [firstName, setFirstName] = useState(user?.fullName?.firstName || '');
   const [lastName, setLastName] = useState(user?.fullName?.lastName || '');
   const [username, setUsername] = useState(user?.username || '');
+  const [pictureUrl, setPictureUrl] = useState(user?.pictureUrl || '');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,6 +40,7 @@ export default function Profile() {
       await updateUserInfo({
         username,
         fullName: { firstName, lastName },
+        pictureUrl,
       });
       setEditMode(false);
     } catch (e: any) {
@@ -62,7 +64,7 @@ export default function Profile() {
       return;
     }
     const pickerResult = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       quality: 0.8,
       allowsEditing: true,
       aspect: [1, 1],
@@ -74,7 +76,9 @@ export default function Profile() {
       const fileName = asset.fileName ?? uri.split('/').pop() ?? `profile_${Date.now()}.jpg`;
       const mimeType = 'image/jpeg';
       const blobUrl = await upload(uri, fileName, mimeType);
-      await updateUserInfo({ username, fullName: { firstName, lastName }, pictureUrl: blobUrl });
+      // await updateUserInfo({ username, fullName: { firstName, lastName }, pictureUrl: blobUrl });
+      setPictureUrl(blobUrl);
+
       resetState();
     } catch (e: any) {
       Alert.alert('Upload failed', e.message || 'Could not upload image');
@@ -100,7 +104,11 @@ export default function Profile() {
             onPress={editMode ? handlePickImage : undefined}
             disabled={!editMode || isUploadingPic}
             className="relative">
-            <UserProfilePicture imageUrl={user?.pictureUrl} size={48} />
+            <UserProfilePicture
+              // imageUrl={user?.pictureUrl}
+              imageUrl={pictureUrl}
+              size={48}
+            />
             {isUploadingPic && (
               <View className="absolute inset-0 items-center justify-center rounded-full bg-black/30">
                 <ActivityIndicator color="#fff" />
@@ -185,7 +193,6 @@ export default function Profile() {
             )}
           </View>
 
-          {/* Logout Button */}
           <Pressable
             className="mt-4 flex-row items-center justify-center rounded-md border border-destructive py-3"
             onPress={handleLogout}>

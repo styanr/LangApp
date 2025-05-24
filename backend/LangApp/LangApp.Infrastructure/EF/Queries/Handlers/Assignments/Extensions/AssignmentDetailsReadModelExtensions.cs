@@ -110,7 +110,9 @@ public static class AssignmentDetailsReadModelExtensions
     {
         return new PronunciationActivityDetailsDto(
             details.Language.Code,
-            details.ReferenceText);
+            details.ReferenceText,
+            details.AllowAssessment,
+            details.AllowListening);
     }
 
     private static ActivityDetailsDto CreateQuestionDto(

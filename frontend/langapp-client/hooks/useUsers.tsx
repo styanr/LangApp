@@ -28,7 +28,6 @@ export function useUsers() {
   const { mutateAsync: updateUserInfoAsync, ...updateUserInfoRest } = useUpdateUserInfo({
     mutation: {
       onSuccess: (_data, variables) => {
-        // Invalidate only the current user query
         queryClient.invalidateQueries({
           queryKey: getGetCurrentUserQueryKey(),
         });
@@ -59,7 +58,6 @@ export function useUsers() {
     getUserById,
     updateUserInfo,
     updateUserInfoStatus: updateUserInfoRest,
-    // Search users with pagination support
     searchUsers,
   };
 }
