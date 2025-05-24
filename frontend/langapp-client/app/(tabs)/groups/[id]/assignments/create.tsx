@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, View, Alert } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { Input } from '@/components/ui/input';
@@ -42,6 +42,10 @@ export default function CreateAssignmentPage() {
     date.setDate(date.getDate() + 7);
     return date;
   });
+
+  useEffect(() => {
+    console.log('New Date:', dueDate);
+  }, [dueDate]);
 
   const [dateError, setDateError] = useState<string>('');
   const [activities, setActivities] = useState<CreateActivityDto[]>([]);
@@ -108,6 +112,7 @@ export default function CreateAssignmentPage() {
           <CardHeader className="border-b bg-card pb-3">
             <CardTitle>Assignment Details</CardTitle>
           </CardHeader>
+
           <CardContent className="p-4">
             <Text className="mb-1 font-medium">Name</Text>
             <Input
@@ -126,12 +131,7 @@ export default function CreateAssignmentPage() {
             />
 
             <Text className="mb-1 font-medium">Due Date</Text>
-            {/* <DatePicker
-              date={dueDate}
-              onChange={(date) => setDueDate(date)}
-              mode="date"
-              className="mb-4"
-            /> */}
+            <DatePicker date={dueDate} onChange={(date) => setDueDate(date)} mode="date" />
             <Text className="mb-4 text-xs text-muted-foreground">Format: YYYY-MM-DD</Text>
           </CardContent>
         </Card>
