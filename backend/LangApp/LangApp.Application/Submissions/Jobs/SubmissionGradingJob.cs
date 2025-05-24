@@ -52,7 +52,6 @@ public class SubmissionGradingJob : IJob<SubmissionGradingJobData>
 
             submission.RecalculateTotalScore(assignment.Activities);
 
-            // Save changes
             await _assignmentSubmissionRepository.UpdateAsync(submission);
         }
         catch (Exception ex)
@@ -88,6 +87,12 @@ public class SubmissionGradingJob : IJob<SubmissionGradingJobData>
 
         foreach (var submittedActivity in submission.ActivitySubmissions)
         {
+            if (submittedActivity.Status != GradeStatus.Pending)
+            {
+                _logger.LogInformation("Skipping already graded activity: {ActivityId}", submittedActivity.ActivityId);
+                continue;
+            }
+
             if (!activityLookup.TryGetValue(submittedActivity.ActivityId, out var activity))
             {
                 _logger.LogWarning("Activity not found for submission. ActivityId={ActivityId}", submittedActivity.Id);
