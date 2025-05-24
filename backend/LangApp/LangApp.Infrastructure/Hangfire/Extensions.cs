@@ -1,20 +1,23 @@
 using Hangfire;
+using Hangfire.PostgreSql;
 using LangApp.Application.Common.Jobs;
+using LangApp.Infrastructure.Hangfire.Options;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Options;
 
 namespace LangApp.Infrastructure.Hangfire;
 
 internal static class Extensions
 {
-    public static IServiceCollection AddHangfire(this IServiceCollection services
-    )
+    public static IServiceCollection AddHangfire(this IServiceCollection services, IConfiguration configuration)
     {
-        // Configuring Hangfire to use in-memory storage
-        services.AddHangfire(config => config.UseInMemoryStorage());
+        var hangfire = configuration.GetOptions<HangfireOptions>("Hangfire");
+        services.AddHangfire(config =>
+            config.UsePostgreSqlStorage(c =>
+                c.UseNpgsqlConnection(hangfire.ConnectionString)));
 
-        // Adding the Hangfire server
         services.AddHangfireServer();
 
         services.AddSingleton<IJobScheduler, JobScheduler>();
