@@ -5,7 +5,7 @@ import { useAssignments } from '@/hooks/useAssignments';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
 import Animated, { FadeIn } from 'react-native-reanimated';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { CheckCircle } from 'lucide-react-native';
@@ -15,6 +15,11 @@ export default function AssignmentDetailPage() {
   const router = useRouter();
   const { getAssignmentById } = useAssignments();
   const { data: assignment, isLoading, isError } = getAssignmentById(assignmentId as string);
+
+  const overdue = useMemo(() => {
+    if (!assignment?.dueTime) return false;
+    return new Date(assignment.dueTime) < new Date();
+  }, [assignment]);
 
   const route = useRoute();
   console.log('Current route:', route.name);
@@ -99,11 +104,15 @@ export default function AssignmentDetailPage() {
           <Button
             className="mt-8 py-3"
             onPress={handleBeginSubmission}
-            disabled={assignment.submitted}>
+            disabled={assignment.submitted || overdue}>
             <View className="flex-row items-center">
               <MaterialCommunityIcons name="pencil" size={20} color={'white'} />
               <Text className="ml-2 font-medium text-white">
-                {assignment.submitted ? 'Already Submitted' : 'Begin Submission'}
+                {assignment.submitted
+                  ? 'Already Submitted'
+                  : overdue
+                    ? 'Overdue'
+                    : 'Begin Submission'}
               </Text>
             </View>
           </Button>

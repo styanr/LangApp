@@ -61,7 +61,7 @@ public class AssignmentsModule : IEndpointModule
     )
     {
         var userId = context.User.GetUserId();
-        var query = new GetAssignmentsByGroup(request.GroupId, userId, request.ShowSubmitted)
+        var query = new GetAssignmentsByGroup(request.GroupId, userId, request.ShowSubmitted, request.ShowOverdue)
         {
             PageNumber = pageNumber ?? 1,
             PageSize = pageSize ?? 10,
@@ -73,6 +73,7 @@ public class AssignmentsModule : IEndpointModule
 
     private async Task<Results<Ok<PagedResult<AssignmentSlimDto>>, NotFound>> GetByUser(
         [FromQuery] bool showSubmitted,
+        [FromQuery] bool showOverdue,
         [FromServices] IQueryDispatcher dispatcher,
         HttpContext context,
         int? pageNumber = null,
@@ -80,7 +81,7 @@ public class AssignmentsModule : IEndpointModule
     )
     {
         var userId = context.User.GetUserId();
-        var query = new GetAssignmentsByUser(userId, showSubmitted)
+        var query = new GetAssignmentsByUser(userId, showSubmitted, showOverdue)
         {
             PageNumber = pageNumber ?? 1,
             PageSize = pageSize ?? 10,

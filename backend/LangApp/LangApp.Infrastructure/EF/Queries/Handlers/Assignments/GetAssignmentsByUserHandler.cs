@@ -33,9 +33,11 @@ internal class GetAssignmentsByUserHandler : IQueryHandler<GetAssignmentsByUser,
         var baseQuery = _assignments
             .AsNoTracking()
             .Where(a =>
-                (a.StudyGroup.OwnerId == query.UserId || a.StudyGroup.Members.Any(m => m.Id == query.UserId)) &&
-                a.DueDate >= DateTime.UtcNow
+                (a.StudyGroup.OwnerId == query.UserId || a.StudyGroup.Members.Any(m => m.Id == query.UserId))
             );
+
+        if (!query.ShowOverdue)
+            baseQuery = baseQuery.Where(a => a.DueDate >= DateTime.UtcNow);
 
         if (!query.ShowSubmitted)
             baseQuery = baseQuery.Where(a => a.Submissions.All(s => s.StudentId != query.UserId));

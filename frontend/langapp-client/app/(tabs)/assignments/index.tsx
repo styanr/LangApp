@@ -1,7 +1,7 @@
 import { useAssignments } from '@/hooks/useAssignments';
 import { ScrollView, ActivityIndicator, View as RNView } from 'react-native';
 import { Toggle, ToggleIcon } from '@/components/ui/toggle';
-import { Eye, EyeOff } from 'lucide-react-native';
+import { Eye, EyeOff, CalendarDays } from 'lucide-react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useState } from 'react';
 import { Paging } from '@/components/ui/paging';
@@ -12,12 +12,16 @@ import { useAuth } from '@/hooks/useAuth';
 export default function Assignments() {
   const [page, setPage] = useState(1);
   const [showSubmitted, setShowSubmitted] = useState(false);
+  // Toggle to include overdue assignments in filter
+  const [showOverdue, setShowOverdue] = useState(false);
   const pageSize = 10;
   const { getUserAssignments } = useAssignments();
+  // Fetch assignments with submitted and overdue filters
   const { data, isLoading, isError } = getUserAssignments({
     pageNumber: page,
     pageSize,
     showSubmitted,
+    showOverdue,
   });
   const assignments = data?.items || [];
   const totalCount = data?.totalCount || 0;
@@ -35,6 +39,10 @@ export default function Assignments() {
           {showSubmitted ? <ToggleIcon icon={EyeOff} /> : <ToggleIcon icon={Eye} />}
         </Toggle>
         <Text className="ml-2">Show Submitted</Text>
+        <Toggle pressed={showOverdue} onPressedChange={setShowOverdue} className="ml-6">
+          <ToggleIcon icon={CalendarDays} />
+        </Toggle>
+        <Text className="ml-2">Show Overdue</Text>
       </RNView>
       <ScrollView
         className="flex-1 px-2"
@@ -69,6 +77,11 @@ export default function Assignments() {
               name={assignment.name || 'Untitled Assignment'}
               dueTime={assignment.dueTime}
               submitted={assignment.submitted}
+              overdue={
+                !assignment.submitted &&
+                !!assignment.dueTime &&
+                new Date(assignment.dueTime) < new Date()
+              }
               index={idx}
               isTeacher={isTeacher}
             />

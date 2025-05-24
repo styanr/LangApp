@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 export type MemberProps = {
   id: string;
   name: string;
-  email: string;
+  pictureUrl?: string | null;
   role: string;
   imageUrl?: string | null;
   onPress?: (userId: string) => void;
@@ -21,9 +21,8 @@ export type MemberProps = {
 export const GroupMember = ({
   id,
   name,
-  email,
+  pictureUrl,
   role,
-  imageUrl,
   onPress,
   onLongPress,
   index = 0,
@@ -50,7 +49,7 @@ export const GroupMember = ({
             className
           )}>
           <CardContent className="flex-row items-center gap-3 p-4">
-            <UserProfilePicture imageUrl={imageUrl} iconContainerClassName="bg-indigo-100" />
+            <UserProfilePicture imageUrl={pictureUrl} iconContainerClassName="bg-indigo-100" />
             <View className="flex-1 flex-row items-center">
               <Text className="text-base font-semibold text-primary">{name}</Text>
               {isOwner && <Crown size={16} color="gold" style={{ marginLeft: 4 }} />}

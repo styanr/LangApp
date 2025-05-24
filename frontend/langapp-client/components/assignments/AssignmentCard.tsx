@@ -8,6 +8,8 @@ import Animated, { FadeInUp } from 'react-native-reanimated';
 import { Link } from 'expo-router';
 
 interface AssignmentCardProps {
+  /** Whether the assignment is overdue */
+  overdue?: boolean;
   id: string;
   name: string;
   description?: string | null;
@@ -31,6 +33,7 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({
   compact = false,
   isTeacher = false,
   onPress,
+  overdue = false,
 }) => {
   return (
     <Animated.View
@@ -39,12 +42,12 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({
       {onPress ? (
         <Pressable className="active:scale-98" onPress={() => onPress(id)}>
           <Card
-            className={`border-0 bg-white/90 dark:bg-zinc-900/80 ${submitted ? 'border-l-4 border-l-emerald-500' : ''}`}>
+            className={`border-0 bg-white/90 dark:bg-zinc-900/80 ${submitted ? 'border-l-4 border-l-emerald-500' : ''} ${overdue && !submitted ? 'border-l-4 border-l-red-500' : ''}`}>
             <CardHeader className={`flex-row items-center gap-4 ${compact ? 'p-4' : 'p-5'}`}>
               <IconBadge
                 Icon={submitted ? CheckCircle : ClipboardList}
                 size={compact ? 24 : 32}
-                className={submitted ? 'text-emerald-500' : 'text-fuchsia-500'}
+                className={submitted ? 'text-emerald-500' : overdue && !submitted ? 'text-red-500' : 'text-fuchsia-500'}
               />
               <RNView className="flex-1">
                 <CardTitle
@@ -55,6 +58,13 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({
                   <RNView className="mt-1">
                     <Text className="self-start rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-800 dark:text-emerald-100">
                       Submitted
+                    </Text>
+                  </RNView>
+                )}
+                {overdue && !submitted && (
+                  <RNView className="mt-1">
+                    <Text className="self-start rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">
+                      Overdue
                     </Text>
                   </RNView>
                 )}
@@ -90,12 +100,12 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({
           asChild>
           <Pressable className="active:scale-98">
             <Card
-              className={`border-0 bg-white/90 dark:bg-zinc-900/80 ${submitted ? 'border-l-4 border-l-emerald-500' : ''}`}>
+              className={`border-0 bg-white/90 dark:bg-zinc-900/80 ${submitted ? 'border-l-4 border-l-emerald-500' : ''} ${overdue && !submitted ? 'border-l-4 border-l-red-500' : ''}`}>
               <CardHeader className={`flex-row items-center gap-4 ${compact ? 'p-4' : 'p-5'}`}>
                 <IconBadge
                   Icon={submitted ? CheckCircle : ClipboardList}
                   size={compact ? 24 : 32}
-                  className={submitted ? 'text-emerald-500' : 'text-fuchsia-500'}
+                  className={submitted ? 'text-emerald-500' : overdue && !submitted ? 'text-red-500' : 'text-fuchsia-500'}
                 />
                 <RNView className="flex-1">
                   <CardTitle
@@ -106,6 +116,13 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({
                     <RNView className="mt-1">
                       <Text className="self-start rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-800 dark:text-emerald-100">
                         Submitted
+                      </Text>
+                    </RNView>
+                  )}
+                  {overdue && !submitted && (
+                    <RNView className="mt-1">
+                      <Text className="self-start rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">
+                        Overdue
                       </Text>
                     </RNView>
                   )}

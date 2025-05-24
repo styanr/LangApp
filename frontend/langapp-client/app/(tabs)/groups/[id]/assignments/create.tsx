@@ -131,7 +131,7 @@ export default function CreateAssignmentPage() {
             />
 
             <Text className="mb-1 font-medium">Due Date</Text>
-            <DatePicker date={dueDate} onChange={(date) => setDueDate(date)} mode="date" />
+            <DatePicker date={dueDate} onChange={(date) => setDueDate(date!)} mode="date" />
             <Text className="mb-4 text-xs text-muted-foreground">Format: YYYY-MM-DD</Text>
           </CardContent>
         </Card>

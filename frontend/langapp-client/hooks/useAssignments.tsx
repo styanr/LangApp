@@ -65,7 +65,14 @@ export function useAssignments() {
     params?: GetAssignmentsByGroupParams,
     options?: { query?: any; request?: any }
   ) => {
-    const query = useGetAssignmentsByGroup(groupId, params, options);
+    // ensure ShowOverdue defaults to false
+    const actualParams: GetAssignmentsByGroupParams = {
+      ShowSubmitted: params?.ShowSubmitted ?? false,
+      ShowOverdue: params?.ShowOverdue ?? false,
+      pageNumber: params?.pageNumber,
+      pageSize: params?.pageSize,
+    };
+    const query = useGetAssignmentsByGroup(groupId, actualParams, options);
     return {
       // all raw query properties (isLoading, isError, refetch, etc.)
       ...query,
@@ -84,7 +91,13 @@ export function useAssignments() {
     params?: GetAssignmentsByUserParams,
     options?: { query?: any; request?: any }
   ) => {
-    const actualParams = params ?? { showSubmitted: false };
+    // ensure showOverdue defaults to false
+    const actualParams: GetAssignmentsByUserParams = {
+      showSubmitted: params?.showSubmitted ?? false,
+      showOverdue: params?.showOverdue ?? false,
+      pageNumber: params?.pageNumber,
+      pageSize: params?.pageSize,
+    };
     const query = useGetAssignmentsByUser(actualParams, options);
     return {
       ...query,
@@ -103,22 +116,28 @@ export function useAssignments() {
         // variables.data contains the CreateAssignmentRequest
         // We need to invalidate by group if groupId is present, and always by user
         if (variables.data.groupId) {
-          queryClient.invalidateQueries({
-            queryKey: getGetAssignmentsByGroupQueryKey(variables.data.groupId, {
-              ShowSubmitted: true,
-            }),
-          });
-          queryClient.invalidateQueries({
-            queryKey: getGetAssignmentsByGroupQueryKey(variables.data.groupId, {
-              ShowSubmitted: false,
-            }),
+          // Invalidate all group assignment queries with different filters
+          [true, false].forEach((submitted) => {
+            [true, false].forEach((overdue) => {
+              queryClient.invalidateQueries({
+                queryKey: getGetAssignmentsByGroupQueryKey(variables.data.groupId!, {
+                  ShowSubmitted: submitted,
+                  ShowOverdue: overdue,
+                }),
+              });
+            });
           });
         }
-        queryClient.invalidateQueries({
-          queryKey: getGetAssignmentsByUserQueryKey({ showSubmitted: true }),
-        });
-        queryClient.invalidateQueries({
-          queryKey: getGetAssignmentsByUserQueryKey({ showSubmitted: false }),
+        // Invalidate user assignment queries with different filters
+        [true, false].forEach((submitted) => {
+          [true, false].forEach((overdue) => {
+            queryClient.invalidateQueries({
+              queryKey: getGetAssignmentsByUserQueryKey({
+                showSubmitted: submitted,
+                showOverdue: overdue,
+              }),
+            });
+          });
         });
         // Potentially invalidate a general assignments list if one exists
         // queryClient.invalidateQueries({ queryKey: ['assignments'] }); // Example

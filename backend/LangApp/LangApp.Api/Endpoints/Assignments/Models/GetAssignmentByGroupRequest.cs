@@ -4,5 +4,6 @@ namespace LangApp.Api.Endpoints.Assignments.Models;
 
 public record GetAssignmentByGroupRequest(
     Guid GroupId,
-    bool ShowSubmitted = false
+    bool ShowSubmitted = false,
+    bool ShowOverdue = false
 );

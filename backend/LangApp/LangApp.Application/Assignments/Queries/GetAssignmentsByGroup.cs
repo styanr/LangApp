@@ -7,5 +7,6 @@ namespace LangApp.Application.Assignments.Queries;
 public record GetAssignmentsByGroup(
     Guid GroupId,
     Guid UserId,
-    bool ShowSubmitted = false
+    bool ShowSubmitted = false,
+    bool ShowOverdue = false
 ) : PagedQuery<PagedResult<AssignmentSlimDto>>;

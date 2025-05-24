@@ -37,6 +37,9 @@ internal sealed class
             .Where(a => a.StudyGroupId == query.GroupId)
             .AsNoTracking();
 
+        if (!query.ShowOverdue)
+            baseQuery = baseQuery.Where(a => a.DueDate >= DateTime.UtcNow);
+
         if (!query.ShowSubmitted)
             baseQuery = baseQuery.Where(a => a.Submissions.All(s => s.StudentId != query.UserId));
 

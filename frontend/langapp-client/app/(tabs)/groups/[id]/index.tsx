@@ -20,16 +20,11 @@ import GroupMembersSection from '@/components/groups/GroupMembersSection';
 import GroupSubmissionsSection from '@/components/groups/GroupSubmissionsSection';
 import { Paging } from '@/components/ui/paging';
 import Animated, { FadeIn } from 'react-native-reanimated';
-import {
-  Eye,
-  EyeOff,
-  FileCheck,
-  ChevronLeft,
-} from 'lucide-react-native';
+import { Eye, EyeOff, FileCheck, ChevronLeft, CalendarDays } from 'lucide-react-native';
 
-import {User} from '@/lib/icons/User'
-import {ClipboardList} from '@/lib/icons/ClipboardList'
-import {MessageCircle} from '@/lib/icons/MessageCircle'
+import { User } from '@/lib/icons/User';
+import { ClipboardList } from '@/lib/icons/ClipboardList';
+import { MessageCircle } from '@/lib/icons/MessageCircle';
 
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
@@ -53,6 +48,8 @@ const GroupPage = () => {
   const [assignmentsPage, setAssignmentsPage] = useState(1);
   const [submissionsPage, setSubmissionsPage] = useState(1);
   const [showSubmitted, setShowSubmitted] = useState(false);
+  // Toggle to include overdue assignments
+  const [showOverdue, setShowOverdue] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   // Search state for adding members
   const [searchTerm, setSearchTerm] = useState('');
@@ -89,6 +86,7 @@ const GroupPage = () => {
     pageNumber: assignmentsPage,
     pageSize,
     ShowSubmitted: showSubmitted,
+    ShowOverdue: showOverdue,
   });
 
   // Submissions
@@ -298,20 +296,27 @@ const GroupPage = () => {
                 ) : (
                   // Student view: show submitted filter and submissions link
                   <>
-                    <View className="mb-2 flex-row items-center justify-between px-4 pb-2">
+                    <View className="mb-2 flex gap-3  px-4 pb-2">
+                      <Button
+                        variant="outline"
+                        className="flex-row items-center gap-2 border-indigo-200 bg-indigo-50"
+                        onPress={() => setActiveTab('submissions')}>
+                        <FileCheck size={16} className="mr-2 text-indigo-600" />
+                        <Text className="text-sm text-indigo-700">View Submissions</Text>
+                      </Button>
                       <View className="flex-row items-center">
                         <Toggle pressed={showSubmitted} onPressedChange={setShowSubmitted}>
                           {showSubmitted ? <ToggleIcon icon={EyeOff} /> : <ToggleIcon icon={Eye} />}
                         </Toggle>
                         <Text className="ml-2">Show Submitted</Text>
+                        <Toggle
+                          pressed={showOverdue}
+                          onPressedChange={setShowOverdue}
+                          className="ml-6">
+                          <ToggleIcon icon={CalendarDays} />
+                        </Toggle>
+                        <Text className="ml-2">Show Overdue</Text>
                       </View>
-                      <Button
-                        variant="outline"
-                        className="border-indigo-200 bg-indigo-50"
-                        onPress={() => setActiveTab('submissions')}>
-                        <FileCheck size={16} className="mr-2 text-indigo-600" />
-                        <Text className="text-sm text-indigo-700">View Submissions</Text>
-                      </Button>
                     </View>
                     <GroupAssignmentsSection
                       assignments={assignments}
@@ -389,7 +394,7 @@ const GroupPage = () => {
                 <View className="px-4 pb-4">
                   <Button
                     variant="outline"
-                    className="border-indigo-200 bg-indigo-50 flex flex-row items-center gap-2 justify-center"
+                    className="flex flex-row items-center justify-center gap-2 border-indigo-200 bg-indigo-50"
                     onPress={() => setActiveTab('assignments')}>
                     <ChevronLeft size={16} className="mr-2 text-indigo-600" />
                     <Text className="text-sm text-indigo-700">Back to Assignments</Text>

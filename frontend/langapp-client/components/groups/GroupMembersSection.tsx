@@ -23,6 +23,7 @@ const GroupMembersSection: React.FC<GroupMembersSectionProps> = ({
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const toggleSelect = (id: string) => {
+    if (!isOwner) return; 
     // Prevent selecting the owner
     if (owner && id === owner.id) return;
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
@@ -54,7 +55,7 @@ const GroupMembersSection: React.FC<GroupMembersSectionProps> = ({
           name={
             `${owner.fullName?.firstName || ''} ${owner.fullName?.lastName || ''}`.trim() || 'Owner'
           }
-          email={owner.pictureUrl || ''}
+          pictureUrl={owner.pictureUrl || ''}
           role="Owner"
           onPress={onPress}
           index={-1}
@@ -73,7 +74,7 @@ const GroupMembersSection: React.FC<GroupMembersSectionProps> = ({
               `${member.fullName?.firstName || ''} ${member.fullName?.lastName || ''}`.trim() ||
               'Member'
             }
-            email={member.pictureUrl || ''}
+            pictureUrl={member.pictureUrl || ''}
             role="Member"
             onPress={onPress}
             onLongPress={() => toggleSelect(id)}

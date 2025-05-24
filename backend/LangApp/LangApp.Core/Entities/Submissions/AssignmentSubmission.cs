@@ -57,6 +57,8 @@ public class AssignmentSubmission : AggregateRoot
 
     public void GradeActivitySubmission(ActivitySubmission activitySubmission, SubmissionGrade submissionGrade)
     {
+        var previousStatus = Status;
+
         var index = _activitySubmissions.IndexOf(activitySubmission);
         _activitySubmissions[index].UpdateGrade(submissionGrade);
 
@@ -73,6 +75,11 @@ public class AssignmentSubmission : AggregateRoot
         if (_activitySubmissions.Any(a => a.Status == GradeStatus.NeedsReview))
         {
             Status = GradeStatus.NeedsReview;
+        }
+
+        if (Status == GradeStatus.Completed && previousStatus != GradeStatus.Completed)
+        {
+            AddEvent(new SubmissionGraded(this));
         }
     }
 

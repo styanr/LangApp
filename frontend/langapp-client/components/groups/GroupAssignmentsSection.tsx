@@ -65,6 +65,11 @@ const GroupAssignmentsSection: React.FC<GroupAssignmentsSectionProps> = ({
           name={assignment.name || 'Untitled Assignment'}
           dueTime={assignment.dueTime || ''}
           submitted={assignment.submitted}
+          overdue={
+            !assignment.submitted &&
+            !!assignment.dueTime &&
+            new Date(assignment.dueTime) < new Date()
+          }
           index={idx}
           compact={true}
           showDescription={false}

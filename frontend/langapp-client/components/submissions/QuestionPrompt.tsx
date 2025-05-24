@@ -18,7 +18,7 @@ export const QuestionPrompt: React.FC<QuestionPromptProps> = ({ details: d }) =>
     )}
     {(d.answers?.length ?? 0) > 0 && (
       <View className="mt-3 border-t border-gray-200 pt-3">
-        <Text className="mb-2 font-medium">Example Answers:</Text>
+        <Text className="mb-2 font-medium">Answers:</Text>
         {d.answers?.map((ans, i) => (
           <Text key={i} className="mb-1 text-sm">
             • {ans}

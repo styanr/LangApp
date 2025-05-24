@@ -27,6 +27,7 @@ import { WritingSubmission } from './WritingSubmission';
 import PronunciationAssessmentResult, {
   PronunciationWordResult,
 } from '../activities/PronunciationAssessmentResult';
+import { ActivityFeedback } from './ActivityFeedback';
 
 interface ActivityCardProps {
   subActivity: ActivitySubmissionDto;
@@ -179,71 +180,20 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
             }
           })()}
         </View>
-        {subActivity.grade && editingActivityId !== subActivity.id && (
-          <View className="mt-4 border-t border-gray-200 pt-4 dark:border-gray-700">
-            <Text className="mb-1 font-medium">Current Grade:</Text>
-            <View className="flex-row items-center">
-              <Award size={18} className="mr-2 text-fuchsia-500" />
-              <Text>Score: {subActivity.grade.scorePercentage}%</Text>
-            </View>
-            {subActivity.grade.feedback && (
-              <View className="mt-2">
-                <Text className="mb-1 font-medium">Feedback:</Text>
-                <View className="rounded-md bg-muted p-2">
-                  <Text>{subActivity.grade.feedback}</Text>
-                </View>
-                {pronunciationFeedback && (
-                  <PronunciationAssessmentResult words={pronunciationFeedback} />
-                )}
-              </View>
-            )}
-            <Button className="mt-4" onPress={() => onEdit(subActivity)}>
-              <Text>Edit Grade</Text>
-            </Button>
-          </View>
-        )}
-        {editingActivityId === subActivity.id && (
-          <View className="mt-4 border-t border-gray-200 pt-4 dark:border-gray-700">
-            <Text className="mb-3 font-medium">Edit Grade</Text>
-            <View className="mb-4">
-              <Text className="mb-2">Score (%)</Text>
-              <Input
-                value={score}
-                onChangeText={setScore}
-                keyboardType="number-pad"
-                placeholder="Enter score (0-100)"
-                className="mb-1"
-              />
-              <Text className="text-xs text-muted-foreground">
-                Enter a number between 0 and 100
-              </Text>
-            </View>
-            <View className="mb-4">
-              <Text className="mb-2">Feedback (optional)</Text>
-              <Textarea
-                value={feedback}
-                onChangeText={setFeedback}
-                placeholder="Provide feedback to the student"
-                className="min-h-[120px]"
-              />
-            </View>
-            <View className="flex-row gap-3">
-              <Button
-                className="flex-1"
-                onPress={() => onSave(subActivity.id || '')}
-                disabled={mutationStatus.editGrade.isLoading}>
-                {mutationStatus.editGrade.isLoading ? (
-                  <ActivityIndicator size="small" color="#ffffff" />
-                ) : (
-                  <Text>Save Grade</Text>
-                )}
-              </Button>
-              <Button className="flex-1" variant="outline" onPress={onCancel}>
-                <Text>Cancel</Text>
-              </Button>
-            </View>
-          </View>
-        )}
+        {/* Feedback and grading UI */}
+        <ActivityFeedback
+          grade={subActivity.grade}
+          isEditing={editingActivityId === subActivity.id}
+          score={score}
+          feedback={feedback}
+          mutationStatus={{ isLoading: mutationStatus.editGrade.isLoading }}
+          onEdit={() => onEdit(subActivity)}
+          onSave={() => onSave(subActivity.id || '')}
+          onCancel={onCancel}
+          setScore={setScore}
+          setFeedback={setFeedback}
+        />
+        {/* Show Grade Activity button for new submissions */}
         {!subActivity.grade && editingActivityId !== subActivity.id && (
           <Button className="mt-4" variant="default" onPress={() => onEdit(subActivity)}>
             <Text>Grade Activity</Text>

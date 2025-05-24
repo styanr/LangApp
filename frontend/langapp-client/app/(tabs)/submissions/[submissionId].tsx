@@ -2,41 +2,15 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ScrollView, View, ActivityIndicator, Alert, Pressable } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCallback, useState, useMemo } from 'react';
 import Animated, { FadeIn } from 'react-native-reanimated';
-import {
-  ArrowLeft,
-  User,
-  Clock,
-  Award,
-  FileText,
-  AlertCircle,
-  MessageCircle,
-  Edit3,
-  CheckCircle,
-  ListChecks,
-  Mic,
-} from 'lucide-react-native';
+import { AlertCircle } from '@/lib/icons/AlertCircle';
 import { useSubmissions } from '@/hooks/useSubmissions';
 import { useAssignments } from '@/hooks/useAssignments';
 import {
-  GradeStatus,
   SubmissionGradeDto,
   ActivitySubmissionDto,
   ActivityDto,
-  AssignmentSubmissionDto,
-  AssignmentDto,
-  MultipleChoiceActivitySubmissionDetailsDto,
-  FillInTheBlankActivitySubmissionDetailsDto,
-  PronunciationActivitySubmissionDetailsDto,
-  QuestionActivitySubmissionDetailsDto,
-  WritingActivitySubmissionDetailsDto,
-  MultipleChoiceActivityDetailsDto,
-  FillInTheBlankActivityDetailsDto,
-  PronunciationActivityDetailsDto,
-  QuestionActivityDetailsDto,
-  WritingActivityDetailsDto,
 } from '@/api/orval/langAppApi.schemas';
 import { HeaderSection } from '@/components/submissions/HeaderSection';
 import { AssignmentInfo } from '@/components/submissions/AssignmentInfo';

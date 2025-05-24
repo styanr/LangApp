@@ -678,12 +678,14 @@ export type WritingActivitySubmissionDetailsDto = Omit<
 
 export type GetAssignmentsByGroupParams = {
   ShowSubmitted?: boolean;
+  ShowOverdue?: boolean;
   pageNumber?: number;
   pageSize?: number;
 };
 
 export type GetAssignmentsByUserParams = {
   showSubmitted: boolean;
+  showOverdue: boolean;
   pageNumber?: number;
   pageSize?: number;
 };
