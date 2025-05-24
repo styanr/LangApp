@@ -15,8 +15,11 @@ internal static class Extensions
     {
         var hangfire = configuration.GetOptions<HangfireOptions>("Hangfire");
         services.AddHangfire(config =>
+        {
+            config.UseFilter(new AutomaticRetryAttribute { Attempts = 3 });
             config.UsePostgreSqlStorage(c =>
-                c.UseNpgsqlConnection(hangfire.ConnectionString)));
+                c.UseNpgsqlConnection(hangfire.ConnectionString));
+        });
 
         services.AddHangfireServer();
 
