@@ -4,7 +4,6 @@ using LangApp.Infrastructure.EF.Context;
 using LangApp.Infrastructure.EF.Interceptors;
 using LangApp.Infrastructure.EF.Options;
 using LangApp.Infrastructure.EF.Repositories.Assignments;
-using LangApp.Infrastructure.EF.Repositories.Lexicons;
 using LangApp.Infrastructure.EF.Repositories.Posts;
 using LangApp.Infrastructure.EF.Repositories.StudyGroups;
 using LangApp.Infrastructure.EF.Repositories.Submissions;
@@ -22,12 +21,11 @@ internal static class Extensions
     public static IServiceCollection AddPostgres(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddScoped<ILexiconRepository, PostgresLexiconRepository>();
         services.AddScoped<IApplicationUserRepository, IdentityUserRepository>();
         services.AddScoped<IAssignmentRepository, PostgresAssignmentRepository>();
         services.AddScoped<IPostRepository, PostgresPostRepository>();
         services.AddScoped<IStudyGroupRepository, PostgresStudyGroupRepository>();
-        services.AddScoped<ISubmissionRepository, PostgresSubmissionRepository>();
+        services.AddScoped<IAssignmentSubmissionRepository, PostgresAssignmentSubmissionRepository>();
 
         services.AddScoped<IApplicationUserReadService, ApplicationUserReadService>();
 

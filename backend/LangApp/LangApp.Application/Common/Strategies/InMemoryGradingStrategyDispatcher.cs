@@ -17,14 +17,14 @@ public class InMemoryGradingStrategyDispatcher : IGradingStrategyDispatcher
 
     public async Task<SubmissionGrade> Grade<TAssignmentDetails>(TAssignmentDetails assignmentDetails,
         SubmissionDetails submissionDetails, CancellationToken cancellationToken = default(CancellationToken))
-        where TAssignmentDetails : AssignmentDetails
+        where TAssignmentDetails : ActivityDetails
     {
         using var scope = _serviceProvider.CreateScope();
 
         var handlerType = typeof(IGradingStrategy<>).MakeGenericType(assignmentDetails.GetType());
         var handler = scope.ServiceProvider.GetRequiredService(handlerType);
 
-        var method = handlerType.GetMethod(nameof(IGradingStrategy<TAssignmentDetails>.Grade));
+        var method = handlerType.GetMethod(nameof(IGradingStrategy<TAssignmentDetails>.GradeAsync));
 
         return await (Task<SubmissionGrade>)method!.Invoke(handler,
             [assignmentDetails, submissionDetails, cancellationToken])!;

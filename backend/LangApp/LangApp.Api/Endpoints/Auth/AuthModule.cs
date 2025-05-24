@@ -21,6 +21,17 @@ public class AuthModule : IEndpointModule
         group.MapPost("/login", Login)
             .AllowAnonymous()
             .WithName("Login");
+        group.MapPost("/refresh", Refresh)
+            .AllowAnonymous()
+            .WithName("Refresh");
+        group.MapPost("/request-password-reset", RequestPasswordReset)
+            .AllowAnonymous()
+            .WithName("RequestPasswordReset")
+            .WithDescription(
+                "Request a password reset. The user will receive an email with a link to the client app reset their password.");
+        group.MapPost("/reset-password", ResetPassword)
+            .AllowAnonymous()
+            .WithName("ResetPassword");
     }
 
 
@@ -40,5 +51,33 @@ public class AuthModule : IEndpointModule
     {
         var token = await dispatcher.DispatchWithResultAsync(command);
         return TypedResults.Ok(token);
+    }
+
+    private async Task<Ok<TokenResponse>> Refresh(
+        [FromBody] Refresh command,
+        [FromServices] ICommandDispatcher dispatcher)
+    {
+        var tokenResponse = await dispatcher.DispatchWithResultAsync(command);
+        return TypedResults.Ok(tokenResponse);
+    }
+
+    private async Task<NoContent> RequestPasswordReset(
+        [FromBody] RequestPasswordReset command,
+        [FromServices] ICommandDispatcher dispatcher
+    )
+    {
+        await dispatcher.DispatchAsync(command);
+
+        return TypedResults.NoContent();
+    }
+
+    private async Task<Ok> ResetPassword(
+        [FromBody] ResetPassword command,
+        [FromServices] ICommandDispatcher dispatcher
+    )
+    {
+        await dispatcher.DispatchAsync(command);
+
+        return TypedResults.Ok();
     }
 }

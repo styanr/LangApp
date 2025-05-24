@@ -3,7 +3,6 @@ using LangApp.Infrastructure.EF.Config.Exceptions;
 using LangApp.Infrastructure.EF.Config.JsonConfig.ReadContext;
 using LangApp.Infrastructure.EF.Models.Assignments;
 using LangApp.Infrastructure.EF.Models.Identity;
-using LangApp.Infrastructure.EF.Models.Lexicons;
 using LangApp.Infrastructure.EF.Models.Posts;
 using LangApp.Infrastructure.EF.Models.StudyGroups;
 using LangApp.Infrastructure.EF.Models.Submissions;
@@ -19,11 +18,10 @@ internal sealed class ReadConfiguration :
     IEntityTypeConfiguration<MemberReadModel>,
     IEntityTypeConfiguration<PostReadModel>,
     IEntityTypeConfiguration<PostCommentReadModel>,
-    IEntityTypeConfiguration<LexiconReadModel>,
-    IEntityTypeConfiguration<LexiconEntryReadModel>,
-    IEntityTypeConfiguration<LexiconEntryDefinitionReadModel>,
     IEntityTypeConfiguration<AssignmentReadModel>,
-    IEntityTypeConfiguration<SubmissionReadModel>,
+    IEntityTypeConfiguration<ActivityReadModel>,
+    IEntityTypeConfiguration<AssignmentSubmissionReadModel>,
+    IEntityTypeConfiguration<ActivitySubmissionReadModel>,
     IEntityTypeConfiguration<SubmissionGradeReadModel>,
     IEntityTypeConfiguration<IdentityRoleReadModel>,
     IEntityTypeConfiguration<IdentityUserClaimReadModel>,
@@ -42,8 +40,6 @@ internal sealed class ReadConfiguration :
             .WithMany(g => g.Members).UsingEntity<MemberReadModel>();
         builder.HasMany(u => u.ManagedGroups)
             .WithOne(g => g.Owner).HasForeignKey(g => g.OwnerId);
-        builder.HasMany(u => u.Lexicons)
-            .WithOne(l => l.Owner).HasForeignKey(l => l.UserId);
 
         builder.HasIndex(u => u.Username).IsUnique();
         builder.HasIndex(u => u.Email).IsUnique();
@@ -69,6 +65,10 @@ internal sealed class ReadConfiguration :
 
         builder.HasMany(g => g.Posts)
             .WithOne(p => p.Group).HasForeignKey(p => p.GroupId);
+
+        builder.HasMany(g => g.Assignments)
+            .WithOne(a => a.StudyGroup)
+            .HasForeignKey(a => a.StudyGroupId);
     }
 
     public void Configure(EntityTypeBuilder<MemberReadModel> builder)
@@ -107,49 +107,11 @@ internal sealed class ReadConfiguration :
         builder.HasOne<UserReadModel>()
             .WithMany()
             .HasForeignKey("AuthorId");
+
+        builder.HasOne(c => c.Author)
+            .WithMany().HasForeignKey(c => c.AuthorId);
     }
 
-    public void Configure(EntityTypeBuilder<LexiconReadModel> builder)
-    {
-        builder.ToTable("Lexicons");
-        builder.HasKey(l => l.Id);
-
-        builder.Property(l => l.Language).IsRequired();
-        builder.Property(l => l.Title).IsRequired();
-
-        builder.HasOne(l => l.Owner)
-            .WithMany(u => u.Lexicons)
-            .HasForeignKey(l => l.UserId)
-            .IsRequired();
-    }
-
-    public void Configure(EntityTypeBuilder<LexiconEntryReadModel> builder)
-    {
-        builder.ToTable("LexiconEntries");
-        builder.HasKey(e => e.Id);
-
-        builder.Property(e => e.Term).IsRequired();
-
-        builder.HasOne(e => e.Lexicon)
-            .WithMany(l => l.Entries)
-            .HasForeignKey(e => e.LexiconId)
-            .IsRequired();
-
-        builder.HasMany(e => e.Definitions)
-            .WithOne(d => d.Entry)
-            .HasForeignKey(d => d.LexiconEntryId)
-            .IsRequired();
-    }
-
-    public void Configure(EntityTypeBuilder<LexiconEntryDefinitionReadModel> builder)
-    {
-        builder.ToTable("LexiconEntryDefinitions");
-        builder.HasKey(d => d.Id);
-        builder.Property(e => e.Id).HasDefaultValueSql("gen_random_uuid()");
-
-        builder.Property(d => d.LexiconEntryId).IsRequired();
-        builder.Property(d => d.Value).IsRequired();
-    }
 
     public void Configure(EntityTypeBuilder<AssignmentReadModel> builder)
     {
@@ -157,8 +119,22 @@ internal sealed class ReadConfiguration :
         builder.HasKey(a => a.Id);
         builder.Property(a => a.Id).ValueGeneratedNever();
         builder.Property(a => a.AuthorId);
-        builder.Property(a => a.GroupId);
-        builder.Property(a => a.DueTime);
+        builder.Property(a => a.StudyGroupId);
+
+        builder.HasMany(a => a.Activities)
+            .WithOne()
+            .HasForeignKey(ac => ac.AssignmentId);
+
+        builder.HasMany(a => a.Submissions)
+            .WithOne()
+            .HasForeignKey(s => s.AssignmentId);
+    }
+
+    public void Configure(EntityTypeBuilder<ActivityReadModel> builder)
+    {
+        builder.ToTable("Activities");
+        builder.HasKey(a => a.Id);
+        builder.Property(a => a.Id).ValueGeneratedNever();
         builder.Property(a => a.MaxScore);
         builder.Property(a => a.Type);
 
@@ -171,19 +147,39 @@ internal sealed class ReadConfiguration :
     }
 
 
-    public void Configure(EntityTypeBuilder<SubmissionReadModel> builder)
+    public void Configure(EntityTypeBuilder<AssignmentSubmissionReadModel> builder)
     {
-        builder.ToTable("Submissions");
+        builder.ToTable("AssignmentSubmissions");
         builder.HasKey(s => s.Id);
         builder.Property(s => s.Id).ValueGeneratedNever();
         builder.Property(s => s.AssignmentId);
         builder.Property(s => s.StudentId);
-        builder.Property(s => s.Type);
         builder.Property(s => s.SubmittedAt);
         builder.Property(s => s.Status);
 
+        builder.HasMany(a => a.ActivitySubmissions)
+            .WithOne()
+            .HasForeignKey(asub => asub.AssignmentSubmissionId);
+
+        builder.HasOne(s => s.Student)
+            .WithMany()
+            .HasForeignKey(s => s.StudentId);
+
+        builder.HasOne(s => s.Assignment)
+            .WithMany(a => a.Submissions)
+            .HasForeignKey(s => s.AssignmentId);
+    }
+
+    public void Configure(EntityTypeBuilder<ActivitySubmissionReadModel> builder)
+    {
+        builder.ToTable("ActivitySubmissions");
+        builder.HasKey(s => s.Id);
+        builder.Property(s => s.Id).ValueGeneratedNever();
+        builder.Property(s => s.Type);
+        builder.Property(s => s.Status);
+
         builder.HasOne(s => s.Grade).WithOne()
-            .HasForeignKey<SubmissionGradeReadModel>("SubmissionId");
+            .HasForeignKey<SubmissionGradeReadModel>(g => g.SubmissionId);
 
         builder.Property(s => s.Details)
             .HasConversion(
@@ -192,21 +188,20 @@ internal sealed class ReadConfiguration :
             );
     }
 
-
     public void Configure(EntityTypeBuilder<SubmissionGradeReadModel> builder)
     {
         builder.ToTable("SubmissionGrades");
-        builder.HasKey("SubmissionId");
+        builder.HasKey(g => g.SubmissionId);
     }
 
-    private static AssignmentDetailsReadModel DeserializeAssignmentDetails(string json)
+    private static ActivityDetailsReadModel DeserializeAssignmentDetails(string json)
     {
-        return JsonSerializer.Deserialize<AssignmentDetailsReadModel>(json, new JsonSerializerOptions
+        return JsonSerializer.Deserialize<ActivityDetailsReadModel>(json, new JsonSerializerOptions
                {
                    TypeInfoResolver = new AssignmentDetailsReadModelTypeResolver(),
                    PropertyNameCaseInsensitive = true
                })
-               ?? throw new DeserializationException(typeof(AssignmentDetailsReadModel), json);
+               ?? throw new DeserializationException(typeof(ActivityDetailsReadModel), json);
     }
 
     private static SubmissionDetailsReadModel DeserializeSubmissionDetails(string json)

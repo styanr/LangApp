@@ -4,8 +4,6 @@ using LangApp.Core.Exceptions.Assignments;
 namespace LangApp.Core.ValueObjects.Assignments.MultipleChoice;
 
 // Json attributes are used here for the deserialization.
-// this is a violation of clean architecture, but I
-// don't see a better way to do this right now
 
 public record MultipleChoiceQuestion
 {

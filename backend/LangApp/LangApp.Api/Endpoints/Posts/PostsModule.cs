@@ -49,10 +49,17 @@ public class PostsModule : IEndpointModule
     private async Task<Results<Ok<PagedResult<PostSlimDto>>, NotFound>> GetByGroup(
         [AsParameters] GetPostsByGroupRequest request,
         [FromServices] IQueryDispatcher dispatcher,
-        HttpContext context)
+        HttpContext context,
+        int? pageNumber = null,
+        int? pageSize = null
+    )
     {
         var userId = context.User.GetUserId();
-        var query = new GetPostsByGroup(request.GroupId, userId);
+        var query = new GetPostsByGroup(request.GroupId, userId)
+        {
+            PageNumber = pageNumber ?? 1,
+            PageSize = pageSize ?? 10
+        };
         var posts = await dispatcher.QueryAsync(query);
 
         return ApplicationTypedResults.OkOrNotFound(posts);

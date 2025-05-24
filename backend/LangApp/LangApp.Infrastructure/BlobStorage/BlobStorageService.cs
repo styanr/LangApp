@@ -87,4 +87,12 @@ public class BlobStorageService
                 $"Failed to download blob '{blobName}' from container '{containerName}'.", ex);
         }
     }
+
+    public async Task<bool> Exists(string containerName, string blobName)
+    {
+        var containerClient = await _containerService.GetOrCreateContainerAsync(containerName);
+        var blobClient = containerClient.GetBlobClient(blobName);
+
+        return await blobClient.ExistsAsync();
+    }
 }

@@ -9,6 +9,11 @@ public class UnauthorizedException : LangAppException
     public Guid? EntityId { get; }
     public string? EntityType { get; }
 
+    protected UnauthorizedException(string message)
+        : base(message)
+    {
+    }
+
     public UnauthorizedException(Guid userId)
         : base($"The user '{userId}' is not authorized to perform this action.")
     {

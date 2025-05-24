@@ -11,3 +11,13 @@ public class AssignmentNotFound : NotFoundException
         AssignmentId = assignmentId;
     }
 }
+
+public class ActivityNotFound : NotFoundException
+{
+    public Guid ActivityId { get; }
+
+    public ActivityNotFound(Guid activityId) : base($"Activity with id {activityId} not found.")
+    {
+        ActivityId = activityId;
+    }
+}

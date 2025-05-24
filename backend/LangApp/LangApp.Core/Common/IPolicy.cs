@@ -4,7 +4,7 @@ public interface IPolicy;
 
 public interface IPolicy<TResource, TUser> : IPolicy
 {
-    bool IsSatisfiedBy(TResource resource, TUser user);
+    bool IsSatisfiedBy(TResource assignment, TUser user);
 }
 
 public interface IPolicy<TResource, TResource1, TUser> : IPolicy

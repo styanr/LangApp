@@ -7,28 +7,44 @@ using LangApp.Core.ValueObjects.Submissions.MultipleChoice;
 namespace LangApp.Core.Services.GradingStrategies;
 
 public class MultipleChoiceGradingStrategy
-    : SynchronousGradingStrategy<MultipleChoiceAssignmentDetails>
+    : SynchronousGradingStrategy<MultipleChoiceActivityDetails>
 {
-    protected override SubmissionGrade ExecuteGrade(MultipleChoiceAssignmentDetails assignment,
+    protected override SubmissionGrade ExecuteGrade(
+        MultipleChoiceActivityDetails activity,
         SubmissionDetails submission,
         CancellationToken cancellationToken)
     {
         if (submission is not MultipleChoiceSubmissionDetails multipleChoiceSubmissionDetails)
         {
             throw new LangAppException(
-                $"Provided submission {submission.GetType()} is not compatible with the assignment {assignment.GetType()}");
+                $"Provided submission {submission.GetType()} is not compatible with the assignment {activity.GetType()}");
         }
 
-        if (multipleChoiceSubmissionDetails.Answers.Count != assignment.Questions.Count)
+        if (activity.Questions.Count == 0)
         {
-            throw new LangAppException("Invalid multiple choice answer count");
+            throw new LangAppException("Grading failed: activity contains no questions.");
         }
 
-        double correctOptions = assignment.Questions.Zip(multipleChoiceSubmissionDetails.Answers)
-            .Count(t => t.First.CorrectOptionIndex == t.Second.ChosenOptionIndex);
+        int correctOptions = 0;
 
-        Percentage percentage = new(correctOptions / assignment.Questions.Count * 100);
+        foreach (var answer in multipleChoiceSubmissionDetails.Answers)
+        {
+            if (answer.QuestionIndex < 0 || answer.QuestionIndex >= activity.Questions.Count)
+            {
+                continue;
+            }
 
+            var question = activity.Questions[answer.QuestionIndex];
+
+            if (question.CorrectOptionIndex == answer.ChosenOptionIndex)
+            {
+                correctOptions++;
+            }
+        }
+
+        double percentageValue = (double)correctOptions / activity.Questions.Count * 100;
+
+        var percentage = new Percentage(percentageValue);
         return new SubmissionGrade(percentage);
     }
 }

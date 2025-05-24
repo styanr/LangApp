@@ -4,6 +4,7 @@ using LangApp.Application.Common.Exceptions;
 using LangApp.Application.StudyGroups.Exceptions;
 using LangApp.Application.Users.Services;
 using LangApp.Core.Entities.StudyGroups;
+using LangApp.Core.Enums;
 using LangApp.Core.Repositories;
 using LangApp.Core.ValueObjects;
 
@@ -36,7 +37,7 @@ public class AddMembersToStudyGroupHandler : ICommandHandler<AddMembersToStudyGr
         var members = membersModel.Select(m => new Member(m, studyGroupId)).ToList();
 
         var studyGroup = await _repository.GetAsync(studyGroupId) ??
-                         throw new StudyGroupNotFoundException(studyGroupId);
+                         throw new StudyGroupNotFound(studyGroupId);
 
         if (!studyGroup.CanBeModifiedBy(userId))
         {
@@ -49,6 +50,12 @@ public class AddMembersToStudyGroupHandler : ICommandHandler<AddMembersToStudyGr
             if (!exists)
             {
                 throw new UserNotFoundException(member.UserId);
+            }
+
+            var isStudent = await _readService.GetRoleAsync(member.UserId) == UserRole.Student;
+            if (!isStudent)
+            {
+                throw new StudyGroupInvalidMemberException(studyGroupId);
             }
         }
 

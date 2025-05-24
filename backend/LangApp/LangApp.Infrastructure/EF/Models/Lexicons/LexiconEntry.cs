@@ -1,1 +1,0 @@
-namespace LangApp.Infrastructure.EF.Models.Lexicons;

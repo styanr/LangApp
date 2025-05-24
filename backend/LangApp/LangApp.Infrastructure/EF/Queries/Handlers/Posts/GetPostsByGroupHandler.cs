@@ -34,7 +34,6 @@ internal sealed class GetPostsByGroupHandler : IQueryHandler<GetPostsByGroup, Pa
             return null;
         }
 
-        // Direct permission check
         bool isAllowed = false;
 
         // Group owner can access all posts in their group
@@ -58,11 +57,16 @@ internal sealed class GetPostsByGroupHandler : IQueryHandler<GetPostsByGroup, Pa
 
         var posts = await _posts
             .Where(p => p.GroupId == query.GroupId && !p.Archived)
+            .Include(p => p.Author)
+            .OrderByDescending(p => p.CreatedAt)
             .TakePage(query.PageNumber, query.PageSize)
             .AsNoTracking()
             .Select(p => new PostSlimDto(
                 p.Id,
                 p.AuthorId,
+                p.Author.Username,
+                p.Author.PictureUrl,
+                p.Author.Role,
                 p.Type,
                 p.Title,
                 ToPreview(p.Content, contentPreviewLength),

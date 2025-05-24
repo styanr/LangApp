@@ -5,6 +5,8 @@ using LangApp.Infrastructure.EF.Models.Assignments;
 using LangApp.Infrastructure.EF.Models.Assignments.FillInTheBlank;
 using LangApp.Infrastructure.EF.Models.Assignments.MultipleChoice;
 using LangApp.Infrastructure.EF.Models.Assignments.Pronunciation;
+using LangApp.Infrastructure.EF.Models.Assignments.Question;
+using LangApp.Infrastructure.EF.Models.Assignments.Writing;
 
 namespace LangApp.Infrastructure.EF.Config.JsonConfig.ReadContext;
 
@@ -14,7 +16,7 @@ public class AssignmentDetailsReadModelTypeResolver : DefaultJsonTypeInfoResolve
     {
         JsonTypeInfo jsonTypeInfo = base.GetTypeInfo(type, options);
 
-        if (jsonTypeInfo.Type == typeof(AssignmentDetailsReadModel))
+        if (jsonTypeInfo.Type == typeof(ActivityDetailsReadModel))
         {
             jsonTypeInfo.PolymorphismOptions = new JsonPolymorphismOptions
             {
@@ -23,13 +25,16 @@ public class AssignmentDetailsReadModelTypeResolver : DefaultJsonTypeInfoResolve
                 UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FailSerialization,
                 DerivedTypes =
                 {
-                    // TODO: could probably do some trickery with the names (compare to read model without ReadModel)
-                    new(typeof(MultipleChoiceAssignmentDetailsReadModel),
-                        "MultipleChoiceAssignmentDetails"),
-                    new(typeof(FillInTheBlankAssignmentDetailsReadModel),
-                        "FillInTheBlankAssignmentDetails"),
-                    new(typeof(PronunciationAssignmentDetailsReadModel),
-                        "PronunciationAssignmentDetails"),
+                    new(typeof(MultipleChoiceActivityDetailsReadModel),
+                        "MultipleChoiceActivityDetails"),
+                    new(typeof(FillInTheBlankActivityDetailsReadModel),
+                        "FillInTheBlankActivityDetails"),
+                    new(typeof(PronunciationActivityDetailsReadModel),
+                        "PronunciationActivityDetails"),
+                    new(typeof(QuestionActivityDetailsReadModel),
+                        "QuestionActivityDetails"),
+                    new(typeof(WritingActivityDetailsReadModel),
+                        "WritingActivityDetails")
                 }
             };
         }

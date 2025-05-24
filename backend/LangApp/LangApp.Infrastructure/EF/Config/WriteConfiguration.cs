@@ -1,6 +1,5 @@
 using System.Text.Json;
 using LangApp.Core.Entities.Assignments;
-using LangApp.Core.Entities.Lexicons;
 using LangApp.Core.Entities.Posts;
 using LangApp.Core.Entities.StudyGroups;
 using LangApp.Core.Entities.Submissions;
@@ -8,7 +7,6 @@ using LangApp.Core.ValueObjects;
 using LangApp.Core.ValueObjects.Assignments;
 using LangApp.Core.ValueObjects.Submissions;
 using LangApp.Infrastructure.EF.Config.Exceptions;
-using LangApp.Infrastructure.EF.Config.JsonConfig;
 using LangApp.Infrastructure.EF.Config.JsonConfig.WriteContext;
 using LangApp.Infrastructure.EF.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -19,14 +17,15 @@ namespace LangApp.Infrastructure.EF.Config;
 
 internal sealed class WriteConfiguration :
     IEntityTypeConfiguration<IdentityApplicationUser>,
+    IEntityTypeConfiguration<RefreshToken>,
     IEntityTypeConfiguration<StudyGroup>,
     IEntityTypeConfiguration<Member>,
     IEntityTypeConfiguration<Post>,
     IEntityTypeConfiguration<PostComment>,
-    IEntityTypeConfiguration<Lexicon>,
-    IEntityTypeConfiguration<LexiconEntry>,
     IEntityTypeConfiguration<Assignment>,
-    IEntityTypeConfiguration<Submission>,
+    IEntityTypeConfiguration<Activity>,
+    IEntityTypeConfiguration<AssignmentSubmission>,
+    IEntityTypeConfiguration<ActivitySubmission>,
     IEntityTypeConfiguration<IdentityRole<Guid>>,
     IEntityTypeConfiguration<IdentityUserClaim<Guid>>,
     IEntityTypeConfiguration<IdentityUserRole<Guid>>,
@@ -45,6 +44,18 @@ internal sealed class WriteConfiguration :
 
         builder.HasIndex(u => u.UserName).IsUnique();
         builder.HasIndex(u => u.Email).IsUnique();
+    }
+
+    public void Configure(EntityTypeBuilder<RefreshToken> builder)
+    {
+        builder.ToTable("RefreshTokens");
+        builder.HasKey(r => r.Id);
+
+        builder.Property(r => r.Token).HasMaxLength(200);
+        builder.HasIndex(r => r.Token).IsUnique();
+        builder.HasOne(r => r.User)
+            .WithMany()
+            .HasForeignKey(r => r.UserId);
     }
 
     public void Configure(EntityTypeBuilder<StudyGroup> builder)
@@ -89,8 +100,12 @@ internal sealed class WriteConfiguration :
 
         builder.HasOne<Post>()
             .WithMany(p => p.Comments)
-            .HasForeignKey("PostId")
+            .HasForeignKey(c => c.PostId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne<IdentityApplicationUser>()
+            .WithMany()
+            .HasForeignKey(c => c.AuthorId);
     }
 
     public void Configure(EntityTypeBuilder<Post> builder)
@@ -116,59 +131,11 @@ internal sealed class WriteConfiguration :
             .OnDelete(DeleteBehavior.Cascade);
     }
 
-    public void Configure(EntityTypeBuilder<Lexicon> builder)
-    {
-        builder.ToTable("Lexicons");
-        builder.HasKey(l => l.Id);
-
-        builder.Property(l => l.Language)
-            .HasConversion(g => g.Code, s => Language.FromString(s));
-        builder.Property(l => l.Title)
-            .HasConversion(g => g.ToString(), s => new LexiconTitle(s));
-
-        builder.HasOne<IdentityApplicationUser>()
-            .WithMany()
-            .HasForeignKey(l => l.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
-    }
-
-    public void Configure(EntityTypeBuilder<LexiconEntry> builder)
-    {
-        builder.ToTable("LexiconEntries");
-        builder.HasKey(e => e.Id);
-
-        builder.Property(e => e.Id).ValueGeneratedNever();
-        builder.Property(e => e.Term)
-            .HasConversion(term => term.ToString(), value => new Term(value))
-            .HasColumnName("Term")
-            .IsRequired();
-
-        builder.Navigation(e => e.Definitions).HasField("_definitions");
-
-        builder.HasOne<Lexicon>()
-            .WithMany(l => l.Entries)
-            .HasForeignKey(e => e.LexiconId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.OwnsMany(e => e.Definitions, definitionsBuilder =>
-        {
-            definitionsBuilder.ToTable("LexiconEntryDefinitions");
-            definitionsBuilder.WithOwner().HasForeignKey("LexiconEntryId");
-
-            definitionsBuilder.Property<Guid>("Id").HasColumnType("uuid");
-            definitionsBuilder.HasKey("Id");
-
-            definitionsBuilder.Property(d => d.Value).IsRequired();
-        });
-    }
-
     public void Configure(EntityTypeBuilder<Assignment> builder)
     {
         builder.ToTable("Assignments");
         builder.HasKey(e => e.Id);
-
         builder.Property(e => e.Id).ValueGeneratedNever();
-
         builder.HasOne<IdentityApplicationUser>()
             .WithMany()
             .HasForeignKey(a => a.AuthorId)
@@ -176,22 +143,37 @@ internal sealed class WriteConfiguration :
 
         builder.HasOne<StudyGroup>()
             .WithMany()
-            .HasForeignKey(a => a.GroupId)
+            .HasForeignKey(a => a.StudyGroupId)
             .OnDelete(DeleteBehavior.Cascade);
+    }
+
+    public void Configure(EntityTypeBuilder<Activity> builder)
+    {
+        builder.ToTable("Activities");
+        builder.HasKey(e => e.Id);
+
+        builder.Property(e => e.Id).ValueGeneratedNever();
+        builder.Property<Guid>("AssignmentId");
+
+        builder.HasIndex(a => a.Order);
+
+        builder.HasOne<Assignment>()
+            .WithMany(a => a.Activities)
+            .HasForeignKey("AssignmentId");
 
         builder.Property(a => a.Details).HasConversion(entry =>
                 JsonSerializer.Serialize(entry,
                     new JsonSerializerOptions
                     {
-                        TypeInfoResolver = new PolymorphicTypeResolver<AssignmentDetails>(),
+                        TypeInfoResolver = new PolymorphicTypeResolver<ActivityDetails>(),
                         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                     }),
-            value => DeserializePolymorphic<AssignmentDetails>(value));
+            value => DeserializePolymorphic<ActivityDetails>(value));
     }
 
-    public void Configure(EntityTypeBuilder<Submission> builder)
+    public void Configure(EntityTypeBuilder<AssignmentSubmission> builder)
     {
-        builder.ToTable("Submissions");
+        builder.ToTable("AssignmentSubmissions");
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id).ValueGeneratedNever();
@@ -206,6 +188,19 @@ internal sealed class WriteConfiguration :
             .HasForeignKey(a => a.AssignmentId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasMany(a => a.ActivitySubmissions)
+            .WithOne()
+            .HasForeignKey("AssignmentSubmissionId");
+    }
+
+    public void Configure(EntityTypeBuilder<ActivitySubmission> builder)
+    {
+        builder.ToTable("ActivitySubmissions");
+        builder.HasKey(e => e.Id);
+
+        builder.Property(e => e.Id).ValueGeneratedNever();
+
+        // Replace the OwnsOne configuration with a regular relationship
         builder.OwnsOne(a => a.Grade, grade =>
         {
             grade.ToTable("SubmissionGrades");
@@ -217,14 +212,20 @@ internal sealed class WriteConfiguration :
                 perc.Property(p => p.Value)
                     .HasColumnName("ScorePercentage");
             });
+
             grade.Property(g => g.Feedback);
         });
+
+        builder.HasOne<Activity>()
+            .WithMany()
+            .HasForeignKey(a => a.ActivityId);
 
         builder.Property(a => a.Details).HasConversion(entry =>
                 JsonSerializer.Serialize(entry,
                     new JsonSerializerOptions { TypeInfoResolver = new PolymorphicTypeResolver<SubmissionDetails>() }),
             value => DeserializePolymorphic<SubmissionDetails>(value));
     }
+
 
     private static T DeserializePolymorphic<T>(string json)
     {

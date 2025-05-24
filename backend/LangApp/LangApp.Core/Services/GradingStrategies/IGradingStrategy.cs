@@ -4,8 +4,8 @@ using LangApp.Core.ValueObjects.Submissions;
 
 namespace LangApp.Core.Services.GradingStrategies;
 
-public interface IGradingStrategy<TAssignmentDetails> where TAssignmentDetails : AssignmentDetails
+public interface IGradingStrategy<TAssignmentDetails> where TAssignmentDetails : ActivityDetails
 {
-    Task<SubmissionGrade> Grade(TAssignmentDetails assignment, SubmissionDetails submission,
+    Task<SubmissionGrade> GradeAsync(TAssignmentDetails assignment, SubmissionDetails submission,
         CancellationToken cancellationToken = default(CancellationToken));
 }

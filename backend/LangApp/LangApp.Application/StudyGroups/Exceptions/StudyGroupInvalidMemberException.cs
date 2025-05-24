@@ -6,7 +6,8 @@ public class StudyGroupInvalidMemberException : LangAppException
 {
     public Guid StudyGroupId { get; }
 
-    public StudyGroupInvalidMemberException(Guid studyGroupId) : base($"Cannot add member with ID {studyGroupId}.")
+    public StudyGroupInvalidMemberException(Guid studyGroupId) : base(
+        $"The user with ID {studyGroupId} is a teacher or owns the study group.")
     {
         StudyGroupId = studyGroupId;
     }

@@ -1,4 +1,4 @@
-using LangApp.Application.Lexicons.Dto;
+using LangApp.Application.Assignments.Dto;
 
 namespace LangApp.Application.Common.Queries.Abstractions;
 

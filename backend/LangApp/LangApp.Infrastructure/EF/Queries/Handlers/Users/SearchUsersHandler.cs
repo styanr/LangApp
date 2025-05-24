@@ -19,10 +19,21 @@ internal sealed class SearchUsersHandler : IQueryHandler<SearchUsers, PagedResul
 
     public async Task<PagedResult<UserDto>?> HandleAsync(SearchUsers query)
     {
-        // TODO: implement trigram search
+        if (string.IsNullOrWhiteSpace(query.SearchTerm))
+        {
+            return new(
+                [],
+                0,
+                query.PageNumber,
+                query.PageSize
+            );
+        }
+
         var users = await _users
             .Where(u =>
                 Microsoft.EntityFrameworkCore.EF.Functions.ILike(u.Username, $"%{query.SearchTerm}%"))
+            .OrderBy(u => u.Username)
+            .Where(u => u.Id != query.UserId)
             .TakePage(query.PageNumber, query.PageSize)
             .Select(u => u.ToDto())
             .AsNoTracking()

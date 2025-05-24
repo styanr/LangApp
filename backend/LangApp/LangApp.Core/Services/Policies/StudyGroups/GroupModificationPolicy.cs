@@ -5,8 +5,8 @@ namespace LangApp.Core.Services.Policies.StudyGroups;
 
 public class GroupModificationPolicy : IGroupModificationPolicy
 {
-    public bool IsSatisfiedBy(StudyGroup group, ApplicationUser user)
+    public bool IsSatisfiedBy(StudyGroup assignment, ApplicationUser user)
     {
-        return group.CanBeModifiedBy(user.Id);
+        return assignment.CanBeModifiedBy(user.Id);
     }
 }

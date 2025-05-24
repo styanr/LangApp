@@ -5,7 +5,7 @@ namespace LangApp.Core.Repositories;
 public interface IAssignmentRepository
 {
     Task<Assignment?> GetAsync(Guid id);
-    Task AddAsync(Assignment assignment);
-    Task UpdateAsync(Assignment assignment);
-    Task DeleteAsync(Assignment assignment);
+    Task AddAsync(Assignment activity);
+    Task UpdateAsync(Assignment activity);
+    Task DeleteAsync(Assignment activity);
 }

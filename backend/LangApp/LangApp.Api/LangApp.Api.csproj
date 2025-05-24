@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>LangApp.Api</RootNamespace>
@@ -9,17 +9,27 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.12"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
+        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.12.0"/>
+        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.12.0"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.12.0-beta.1"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.12.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="8.1.1"/>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\LangApp.Application\LangApp.Application.csproj"/>
         <ProjectReference Include="..\LangApp.Infrastructure\LangApp.Infrastructure.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Common\Configuration\" />
     </ItemGroup>
 
 </Project>

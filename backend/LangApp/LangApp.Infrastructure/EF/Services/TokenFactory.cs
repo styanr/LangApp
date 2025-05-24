@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using LangApp.Application.Auth.Exceptions;
 using LangApp.Application.Auth.Models;
@@ -25,7 +26,7 @@ public class TokenFactory : ITokenFactory
         _options = options.Value;
     }
 
-    public TokenResponse GenerateJwtToken(IdentityApplicationUser user)
+    public string GenerateAccessToken(IdentityApplicationUser user)
     {
         var secret = Encoding.UTF8.GetBytes(_options.Secret);
 
@@ -47,6 +48,11 @@ public class TokenFactory : ITokenFactory
         };
 
         var token = handler.CreateToken(descriptor);
-        return new TokenResponse(handler.WriteToken(token));
+        return handler.WriteToken(token);
+    }
+
+    public string GenerateRefreshToken()
+    {
+        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
     }
 }

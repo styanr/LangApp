@@ -1,0 +1,11 @@
+using LangApp.Application.Assignments.Dto;
+
+namespace LangApp.Api.Endpoints.Assignments.Models;
+
+public record CreateAssignmentRequest(
+    string Name,
+    string? Description,
+    Guid GroupId,
+    DateTimeOffset DueDate,
+    List<CreateActivityDto> Activities
+);

@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.OpenApi.Models;
 
 namespace LangApp.Api.OpenApi;
@@ -31,8 +32,13 @@ public static class Extensions
                     new List<string>()
                 }
             });
+            options.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
+            options.SupportNonNullableReferenceTypes();
         });
-
+        services.Configure<Microsoft.AspNetCore.Mvc.JsonOptions>(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
         return services;
     }
 }

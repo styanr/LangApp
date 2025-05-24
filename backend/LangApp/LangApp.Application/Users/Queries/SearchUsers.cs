@@ -5,5 +5,6 @@ using LangApp.Application.Users.Dto;
 namespace LangApp.Application.Users.Queries;
 
 public record SearchUsers(
-    string SearchTerm
+    string SearchTerm,
+    Guid UserId
 ) : PagedQuery<PagedResult<UserDto>>;

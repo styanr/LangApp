@@ -1,5 +1,5 @@
+using System.Reflection;
 using LangApp.Core.Entities.Assignments;
-using LangApp.Core.Entities.Lexicons;
 using LangApp.Core.Entities.Posts;
 using LangApp.Core.Entities.StudyGroups;
 using LangApp.Core.Entities.Submissions;
@@ -17,10 +17,14 @@ internal sealed class WriteDbContext : IdentityDbContext<IdentityApplicationUser
     public DbSet<StudyGroup> StudyGroups { get; set; }
     public DbSet<Post> Posts { get; set; }
     public DbSet<PostComment> PostComments { get; set; }
-    public DbSet<Lexicon> Lexicons { get; set; }
-    public DbSet<LexiconEntry> LexiconEntries { get; set; }
     public DbSet<Assignment> Assignments { get; set; }
-    public DbSet<Submission> Submissions { get; set; }
+    public DbSet<Activity> Activities { get; set; }
+
+    public DbSet<AssignmentSubmission> AssignmentSubmissions { get; set; }
+    public DbSet<ActivitySubmission> ActivitySubmissions { get; set; }
+
+
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     public WriteDbContext(DbContextOptions<WriteDbContext> options) : base(options)
     {
@@ -30,23 +34,27 @@ internal sealed class WriteDbContext : IdentityDbContext<IdentityApplicationUser
     {
         base.OnModelCreating(modelBuilder);
 
+
         modelBuilder.HasDefaultSchema("application");
         var configuration = new WriteConfiguration();
 
         modelBuilder.ApplyConfiguration<IdentityApplicationUser>(configuration);
+        modelBuilder.ApplyConfiguration<RefreshToken>(configuration);
         modelBuilder.ApplyConfiguration<StudyGroup>(configuration);
         modelBuilder.ApplyConfiguration<Member>(configuration);
         modelBuilder.ApplyConfiguration<Post>(configuration);
         modelBuilder.ApplyConfiguration<PostComment>(configuration);
-        modelBuilder.ApplyConfiguration<Lexicon>(configuration);
-        modelBuilder.ApplyConfiguration<LexiconEntry>(configuration);
+        modelBuilder.ApplyConfiguration<Activity>(configuration);
         modelBuilder.ApplyConfiguration<Assignment>(configuration);
-        modelBuilder.ApplyConfiguration<Submission>(configuration);
+        modelBuilder.ApplyConfiguration<AssignmentSubmission>(configuration);
+        modelBuilder.ApplyConfiguration<ActivitySubmission>(configuration);
         modelBuilder.ApplyConfiguration<IdentityRole<Guid>>(configuration);
         modelBuilder.ApplyConfiguration<IdentityUserClaim<Guid>>(configuration);
         modelBuilder.ApplyConfiguration<IdentityUserRole<Guid>>(configuration);
         modelBuilder.ApplyConfiguration<IdentityUserLogin<Guid>>(configuration);
         modelBuilder.ApplyConfiguration<IdentityUserToken<Guid>>(configuration);
         modelBuilder.ApplyConfiguration<IdentityRoleClaim<Guid>>(configuration);
+        var model = modelBuilder.Model;
+        Console.WriteLine(model.ToDebugString());
     }
 }

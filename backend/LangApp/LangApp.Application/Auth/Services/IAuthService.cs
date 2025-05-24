@@ -6,4 +6,7 @@ namespace LangApp.Application.Auth.Services;
 public interface IAuthService
 {
     Task<TokenResponse?> Authenticate(string username, string password);
+    Task<TokenResponse> RefreshToken(string refreshToken);
+    Task<string?> RequestPasswordReset(string email);
+    Task ResetPasswordAsync(string email, string token, string password);
 }

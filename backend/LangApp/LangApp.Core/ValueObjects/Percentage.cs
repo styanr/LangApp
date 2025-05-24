@@ -13,6 +13,6 @@ public record Percentage
                 "Percentage must be between 0 and 100 inclusive");
         }
 
-        Value = value;
+        Value = Math.Round(value, 2);
     }
 }

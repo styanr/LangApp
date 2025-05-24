@@ -1,4 +1,5 @@
 using LangApp.Application.Users.Services;
+using LangApp.Core.Enums;
 using LangApp.Infrastructure.EF.Context;
 using LangApp.Infrastructure.EF.Models.Users;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,11 @@ internal sealed class ApplicationUserReadService : IApplicationUserReadService
     public Task<bool> Exists(Guid id)
     {
         return _users.AnyAsync(u => u.Id == id);
+    }
+
+    public Task<UserRole> GetRoleAsync(Guid id)
+    {
+        return _users.Where(u => u.Id == id).Select(u => u.Role).FirstOrDefaultAsync();
     }
 
     public Task<bool> ExistsByUsernameAsync(string username)

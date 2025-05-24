@@ -40,7 +40,7 @@ public class CreatePostHandler : ICommandHandler<CreatePost, Guid>
     public async Task<Guid> HandleAsync(CreatePost command, CancellationToken cancellationToken)
     {
         var group = await _studyGroupRepository.GetAsync(command.GroupId) ??
-                    throw new StudyGroupNotFoundException(command.GroupId);
+                    throw new StudyGroupNotFound(command.GroupId);
 
         var isAllowed = await _policy.IsSatisfiedBy(command.GroupId, command.AuthorId);
         if (!isAllowed)

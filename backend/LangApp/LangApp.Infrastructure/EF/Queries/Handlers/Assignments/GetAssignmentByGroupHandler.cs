@@ -11,7 +11,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LangApp.Infrastructure.EF.Queries.Handlers.Assignments;
 
-internal sealed class GetAssignmentForGroupHandler : IQueryHandler<GetAssignmentByGroup, PagedResult<AssignmentDto>>
+internal sealed class
+    GetAssignmentForGroupHandler : IQueryHandler<GetAssignmentsByGroup, PagedResult<AssignmentSlimDto>>
 {
     private readonly DbSet<AssignmentReadModel> _assignments;
     private readonly DbSet<StudyGroupReadModel> _groups;
@@ -22,58 +23,45 @@ internal sealed class GetAssignmentForGroupHandler : IQueryHandler<GetAssignment
         _groups = context.StudyGroups;
     }
 
-    // todo: maybe extract access check to a separate method
-    public async Task<PagedResult<AssignmentDto>?> HandleAsync(GetAssignmentByGroup query)
+    public async Task<PagedResult<AssignmentSlimDto>?> HandleAsync(GetAssignmentsByGroup query)
     {
-        // Get the group with its members for permission checking
-        var group = await _groups
-            .Include(g => g.Members)
+        bool canAccess = await _groups
             .AsNoTracking()
-            .SingleOrDefaultAsync(g => g.Id == query.GroupId);
-
-        if (group is null)
-        {
-            return null;
-        }
-
-        // Direct permission check
-        var canAccess = false;
-        var canAccessFull = false;
-
-        // Group owner can access all assignments in their group
-        if (group.OwnerId == query.UserId)
-        {
-            canAccess = true;
-            canAccessFull = true;
-        }
-        // Group members can access assignments in the group
-        else if (group.Members.Any(m => m.Id == query.UserId))
-        {
-            canAccess = true;
-        }
+            .Where(g => g.Id == query.GroupId)
+            .AnyAsync(g => g.OwnerId == query.UserId || g.Members.Any(m => m.Id == query.UserId));
 
         if (!canAccess)
-        {
             throw new UnauthorizedException(query.UserId, query.GroupId, "StudyGroup");
-        }
 
-        var totalCount = await _assignments.Where(a => a.GroupId == query.GroupId).CountAsync();
+        var baseQuery = _assignments
+            .Where(a => a.StudyGroupId == query.GroupId)
+            .AsNoTracking();
 
-        var assignments = await _assignments
-            .Where(a => a.GroupId == query.GroupId)
+        if (!query.ShowOverdue)
+            baseQuery = baseQuery.Where(a => a.DueDate >= DateTime.UtcNow);
+
+        if (!query.ShowSubmitted)
+            baseQuery = baseQuery.Where(a => a.Submissions.All(s => s.StudentId != query.UserId));
+
+        int totalCount = await baseQuery.CountAsync();
+
+        var assignments = await baseQuery
+            .OrderByDescending(a => a.DueDate)
             .TakePage(query.PageNumber, query.PageSize)
-            .AsNoTracking()
-            .Select(a => new AssignmentDto(
+            .Select(a => new AssignmentSlimDto(
                 a.Id,
+                a.Name,
+                a.Description,
                 a.AuthorId,
-                a.GroupId,
-                a.DueTime,
-                a.MaxScore,
-                a.Type,
-                a.Details.ToDto(!canAccessFull)
-            )).ToListAsync();
+                a.StudyGroupId,
+                a.DueDate,
+                a.Activities.Sum(ac => ac.MaxScore),
+                a.Submissions.Any(s => s.StudentId == query.UserId),
+                a.Activities.Count
+            ))
+            .ToListAsync();
 
-        return new PagedResult<AssignmentDto>(
+        return new PagedResult<AssignmentSlimDto>(
             assignments,
             totalCount,
             query.PageNumber,

@@ -1,20 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.2"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.2"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2"/>
-        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0"/>
+        <Reference Include="Microsoft.Extensions.Configuration.Abstractions">
+            <HintPath>..\..\..\..\..\..\..\.nuget\packages\microsoft.extensions.configuration.abstractions\9.0.2\lib\net9.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\LangApp.Application\LangApp.Application.csproj"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.0-preview.4.25258.110"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0-preview.4.25258.110"/>
+        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.0-preview.4.25258.110"/>
     </ItemGroup>
 
 </Project>

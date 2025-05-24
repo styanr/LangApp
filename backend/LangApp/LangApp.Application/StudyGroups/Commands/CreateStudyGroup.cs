@@ -30,7 +30,6 @@ public class CreateStudyGroupHandler : ICommandHandler<CreateStudyGroup, Guid>
     {
         var (name, languageModel, ownerId, role) = command;
 
-        // TODO: move this logic to domain?
         if (role != UserRole.Teacher)
         {
             throw new UnauthorizedRoleException<StudyGroup>(ownerId, role);

@@ -9,9 +9,8 @@ public record SubmissionGrade
     {
     }
 
-    public SubmissionGrade(Percentage scorePercentage)
+    public SubmissionGrade(Percentage scorePercentage) : this(scorePercentage, null)
     {
-        ScorePercentage = scorePercentage;
     }
 
     public SubmissionGrade(Percentage scorePercentage, string? feedback)

@@ -5,5 +5,6 @@ namespace LangApp.Infrastructure.EF.Services;
 
 public interface ITokenFactory
 {
-    TokenResponse GenerateJwtToken(IdentityApplicationUser user);
+    string GenerateAccessToken(IdentityApplicationUser user);
+    public string GenerateRefreshToken();
 }

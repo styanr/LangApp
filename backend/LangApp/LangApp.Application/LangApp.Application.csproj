@@ -1,24 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="MediatR" Version="12.5.0"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0"/>
-        <PackageReference Include="Scrutor" Version="5.1.1"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0-preview.4.25258.110"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0-preview.4.25258.110"/>
+        <PackageReference Include="Scrutor" Version="6.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\LangApp.Core\LangApp.Core.csproj"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="Auth\Queries\"/>
+        <ProjectReference Include="..\Shared\Shared.csproj"/>
     </ItemGroup>
 
 </Project>
