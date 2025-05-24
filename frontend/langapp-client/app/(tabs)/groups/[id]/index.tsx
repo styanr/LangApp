@@ -21,14 +21,16 @@ import GroupSubmissionsSection from '@/components/groups/GroupSubmissionsSection
 import { Paging } from '@/components/ui/paging';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import {
-  User,
-  MessageCircle,
-  ClipboardList,
   Eye,
   EyeOff,
   FileCheck,
   ChevronLeft,
 } from 'lucide-react-native';
+
+import {User} from '@/lib/icons/User'
+import {ClipboardList} from '@/lib/icons/ClipboardList'
+import {MessageCircle} from '@/lib/icons/MessageCircle'
+
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { EditStudyGroupModal } from '@/components/groups/EditStudyGroupModal';
