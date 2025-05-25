@@ -40,7 +40,8 @@ internal static class Extensions
         {
             opt.UseNpgsql(postgres.ConnectionString);
             opt.AddInterceptors(sp.GetRequiredService<EventPublishingInterceptor>());
-            opt.EnableSensitiveDataLogging();
+
+            // opt.EnableSensitiveDataLogging();
         });
 
         // var context = services.BuildServiceProvider().GetRequiredService<WriteDbContext>();

@@ -48,7 +48,7 @@ public class GetReadSasUri
         bodyType: typeof(string),
         Description = "Internal server error during SAS generation")]
     public async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)]
         HttpRequest req,
         ILogger log)
     {

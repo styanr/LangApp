@@ -5,13 +5,16 @@ name: Build and deploy Azure Function App - langapp-functions
 
 on:
   push:
+    paths:
+      - 'backend/LangApp/LangApp.Functions/**'
+      - '.github/workflows/main_langapp-functions.yml'
     branches:
       - main
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: "./backend/LangApp/LangApp.Functions"
-  DOTNET_VERSION: "9.x"
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: './backend/LangApp/LangApp.Functions'
+  DOTNET_VERSION: '9.x'
 
 jobs:
   build-and-deploy:
@@ -45,7 +48,6 @@ jobs:
       - name: Deploy to Azure Function App
         uses: Azure/functions-action@v1
         with:
-          app-name: "langapp-functions"
-          slot-name: "Production"
-          package: "${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output"
-
+          app-name: 'langapp-functions'
+          slot-name: 'Production'
+          package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
