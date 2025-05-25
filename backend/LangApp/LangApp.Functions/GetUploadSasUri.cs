@@ -90,9 +90,9 @@ public class GetUploadSasUri
 
         try
         {
-            string connectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage")
+            string connectionString = Environment.GetEnvironmentVariable("BLOB_STORAGE_CONNECTION_STRING")
                                       ?? throw new InvalidOperationException(
-                                          "AzureWebJobsStorage environment variable is not set.");
+                                          "BLOB_STORAGE_CONNECTION_STRING environment variable is not set.");
             var blobServiceClient = new BlobServiceClient(connectionString);
             var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
             await containerClient.CreateIfNotExistsAsync();
