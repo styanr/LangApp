@@ -1,6 +1,7 @@
 using LangApp.Api.Common.Endpoints;
 using LangApp.Application.Auth.Options;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 
 public class ClientModule : IEndpointModule
@@ -28,8 +29,16 @@ public class ClientModule : IEndpointModule
 
         try
         {
-            string appScheme = deepLinkOptions.Value.AppScheme ?? "testapp"; // Default fallback
-            string deepLink = $"{appScheme}{Uri.EscapeDataString(queryString)}";
+            var query = QueryHelpers.ParseQuery(queryString);
+
+            var encodedQuery = string.Join("&", query
+                .SelectMany(kvp => kvp.Value.Select(value =>
+                    $"{Uri.EscapeDataString(kvp.Key)}={Uri.EscapeDataString(value ?? string.Empty)}")));
+
+            string appScheme = deepLinkOptions.Value.AppScheme ?? "testapp";
+            string path = "auth/reset-password";
+            string deepLink = $"{appScheme}://{path}?{encodedQuery}";
+
             logger.LogInformation("Attempting to redirect to deep link: {DeepLink}", deepLink);
             var html = $@"
 <!DOCTYPE html>
