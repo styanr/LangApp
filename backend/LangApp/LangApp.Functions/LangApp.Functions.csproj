@@ -10,6 +10,7 @@
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>
         <PackageReference Include="Azure.Storage.Blobs" Version="12.24.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.3" />
         <!-- Application Insights isn't enabled by default. See https://aka.ms/AAt8mw4. -->
         <!-- <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.22.0" /> -->
         <!-- <PackageReference Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="2.0.0" /> -->
@@ -20,7 +21,8 @@
         <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.OpenApi" Version="1.5.1"/>
         <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.9.0"/>
         <PackageReference Include="Microsoft.IdentityModel.Logging" Version="8.9.0"/>
-        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.9.0"/>
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.9.0" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.9.0" />
     </ItemGroup>
     <ItemGroup>
         <None Update="host.json">
@@ -35,14 +37,6 @@
         <Using Include="System.Threading.ExecutionContext" Alias="ExecutionContext"/>
     </ItemGroup>
     <ItemGroup>
-        <Reference Include="Microsoft.AspNetCore.Authentication.JwtBearer">
-            <HintPath>..\..\..\..\..\..\..\.nuget\packages\microsoft.aspnetcore.authentication.jwtbearer\9.0.4\lib\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll</HintPath>
-        </Reference>
-        <Reference Include="Microsoft.IdentityModel.Tokens">
-            <HintPath>..\..\..\..\..\..\..\.nuget\packages\microsoft.identitymodel.tokens\8.0.1\lib\net9.0\Microsoft.IdentityModel.Tokens.dll</HintPath>
-        </Reference>
-        <Reference Include="System.IdentityModel.Tokens.Jwt">
-            <HintPath>..\..\..\..\..\..\..\.nuget\packages\system.identitymodel.tokens.jwt\8.0.1\lib\net9.0\System.IdentityModel.Tokens.Jwt.dll</HintPath>
-        </Reference>
+       
     </ItemGroup>
 </Project>
