@@ -4,6 +4,7 @@ import { Text } from '@/components/ui/text';
 import { Paging } from '@/components/ui/paging';
 import { GroupPost } from '@/components/groups/GroupPost';
 import type { PostSlimDto } from '@/api/orval/langAppApi.schemas';
+import { useTranslation } from 'react-i18next';
 
 interface GroupPostsSectionProps {
   posts: PostSlimDto[];
@@ -26,11 +27,13 @@ const GroupPostsSection: React.FC<GroupPostsSectionProps> = ({
   onPress,
   onPageChange,
 }) => {
+  const { t } = useTranslation();
+
   if (isLoading) {
     return (
       <View className="items-center py-16">
         <ActivityIndicator size="large" color="#a21caf" />
-        <Text className="mt-4 text-lg text-muted-foreground">Loading posts...</Text>
+        <Text className="mt-4 text-lg text-muted-foreground">{t('groupPostsSection.loading')}</Text>
       </View>
     );
   }
@@ -38,7 +41,7 @@ const GroupPostsSection: React.FC<GroupPostsSectionProps> = ({
   if (isError) {
     return (
       <View className="items-center py-16">
-        <Text className="text-lg text-destructive">Failed to load posts</Text>
+        <Text className="text-lg text-destructive">{t('groupPostsSection.error')}</Text>
       </View>
     );
   }
@@ -47,10 +50,10 @@ const GroupPostsSection: React.FC<GroupPostsSectionProps> = ({
     return (
       <View className="items-center py-16">
         <Text className="text-center text-xl font-semibold text-muted-foreground">
-          No posts in this group yet.
+          {t('groupPostsSection.noPosts')}
         </Text>
         <Text className="mt-2 text-center text-base text-muted-foreground">
-          Be the first to start a discussion!
+          {t('groupPostsSection.beTheFirst')}
         </Text>
       </View>
     );

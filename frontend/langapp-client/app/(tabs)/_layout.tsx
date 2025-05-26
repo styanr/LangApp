@@ -6,6 +6,7 @@ import { ClipboardList, House, Settings, UserRound, UsersRound } from 'lucide-re
 import { useColorScheme } from '@/lib/useColorScheme';
 import { NAV_THEME } from '@/lib/constants';
 import CustomHeader from '@/components/ui/CustomHeader';
+import { useTranslation } from 'react-i18next';
 
 const fallbackImage = require('@/assets/image-fallback.png');
 
@@ -13,6 +14,7 @@ export default function AuthenticatedLayout() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const { isDarkColorScheme } = useColorScheme();
   const router = useRouter();
+  const { t } = useTranslation();
 
   const theme = isDarkColorScheme ? NAV_THEME.dark : NAV_THEME.light;
 
@@ -50,7 +52,7 @@ export default function AuthenticatedLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: t('tabs.home'),
           tabBarIcon: ({ color }) => <House color={color} size={24} />,
         }}
         listeners={{
@@ -64,7 +66,7 @@ export default function AuthenticatedLayout() {
       <Tabs.Screen
         name="groups"
         options={{
-          title: 'Groups',
+          title: t('tabs.groups'),
           tabBarIcon: ({ color }) => <UsersRound color={color} size={24} />,
           popToTopOnBlur: true,
         }}
@@ -79,7 +81,7 @@ export default function AuthenticatedLayout() {
       <Tabs.Screen
         name="assignments"
         options={{
-          title: 'Assignments',
+          title: t('tabs.assignments'),
           tabBarIcon: ({ color }) => <ClipboardList color={color} size={24} />,
           popToTopOnBlur: true,
         }}
@@ -94,7 +96,7 @@ export default function AuthenticatedLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
+          title: t('tabs.profile'),
           tabBarIcon: ({ color }) => <UserRound color={color} size={24} />,
         }}
         listeners={{

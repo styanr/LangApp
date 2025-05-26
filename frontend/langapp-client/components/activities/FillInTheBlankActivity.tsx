@@ -14,6 +14,7 @@ import { Edit3 } from 'lucide-react-native';
 import { IconBadge } from '@/components/ui/themed-icon';
 import { isEqual } from 'lodash';
 import { useFillInTheBlankParser } from '@/hooks/useFillInTheBlankParser';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   activity: ActivityDto;
@@ -22,6 +23,7 @@ interface Props {
 }
 
 export default function FillInTheBlankActivity({ activity, submission, onChange }: Props) {
+  const { t } = useTranslation();
   const details = activity.details as FillInTheBlankActivityDetailsDto;
   const { templateText } = details;
 
@@ -38,8 +40,10 @@ export default function FillInTheBlankActivity({ activity, submission, onChange 
         }
       });
     }
-    setValues(newInitialValues);
-  }, [activity.id, templateText, blanksCount]);
+    if (!isEqual(values, newInitialValues)) {
+      setValues(newInitialValues);
+    }
+  }, [activity.id, templateText, blanksCount, submission?.answers]);
 
   useEffect(() => {
     const submissionDetails: FillInTheBlankActivitySubmissionDetailsDto = {
@@ -62,12 +66,12 @@ export default function FillInTheBlankActivity({ activity, submission, onChange 
       <View className="mb-5 flex-row items-center gap-3">
         <IconBadge Icon={Edit3} size={28} className="mr-2 text-fuchsia-500" />
         <UIText className="text-xl font-bold text-fuchsia-900 dark:text-white">
-          Fill in the Blanks
+          {t('common.activityTypes.FillInTheBlank')}
         </UIText>
       </View>
       <Card className="overflow-hidden rounded-xl border border-border bg-white/90 shadow-sm dark:bg-zinc-900/80">
         <CardHeader className="border-b border-border bg-primary/5 pb-3 dark:bg-primary/10">
-          <CardTitle>Complete the sentence(s)</CardTitle>
+          <CardTitle>{t('fillInTheBlankActivity.cardTitle')}</CardTitle>
         </CardHeader>
         <CardContent className="p-4">
           {templateText ? (
@@ -97,12 +101,12 @@ export default function FillInTheBlankActivity({ activity, submission, onChange 
           ) : null}
           {blanksCount === 0 && templateText && (
             <UIText className="text-muted-foreground">
-              No blanks found in the template according to the pattern.
+              {t('fillInTheBlankActivity.noBlanksFound')}
             </UIText>
           )}
           {!templateText && (
             <UIText className="text-muted-foreground">
-              No template text provided for this activity.
+              {t('fillInTheBlankActivity.noTemplateProvided')}
             </UIText>
           )}
         </CardContent>

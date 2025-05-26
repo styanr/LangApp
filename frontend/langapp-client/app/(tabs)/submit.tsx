@@ -78,10 +78,10 @@ export default function SubmitAssignmentPage() {
       });
     }
     queryClient.invalidateQueries({
-      queryKey: getGetAssignmentsByUserQueryKey({ showSubmitted: true }),
+      queryKey: getGetAssignmentsByUserQueryKey({ showSubmitted: true, showOverdue: false }),
     });
     queryClient.invalidateQueries({
-      queryKey: getGetAssignmentsByUserQueryKey({ showSubmitted: false }),
+      queryKey: getGetAssignmentsByUserQueryKey({ showSubmitted: false, showOverdue: false }),
     });
     // Reset state after successful submission
     setDetails(Array(activities.length).fill(null));

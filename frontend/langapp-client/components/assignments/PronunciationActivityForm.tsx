@@ -4,6 +4,7 @@ import { Text } from '@/components/ui/text';
 import { Input } from '@/components/ui/input';
 import { LanguageSelector } from '@/components/ui/language-selector';
 import type { PronunciationActivityDetailsDto } from '@/api/orval/langAppApi.schemas';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   details?: PronunciationActivityDetailsDto;
@@ -16,6 +17,7 @@ export const PronunciationActivityForm: React.FC<Props> = ({
   onChange,
   defaultLanguage,
 }) => {
+  const { t } = useTranslation();
   const [referenceText, setReferenceText] = useState(details?.referenceText || '');
   const [language, setLanguage] = useState(details?.language || defaultLanguage || '');
 
@@ -32,19 +34,19 @@ export const PronunciationActivityForm: React.FC<Props> = ({
 
   return (
     <View className="mb-4">
-      <Text className="mb-2 text-lg font-semibold">Pronunciation Activity</Text>
-      <Text className="mb-1">Reference Text</Text>
+      <Text className="mb-2 text-lg font-semibold">{t('pronunciationActivityForm.title')}</Text>
+      <Text className="mb-1">{t('pronunciationActivityForm.referenceTextLabel')}</Text>
       <Input
         value={referenceText}
-        placeholder="Text to pronounce"
+        placeholder={t('pronunciationActivityForm.referenceTextPlaceholder')}
         onChangeText={setReferenceText}
         className="mb-2"
       />
-      <Text className="mb-1">Language</Text>
+      <Text className="mb-1">{t('pronunciationActivityForm.languageLabel')}</Text>
       <LanguageSelector
         value={language}
         onValueChange={setLanguage}
-        placeholder="Select language"
+        placeholder={t('pronunciationActivityForm.languagePlaceholder')}
         className="mb-2"
       />
     </View>

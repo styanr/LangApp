@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { IconBadge } from '@/components/ui/themed-icon';
 import { MessageCircle } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   activity: ActivityDto;
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export default function QuestionActivity({ activity, submission, onChange }: Props) {
+  const { t } = useTranslation();
   const details = activity.details as QuestionActivityDetailsDto;
   const { question, maxLength } = details;
   const [answer, setAnswer] = useState<string>(submission?.answer || '');
@@ -42,19 +44,25 @@ export default function QuestionActivity({ activity, submission, onChange }: Pro
       <View className="mb-5 flex-row items-center gap-3">
         <IconBadge Icon={MessageCircle} size={28} className=" text-black" />
         <UIText className="text-xl font-bold text-fuchsia-900 dark:text-white">
-          Question Activity
+          {t('common.activityTypes.Question')}
         </UIText>
       </View>
       <Card className="overflow-hidden rounded-xl border border-border bg-white/90 shadow-sm dark:bg-zinc-900/80">
         <CardHeader className="border-b border-border bg-primary/5 pb-3 dark:bg-primary/10">
-          <CardTitle>Answer the Question</CardTitle>
+          <CardTitle>{t('questionActivity.cardTitle')}</CardTitle>
         </CardHeader>
         <CardContent className="p-4">
-          {question && <UIText className="mb-4 text-lg text-foreground">{question}</UIText>}
+          {question ? (
+            <UIText className="mb-4 text-lg text-foreground">{question}</UIText>
+          ) : (
+            <UIText className="mb-4 text-lg text-muted-foreground">
+              {t('questionActivity.noQuestionText')}
+            </UIText>
+          )}
           <Input
             value={answer}
             onChangeText={setAnswer}
-            placeholder="Type your answer..."
+            placeholder={t('questionActivity.answerPlaceholder')}
             maxLength={maxLength}
             multiline
             className="h-24 text-base"

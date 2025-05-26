@@ -11,6 +11,7 @@ export type MemberProps = {
   name: string;
   pictureUrl?: string | null;
   role: string;
+  roleName: string;
   imageUrl?: string | null;
   onPress?: (userId: string) => void;
   onLongPress?: (userId: string) => void;
@@ -23,6 +24,7 @@ export const GroupMember = ({
   name,
   pictureUrl,
   role,
+  roleName,
   onPress,
   onLongPress,
   index = 0,
@@ -40,9 +42,6 @@ export const GroupMember = ({
         onLongPress={() => onLongPress?.(id)}
         disabled={!onPress && !onLongPress}>
         <Card
-          // className={`border-0 bg-white/90 dark:bg-zinc-900/80 ${
-          //   isOwner ? 'border-2 border-yellow-500' : ''
-          // }`}>
           className={cn(
             'border-0 bg-white/90 dark:bg-zinc-900/80',
             isOwner ? 'border-2 border-yellow-500' : '',
@@ -64,7 +63,7 @@ export const GroupMember = ({
                     ? 'text-yellow-900 dark:text-yellow-100'
                     : 'text-indigo-800 dark:text-indigo-200'
                 }`}>
-                {role}
+              {roleName}
               </Text>
             </View>
           </CardContent>

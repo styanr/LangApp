@@ -25,6 +25,7 @@ import type { StudyGroupSlimDto, AssignmentDto } from '@/api/orval/langAppApi.sc
 import { UserProfilePicture } from '@/components/ui/UserProfilePicture';
 import { AssignmentCard } from '@/components/assignments/AssignmentCard';
 import { CreateStudyGroupModal } from '@/components/groups/CreateStudyGroupModal';
+import { useTranslation } from 'react-i18next';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -34,6 +35,7 @@ export default function Dashboard() {
   const [isCreatingGroup, setIsCreatingGroup] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
   const [newGroupLanguage, setNewGroupLanguage] = useState('');
+  const { t } = useTranslation();
 
   const {
     data: groupsResponse,
@@ -55,25 +57,8 @@ export default function Dashboard() {
     queryClient.invalidateQueries({ queryKey: getGetStudyGroupForUserQueryKey() });
     if (!isTeacher) {
       queryClient.invalidateQueries({
-        queryKey: getGetAssignmentsByUserQueryKey({ showSubmitted: false }),
+        queryKey: getGetAssignmentsByUserQueryKey({ showSubmitted: false, showOverdue: false }),
       });
-    }
-  };
-
-  const handleCreateGroup = async () => {
-    if (!newGroupName) return;
-
-    try {
-      await createGroup({
-        name: newGroupName,
-        language: newGroupLanguage,
-      });
-      setIsCreatingGroup(false);
-      setNewGroupName('');
-      setNewGroupLanguage('');
-      queryClient.invalidateQueries({ queryKey: getGetStudyGroupForUserQueryKey() });
-    } catch (error) {
-      console.error('Failed to create study group:', error);
     }
   };
 
@@ -88,9 +73,9 @@ export default function Dashboard() {
           iconContainerClassName="bg-transparent"
         />
         <View className="ml-3">
-          <Text className="text-sm text-muted-foreground">Welcome back</Text>
+          <Text className="text-sm text-muted-foreground">{t('dashboard.welcomeBack')}</Text>
           <Text className="text-xl font-bold text-card-foreground">
-            {user?.fullName?.firstName || 'User'}
+            {user?.fullName?.firstName || t('dashboard.user')}
           </Text>
         </View>
       </View>
@@ -114,7 +99,7 @@ export default function Dashboard() {
             <CardDescription className="mt-1">{description}</CardDescription>
           </View>
           <View className="flex-row items-center">
-            <Text className="mr-1 text-sm text-primary">View All</Text>
+            <Text className="mr-1 text-sm text-primary">{t('dashboard.viewAll')}</Text>
           </View>
         </CardHeader>
       </Pressable>
@@ -126,14 +111,14 @@ export default function Dashboard() {
       return (
         <View className="items-center py-8">
           <ActivityIndicator size="large" className="text-primary" />
-          <Text className="mt-2 text-muted-foreground">Loading groups...</Text>
+          <Text className="mt-2 text-muted-foreground">{t('dashboard.loadingGroups')}</Text>
         </View>
       );
 
     if (isErrorGroups)
       return (
         <View className="items-center py-8">
-          <Text className="text-destructive">Failed to load groups</Text>
+          <Text className="text-destructive">{t('dashboard.failedToLoadGroups')}</Text>
         </View>
       );
 
@@ -141,13 +126,13 @@ export default function Dashboard() {
       return (
         <View className="items-center py-8">
           <Text className="text-center text-muted-foreground">
-            {isTeacher
-              ? "You haven't created any groups yet. Create one to start teaching!"
-              : 'No groups yet. Explore and join some!'}
+            {isTeacher ? t('dashboard.noGroupsTeacher') : t('dashboard.noGroupsStudent')}
           </Text>
           {isTeacher && (
             <Button className="mt-4" onPress={() => setIsCreatingGroup(true)}>
-              <Text className="text-sm font-semibold text-white">New Study Group</Text>
+              <Text className="text-sm font-semibold text-white">
+                {t('dashboard.newStudyGroup')}
+              </Text>
             </Button>
           )}
         </View>
@@ -158,7 +143,7 @@ export default function Dashboard() {
       <View className="px-4">
         {isTeacher && (
           <Button className="mb-4 w-full" onPress={() => setIsCreatingGroup(true)}>
-            <Text className="text-sm font-semibold text-white">New Study Group</Text>
+            <Text className="text-sm font-semibold text-white">{t('dashboard.newStudyGroup')}</Text>
           </Button>
         )}
         {groups.slice(0, 3).map((group: StudyGroupSlimDto, index) => (
@@ -174,7 +159,7 @@ export default function Dashboard() {
                     <View className="ml-2 flex-1">
                       <Text className="font-semibold text-card-foreground">{group.name}</Text>
                       <Text className="text-sm font-semibold text-card-foreground">
-                        {group.language || 'Language not specified'}
+                        {group.language || t('dashboard.languageNotSpecified')}
                       </Text>
                     </View>
                   </View>
@@ -192,21 +177,23 @@ export default function Dashboard() {
       return (
         <View className="items-center py-8">
           <ActivityIndicator size="large" className="text-primary" />
-          <Text className="mt-2 text-muted-foreground">Loading assignments...</Text>
+          <Text className="mt-2 text-muted-foreground">{t('dashboard.loadingAssignments')}</Text>
         </View>
       );
 
     if (isErrorAssignments)
       return (
         <View className="items-center py-8">
-          <Text className="text-destructive">Failed to load assignments</Text>
+          <Text className="text-destructive">{t('dashboard.failedToLoadAssignments')}</Text>
         </View>
       );
 
     if (!assignments?.length) {
       return (
         <View className="items-center py-8">
-          <Text className="text-center text-muted-foreground">No assignments due. Great job!</Text>
+          <Text className="text-center text-muted-foreground">
+            {t('dashboard.noAssignmentsDue')}
+          </Text>
         </View>
       );
     }
@@ -217,7 +204,7 @@ export default function Dashboard() {
           <AssignmentCard
             key={assignment.id}
             id={assignment.id || ''}
-            name={assignment.name || 'Untitled Assignment'}
+            name={assignment.name || t('dashboard.untitledAssignment')}
             dueTime={assignment.dueTime}
             submitted={assignment.submitted}
             index={index}
@@ -237,21 +224,24 @@ export default function Dashboard() {
       <CreateStudyGroupModal
         isVisible={isCreatingGroup}
         onClose={() => setIsCreatingGroup(false)}
-        />
+      />
     );
   };
 
   return (
     <View className="bg-background-primary flex-1 bg-fuchsia-50 dark:bg-black">
-      <ScrollView className="flex-1 px-4 pt-5"
+      <ScrollView
+        className="flex-1 px-4 pt-5"
         contentContainerStyle={{ paddingBottom: 32 }}
         showsVerticalScrollIndicator={false}>
         <Animated.View entering={FadeInDown.delay(100).duration(600)}>
           {renderGreeting()}
           <Card className="mb-6 overflow-hidden border-0 border-t-4 border-primary">
             {renderSectionHeader(
-              'Study Groups',
-              isTeacher ? 'Manage your teaching groups' : 'Your language learning communities',
+              t('dashboard.studyGroups'),
+              isTeacher
+                ? t('dashboard.studyGroupsDescriptionTeacher')
+                : t('dashboard.studyGroupsDescriptionStudent'),
               <IconBadge Icon={Users} size={20} />,
               '/(tabs)/groups'
             )}
@@ -260,7 +250,7 @@ export default function Dashboard() {
               <CardFooter className="border-t border-border pt-3">
                 <Link href="/(tabs)/groups" asChild>
                   <Pressable className="flex-1 items-center py-2">
-                    <Text className="text-sm text-primary">View All Groups</Text>
+                    <Text className="text-sm text-primary">{t('dashboard.viewAllGroups')}</Text>
                   </Pressable>
                 </Link>
               </CardFooter>
@@ -272,8 +262,8 @@ export default function Dashboard() {
           <Animated.View entering={FadeInDown.delay(300).duration(600)}>
             <Card className="overflow-hidden border-0 border-t-4 border-primary">
               {renderSectionHeader(
-                'Assignments',
-                'Your pending language tasks',
+                t('dashboard.assignments'),
+                t('dashboard.assignmentsDescription'),
                 <IconBadge Icon={ClipboardList} size={20} />,
                 '/(tabs)/assignments'
               )}
@@ -282,7 +272,9 @@ export default function Dashboard() {
                 <CardFooter className="border-t border-border pt-3">
                   <Link href="/(tabs)/assignments" asChild>
                     <Pressable className="flex-1 items-center py-2">
-                      <Text className="text-sm text-primary">View All Assignments</Text>
+                      <Text className="text-sm text-primary">
+                        {t('dashboard.viewAllAssignments')}
+                      </Text>
                     </Pressable>
                   </Link>
                 </CardFooter>

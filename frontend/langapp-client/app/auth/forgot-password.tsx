@@ -9,12 +9,14 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Toast from 'react-native-toast-message';
 import { getErrorMessage } from '@/lib/errors';
+import { useTranslation } from 'react-i18next';
 
 export default function ForgotPasswordScreen() {
   const { isLoading, requestPasswordReset } = useAuth();
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     // Redirect if already authenticated
@@ -24,12 +26,12 @@ export default function ForgotPasswordScreen() {
   const handleSubmit = async () => {
     setError(null);
     if (!email.trim()) {
-      setError('Email is required');
+      setError(t('forgotPasswordScreen.emailRequired'));
       return;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
-      setError('Please enter a valid email address');
+      setError(t('forgotPasswordScreen.invalidEmail'));
       return;
     }
     setIsSubmitting(true);
@@ -37,14 +39,14 @@ export default function ForgotPasswordScreen() {
       await requestPasswordReset({ email: email.trim() });
       Toast.show({
         type: 'success',
-        text1: 'Reset Email Sent',
-        text2: 'Check your inbox for instructions',
+        text1: t('forgotPasswordScreen.resetEmailSentTitle'),
+        text2: t('forgotPasswordScreen.resetEmailSentMessage'),
         position: 'top',
       });
       router.replace('/auth/login');
     } catch (err) {
       const message = getErrorMessage(err);
-      setError(message || 'Reset request failed');
+      setError(message || t('forgotPasswordScreen.resetRequestFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -54,21 +56,21 @@ export default function ForgotPasswordScreen() {
     return (
       <View className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color="#6366F1" />
-        <Text className="mt-3 text-base text-gray-500">Loading...</Text>
+        <Text className="mt-3 text-base text-gray-500">{t('login.loading')}</Text>
       </View>
     );
   }
 
   return (
     <AuthLayout
-      title="Reset Password"
-      subtitle="Enter your email to receive reset instructions"
+      title={t('forgotPasswordScreen.title')}
+      subtitle={t('forgotPasswordScreen.subtitle')}
       Icon={Key}
       iconSize={54}>
       {error && <FormError message={error} />}
       <View className="p-6">
         <Input
-          placeholder="Enter your email"
+          placeholder={t('forgotPasswordScreen.emailPlaceholder')}
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
@@ -77,11 +79,15 @@ export default function ForgotPasswordScreen() {
         />
         <Button onPress={handleSubmit} disabled={isSubmitting} className="h-12">
           <Text className="text-base font-semibold text-white">
-            {isSubmitting ? 'Requesting...' : 'Send Reset Email'}
+            {isSubmitting
+              ? t('forgotPasswordScreen.requesting')
+              : t('forgotPasswordScreen.sendResetEmailButton')}
           </Text>
         </Button>
       </View>
-      <Stack.Screen options={{ title: 'Forgot Password', headerShown: false }} />
+      <Stack.Screen
+        options={{ title: t('forgotPasswordScreen.screenTitle'), headerShown: false }}
+      />
     </AuthLayout>
   );
 }

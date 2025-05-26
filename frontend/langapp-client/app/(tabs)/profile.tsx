@@ -1,5 +1,5 @@
 import { useAuth } from '@/hooks/useAuth';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   View,
   TextInput,
@@ -11,12 +11,15 @@ import {
 } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LogOut } from 'lucide-react-native';
 import { UserProfilePicture } from '@/components/ui/UserProfilePicture';
 import * as ImagePicker from 'expo-image-picker';
 import { useFileUpload } from '@/hooks/useFileUpload';
+import { useTranslation } from 'react-i18next';
+import { set } from 'lodash';
+import { LogOut } from '@/lib/icons/LogOut';
 
 export default function Profile() {
+  const { t } = useTranslation();
   const { user, isLoading, updateUserInfo, logout } = useAuth();
   const {
     upload,
@@ -44,23 +47,32 @@ export default function Profile() {
       });
       setEditMode(false);
     } catch (e: any) {
-      setError(e?.message || 'Failed to update profile');
+      setError(e?.message || t('profileScreen.updateFailedMessage'));
     } finally {
       setSaving(false);
     }
   };
 
+  useEffect(() => {
+    setUsername(user?.username || '');
+    setFirstName(user?.fullName?.firstName || '');
+    setLastName(user?.fullName?.lastName || '');
+  }, [editMode, user]);
+
   const handleLogout = () => {
-    Alert.alert('Logout', 'Are you sure you want to logout?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Logout', onPress: logout, style: 'destructive' },
+    Alert.alert(t('profileScreen.logoutConfirmTitle'), t('profileScreen.logoutConfirmMessage'), [
+      { text: t('profileScreen.logoutCancel'), style: 'cancel' },
+      { text: t('profileScreen.logout'), onPress: logout, style: 'destructive' },
     ]);
   };
 
   const handlePickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission required', 'Permission to access media library is required.');
+      Alert.alert(
+        t('profileScreen.permissionRequiredTitle'),
+        t('profileScreen.permissionRequiredMessage')
+      );
       return;
     }
     const pickerResult = await ImagePicker.launchImageLibraryAsync({
@@ -81,7 +93,10 @@ export default function Profile() {
 
       resetState();
     } catch (e: any) {
-      Alert.alert('Upload failed', e.message || 'Could not upload image');
+      Alert.alert(
+        t('profileScreen.uploadFailedTitle'),
+        e.message || t('profileScreen.uploadFailedMessage')
+      );
     }
   };
 
@@ -89,7 +104,7 @@ export default function Profile() {
     return (
       <View className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color="#a21caf" />
-        <Text className="mt-4 text-lg text-muted-foreground">Loading profile...</Text>
+        <Text className="mt-4 text-lg text-muted-foreground">{t('profileScreen.loading')}</Text>
       </View>
     );
   }
@@ -115,14 +130,18 @@ export default function Profile() {
               </View>
             )}
           </Pressable>
-          <CardTitle className="text-3xl font-bold text-primary">Profile</CardTitle>
+          <CardTitle className="text-3xl font-bold text-primary">
+            {t('profileScreen.title')}
+          </CardTitle>
         </CardHeader>
         <CardContent className="gap-4 p-6 pt-2">
           <Text className="mb-2 text-base text-muted-foreground">
-            View and edit your profile information.
+            {t('profileScreen.subtitle')}
           </Text>
           <View className="gap-3">
-            <Text className="text-sm font-semibold text-primary">Username</Text>
+            <Text className="text-sm font-semibold text-primary">
+              {t('profileScreen.username')}
+            </Text>
             {editMode ? (
               <TextInput
                 className="rounded-md border border-border bg-white px-3 py-2 text-base text-foreground"
@@ -137,7 +156,9 @@ export default function Profile() {
           </View>
           <View className="mt-2 flex-row gap-3">
             <View className="flex-1">
-              <Text className="text-sm font-semibold text-primary">First Name</Text>
+              <Text className="text-sm font-semibold text-primary">
+                {t('profileScreen.firstName')}
+              </Text>
               {editMode ? (
                 <TextInput
                   className="rounded-md border border-border bg-white px-3 py-2 text-base text-foreground"
@@ -150,7 +171,9 @@ export default function Profile() {
               )}
             </View>
             <View className="ml-2 flex-1">
-              <Text className="text-sm font-semibold text-primary">Last Name</Text>
+              <Text className="text-sm font-semibold text-primary">
+                {t('profileScreen.lastName')}
+              </Text>
               {editMode ? (
                 <TextInput
                   className="rounded-md border border-border bg-white px-3 py-2 text-base text-foreground"
@@ -174,21 +197,27 @@ export default function Profile() {
                   {saving ? (
                     <ActivityIndicator color="#fff" />
                   ) : (
-                    <Text className="text-lg font-semibold text-white">Save</Text>
+                    <Text className="text-lg font-semibold text-white">
+                      {t('profileScreen.save')}
+                    </Text>
                   )}
                 </Pressable>
                 <Pressable
                   className="flex-1 items-center rounded-md border border-border py-3"
                   onPress={() => setEditMode(false)}
                   disabled={saving}>
-                  <Text className="text-lg font-semibold text-primary">Cancel</Text>
+                  <Text className="text-lg font-semibold text-primary">
+                    {t('profileScreen.cancel')}
+                  </Text>
                 </Pressable>
               </>
             ) : (
               <Pressable
                 className="flex-1 items-center rounded-md bg-primary py-3"
                 onPress={() => setEditMode(true)}>
-                <Text className="text-lg font-semibold text-white">Edit Profile</Text>
+                <Text className="text-lg font-semibold text-white">
+                  {t('profileScreen.editProfile')}
+                </Text>
               </Pressable>
             )}
           </View>
@@ -197,7 +226,9 @@ export default function Profile() {
             className="mt-4 flex-row items-center justify-center rounded-md border border-destructive py-3"
             onPress={handleLogout}>
             <LogOut size={18} className="mr-2 text-destructive" />
-            <Text className="text-lg font-semibold text-destructive">Logout</Text>
+            <Text className="text-lg font-semibold text-destructive">
+              {t('profileScreen.logout')}
+            </Text>
           </Pressable>
         </CardContent>
       </Card>

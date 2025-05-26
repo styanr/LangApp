@@ -16,8 +16,10 @@ import { HeaderSection } from '@/components/submissions/HeaderSection';
 import { AssignmentInfo } from '@/components/submissions/AssignmentInfo';
 import { StudentInfo } from '@/components/submissions/StudentInfo';
 import { ActivityCard } from '@/components/submissions/ActivityCard';
+import { useTranslation } from 'react-i18next';
 
 export default function SubmissionDetailPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { submissionId } = useLocalSearchParams();
   const [editingActivityId, setEditingActivityId] = useState<string | null>(null);
@@ -75,7 +77,10 @@ export default function SubmissionDetailPage() {
     const scorePercentage = parseInt(score);
 
     if (isNaN(scorePercentage) || scorePercentage < 0 || scorePercentage > 100) {
-      Alert.alert('Invalid Score', 'Score must be a number between 0 and 100');
+      Alert.alert(
+        t('submissionDetailScreen.invalidScoreTitle'),
+        t('submissionDetailScreen.invalidScoreMessage')
+      );
       return;
     }
 
@@ -91,7 +96,10 @@ export default function SubmissionDetailPage() {
       setFeedback('');
       refetchSubmission();
     } catch (error) {
-      Alert.alert('Error', 'Failed to save grade. Please try again.');
+      Alert.alert(
+        t('submissionDetailScreen.saveGradeErrorTitle'),
+        t('submissionDetailScreen.saveGradeErrorMessage')
+      );
     }
   };
 
@@ -115,7 +123,7 @@ export default function SubmissionDetailPage() {
     return (
       <View className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color="#a21caf" />
-        <Text className="mt-4 text-lg">Loading submission data...</Text>
+        <Text className="mt-4 text-lg">{t('submissionDetailScreen.loadingText')}</Text>
       </View>
     );
   }
@@ -123,9 +131,11 @@ export default function SubmissionDetailPage() {
   if (isError || !submission) {
     return (
       <View className="flex-1 items-center justify-center">
-        <Text className="text-lg text-destructive">Failed to load submission data.</Text>
+        <Text className="text-lg text-destructive">
+          {t('submissionDetailScreen.loadErrorText')}
+        </Text>
         <Button className="mt-4" onPress={() => refetchSubmission()}>
-          <Text>Retry</Text>
+          <Text>{t('submissionDetailScreen.retryButton')}</Text>
         </Button>
       </View>
     );
@@ -137,7 +147,10 @@ export default function SubmissionDetailPage() {
       contentContainerClassName="p-4 pb-20"
       showsVerticalScrollIndicator={false}>
       <Animated.View entering={FadeIn.duration(300)}>
-        <HeaderSection title="Submission Review" onBack={handleBackToAssignment} />
+        <HeaderSection
+          title={t('submissionDetailScreen.headerTitle')}
+          onBack={handleBackToAssignment}
+        />
 
         {assignment && <AssignmentInfo assignment={assignment} />}
 
@@ -172,7 +185,7 @@ export default function SubmissionDetailPage() {
         {!submission.activitySubmissions || submission.activitySubmissions.length === 0 ? (
           <View className="items-center justify-center rounded-xl bg-fuchsia-50 p-8 dark:bg-fuchsia-900/10">
             <AlertCircle size={32} className="mb-2 text-fuchsia-400" />
-            <Text className="text-center">No activities in this submission</Text>
+            <Text className="text-center">{t('submissionDetailScreen.noActivitiesText')}</Text>
           </View>
         ) : null}
       </Animated.View>

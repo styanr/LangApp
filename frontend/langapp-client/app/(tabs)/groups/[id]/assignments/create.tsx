@@ -26,8 +26,10 @@ import type {
 } from '@/api/orval/langAppApi.schemas';
 import { handleApiError } from '@/lib/errors';
 import { DatePicker } from '@/components/ui/dateTimePicker';
+import { useTranslation } from 'react-i18next';
 
 export default function CreateAssignmentPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { id: groupId } = useGlobalSearchParams();
   const groupIdValue = groupId as string;
@@ -72,7 +74,10 @@ export default function CreateAssignmentPage() {
 
   const onSubmit = async () => {
     if (!name.trim()) {
-      Alert.alert('Validation', 'Name is required');
+      Alert.alert(
+        t('createAssignmentScreen.validationTitle'),
+        t('createAssignmentScreen.nameRequiredError')
+      );
       return;
     }
 
@@ -88,9 +93,17 @@ export default function CreateAssignmentPage() {
       router.back();
     } catch (err) {
       console.error(err);
-      setApiError('Failed to create assignment. Please try again.');
+      setApiError(t('createAssignmentScreen.createFailedError'));
       handleApiError(err);
     }
+  };
+
+  // Helper for activity type translation
+  const getActivityTypeText = (activityType?: string) => {
+    if (!activityType) return t('common.activityTypes.Unknown');
+    // Remove 'Activity' suffix if present
+    const type = activityType.replace('Activity', '');
+    return t(`common.activityTypes.${type}`, { defaultValue: type });
   };
 
   return (
@@ -104,41 +117,47 @@ export default function CreateAssignmentPage() {
           <Button variant="ghost" size="icon" onPress={() => router.back()} className="mr-3">
             <ArrowLeft size={24} className="text-fuchsia-600" />
           </Button>
-          <Text className="text-3xl font-bold text-primary">Create Assignment</Text>
+          <Text className="text-3xl font-bold text-primary">
+            {t('createAssignmentScreen.title')}
+          </Text>
         </View>
 
         {/* Main form card */}
         <Card className="mb-6 overflow-hidden rounded-xl border shadow-sm">
           <CardHeader className="border-b bg-card pb-3">
-            <CardTitle>Assignment Details</CardTitle>
+            <CardTitle>{t('createAssignmentScreen.assignmentDetails')}</CardTitle>
           </CardHeader>
 
           <CardContent className="p-4">
-            <Text className="mb-1 font-medium">Name</Text>
+            <Text className="mb-1 font-medium">{t('createAssignmentScreen.nameLabel')}</Text>
             <Input
               value={name}
               onChangeText={setName}
-              placeholder="Assignment name"
+              placeholder={t('createAssignmentScreen.namePlaceholder')}
               className="mb-4"
             />
 
-            <Text className="mb-1 font-medium">Description</Text>
+            <Text className="mb-1 font-medium">{t('createAssignmentScreen.descriptionLabel')}</Text>
             <Textarea
               value={description}
               onChangeText={setDescription}
-              placeholder="Description (optional)"
+              placeholder={t('createAssignmentScreen.descriptionPlaceholder')}
               className="mb-4 min-h-[100px]"
             />
 
-            <Text className="mb-1 font-medium">Due Date</Text>
+            <Text className="mb-1 font-medium">{t('createAssignmentScreen.dueDateLabel')}</Text>
             <DatePicker date={dueDate} onChange={(date) => setDueDate(date!)} mode="date" />
-            <Text className="mb-4 text-xs text-muted-foreground">Format: YYYY-MM-DD</Text>
+            {/* <Text className="mb-4 text-xs text-muted-foreground">
+              {t('createAssignmentScreen.dateFormat')}
+            </Text> */}
           </CardContent>
         </Card>
 
         {/* Activities section */}
         <View className="mb-4 flex-row items-center justify-between">
-          <Text className="text-xl font-bold text-primary">Activities</Text>
+          <Text className="text-xl font-bold text-primary">
+            {t('createAssignmentScreen.activitiesTitle')}
+          </Text>
           <View className="mx-4 h-[1px] flex-1 bg-border" />
           <ClipboardList size={24} className="text-fuchsia-500" />
         </View>
@@ -151,22 +170,27 @@ export default function CreateAssignmentPage() {
             <Card className="overflow-hidden rounded-xl border shadow-sm">
               <CardHeader className="border-b bg-fuchsia-50 pb-3 dark:bg-fuchsia-900/20">
                 <CardTitle>
-                  Activity {i + 1}: {act.details?.activityType}
+                  {t('createAssignmentScreen.activityTitle', {
+                    index: i + 1,
+                    type: getActivityTypeText(act.details?.activityType),
+                  })}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4">
                 {/* Max score input */}
                 <View className="mb-4">
-                  <Text className="mb-1 font-medium">Max Score</Text>
+                  <Text className="mb-1 font-medium">
+                    {t('createAssignmentScreen.maxScoreLabel')}
+                  </Text>
                   <Input
                     value={act.maxScore?.toString() || ''}
                     onChangeText={(v) => handleMaxScoreChange(i, v)}
                     keyboardType="number-pad"
-                    placeholder="Max points"
+                    placeholder={t('createAssignmentScreen.maxScorePlaceholder')}
                     className="mb-1"
                   />
                   <Text className="text-xs text-muted-foreground">
-                    Points awarded for this activity
+                    {t('createAssignmentScreen.maxScoreDescription')}
                   </Text>
                 </View>
 
@@ -206,7 +230,7 @@ export default function CreateAssignmentPage() {
                   variant="destructive"
                   onPress={() => setActivities(activities.filter((_, idx) => idx !== i))}
                   className="mt-2">
-                  <Text>Remove Activity</Text>
+                  <Text>{t('common.delete')}</Text>
                 </Button>
               </CardContent>
             </Card>
@@ -215,46 +239,42 @@ export default function CreateAssignmentPage() {
 
         {/* Activity type buttons */}
         <Card className="mb-6 overflow-hidden rounded-xl border shadow-sm">
-          <CardHeader className="bg-card pb-3">
-            <CardTitle>Add New Activity</CardTitle>
-          </CardHeader>
           <CardContent className="p-4">
-            <Text className="mb-3 text-muted-foreground">Select an activity type to add:</Text>
             <View className="flex-row flex-wrap gap-2">
               <Button
                 variant="outline"
                 onPress={() => addActivity('MultipleChoice')}
                 className="flex-row items-center">
                 <Plus size={18} className="mr-1" />
-                <Text>Multiple Choice</Text>
+                <Text>{t('common.activityTypes.MultipleChoice')}</Text>
               </Button>
               <Button
                 variant="outline"
                 onPress={() => addActivity('FillInTheBlank')}
                 className="flex-row items-center">
                 <Plus size={18} className="mr-1" />
-                <Text>Fill in Blank</Text>
+                <Text>{t('common.activityTypes.FillInTheBlank')}</Text>
               </Button>
               <Button
                 variant="outline"
                 onPress={() => addActivity('Pronunciation')}
                 className="flex-row items-center">
                 <Plus size={18} className="mr-1" />
-                <Text>Pronunciation</Text>
+                <Text>{t('common.activityTypes.Pronunciation')}</Text>
               </Button>
               <Button
                 variant="outline"
                 onPress={() => addActivity('Question')}
                 className="flex-row items-center">
                 <Plus size={18} className="mr-1" />
-                <Text>Question</Text>
+                <Text>{t('common.activityTypes.Question')}</Text>
               </Button>
               <Button
                 variant="outline"
                 onPress={() => addActivity('Writing')}
                 className="flex-row items-center">
                 <Plus size={18} className="mr-1" />
-                <Text>Writing</Text>
+                <Text>{t('common.activityTypes.Writing')}</Text>
               </Button>
             </View>
           </CardContent>
@@ -269,7 +289,7 @@ export default function CreateAssignmentPage() {
           }>
           <CheckCircle size={18} className="mr-2" />
           <Text className="font-semibold">
-            {mutationStatus.createAssignment.isLoading ? 'Creating...' : 'Create Assignment'}
+            {mutationStatus.createAssignment.isLoading ? t('common.saving') : t('common.create')}
           </Text>
         </Button>
 

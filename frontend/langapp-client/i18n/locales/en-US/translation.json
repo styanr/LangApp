@@ -1,0 +1,586 @@
+{
+  "login": {
+    "registrationSuccessTitle": "Registration Successful",
+    "registrationSuccessMessage": "Please log in with your new account",
+    "loading": "Loading...",
+    "welcomeBack": "Welcome Back",
+    "credentialsPrompt": "Enter your credentials to access your account",
+    "requiredFields": "Username and password are required",
+    "loginFailed": "Login failed",
+    "title": "Login"
+  },
+  "loginForm": {
+    "username": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "passwordPlaceholder": "Enter your password",
+    "loggingIn": "Logging in...",
+    "loginButton": "Login",
+    "noAccount": "Don't have an account?",
+    "register": "Register"
+  },
+  "registerScreen": {
+    "createAccount": "Create Account",
+    "subtitle": "Sign up to start learning with LangApp",
+    "requiredFields": "Username, email, and password are required",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "registrationFailed": "Registration failed. Please try again.",
+    "title": "Register"
+  },
+  "registerForm": {
+    "username": "Username",
+    "usernamePlaceholder": "Choose a username",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "firstName": "First Name",
+    "firstNamePlaceholder": "Enter first name",
+    "lastName": "Last Name",
+    "lastNamePlaceholder": "Enter last name",
+    "iAmA": "I am a:",
+    "student": "Student",
+    "teacher": "Teacher",
+    "password": "Password",
+    "passwordPlaceholder": "Create a password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Confirm your password",
+    "creatingAccount": "Creating Account...",
+    "register": "Register",
+    "alreadyHaveAccount": "Already have an account? ",
+    "login": "Login"
+  },
+  "resetPasswordScreen": {
+    "invalidOrExpiredLink": "Invalid or expired reset link.",
+    "invalidTokenFormat": "Invalid token format.",
+    "requiredFields": "Both fields are required",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "passwordResetSuccessTitle": "Password Reset",
+    "passwordResetSuccessMessage": "Your password has been updated. Please log in.",
+    "passwordResetFailed": "Password reset failed",
+    "title": "Reset Password",
+    "subtitle": "Enter a new password to finish resetting",
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "Enter new password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Confirm new password",
+    "resetting": "Resetting...",
+    "resetPasswordButton": "Reset Password"
+  },
+  "forgotPasswordScreen": {
+    "emailRequired": "Email is required",
+    "invalidEmail": "Please enter a valid email address",
+    "resetEmailSentTitle": "Reset Email Sent",
+    "resetEmailSentMessage": "Check your inbox for instructions",
+    "resetRequestFailed": "Reset request failed",
+    "title": "Reset Password",
+    "subtitle": "Enter your email to receive reset instructions",
+    "emailPlaceholder": "Enter your email",
+    "requesting": "Requesting...",
+    "sendResetEmailButton": "Send Reset Email",
+    "screenTitle": "Forgot Password"
+  },
+  "tabs": {
+    "home": "Home",
+    "groups": "Groups",
+    "assignments": "Assignments",
+    "profile": "Profile"
+  },
+  "dashboard": {
+    "welcomeBack": "Welcome back",
+    "user": "User",
+    "viewAll": "View All",
+    "loadingGroups": "Loading groups...",
+    "failedToLoadGroups": "Failed to load groups",
+    "noGroupsTeacher": "You haven't created any groups yet. Create one to start teaching!",
+    "noGroupsStudent": "No groups yet. Explore and join some!",
+    "newStudyGroup": "New Study Group",
+    "languageNotSpecified": "Language not specified",
+    "loadingAssignments": "Loading assignments...",
+    "failedToLoadAssignments": "Failed to load assignments",
+    "noAssignmentsDue": "No assignments due. Great job!",
+    "untitledAssignment": "Untitled Assignment",
+    "studyGroups": "Study Groups",
+    "studyGroupsDescriptionTeacher": "Manage your teaching groups",
+    "studyGroupsDescriptionStudent": "Your language learning communities",
+    "viewAllGroups": "View All Groups",
+    "assignments": "Assignments",
+    "assignmentsDescription": "Your pending language tasks",
+    "viewAllAssignments": "View All Assignments"
+  },
+  "groupsScreen": {
+    "teachingGroups": "Teaching Groups",
+    "myGroups": "My Groups",
+    "manageTeachingGroups": "Manage your language teaching groups",
+    "learningCommunities": "All your language learning communities",
+    "newStudyGroup": "New Study Group",
+    "loadingGroups": "Loading groups...",
+    "failedToLoadGroups": "Failed to load groups",
+    "noGroupsTeacher": "You haven't created any teaching groups yet.",
+    "noGroupsStudent": "You haven't joined any groups yet.",
+    "createFirstGroupTeacher": "Create your first study group to start teaching!",
+    "mustBeAddedStudent": "You have to be added to a group by a teacher to start.",
+    "languageNotSpecified": "Language not specified",
+    "teacherManaged": "Teacher Managed",
+    "tapToManageGroup": "Tap to manage this group, assignments, and students.",
+    "tapToViewGroup": "Tap to view group details, posts, and members."
+  },
+  "assignmentsScreen": {
+    "title": "My Assignments",
+    "subtitle": "All your language tasks",
+    "showSubmitted": "Show Submitted",
+    "showOverdue": "Show Overdue",
+    "loading": "Loading assignments...",
+    "loadError": "Failed to load assignments",
+    "noAssignments": "You have no assignments due.",
+    "noAssignmentsHint": "Check back later or join a group to get started!",
+    "untitledAssignment": "Untitled Assignment"
+  },
+  "assignmentCard": {
+    "submitted": "Submitted",
+    "overdue": "Overdue",
+    "due": "Due: {{date}}",
+    "noDueDate": "No due date",
+    "group": "Group: {{groupName}}",
+    "defaultDescription": "Tap to view assignment details and activities.",
+    "assignmentPrompt": "Assignment Prompt:",
+    "studentSubmission": "Student's Submission:",
+    "gradeActivity": "Grade Activity"
+  },
+  "profileScreen": {
+    "loading": "Loading profile...",
+    "title": "Profile",
+    "subtitle": "View and edit your profile information.",
+    "username": "Username",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "save": "Save",
+    "cancel": "Cancel",
+    "editProfile": "Edit Profile",
+    "logout": "Logout",
+    "logoutConfirmTitle": "Logout",
+    "logoutConfirmMessage": "Are you sure you want to logout?",
+    "logoutCancel": "Cancel",
+    "permissionRequiredTitle": "Permission required",
+    "permissionRequiredMessage": "Permission to access media library is required.",
+    "uploadFailedTitle": "Upload failed",
+    "uploadFailedMessage": "Could not upload image",
+    "updateFailedMessage": "Failed to update profile"
+  },
+  "groupScreen": {
+    "loadingGroup": "Loading group...",
+    "failedToLoadGroup": "Failed to load group details",
+    "defaultGroupName": "Group",
+    "edit": "Edit",
+    "member": "member",
+    "members": "members",
+    "postsTab": "Posts",
+    "assignmentsTab": "Assignments",
+    "membersTab": "Members",
+    "submissionsTab": "Submissions",
+    "createPost": "Create Post",
+    "createAssignment": "Create Assignment",
+    "viewSubmissions": "View Submissions",
+    "showSubmitted": "Show Submitted",
+    "showOverdue": "Show Overdue",
+    "addUserToGroupPlaceholder": "Add users to group",
+    "cannotAddTeacher": "Cannot add teacher",
+    "add": "Add",
+    "backToAssignments": "Back to Assignments",
+    "errorAddingMember": "Error adding member"
+  },
+  "groupAssignmentsSection": {
+    "loading": "Loading assignments...",
+    "loadError": "Failed to load assignments",
+    "noAssignments": "No assignments in this group yet.",
+    "noAssignmentsHint": "Check back later for language learning tasks.",
+    "untitledAssignment": "Untitled Assignment"
+  },
+  "groupMembersSection": {
+    "noMembers": "No members in this group.",
+    "owner": "Owner",
+    "ownerRole": "Owner",
+    "member": "Member",
+    "memberRole": "Member",
+    "removeSelected": "Remove {{count}} {{count, plural, one {Member} other {Members}}}"
+  },
+  "createPostScreen": {
+    "title": "Create Post",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Enter title",
+    "contentLabel": "Content",
+    "contentPlaceholder": "Enter content",
+    "postTypeLabel": "Post Type",
+    "discussionType": "Discussion",
+    "resourceType": "Resource",
+    "mediaHint": "Media upload is enabled. You can upload images or documents (PDFs).",
+    "uploading": "Uploading...",
+    "creating": "Creating...",
+    "createButton": "Create",
+    "validationErrorTitle": "Validation Error",
+    "validationErrorMessage": "Title and content cannot be empty."
+  },
+  "attachmentManager": {
+    "attachmentsLabel": "Attachments",
+    "currentAttachments": "Current attachments:",
+    "newAttachments": "New attachments:",
+    "addImage": "Add Image",
+    "addDocument": "Add Document",
+    "errorTitle": "Error",
+    "errorPickImage": "Failed to pick image",
+    "errorPickDocument": "Failed to pick document",
+    "infoTitle": "Info",
+    "infoNoDocuments": "Document uploads are not allowed for this post type"
+  },
+  "groupPost": {
+    "edited": "edited",
+    "teacher": "Teacher",
+    "student": "Student",
+    "attachment_one": "{{count}} attachment",
+    "attachment_other": "{{count}} attachments"
+  },
+  "groupPostsSection": {
+    "loading": "Loading posts...",
+    "error": "Failed to load posts",
+    "noPosts": "No posts in this group yet.",
+    "beTheFirst": "Be the first to start a discussion!"
+  },
+  "postDetail": {
+    "post": "Post",
+    "updateSuccessTitle": "Post updated",
+    "updateSuccessMessage": "Your changes have been saved",
+    "updateFailedTitle": "Update failed",
+    "updateFailedMessage": "Failed to update post",
+    "deleteTitle": "Delete Post",
+    "deleteMessage": "Are you sure you want to delete this post? This action cannot be undone.",
+    "deleteSuccessTitle": "Post deleted",
+    "deleteSuccessMessage": "The post has been successfully deleted",
+    "deleteFailedTitle": "Delete failed",
+    "deleteFailedMessage": "Failed to delete post",
+    "loading": "Loading post...",
+    "loadError": "Failed to load post",
+    "edited": "edited",
+    "untitled": "Untitled",
+    "contentLabel": "Content",
+    "attachmentsLabel": "Attachments"
+  },
+  "postComments": {
+    "title": "Comments",
+    "noComments": "No comments yet",
+    "placeholder": "Write a comment...",
+    "posting": "Posting...",
+    "postComment": "Post Comment",
+    "updating": "Updating...",
+    "update": "Update",
+    "edited": "edited",
+    "createFailed": "Failed to create comment",
+    "editFailed": "Failed to edit comment",
+    "deleteTitle": "Delete Comment",
+    "deleteMessage": "Are you sure you want to delete this comment? This action cannot be undone.",
+    "deleteFailed": "Failed to delete comment"
+  },
+  "groupSubmissionsSection": {
+    "loading": "Loading submissions...",
+    "loadError": "Failed to load submissions",
+    "noSubmissions": "No submissions in this group yet.",
+    "untitledAssignment": "Untitled Assignment",
+    "submitted": "Submitted",
+    "notSubmitted": "Not submitted",
+    "dueLabel": "Due:",
+    "noDueDate": "No due date",
+    "submittedLabel": "Submitted:",
+    "scoreLabel": "Score:",
+    "statusLabel": "Status:",
+    "activitiesLabel": "Activities:",
+    "unknownActivityType": "Unknown activity type"
+  },
+  "submissionListItem": {
+    "student": "Student: {{studentName}}",
+    "unmarked": "Unmarked",
+    "submitted": "Submitted: {{date}}",
+    "unknown": "Unknown",
+    "score": "Score: {{score}}/{{maxScore}}",
+    "notGraded": "Not graded",
+    "activities": "Activities: {{count}}"
+  },
+  "fillInTheBlankActivityForm": {
+    "title": "Fill in the Blank Activity",
+    "templateTextLabel": "Template Text",
+    "templateTextDescription": "Use underscore (_) to mark blanks. Each underscore will become a blank for students to fill in.",
+    "examplesLabel": "Examples:",
+    "examplesContent": "\n• \"The sky is _.\" → \"The sky is _____\"\n• \"Paris is the capital of _.\" → \"Paris is the capital of _____\"\n• \"I like to _ in the morning.\" → \"I like to _____ in the morning.\"",
+    "templateTextPlaceholder": "Enter text with _ for blanks. Example: The sky is _.",
+    "studentPreviewLabel": "Student Preview",
+    "blanksDetected_one": "{{count}} blank detected",
+    "blanksDetected_other": "{{count}} blanks detected",
+    "studentPreviewDescription": "This is how the activity will appear to students:",
+    "studentInputsLabel": "Input fields students will see:",
+    "moreBlanks": "+ {{count}} more",
+    "noBlanksTitle": "No blanks detected",
+    "noBlanksDescription": "To create blanks, add underscores (_) in your text. Make sure each underscore has spaces around it or is next to punctuation. For example: \"The sky is _.\" or \"Hello, _!\"",
+    "validExamplesLabel": "Valid examples:",
+    "validExamplesContent": "\n• \"The sky is _\"\n• \"Hello, _!\"\n• \"_ is the answer.\"",
+    "acceptableAnswersLabel": "Acceptable Answers",
+    "acceptableAnswersDescription": "For each blank, provide one or more acceptable answers (separated by commas). Students' responses must match one of these answers exactly to be considered correct.",
+    "blankLabel": "Blank {{index}}",
+    "answerPlaceholder": "e.g. blue, azure, cyan",
+    "multipleAnswersHint": "Type multiple correct answers separated by commas"
+  },
+  "multipleChoiceActivityForm": {
+    "title": "Multiple Choice Activity",
+    "questionLabel": "Question {{index}}",
+    "questionPlaceholder": "Question text",
+    "optionsPlaceholder": "Options (comma separated)",
+    "correctOptionIndexPlaceholder": "Correct option index (0-based)",
+    "removeQuestionButton": "Remove Question",
+    "addQuestionButton": "Add Question"
+  },
+  "pronunciationActivityForm": {
+    "title": "Pronunciation Activity",
+    "referenceTextLabel": "Reference Text",
+    "referenceTextPlaceholder": "Text to pronounce",
+    "languageLabel": "Language",
+    "languagePlaceholder": "Select language"
+  },
+  "questionActivityForm": {
+    "title": "Question Activity",
+    "questionTextLabel": "Question Text",
+    "questionPlaceholder": "Enter question",
+    "maxLengthLabel": "Max Length (optional)",
+    "maxLengthPlaceholder": "Enter max characters",
+    "exampleAnswerPlaceholder": "Example answer",
+    "removeButton": "Remove",
+    "addExampleAnswerButton": "Add Example Answer"
+  },
+  "writingActivityForm": {
+    "title": "Writing Activity",
+    "promptLabel": "Prompt",
+    "promptPlaceholder": "Enter prompt",
+    "maxWordsLabel": "Max Words (optional)",
+    "maxWordsPlaceholder": "Enter max words"
+  },
+  "editStudyGroupModal": {
+    "title": "Edit Study Group",
+    "groupNameLabel": "Group Name",
+    "groupNamePlaceholder": "Enter group name"
+  },
+  "createStudyGroupModal": {
+    "title": "Create New Study Group",
+    "groupNameLabel": "Group Name",
+    "groupNamePlaceholder": "Enter group name",
+    "languageLabel": "Language",
+    "languagePlaceholder": "Select a language"
+  },
+  "assignmentOverviewCard": {
+    "dueLabel": "Due:",
+    "noDueDate": "No due date",
+    "maxScoreLabel": "Max Score:",
+    "submissionsText": "Submissions:",
+    "total": "total"
+  },
+  "submissionStatsCard": {
+    "submitted": "Submitted",
+    "notSubmitted": "Not Submitted",
+    "submittedStudents": "Submitted Students:",
+    "noStudentsSubmitted": "No students have submitted yet.",
+    "studentsWhoHaventSubmitted": "Students Who Haven't Submitted:",
+    "allStudentsSubmittedOrNoGroup": "All students have submitted or no group data."
+  },
+  "fillInTheBlankActivity": {
+    "cardTitle": "Complete the sentence(s)",
+    "noBlanksFound": "No blanks found in the template according to the pattern.",
+    "noTemplateProvided": "No template text provided for this activity."
+  },
+  "multipleChoiceActivity": {
+    "cardTitle": "Select the correct option(s)",
+    "questionLabel": "Question {{index}}",
+    "noQuestion": "No question provided.",
+    "noOptions": "No options provided for this question.",
+    "noQuestionsFound": "No multiple choice questions found for this activity."
+  },
+  "pronunciationActivity": {
+    "cardTitle": "Record your pronunciation",
+    "referenceTextLabel": "Language:",
+    "recordButton": "Record",
+    "stopButton": "Stop",
+    "playButton": "Play Recording",
+    "processing": "Recording complete!",
+    "noReferenceText": "No reference text provided.",
+    "statusRecording": "Recording...",
+    "statusPlaying": "Playing...",
+    "statusIdle": "Ready to record",
+    "playbackError": "Could not play recording.",
+    "recordingError": "Could not start recording.",
+    "permissionError": "Microphone permission is required for this activity.",
+    "durationLabel": "Duration: {{duration}}",
+    "uploadingLabel": "Uploading: {{percent}}%",
+    "uploadFailed": "Upload failed: {{message}}",
+    "evaluateButton": "Evaluate Pronunciation",
+    "evaluationFailed": "Evaluation failed",
+    "scoreLabel": "Score: {{score}}%",
+    "feedbackLabel": "Feedback: {{feedback}}",
+    "recordAgainButton": "Record Again"
+  },
+  "questionActivity": {
+    "cardTitle": "Answer the Question",
+    "answerPlaceholder": "Type your answer here...",
+    "noQuestionText": "No question text provided for this activity."
+  },
+  "writingActivity": {
+    "cardTitle": "Write your response",
+    "promptLabel": "Prompt:",
+    "answerPlaceholder": "Type your response here...",
+    "noPrompt": "No prompt provided for this activity.",
+    "wordCount": "{{count}}/{{max}} words"
+  },
+  "common": {
+    "user": "User",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "save": "Save",
+    "saving": "Saving...",
+    "error": "Error",
+    "create": "Create",
+    "notApplicable": "N/A",
+    "activity": "Activity",
+    "activities": "Activities",
+    "activityTypes": {
+      "FillInTheBlank": "Fill In The Blank",
+      "Writing": "Writing",
+      "MultipleChoice": "Multiple Choice",
+      "Pronunciation": "Pronunciation",
+      "Question": "Question",
+      "Unknown": "Unknown Activity"
+    },
+    "gradeStatus": {
+      "Pending": "Pending",
+      "Completed": "Completed",
+      "Failed": "Failed",
+      "NeedsReview": "Needs Review",
+      "Unknown": "Unknown"
+    },
+    "roles": {
+      "Student": "Student",
+      "Teacher": "Teacher",
+      "Owner": "Owner",
+      "Member": "Member"
+    }
+  },
+  "pronunciationAssessmentResult": {
+    "title": "Pronunciation Assessment Result",
+    "correct": "Correct",
+    "mispronounced": "Mispronounced",
+    "omitted": "Omitted",
+    "inserted": "Inserted",
+    "accuracy": "Accuracy: {{score}}%"
+  },
+  "assignmentPrompt": {
+    "noDetails": "No details available for this activity."
+  },
+  "fillInTheBlankPrompt": {
+    "acceptableAnswers": "Acceptable Answers:",
+    "blankLabel": "Blank {{index}}",
+    "noAnswers": "No answers specified"
+  },
+  "multipleChoicePrompt": {
+    "questionLabel": "Question {{index}}",
+    "correct": "(Correct)"
+  },
+  "questionPrompt": {
+    "question": "Question:",
+    "maxLength": "Maximum Length: {{max}} characters",
+    "answers": "Answers:"
+  },
+  "writingPrompt": {
+    "prompt": "Writing Prompt:",
+    "maxWords": "Maximum Words: {{max}}"
+  },
+  "pronunciationPrompt": {
+    "referenceText": "Reference Text:"
+  },
+  "writingSubmission": {
+    "studentResponse": "Student's Response:",
+    "noText": "[No text submitted]",
+    "wordCount": "Word count: {{count}}"
+  },
+  "fillInTheBlankSubmission": {
+    "blankLabel": "Blank {{index}}",
+    "noAnswer": "[No Answer]"
+  },
+  "multipleChoiceSubmission": {
+    "questionLabel": "Question {{index}}",
+    "selectedOption": "Selected Option: {{index}}",
+    "noAnswer": "No answer selected"
+  },
+  "questionSubmission": {
+    "studentAnswer": "Student's Answer:",
+    "noAnswer": "[No answer provided]"
+  },
+  "pronunciationSubmission": {
+    "recordingAvailable": "Recording available",
+    "pause": "Pause Recording",
+    "play": "Play Recording",
+    "noRecording": "No recording submitted"
+  },
+  "studentInfo": {
+    "title": "Student Information",
+    "unmarked": "Unmarked",
+    "submittedLabel": "Submitted:",
+    "scoreLabel": "Score: {{score}}",
+    "notGraded": "Not graded"
+  },
+  "createAssignmentScreen": {
+    "title": "Create Assignment",
+    "assignmentDetails": "Assignment Details",
+    "nameLabel": "Name",
+    "namePlaceholder": "Assignment name",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Description (optional)",
+    "dueDateLabel": "Due Date",
+    "dateFormat": "Format: YYYY-MM-DD",
+    "activitiesTitle": "Activities",
+    "activityTitle": "Activity {{index}}: {{type}}",
+    "maxScoreLabel": "Max Score",
+    "maxScorePlaceholder": "Max points",
+    "maxScoreDescription": "Points awarded for this activity",
+    "validationTitle": "Validation",
+    "nameRequiredError": "Name is required",
+    "createFailedError": "Failed to create assignment. Please try again."
+  },
+  "submissionDetailScreen": {
+    "loadingText": "Loading submission data...",
+    "loadErrorText": "Failed to load submission data.",
+    "retryButton": "Retry",
+    "headerTitle": "Submission Review",
+    "noActivitiesText": "No activities in this submission",
+    "invalidScoreTitle": "Invalid Score",
+    "invalidScoreMessage": "Score must be a number between 0 and 100",
+    "saveGradeErrorTitle": "Error",
+    "saveGradeErrorMessage": "Failed to save grade. Please try again."
+  },
+  "userViewScreen": {
+    "loadingText": "Loading user...",
+    "loadErrorText": "Failed to load user"
+  },
+  "languages": {
+    "english_us": "English (United States)",
+    "french": "French (France)",
+    "german": "German (Germany)",
+    "spanish": "Spanish (Spain)",
+    "italian": "Italian (Italy)",
+    "polish": "Polish (Poland)",
+    "dutch": "Dutch (Netherlands)",
+    "swedish": "Swedish (Sweden)",
+    "portuguese": "Portuguese (Portugal)",
+    "finnish": "Finnish (Finland)",
+    "danish": "Danish (Denmark)",
+    "norwegian": "Norwegian (Norway)",
+    "ukrainian": "Ukrainian (Ukraine)"
+  },
+  "dateTimePicker": {
+    "pickDatePrompt": "Select Date & Time"
+  },
+  "paging": {
+    "pageInfo": "Page {{currentPage}} of {{totalPages}}"
+  }
+}

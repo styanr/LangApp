@@ -25,6 +25,7 @@ import { useRouter } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import { AttachmentManager } from './AttachmentManager';
+import { useTranslation } from 'react-i18next';
 
 interface PostDetailProps {
   post: PostDto;
@@ -45,6 +46,7 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, isLoading, isError
     (string | { uri: string; name: string; type: string; preview?: string })[]
   >([]);
   const router = useRouter();
+  const { t } = useTranslation();
 
   const isAuthor = user?.id === post?.authorId;
 
@@ -118,8 +120,8 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, isLoading, isError
       // Show success toast notification
       Toast.show({
         type: 'success',
-        text1: 'Post updated',
-        text2: 'Your changes have been saved',
+        text1: t('postDetail.updateSuccessTitle'),
+        text2: t('postDetail.updateSuccessMessage'),
         position: 'bottom',
         visibilityTime: 3000,
       });
@@ -127,8 +129,8 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, isLoading, isError
       console.error(error);
       Toast.show({
         type: 'error',
-        text1: 'Update failed',
-        text2: 'Failed to update post',
+        text1: t('postDetail.updateFailedTitle'),
+        text2: t('postDetail.updateFailedMessage'),
         position: 'bottom',
         visibilityTime: 3000,
       });
@@ -140,59 +142,55 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, isLoading, isError
   const handleDeletePost = async () => {
     if (!post?.id) return;
 
-    Alert.alert(
-      'Delete Post',
-      'Are you sure you want to delete this post? This action cannot be undone.',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              setIsSubmitting(true);
-              const postId = post.id;
-              if (!postId) return;
+    Alert.alert(t('postDetail.deleteTitle'), t('postDetail.deleteMessage'), [
+      {
+        text: t('common.cancel'),
+        style: 'cancel',
+      },
+      {
+        text: t('common.delete'),
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            setIsSubmitting(true);
+            const postId = post.id;
+            if (!postId) return;
 
-              await archivePost(postId);
+            await archivePost(postId);
 
-              // Show success toast notification
-              Toast.show({
-                type: 'success',
-                text1: 'Post deleted',
-                text2: 'The post has been successfully deleted',
-                position: 'bottom',
-                visibilityTime: 2000,
-                onHide: () => {
-                  // Navigate back to the previous screen (group posts list)
-                  router.back();
-                },
-              });
-            } catch (error) {
-              Toast.show({
-                type: 'error',
-                text1: 'Delete failed',
-                text2: 'Failed to delete post',
-                position: 'bottom',
-                visibilityTime: 3000,
-              });
-            } finally {
-              setIsSubmitting(false);
-            }
-          },
+            // Show success toast notification
+            Toast.show({
+              type: 'success',
+              text1: t('postDetail.deleteSuccessTitle'),
+              text2: t('postDetail.deleteSuccessMessage'),
+              position: 'bottom',
+              visibilityTime: 2000,
+              onHide: () => {
+                // Navigate back to the previous screen (group posts list)
+                router.back();
+              },
+            });
+          } catch (error) {
+            Toast.show({
+              type: 'error',
+              text1: t('postDetail.deleteFailedTitle'),
+              text2: t('postDetail.deleteFailedMessage'),
+              position: 'bottom',
+              visibilityTime: 3000,
+            });
+          } finally {
+            setIsSubmitting(false);
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
   if (isLoading) {
     return (
       <View className="items-center py-16">
         <ActivityIndicator size="large" color="#a21caf" />
-        <Text className="mt-4 text-lg text-muted-foreground">Loading post...</Text>
+        <Text className="mt-4 text-lg text-muted-foreground">{t('postDetail.loading')}</Text>
       </View>
     );
   }
@@ -200,7 +198,7 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, isLoading, isError
   if (isError || !post) {
     return (
       <View className="items-center py-16">
-        <Text className="text-lg text-destructive">Failed to load post</Text>
+        <Text className="text-lg text-destructive">{t('postDetail.loadError')}</Text>
       </View>
     );
   }
@@ -218,10 +216,12 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, isLoading, isError
             <View className="flex-row items-center">
               <UserProfilePicture imageUrl={post.authorProfilePicture} size={36} />
               <View className="ml-2 flex-1">
-                <Text className="font-semibold">{post.authorName || `User ${post.authorId}`}</Text>
+                <Text className="font-semibold">
+                  {post.authorName || `${t('common.user')} ${post.authorId}`}
+                </Text>
                 <Text className="text-xs text-muted-foreground">
                   {formatDate(post.createdAt)}
-                  {post.isEdited && ' (edited)'}
+                  {post.isEdited && ` (${t('postDetail.edited')})`}
                 </Text>
               </View>
 
@@ -237,12 +237,12 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, isLoading, isError
                 </View>
               )}
             </View>
-            <CardTitle className="mt-3 text-xl">{post.title || 'Untitled'}</CardTitle>
+            <CardTitle className="mt-3 text-xl">{post.title || t('postDetail.untitled')}</CardTitle>
           </CardHeader>
           <CardContent>
             {isEditing ? (
               <View>
-                <Text className="mb-2 font-medium">Content</Text>
+                <Text className="mb-2 font-medium">{t('postDetail.contentLabel')}</Text>
                 <Textarea
                   value={editContent}
                   onChangeText={setEditContent}
@@ -265,11 +265,11 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, isLoading, isError
                     className="mr-2"
                     disabled={isSubmitting}>
                     <X size={16} className="mr-1" />
-                    <Text>Cancel</Text>
+                    <Text>{t('common.cancel')}</Text>
                   </Button>
                   <Button onPress={handleSaveEdit} disabled={isSubmitting || !editContent.trim()}>
                     <Check size={16} className="mr-1" />
-                    <Text>{isSubmitting ? 'Saving...' : 'Save'}</Text>
+                    <Text>{isSubmitting ? t('common.saving') : t('common.save')}</Text>
                   </Button>
                 </View>
               </View>
@@ -280,7 +280,7 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, isLoading, isError
             {/* Display media if available */}
             {!isEditing && post.media && post.media.length > 0 && (
               <View className="mb-4">
-                <Text className="mb-2 font-medium">Attachments</Text>
+                <Text className="mb-2 font-medium">{t('postDetail.attachmentsLabel')}</Text>
                 <View className="flex-row flex-wrap">
                   {post.media.map((url, index) => (
                     <MediaPreview key={index} url={url} index={index} />

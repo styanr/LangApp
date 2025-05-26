@@ -1,12 +1,14 @@
 import { View, Pressable } from 'react-native';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
-import { MessageSquare, Calendar, MoreVertical, Paperclip } from 'lucide-react-native';
+import { MessageSquare, Calendar, MoreVertical} from 'lucide-react-native';
+import {Paperclip} from '@/lib/icons/Paperclip'
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { formatDistanceToNow } from 'date-fns';
 import { UTCDate } from '@date-fns/utc';
 import { toUTCDate } from '@/lib/dateUtils';
 import { UserProfilePicture } from '@/components/ui/UserProfilePicture';
+import { useTranslation } from 'react-i18next';
 
 type PostProps = {
   id: string;
@@ -36,7 +38,7 @@ export const GroupPost = ({
   onPress,
   index = 0,
 }: PostProps) => {
-  console.log(createdAt);
+  const { t } = useTranslation();
   const formattedDate = formatDistanceToNow(toUTCDate(createdAt), { addSuffix: true });
 
   return (
@@ -51,13 +53,16 @@ export const GroupPost = ({
                 <Text>{title}</Text>
               </CardTitle>
               <CardDescription className="mt-1 text-sm text-indigo-700 dark:text-indigo-200">
-                <View className={`flex-row items-center gap-2 p-2 rounded ${author.role === 'Teacher' ? 'border border-yellow-500' : 'border-1 border-blue-400'}`}>
+                <View
+                  className={`flex-row items-center gap-2 rounded p-2 ${author.role === 'Teacher' ? 'border border-yellow-500' : 'border-1 border-blue-400'}`}>
                   <UserProfilePicture imageUrl={author.profilePicture} size={20} />
-                  <View
-                    className={`flex-row items-center gap-1`}>
+                  <View className={`flex-row items-center gap-1`}>
                     <Text className="text-xs">
-                      {author.name} • {formattedDate} {isEdited && ' (edited)'} 
-                      {author.role === 'Teacher' ? ' (Teacher)' : ' (Student)'} 
+                      {author.name} • {formattedDate}
+                      {isEdited && ` (${t('groupPost.edited')})`}
+                      {author.role === 'Teacher'
+                        ? ` (${t('groupPost.teacher')})`
+                        : ` (${t('groupPost.student')})`}
                     </Text>
                   </View>
                 </View>
@@ -74,7 +79,7 @@ export const GroupPost = ({
               <View className="mt-2 flex-row items-center">
                 <Paperclip size={14} className="mr-1 text-indigo-400" />
                 <Text className="text-xs text-indigo-500">
-                  {mediaCount} {mediaCount === 1 ? 'attachment' : 'attachments'}
+                  {t('groupPost.attachment', { count: mediaCount })}
                 </Text>
               </View>
             )}

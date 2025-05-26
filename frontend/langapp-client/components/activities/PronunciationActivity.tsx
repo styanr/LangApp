@@ -17,6 +17,8 @@ import { useSubmissions } from '@/hooks/useSubmissions';
 import type { SubmissionGradeDto } from '@/api/orval/langAppApi.schemas';
 import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
 import PronunciationAssessmentResult from './PronunciationAssessmentResult';
+import { useTranslation } from 'react-i18next';
+import { handleApiError } from '@/lib/errors';
 
 interface Props {
   activity: ActivityDto;
@@ -25,6 +27,7 @@ interface Props {
 }
 
 export default function PronunciationActivity({ activity, submission, onChange }: Props) {
+  const { t } = useTranslation();
   const [uploadedUrl, setUploadedUrl] = useState<string | null>(submission?.recordingUrl || null);
 
   // Get details from the activity
@@ -65,6 +68,8 @@ export default function PronunciationActivity({ activity, submission, onChange }
       console.error('Evaluation error:', e);
       console.error(JSON.stringify(e, null, 2));
       console.error(JSON.stringify(e.response, null, 2));
+
+      handleApiError(e);
     }
   };
 
@@ -124,7 +129,7 @@ export default function PronunciationActivity({ activity, submission, onChange }
     return (
       <View className="rounded-lg bg-destructive/10 p-4">
         <Text className="font-medium text-destructive">
-          Microphone permission is required for this activity.
+          {t('pronunciationActivity.permissionError')}
         </Text>
       </View>
     );
@@ -135,13 +140,13 @@ export default function PronunciationActivity({ activity, submission, onChange }
       <View className="mb-5 flex-row items-center gap-3">
         <IconBadge Icon={Mic} size={28} className="mr-2 text-fuchsia-500" />
         <Text className="text-xl font-bold text-fuchsia-900 dark:text-white">
-          Pronunciation Activity
+          {t('common.activityTypes.Pronunciation')}
         </Text>
       </View>
 
       <Card className="overflow-hidden rounded-xl border border-border bg-white/90 shadow-sm dark:bg-zinc-900/80">
         <CardHeader className="border-b border-border bg-primary/5 pb-3 dark:bg-primary/10">
-          <CardTitle>Record your pronunciation</CardTitle>
+          <CardTitle>{t('pronunciationActivity.cardTitle')}</CardTitle>
         </CardHeader>
         <CardContent className="p-4">
           {/* Reference text to pronounce */}
@@ -149,7 +154,9 @@ export default function PronunciationActivity({ activity, submission, onChange }
             <View className="mb-6 rounded-lg bg-muted p-4">
               <Text className="text-lg font-medium">"{referenceText}"</Text>
               {language && (
-                <Text className="mt-1 text-sm text-muted-foreground">Language: {language}</Text>
+                <Text className="mt-1 text-sm text-muted-foreground">
+                  {t('pronunciationActivity.referenceTextLabel')} {language}
+                </Text>
               )}
             </View>
           )}
@@ -160,14 +167,15 @@ export default function PronunciationActivity({ activity, submission, onChange }
               <View className="mb-6 flex-row items-center justify-between">
                 <Text className="text-base font-medium">
                   {isRecording
-                    ? 'Recording...'
+                    ? t('pronunciationActivity.statusRecording')
                     : isDoneRecording
-                      ? 'Recording complete!'
-                      : 'Ready to record'}
+                      ? t('pronunciationActivity.processing')
+                      : t('pronunciationActivity.statusIdle')}
                 </Text>
                 {isDoneRecording && (
                   <Text className="text-sm text-muted-foreground">
-                    Duration: {formattedDuration}
+                    {t('pronunciationActivity.durationLabel', { duration: formattedDuration }) ||
+                      `${t('pronunciationActivity.durationLabel', { duration: '' })}${formattedDuration}`}
                   </Text>
                 )}
               </View>
@@ -227,14 +235,15 @@ export default function PronunciationActivity({ activity, submission, onChange }
                     />
                   </View>
                   <Text className="mt-1 text-center text-xs text-muted-foreground">
-                    Uploading: {progress.percent}%
+                    {t('pronunciationActivity.uploadingLabel', { percent: progress.percent }) ||
+                      `${t('pronunciationActivity.uploadingLabel', { percent: '' })}${progress.percent}%`}
                   </Text>
                 </View>
               )}
 
               {uploadError && (
                 <Text className="mt-2 text-center text-sm text-destructive">
-                  Upload failed: {uploadError.message}
+                  {t('pronunciationActivity.uploadFailed', { message: uploadError.message })}
                 </Text>
               )}
             </View>
@@ -247,11 +256,13 @@ export default function PronunciationActivity({ activity, submission, onChange }
                 {evaluateState.isLoading ? (
                   <ActivityIndicator size="small" color="#4ade80" />
                 ) : (
-                  <Text>Evaluate Pronunciation</Text>
+                  <Text>{t('pronunciationActivity.evaluateButton')}</Text>
                 )}
               </Button>
               {evaluateState.isError && (
-                <Text className="mt-2 text-center text-sm text-destructive">Evaluation failed</Text>
+                <Text className="mt-2 text-center text-sm text-destructive">
+                  {t('pronunciationActivity.evaluationFailed')}
+                </Text>
               )}
             </View>
           )}
@@ -260,7 +271,9 @@ export default function PronunciationActivity({ activity, submission, onChange }
               <View className="mb-2 flex-row items-center">
                 <CheckCircle2 size={20} className="mr-2 text-emerald-500" />
                 <Text className="text-base font-medium text-emerald-700 dark:text-emerald-300">
-                  Score: {evaluation.scorePercentage?.toFixed(2)}%
+                  {t('pronunciationActivity.scoreLabel', {
+                    score: evaluation.scorePercentage?.toFixed(2),
+                  }) || `Score: ${evaluation.scorePercentage?.toFixed(2)}%`}
                 </Text>
               </View>
               {evaluation.feedback &&
@@ -275,7 +288,7 @@ export default function PronunciationActivity({ activity, submission, onChange }
                   }
                   return (
                     <Text className="-muted-foreground mb-4 text-sm">
-                      Feedback: {evaluation.feedback}
+                      {t('pronunciationActivity.feedbackLabel', { feedback: evaluation.feedback })}
                     </Text>
                   );
                 })()}
@@ -284,7 +297,9 @@ export default function PronunciationActivity({ activity, submission, onChange }
                   onPress={handleReset}
                   variant="outline"
                   className="border-emerald-200 dark:border-emerald-800">
-                  <Text className="text-emerald-700 dark:text-emerald-300">Record Again</Text>
+                  <Text className="text-emerald-700 dark:text-emerald-300">
+                    {t('pronunciationActivity.recordAgainButton')}
+                  </Text>
                 </Button>
               </View>
             </View>

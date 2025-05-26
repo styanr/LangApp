@@ -5,6 +5,7 @@ import { X, FileText, Image as ImageIcon, PlusCircle } from 'lucide-react-native
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { MediaPreview } from '@/components/ui/MediaPreview';
+import { useTranslation } from 'react-i18next';
 
 interface MediaFile {
   uri: string;
@@ -24,6 +25,7 @@ export function AttachmentManager({
   onMediaChange,
   allowDocuments = true,
 }: AttachmentManagerProps) {
+  const { t } = useTranslation();
   const [newMediaFiles, setNewMediaFiles] = useState<MediaFile[]>([]);
   const [keptExistingMedia, setKeptExistingMedia] = useState<string[]>(existingMedia);
 
@@ -60,13 +62,19 @@ export function AttachmentManager({
       }
     } catch (error) {
       console.error('Error picking image:', error);
-      Alert.alert('Error', 'Failed to pick image');
+      Alert.alert(
+        String(t('attachmentManager.errorTitle')),
+        String(t('attachmentManager.errorPickImage'))
+      );
     }
   };
 
   const pickDocument = async () => {
     if (!allowDocuments) {
-      Alert.alert('Info', 'Document uploads are not allowed for this post type');
+      Alert.alert(
+        String(t('attachmentManager.infoTitle')),
+        String(t('attachmentManager.infoNoDocuments'))
+      );
       return;
     }
 
@@ -88,7 +96,10 @@ export function AttachmentManager({
       }
     } catch (error) {
       console.error('Error picking document:', error);
-      Alert.alert('Error', 'Failed to pick document');
+      Alert.alert(
+        String(t('attachmentManager.errorTitle')),
+        String(t('attachmentManager.errorPickDocument'))
+      );
     }
   };
 
@@ -106,12 +117,14 @@ export function AttachmentManager({
 
   return (
     <View className="mb-4">
-      <Text className="mb-2 font-medium">Attachments</Text>
+      <Text className="mb-2 font-medium">{t('attachmentManager.attachmentsLabel')}</Text>
 
       {/* Display existing media that hasn't been removed */}
       {keptExistingMedia.length > 0 && (
         <View className="mb-3">
-          <Text className="mb-1 text-sm text-muted-foreground">Current attachments:</Text>
+          <Text className="mb-1 text-sm text-muted-foreground">
+            {t('attachmentManager.currentAttachments')}
+          </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View className="flex-row">
               {keptExistingMedia.map((url, index) => (
@@ -132,7 +145,9 @@ export function AttachmentManager({
       {/* Display newly added files that haven't been uploaded yet */}
       {newMediaFiles.length > 0 && (
         <View className="mb-3">
-          <Text className="mb-1 text-sm text-muted-foreground">New attachments:</Text>
+          <Text className="mb-1 text-sm text-muted-foreground">
+            {t('attachmentManager.newAttachments')}
+          </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View className="flex-row">
               {newMediaFiles.map((file, index) => (
@@ -169,12 +184,12 @@ export function AttachmentManager({
       <View className="mt-2 flex-row">
         <Button variant="outline" onPress={pickImage} className="mr-2 flex-row items-center">
           <ImageIcon size={16} className="mr-1" />
-          <Text>Add Image</Text>
+          <Text>{t('attachmentManager.addImage')}</Text>
         </Button>
         {allowDocuments && (
           <Button variant="outline" onPress={pickDocument} className="flex-row items-center">
             <FileText size={16} className="mr-1" />
-            <Text>Add Document</Text>
+            <Text>{t('attachmentManager.addDocument')}</Text>
           </Button>
         )}
       </View>

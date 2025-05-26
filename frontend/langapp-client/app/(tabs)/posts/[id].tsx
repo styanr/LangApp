@@ -6,6 +6,7 @@ import { usePosts } from '@/hooks/usePosts';
 import PostDetail from '@/components/posts/PostDetail';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useAuth } from '@/hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 
 export default function PostPage() {
   const { id: postId } = useGlobalSearchParams();
@@ -13,10 +14,14 @@ export default function PostPage() {
   const { getPostById } = usePosts();
   const { data: post, isLoading, isError, refetch } = getPostById(postId as string);
 
+  const { t } = useTranslation();
+
   return (
     <View className="flex-1 bg-gradient-to-b from-indigo-50 to-fuchsia-50">
       <Animated.View entering={FadeIn.duration(600)} className="px-6 pb-2 pt-10">
-        <Text className="text-4xl font-extrabold text-primary drop-shadow-lg">Post</Text>
+        <Text className="text-4xl font-extrabold text-primary drop-shadow-lg">
+          {t('postDetail.post')}
+        </Text>
       </Animated.View>
 
       <PostDetail post={post!} isLoading={isLoading} isError={isError} refetch={refetch} />

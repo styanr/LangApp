@@ -5,6 +5,7 @@ import { Text } from '@/components/ui/text';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import type { WritingActivityDetailsDto } from '@/api/orval/langAppApi.schemas';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   details?: WritingActivityDetailsDto;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export const WritingActivityForm: React.FC<Props> = ({ details, onChange }) => {
+  const { t } = useTranslation();
   const [prompt, setPrompt] = useState(details?.prompt || '');
   const [maxWords, setMaxWords] = useState(details?.maxWords?.toString() || '');
 
@@ -25,19 +27,19 @@ export const WritingActivityForm: React.FC<Props> = ({ details, onChange }) => {
 
   return (
     <View className="mb-4">
-      <Text className="mb-2 text-lg font-semibold">Writing Activity</Text>
-      <Text className="mb-1">Prompt (optional)</Text>
+      <Text className="mb-2 text-lg font-semibold">{t('writingActivityForm.title')}</Text>
+      <Text className="mb-1">{t('writingActivityForm.promptLabel')}</Text>
       <Textarea
         value={prompt}
         onChangeText={setPrompt}
-        placeholder="Enter prompt"
+        placeholder={t('writingActivityForm.promptPlaceholder')}
         className="mb-2 min-h-[60px]"
       />
-      <Text className="mb-1">Max Words (optional)</Text>
+      <Text className="mb-1">{t('writingActivityForm.maxWordsLabel')}</Text>
       <Input
         value={maxWords}
         onChangeText={setMaxWords}
-        placeholder="Enter max words"
+        placeholder={t('writingActivityForm.maxWordsPlaceholder')}
         keyboardType="number-pad"
       />
     </View>

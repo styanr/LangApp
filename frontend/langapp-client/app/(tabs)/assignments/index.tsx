@@ -8,8 +8,10 @@ import { Paging } from '@/components/ui/paging';
 import { Text } from '@/components/ui/text';
 import { AssignmentCard } from '@/components/assignments/AssignmentCard';
 import { useAuth } from '@/hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 
 export default function Assignments() {
+  const { t } = useTranslation();
   const [page, setPage] = useState(1);
   const [showSubmitted, setShowSubmitted] = useState(false);
   // Toggle to include overdue assignments in filter
@@ -31,26 +33,28 @@ export default function Assignments() {
   return (
     <RNView className="flex-1 bg-gradient-to-b from-indigo-50 to-fuchsia-100">
       <Animated.View entering={FadeIn.duration(600)} className="px-6 pb-4 pt-10">
-        <Text className="text-4xl font-extrabold text-primary drop-shadow-lg">My Assignments</Text>
-        <Text className="mt-2 text-lg text-muted-foreground">All your language tasks</Text>
+        <Text className="text-4xl font-extrabold text-primary drop-shadow-lg">
+          {t('assignmentsScreen.title')}
+        </Text>
+        <Text className="mt-2 text-lg text-muted-foreground">
+          {t('assignmentsScreen.subtitle')}
+        </Text>
       </Animated.View>
-      <RNView className="flex-row items-center px-6 pb-2">
+      <RNView className="flex-row items-center justify-center gap-2 px-6 pb-2">
         {!isTeacher && (
-          <>
+          <RNView className="flex-row items-center">
             <Toggle pressed={showSubmitted} onPressedChange={setShowSubmitted}>
               {showSubmitted ? <ToggleIcon icon={EyeOff} /> : <ToggleIcon icon={Eye} />}
             </Toggle>
-            <Text className="ml-2">Show Submitted</Text>
-          </>
+            <Text className="ml-2">{t('assignmentsScreen.showSubmitted')}</Text>
+          </RNView>
         )}
-        <Toggle
-          pressed={showOverdue}
-          onPressedChange={setShowOverdue}
-          className={!isTeacher ? 'ml-6' : ''}
-        >
-          <ToggleIcon icon={CalendarDays} />
-        </Toggle>
-        <Text className="ml-2">Show Overdue</Text>
+        <RNView className="flex-row items-center">
+          <Toggle pressed={showOverdue} onPressedChange={setShowOverdue}>
+            <ToggleIcon icon={CalendarDays} />
+          </Toggle>
+          <Text className="ml-2">{t('assignmentsScreen.showOverdue')}</Text>
+        </RNView>
       </RNView>
       <ScrollView
         className="flex-1 px-2"
@@ -59,21 +63,23 @@ export default function Assignments() {
         {isLoading && (
           <RNView className="items-center py-16">
             <ActivityIndicator size="large" color="#a21caf" />
-            <Text className="mt-4 text-lg text-muted-foreground">Loading assignments...</Text>
+            <Text className="mt-4 text-lg text-muted-foreground">
+              {t('assignmentsScreen.loading')}
+            </Text>
           </RNView>
         )}
         {isError && (
           <RNView className="items-center py-16">
-            <Text className="text-lg text-destructive">Failed to load assignments</Text>
+            <Text className="text-lg text-destructive">{t('assignmentsScreen.loadError')}</Text>
           </RNView>
         )}
         {!isLoading && !isError && assignments.length === 0 && (
           <RNView className="items-center py-16">
             <Text className="text-center text-xl font-semibold text-muted-foreground">
-              You have no assignments due.
+              {t('assignmentsScreen.noAssignments')}
             </Text>
             <Text className="mt-2 text-center text-base text-muted-foreground">
-              Check back later or join a group to get started!
+              {t('assignmentsScreen.noAssignmentsHint')}
             </Text>
           </RNView>
         )}
@@ -82,7 +88,7 @@ export default function Assignments() {
             <AssignmentCard
               key={assignment.id}
               id={assignment.id || ''}
-              name={assignment.name || 'Untitled Assignment'}
+              name={assignment.name || t('assignmentsScreen.untitledAssignment')}
               dueTime={assignment.dueTime}
               groupName={assignment.studyGroupName}
               submitted={assignment.submitted}

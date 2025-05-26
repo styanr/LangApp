@@ -4,6 +4,7 @@ import { Text } from '@/components/ui/text';
 import { GroupMember } from '@/components/groups/GroupMember';
 import { Button } from '@/components/ui/button';
 import type { StudyGroupMemberDto } from '@/api/orval/langAppApi.schemas';
+import { useTranslation } from 'react-i18next';
 
 interface GroupMembersSectionProps {
   members: StudyGroupMemberDto[];
@@ -20,10 +21,11 @@ const GroupMembersSection: React.FC<GroupMembersSectionProps> = ({
   isOwner,
   onRemove,
 }) => {
+  const { t } = useTranslation();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const toggleSelect = (id: string) => {
-    if (!isOwner) return; 
+    if (!isOwner) return;
     // Prevent selecting the owner
     if (owner && id === owner.id) return;
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
@@ -40,7 +42,7 @@ const GroupMembersSection: React.FC<GroupMembersSectionProps> = ({
     return (
       <View className="items-center py-16">
         <Text className="text-center text-xl font-semibold text-muted-foreground">
-          No members in this group.
+          {t('groupMembersSection.noMembers')}
         </Text>
       </View>
     );
@@ -53,10 +55,12 @@ const GroupMembersSection: React.FC<GroupMembersSectionProps> = ({
         <GroupMember
           id={owner.id || ''}
           name={
-            `${owner.fullName?.firstName || ''} ${owner.fullName?.lastName || ''}`.trim() || 'Owner'
+            `${owner.fullName?.firstName || ''} ${owner.fullName?.lastName || ''}`.trim() ||
+            t('groupMembersSection.owner')
           }
           pictureUrl={owner.pictureUrl || ''}
-          role="Owner"
+          role={'Owner'}
+          roleName={t('groupMembersSection.owner')}
           onPress={onPress}
           index={-1}
         />
@@ -72,10 +76,11 @@ const GroupMembersSection: React.FC<GroupMembersSectionProps> = ({
             id={id}
             name={
               `${member.fullName?.firstName || ''} ${member.fullName?.lastName || ''}`.trim() ||
-              'Member'
+              t('groupMembersSection.member')
             }
             pictureUrl={member.pictureUrl || ''}
-            role="Member"
+            role={'Member'}
+            roleName={t('groupMembersSection.member')}
             onPress={onPress}
             onLongPress={() => toggleSelect(id)}
             index={idx}
@@ -88,9 +93,7 @@ const GroupMembersSection: React.FC<GroupMembersSectionProps> = ({
       {isOwner && onRemove && selectedIds.length > 0 && (
         <View className="flex-row justify-end px-4 py-2">
           <Button variant="destructive" onPress={removeSelected}>
-            <Text>
-              Remove {selectedIds.length} {selectedIds.length === 1 ? 'Member' : 'Members'}
-            </Text>
+            <Text>{t('groupMembersSection.removeSelected', { count: selectedIds.length })}</Text>
           </Button>
         </View>
       )}

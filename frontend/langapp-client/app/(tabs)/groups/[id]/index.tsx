@@ -34,10 +34,12 @@ import { SearchInput } from '@/components/ui/search-input';
 
 import { AxiosError } from 'axios';
 import { handleApiError } from '@/lib/errors';
+import { useTranslation } from 'react-i18next';
 
 type TabType = 'posts' | 'assignments' | 'members' | 'submissions';
 
 const GroupPage = () => {
+  const { t } = useTranslation();
   const { id: groupId } = useGlobalSearchParams();
 
   const router = useRouter();
@@ -147,7 +149,7 @@ const GroupPage = () => {
       setSearchTerm('');
       setSearchPage(1);
     } catch (error) {
-      console.error('Error adding member:', error);
+      console.error(t('groupScreen.errorAddingMember'), error);
 
       handleApiError(error);
       setSearchTerm('');
@@ -167,11 +169,13 @@ const GroupPage = () => {
       {isLoadingGroup ? (
         <View className="flex-1 items-center justify-center bg-background">
           <ActivityIndicator size="large" color="#a21caf" />
-          <Text className="mt-4 text-lg text-muted-foreground">Loading group...</Text>
+          <Text className="mt-4 text-lg text-muted-foreground">
+            {t('groupScreen.loadingGroup')}
+          </Text>
         </View>
       ) : isGroupError ? (
         <View className="flex-1 items-center justify-center bg-background">
-          <Text className="text-lg text-destructive">Failed to load group details</Text>
+          <Text className="text-lg text-destructive">{t('groupScreen.failedToLoadGroup')}</Text>
           <Text className="mt-2 text-sm text-muted-foreground"></Text>
         </View>
       ) : (
@@ -180,11 +184,11 @@ const GroupPage = () => {
           <Animated.View entering={FadeIn.duration(600)} className="px-6 pb-2 pt-10">
             <View className="flex-row items-center justify-between">
               <Text className="flex-1 text-4xl font-extrabold text-primary drop-shadow-lg">
-                {group?.name || 'Group'}
+                {group?.name || t('groupScreen.defaultGroupName')}
               </Text>
               {isOwner && (
                 <Button variant="outline" onPress={() => setIsEditModalVisible(true)}>
-                  <Text className="text-sm font-semibold">Edit</Text>
+                  <Text className="text-sm font-semibold">{t('groupScreen.edit')}</Text>
                 </Button>
               )}
             </View>
@@ -192,7 +196,8 @@ const GroupPage = () => {
               <User size={16} className="mr-1 text-indigo-400" />
               <Text className="text-sm text-muted-foreground">
                 {/* members + 1 because + owner */}
-                {members.length + 1} {members.length + 1 === 1 ? 'member' : 'members'}
+                {members.length + 1}{' '}
+                {members.length + 1 === 1 ? t('groupScreen.member') : t('groupScreen.members')}
               </Text>
             </View>
           </Animated.View>
@@ -216,7 +221,7 @@ const GroupPage = () => {
                   className={activeTab === 'posts' ? 'bg-indigo-100 dark:bg-indigo-900' : ''}>
                   <View className="flex-row items-center gap-1">
                     <MessageCircle size={16} className="mr-2 text-indigo-500" />
-                    <Text>Posts</Text>
+                    <Text>{t('groupScreen.postsTab')}</Text>
                   </View>
                 </NavigationMenuTrigger>
               </NavigationMenuItem>
@@ -225,7 +230,7 @@ const GroupPage = () => {
                   className={activeTab === 'assignments' ? 'bg-indigo-100 dark:bg-indigo-900' : ''}>
                   <View className="flex-row items-center gap-1">
                     <ClipboardList size={16} className="mr-2 text-indigo-500" />
-                    <Text>Assignments</Text>
+                    <Text>{t('groupScreen.assignmentsTab')}</Text>
                   </View>
                 </NavigationMenuTrigger>
               </NavigationMenuItem>
@@ -234,7 +239,7 @@ const GroupPage = () => {
                   className={activeTab === 'members' ? 'bg-indigo-100 dark:bg-indigo-900' : ''}>
                   <View className="flex-row items-center gap-1">
                     <User size={16} className="mr-2 text-indigo-500" />
-                    <Text>Members</Text>
+                    <Text>{t('groupScreen.membersTab')}</Text>
                   </View>
                 </NavigationMenuTrigger>
               </NavigationMenuItem>
@@ -255,7 +260,7 @@ const GroupPage = () => {
                     onPress={() =>
                       router.push({ pathname: `/(tabs)/groups/${groupId}/posts/create` })
                     }>
-                    <Text className="text-sm font-semibold">Create Post</Text>
+                    <Text className="text-sm font-semibold">{t('groupScreen.createPost')}</Text>
                   </Button>
                 </View>
                 <GroupPostsSection
@@ -279,7 +284,9 @@ const GroupPage = () => {
                     <View className="px-4 pb-2">
                       <Button
                         onPress={() => router.push(`/(tabs)/groups/${groupId}/assignments/create`)}>
-                        <Text className="text-sm font-semibold">Create Assignment</Text>
+                        <Text className="text-sm font-semibold">
+                          {t('groupScreen.createAssignment')}
+                        </Text>
                       </Button>
                     </View>
                     <GroupAssignmentsSection
@@ -302,20 +309,22 @@ const GroupPage = () => {
                         className="flex-row items-center gap-2 border-indigo-200 bg-indigo-50"
                         onPress={() => setActiveTab('submissions')}>
                         <FileCheck size={16} className="mr-2 text-indigo-600" />
-                        <Text className="text-sm text-indigo-700">View Submissions</Text>
+                        <Text className="text-sm text-indigo-700">
+                          {t('groupScreen.viewSubmissions')}
+                        </Text>
                       </Button>
                       <View className="flex-row items-center">
                         <Toggle pressed={showSubmitted} onPressedChange={setShowSubmitted}>
                           {showSubmitted ? <ToggleIcon icon={EyeOff} /> : <ToggleIcon icon={Eye} />}
                         </Toggle>
-                        <Text className="ml-2">Show Submitted</Text>
+                        <Text className="ml-2">{t('groupScreen.showSubmitted')}</Text>
                         <Toggle
                           pressed={showOverdue}
                           onPressedChange={setShowOverdue}
                           className="ml-6">
                           <ToggleIcon icon={CalendarDays} />
                         </Toggle>
-                        <Text className="ml-2">Show Overdue</Text>
+                        <Text className="ml-2">{t('groupScreen.showOverdue')}</Text>
                       </View>
                     </View>
                     <GroupAssignmentsSection
@@ -340,7 +349,7 @@ const GroupPage = () => {
                 {isOwner && (
                   <View className="mb-4">
                     <SearchInput
-                      placeholder="Add users to group"
+                      placeholder={t('groupScreen.addUserToGroupPlaceholder')}
                       value={searchTerm}
                       onChangeText={setSearchTerm}
                     />
@@ -369,7 +378,11 @@ const GroupPage = () => {
                               size="sm"
                               onPress={() => handleAddMember(u.id || '')}
                               disabled={u.role === 'Teacher'}>
-                              <Text>{u.role === 'Teacher' ? 'Cannot add teacher' : 'Add'}</Text>
+                              <Text>
+                                {u.role === 'Teacher'
+                                  ? t('groupScreen.cannotAddTeacher')
+                                  : t('groupScreen.add')}
+                              </Text>
                             </Button>
                           </View>
                         </View>
@@ -397,7 +410,9 @@ const GroupPage = () => {
                     className="flex flex-row items-center justify-center gap-2 border-indigo-200 bg-indigo-50"
                     onPress={() => setActiveTab('assignments')}>
                     <ChevronLeft size={16} className="mr-2 text-indigo-600" />
-                    <Text className="text-sm text-indigo-700">Back to Assignments</Text>
+                    <Text className="text-sm text-indigo-700">
+                      {t('groupScreen.backToAssignments')}
+                    </Text>
                   </Button>
                 </View>
                 <GroupSubmissionsSection

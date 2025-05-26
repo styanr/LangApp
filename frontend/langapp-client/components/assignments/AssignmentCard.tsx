@@ -7,6 +7,7 @@ import { CalendarDays } from '@/lib/icons/CalendarDays';
 import { IconBadge } from '@/components/ui/themed-icon';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { Link } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
 interface AssignmentCardProps {
   /** Whether the assignment is overdue */
@@ -39,9 +40,10 @@ const CardInnerContent: React.FC<CardInnerContentProps> = React.memo(
     compact = false,
     overdue = false,
   }) => {
+    const { t } = useTranslation();
     const formattedDueDate = useMemo(
-      () => (dueTime ? new Date(dueTime).toLocaleDateString() : 'No due date'),
-      [dueTime]
+      () => (dueTime ? new Date(dueTime).toLocaleDateString() : t('assignmentCard.noDueDate')),
+      [dueTime, t]
     );
 
     const iconColorClass = useMemo(() => {
@@ -67,14 +69,14 @@ const CardInnerContent: React.FC<CardInnerContentProps> = React.memo(
             {submitted && (
               <RNView className="mt-1">
                 <Text className="self-start rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-800 dark:text-emerald-100">
-                  Submitted
+                  {t('assignmentCard.submitted')}
                 </Text>
               </RNView>
             )}
             {overdue && !submitted && (
               <RNView className="mt-1">
                 <Text className="self-start rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">
-                  Overdue
+                  {t('assignmentCard.overdue')}
                 </Text>
               </RNView>
             )}
@@ -84,12 +86,12 @@ const CardInnerContent: React.FC<CardInnerContentProps> = React.memo(
                   <RNView className="flex-row items-center gap-2">
                     <CalendarDays size={16} className="text" />
                     <Text className="text-xs text-fuchsia-700 dark:text-fuchsia-200">
-                      Due: {formattedDueDate}
+                      {t('assignmentCard.due', { date: formattedDueDate })}
                     </Text>
                   </RNView>
                 ) : (
                   <Text className="text-xs text-fuchsia-700 dark:text-fuchsia-200">
-                    No due date
+                    {t('assignmentCard.noDueDate')}
                   </Text>
                 )}
 
@@ -97,7 +99,7 @@ const CardInnerContent: React.FC<CardInnerContentProps> = React.memo(
                   <RNView className="flex-row items-center gap-2">
                     <Users size={16} className="text" />
                     <Text className="text-xs text-fuchsia-700 dark:text-fuchsia-400">
-                      Group: {groupName}
+                      {t('assignmentCard.group', { groupName })}
                     </Text>
                   </RNView>
                 )}
@@ -108,7 +110,7 @@ const CardInnerContent: React.FC<CardInnerContentProps> = React.memo(
         {showDescription && (
           <CardContent className="px-5 pb-4 pt-0">
             <Text className="text-sm text-muted-foreground">
-              {description || 'Tap to view assignment details and activities.'}
+              {description || t('assignmentCard.defaultDescription')}
             </Text>
           </CardContent>
         )}

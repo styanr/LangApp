@@ -8,6 +8,7 @@ import { Edit2, Trash2 } from 'lucide-react-native';
 import { UserProfilePicture } from '@/components/ui/UserProfilePicture';
 import { formatDistanceToNow } from 'date-fns';
 import { formatDistanceToNowUTC } from '@/lib/dateUtils';
+import { useTranslation } from 'react-i18next';
 
 interface PostCommentsProps {
   postId: string;
@@ -27,6 +28,7 @@ export const PostComments: React.FC<PostCommentsProps> = ({
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingContent, setEditingContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { t } = useTranslation();
 
   const handleCreateComment = async () => {
     if (!newComment.trim()) return;
@@ -37,7 +39,7 @@ export const PostComments: React.FC<PostCommentsProps> = ({
       setNewComment('');
       if (onCommentAdded) onCommentAdded();
     } catch (error) {
-      Alert.alert('Error', 'Failed to create comment');
+      Alert.alert(t('common.error'), t('postComments.createFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -52,7 +54,7 @@ export const PostComments: React.FC<PostCommentsProps> = ({
       setEditingCommentId(null);
       setEditingContent('');
     } catch (error) {
-      Alert.alert('Error', 'Failed to edit comment');
+      Alert.alert(t('common.error'), t('postComments.editFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -60,30 +62,26 @@ export const PostComments: React.FC<PostCommentsProps> = ({
 
   const handleDeleteComment = async (commentId: string) => {
     // Add confirmation dialog
-    Alert.alert(
-      'Delete Comment',
-      'Are you sure you want to delete this comment? This action cannot be undone.',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
+    Alert.alert(t('postComments.deleteTitle'), t('postComments.deleteMessage'), [
+      {
+        text: t('common.cancel'),
+        style: 'cancel',
+      },
+      {
+        text: t('common.delete'),
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            setIsSubmitting(true);
+            await deleteComment(postId, commentId);
+          } catch (error) {
+            Alert.alert(t('common.error'), t('postComments.deleteFailed'));
+          } finally {
+            setIsSubmitting(false);
+          }
         },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              setIsSubmitting(true);
-              await deleteComment(postId, commentId);
-            } catch (error) {
-              Alert.alert('Error', 'Failed to delete comment');
-            } finally {
-              setIsSubmitting(false);
-            }
-          },
-        },
-      ]
-    );
+      },
+    ]);
   };
 
   const startEditing = (comment: PostCommentDto) => {
@@ -107,12 +105,12 @@ export const PostComments: React.FC<PostCommentsProps> = ({
 
   return (
     <View className="mt-4">
-      <Text className="mb-2 text-lg font-semibold">Comments</Text>
+      <Text className="mb-2 text-lg font-semibold">{t('postComments.title')}</Text>
 
       {/* Comments List */}
       {comments.length === 0 ? (
         <View className="rounded-md bg-muted p-4">
-          <Text className="text-center text-muted-foreground">No comments yet</Text>
+          <Text className="text-center text-muted-foreground">{t('postComments.noComments')}</Text>
         </View>
       ) : (
         <View className="mb-4 divide-y divide-gray-100">
@@ -133,12 +131,14 @@ export const PostComments: React.FC<PostCommentsProps> = ({
                       onPress={cancelEditing}
                       className="mr-2"
                       disabled={isSubmitting}>
-                      <Text>Cancel</Text>
+                      <Text>{t('common.cancel')}</Text>
                     </Button>
                     <Button
                       onPress={() => comment.id && handleEditComment(comment.id)}
                       disabled={isSubmitting || !editingContent.trim()}>
-                      <Text>{isSubmitting ? 'Updating...' : 'Update'}</Text>
+                      <Text>
+                        {isSubmitting ? t('postComments.updating') : t('postComments.update')}
+                      </Text>
                     </Button>
                   </View>
                 </View>
@@ -149,11 +149,11 @@ export const PostComments: React.FC<PostCommentsProps> = ({
                     <UserProfilePicture imageUrl={comment.authorProfilePicture} size={28} />
                     <View className="ml-2 flex-1">
                       <Text className="font-medium">
-                        {comment.authorName || `User ${comment.authorId}`}
+                        {comment.authorName || `${t('common.user')} ${comment.authorId}`}
                       </Text>
                       <Text className="text-xs text-muted-foreground">
                         {formatDate(comment.createdAt)}
-                        {comment.editedAt && ' (edited)'}
+                        {comment.editedAt && ` (${t('postComments.edited')})`}
                       </Text>
                     </View>
 
@@ -188,7 +188,7 @@ export const PostComments: React.FC<PostCommentsProps> = ({
         <TextInput
           value={newComment}
           onChangeText={setNewComment}
-          placeholder="Write a comment..."
+          placeholder={t('postComments.placeholder')}
           className="mb-2 rounded-md border border-input p-3"
           multiline
         />
@@ -196,7 +196,7 @@ export const PostComments: React.FC<PostCommentsProps> = ({
           onPress={handleCreateComment}
           disabled={isSubmitting || !newComment.trim()}
           className="self-end">
-          <Text>{isSubmitting ? 'Posting...' : 'Post Comment'}</Text>
+          <Text>{isSubmitting ? t('postComments.posting') : t('postComments.postComment')}</Text>
         </Button>
       </View>
     </View>

@@ -8,12 +8,14 @@ import { AuthLayout } from '@/components/auth/AuthLayout';
 import { FormError } from '@/components/auth/FormError';
 import { getErrorMessage } from '@/lib/errors';
 import { set } from 'lodash';
+import { useTranslation } from 'react-i18next';
 
 export default function RegisterScreen() {
   const { isAuthenticated, isLoading, register } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { t } = useTranslation();
 
   React.useEffect(() => {
     if (isAuthenticated) {
@@ -25,15 +27,15 @@ export default function RegisterScreen() {
     return (
       <View className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color="#6366F1" />
-        <Text className="mt-3 text-base text-gray-500">Loading...</Text>
+        <Text className="mt-3 text-base text-gray-500">{t('login.loading')}</Text>
       </View>
     );
   }
 
   return (
     <AuthLayout
-      title="Create Account"
-      subtitle="Sign up to start learning with LangApp"
+      title={t('registerScreen.createAccount')}
+      subtitle={t('registerScreen.subtitle')}
       Icon={UserPlus}
       iconSize={48}>
       <RegisterForm
@@ -50,11 +52,11 @@ export default function RegisterScreen() {
           setIsSubmitting(true);
           try {
             if (!username.trim() || !email.trim() || !password.trim()) {
-              setError('Username, email, and password are required');
+              setError(t('registerScreen.requiredFields'));
               return;
             }
             if (password !== confirmPassword) {
-              setError('Passwords do not match');
+              setError(t('registerScreen.passwordsDoNotMatch'));
               return;
             }
 
@@ -69,7 +71,7 @@ export default function RegisterScreen() {
             router.replace({ pathname: '/auth/login', params: { registered: 'true' } });
           } catch (err) {
             const message = getErrorMessage(err);
-            setError(message || 'Registration failed. Please try again.');
+            setError(message || t('registerScreen.registrationFailed'));
           } finally {
             setIsSubmitting(false);
           }
@@ -77,7 +79,7 @@ export default function RegisterScreen() {
         isSubmitting={isSubmitting}
         error={error}
       />
-      <Stack.Screen options={{ title: 'Register', headerShown: false }} />
+      <Stack.Screen options={{ title: t('registerScreen.title'), headerShown: false }} />
     </AuthLayout>
   );
 }

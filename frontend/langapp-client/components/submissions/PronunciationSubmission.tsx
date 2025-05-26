@@ -6,12 +6,14 @@ import { Button } from '@/components/ui/button';
 import { PronunciationActivitySubmissionDetailsDto } from '@/api/orval/langAppApi.schemas';
 import useAudioPlayer from '@/hooks/useAudioPlayer';
 import { useFileAccess } from '@/hooks/useFileAccess';
+import { useTranslation } from 'react-i18next';
 
 interface PronunciationSubmissionProps {
   details: PronunciationActivitySubmissionDetailsDto;
 }
 
 export const PronunciationSubmission: React.FC<PronunciationSubmissionProps> = ({ details: d }) => {
+  const { t } = useTranslation();
   const [recordingUrl, setRecordingUrl] = React.useState<string | null>(null);
   const { getReadUrl } = useFileAccess();
 
@@ -29,13 +31,15 @@ export const PronunciationSubmission: React.FC<PronunciationSubmissionProps> = (
       {d.recordingUrl ? (
         <View className="flex-row items-center">
           <Mic size={20} className="text-fuchsia-600" />
-          <Text className="ml-2 text-sm">Recording available</Text>
+          <Text className="ml-2 text-sm">{t('pronunciationSubmission.recordingAvailable')}</Text>
           <Button className="ml-4" size="sm" onPress={isPlaying ? pause : play}>
-            <Text>{isPlaying ? 'Pause Recording' : 'Play Recording'}</Text>
+            <Text>
+              {isPlaying ? t('pronunciationSubmission.pause') : t('pronunciationSubmission.play')}
+            </Text>
           </Button>
         </View>
       ) : (
-        <Text className="text-muted-foreground">No recording submitted</Text>
+        <Text className="text-muted-foreground">{t('pronunciationSubmission.noRecording')}</Text>
       )}
     </View>
   );

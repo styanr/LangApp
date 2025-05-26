@@ -1,6 +1,7 @@
 import { View, Pressable } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 
 interface PagingProps {
   page: number;
@@ -15,6 +16,8 @@ export function Paging({ page, pageSize, totalCount, onPageChange, className }: 
   const canPrev = page > 1;
   const canNext = page < totalPages;
 
+  const {t} = useTranslation();
+
   return (
     <View className={`mt-6 flex-row items-center justify-center gap-2 ${className || ''}`}>
       <Pressable
@@ -25,7 +28,7 @@ export function Paging({ page, pageSize, totalCount, onPageChange, className }: 
         <ChevronLeft size={22} className="text-primary" />
       </Pressable>
       <Text className="mx-2 text-base font-semibold text-primary">
-        Page {page} / {totalPages}
+        {t('paging.pageInfo', { page, totalPages })}
       </Text>
       <Pressable
         className={`rounded-full p-2 ${canNext ? 'bg-primary/10' : 'opacity-40'}`}

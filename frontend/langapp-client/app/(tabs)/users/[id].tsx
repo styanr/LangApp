@@ -3,8 +3,10 @@ import { View, ActivityIndicator, ScrollView } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { UserProfilePicture } from '@/components/ui/UserProfilePicture';
 import { useGlobalSearchParams } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
 const UserViewPage = () => {
+  const { t } = useTranslation();
   const { id: userId } = useGlobalSearchParams();
   const { getUserById } = useUsers();
   const { data: user, isLoading, isError, error } = getUserById(userId as string);
@@ -13,7 +15,9 @@ const UserViewPage = () => {
     return (
       <View className="flex-1 items-center justify-center bg-background">
         <ActivityIndicator size="large" color="#a21caf" />
-        <Text className="mt-4 text-lg text-muted-foreground">Loading user...</Text>
+        <Text className="mt-4 text-lg text-muted-foreground">
+          {t('userViewScreen.loadingText')}
+        </Text>
       </View>
     );
   }
@@ -21,13 +25,18 @@ const UserViewPage = () => {
   if (isError || !user) {
     return (
       <View className="flex-1 items-center justify-center bg-background">
-        <Text className="text-lg text-destructive">Failed to load user</Text>
+        <Text className="text-lg text-destructive">{t('userViewScreen.loadErrorText')}</Text>
         <Text className="mt-2 text-sm text-muted-foreground">
           {typeof error === 'object' && error && 'message' in error ? (error as any).message : ''}
         </Text>
       </View>
     );
   }
+
+  const getRoleText = (role?: string) => {
+    if (!role) return '';
+    return t(`common.roles.${role}`, { defaultValue: role });
+  };
 
   return (
     <ScrollView className="flex-1 bg-gradient-to-b from-indigo-50 to-fuchsia-50 px-6 pt-10">
@@ -41,7 +50,7 @@ const UserViewPage = () => {
           {user.fullName?.firstName} {user.fullName?.lastName}
         </Text>
         <Text className="mt-1 text-base text-muted-foreground">@{user.username}</Text>
-        <Text className="mt-2 text-sm font-medium text-indigo-600">{user.role}</Text>
+        <Text className="mt-2 text-sm font-medium text-indigo-600">{getRoleText(user.role)}</Text>
       </View>
       {/* Add more user info here if needed */}
     </ScrollView>

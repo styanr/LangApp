@@ -17,6 +17,8 @@ import { StatusBar } from 'expo-status-bar';
 import Toast from 'react-native-toast-message';
 import { PortalHost } from '@rn-primitives/portal';
 
+import '@/i18n';
+
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
   colors: NAV_THEME.light,
@@ -26,9 +28,7 @@ const DARK_THEME: Theme = {
   colors: NAV_THEME.dark,
 };
 
-const IGNORED_LOGS = [
-"The action 'POP_TO_TOP' was not handled by any navigator."
-]
+const IGNORED_LOGS = ["The action 'POP_TO_TOP' was not handled by any navigator."];
 
 LogBox.ignoreLogs(IGNORED_LOGS);
 

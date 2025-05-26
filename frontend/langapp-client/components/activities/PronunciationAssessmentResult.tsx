@@ -3,6 +3,7 @@ import { View, Pressable } from 'react-native';
 import { CheckCircle, XCircle, AlertTriangle, PlusCircle } from 'lucide-react-native';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Text } from '@/components/ui/text';
+import { useTranslation } from 'react-i18next';
 
 export type PronunciationErrorType = 'Mispronunciation' | 'None' | 'Omission' | 'Insertion';
 
@@ -31,16 +32,16 @@ const getIcon = (errorType: PronunciationErrorType) => {
   }
 };
 
-const getLabel = (errorType: PronunciationErrorType) => {
+const getLabel = (errorType: PronunciationErrorType, t: any) => {
   switch (errorType) {
     case 'None':
-      return 'Correct';
+      return t('pronunciationAssessmentResult.correct');
     case 'Mispronunciation':
-      return 'Mispronounced';
+      return t('pronunciationAssessmentResult.mispronounced');
     case 'Omission':
-      return 'Omitted';
+      return t('pronunciationAssessmentResult.omitted');
     case 'Insertion':
-      return 'Inserted';
+      return t('pronunciationAssessmentResult.inserted');
     default:
       return '';
   }
@@ -49,9 +50,12 @@ const getLabel = (errorType: PronunciationErrorType) => {
 export const PronunciationAssessmentResult: React.FC<PronunciationAssessmentResultProps> = ({
   words,
 }) => {
+  const { t } = useTranslation();
   return (
-    <View className="w-full rounded-xl bg-white p-4 dark:bg-zinc-900 mb-3">
-      <Text className="mb-2 text-lg font-bold text-primary">Pronunciation Assessment</Text>
+    <View className="mb-3 w-full rounded-xl bg-white p-4 dark:bg-zinc-900">
+      <Text className="mb-2 text-lg font-bold text-primary">
+        {t('pronunciationAssessmentResult.title')}
+      </Text>
       <View className="flex flex-row flex-wrap gap-2">
         {words.map((word, idx) => (
           <HoverCard key={idx}>
@@ -79,10 +83,12 @@ export const PronunciationAssessmentResult: React.FC<PronunciationAssessmentResu
                 {getIcon(word.ErrorType)}
                 <Text className="mx-1 text-base font-semibold">{word.WordText}</Text>
               </View>
-              <Text className="mb-1 text-xs text-muted-foreground">{getLabel(word.ErrorType)}</Text>
+              <Text className="mb-1 text-xs text-muted-foreground">
+                {getLabel(word.ErrorType, t)}
+              </Text>
               {typeof word.AccuracyScore === 'number' && (
                 <Text className="rounded-full bg-fuchsia-100 px-2 py-0.5 text-xs font-bold text-fuchsia-700">
-                  Accuracy: {word.AccuracyScore}%
+                  {t('pronunciationAssessmentResult.accuracy', { score: word.AccuracyScore })}
                 </Text>
               )}
             </HoverCardContent>

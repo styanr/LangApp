@@ -7,6 +7,7 @@ import {
   StudyGroupDto,
   AssignmentSubmissionInfoDto,
 } from '@/api/orval/langAppApi.schemas';
+import { useTranslation } from 'react-i18next';
 
 interface SubmissionStatsCardProps {
   assignmentStats: AssignmentSubmissionsStatisticsDto;
@@ -17,6 +18,7 @@ export const SubmissionStatsCard: React.FC<SubmissionStatsCardProps> = ({
   assignmentStats,
   groupData,
 }) => {
+  const { t } = useTranslation();
   const notSubmittedCount =
     (groupData.members?.length || 0) - (assignmentStats.submissionCount || 0);
 
@@ -34,11 +36,15 @@ export const SubmissionStatsCard: React.FC<SubmissionStatsCardProps> = ({
             <Text className="text-2xl font-bold text-emerald-500">
               {assignmentStats.submissionCount || 0}
             </Text>
-            <Text className="text-sm text-muted-foreground">Submitted</Text>
+            <Text className="text-sm text-muted-foreground">
+              {t('submissionStatsCard.submitted')}
+            </Text>
           </View>
           <View className="items-center">
             <Text className="text-2xl font-bold text-red-500">{notSubmittedCount}</Text>
-            <Text className="text-sm text-muted-foreground">Not Submitted</Text>
+            <Text className="text-sm text-muted-foreground">
+              {t('submissionStatsCard.notSubmitted')}
+            </Text>
           </View>
         </View>
         <View className="mt-4 flex-row flex-wrap justify-around border-t border-muted pt-4">
@@ -46,29 +52,33 @@ export const SubmissionStatsCard: React.FC<SubmissionStatsCardProps> = ({
             <Text className="text-xl font-bold text-sky-500">
               {assignmentStats.completedCount || 0}
             </Text>
-            <Text className="text-xs text-muted-foreground">Completed</Text>
+            <Text className="text-xs text-muted-foreground">
+              {t('common.gradeStatus.Completed')}
+            </Text>
           </View>
           <View className="items-center p-2">
             <Text className="text-xl font-bold text-amber-500">
               {assignmentStats.pendingCount || 0}
             </Text>
-            <Text className="text-xs text-muted-foreground">Pending</Text>
+            <Text className="text-xs text-muted-foreground">{t('common.gradeStatus.Pending')}</Text>
           </View>
           <View className="items-center p-2">
             <Text className="text-xl font-bold text-orange-500">
               {assignmentStats.needsReviewCount || 0}
             </Text>
-            <Text className="text-xs text-muted-foreground">Needs Review</Text>
+            <Text className="text-xs text-muted-foreground">
+              {t('common.gradeStatus.NeedsReview')}
+            </Text>
           </View>
           <View className="items-center p-2">
             <Text className="text-xl font-bold text-red-600">
               {assignmentStats.failedCount || 0}
             </Text>
-            <Text className="text-xs text-muted-foreground">Failed</Text>
+            <Text className="text-xs text-muted-foreground">{t('common.gradeStatus.Failed')}</Text>
           </View>
         </View>
         <View className="mt-4 border-t border-muted pt-4">
-          <Text className="mb-2 font-semibold">Submitted Students:</Text>
+          <Text className="mb-2 font-semibold">{t('submissionStatsCard.submittedStudents')}</Text>
           {submittedStudents.length > 0 ? (
             submittedStudents.map((sub: AssignmentSubmissionInfoDto) => (
               <Text key={sub.studentId} className="text-sm">
@@ -76,11 +86,15 @@ export const SubmissionStatsCard: React.FC<SubmissionStatsCardProps> = ({
               </Text>
             ))
           ) : (
-            <Text className="text-sm text-muted-foreground">No students have submitted yet.</Text>
+            <Text className="text-sm text-muted-foreground">
+              {t('submissionStatsCard.noStudentsSubmitted')}
+            </Text>
           )}
         </View>
         <View className="mt-4 border-t border-muted pt-4">
-          <Text className="mb-2 font-semibold">Students Who Haven't Submitted:</Text>
+          <Text className="mb-2 font-semibold">
+            {t('submissionStatsCard.studentsWhoHaventSubmitted')}
+          </Text>
           {notSubmittedStudents.length > 0 ? (
             notSubmittedStudents.map((member) => (
               <Text key={member.id} className="text-sm">
@@ -89,7 +103,7 @@ export const SubmissionStatsCard: React.FC<SubmissionStatsCardProps> = ({
             ))
           ) : (
             <Text className="text-sm text-muted-foreground">
-              All students have submitted or no group data.
+              {t('submissionStatsCard.allStudentsSubmittedOrNoGroup')}
             </Text>
           )}
         </View>

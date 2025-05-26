@@ -28,6 +28,7 @@ import PronunciationAssessmentResult, {
   PronunciationWordResult,
 } from '../activities/PronunciationAssessmentResult';
 import { ActivityFeedback } from './ActivityFeedback';
+import { useTranslation } from 'react-i18next';
 
 interface ActivityCardProps {
   subActivity: ActivitySubmissionDto;
@@ -103,6 +104,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
   setScore,
   setFeedback,
 }) => {
+  const { t } = useTranslation();
   const details = subActivity.details!;
   const statusBg = getStatusBgColor(subActivity.status);
   const statusColor = getStatusColor(subActivity.status);
@@ -118,6 +120,32 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
     }
   }, [subActivity.grade?.feedback]);
 
+  const getActivityTypeLabel = (activityType: string) => {
+    // Only allow known keys for type safety
+    switch (activityType) {
+      case 'FillInTheBlank':
+      case 'Writing':
+      case 'MultipleChoice':
+      case 'Pronunciation':
+      case 'Question':
+        return t(`common.activityTypes.${activityType}`);
+      default:
+        return t('common.activityTypes.Unknown');
+    }
+  };
+
+  const getGradeStatusLabel = (status?: GradeStatus) => {
+    switch (status) {
+      case 'Pending':
+      case 'Completed':
+      case 'Failed':
+      case 'NeedsReview':
+        return t(`common.gradeStatus.${status}`);
+      default:
+        return t('common.gradeStatus.Unknown');
+    }
+  };
+
   return (
     <Card className="mb-6 overflow-hidden rounded-xl border">
       <View className={`h-1 w-full ${statusBg}`} />
@@ -129,11 +157,13 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
               size={20}
               className="mr-2 text-fuchsia-500"
             />
-            <Text className="text-lg font-semibold">Activity: {details.activityType}</Text>
+            <Text className="text-lg font-semibold">
+              {t('common.activity')}: {getActivityTypeLabel(details.activityType)}
+            </Text>
           </View>
           <View className={`rounded-full px-2 py-1 ${statusBg}`}>
             <Text className={`text-xs font-medium ${statusColor}`}>
-              {subActivity.status || 'Unmarked'}
+              {getGradeStatusLabel(subActivity.status)}
             </Text>
           </View>
         </View>
@@ -141,12 +171,12 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
       <CardContent className="p-4">
         {originalActivity && (
           <View className="mb-4 border-b border-gray-200 pb-4 dark:border-gray-700">
-            <Text className="mb-2 font-semibold">Assignment Prompt:</Text>
+            <Text className="mb-2 font-semibold">{t('assignmentCard.assignmentPrompt')}</Text>
             <AssignmentPrompt activity={originalActivity} />
           </View>
         )}
         <View className="mb-4">
-          <Text className="mb-2 font-semibold">Student's Submission:</Text>
+          <Text className="mb-2 font-semibold">{t('assignmentCard.studentSubmission')}</Text>
           {(() => {
             switch (details.activityType) {
               case 'MultipleChoice':
@@ -175,8 +205,6 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
                 return (
                   <WritingSubmission details={details as WritingActivitySubmissionDetailsDto} />
                 );
-              default:
-                return <Text className="text-muted-foreground">Unknown activity type</Text>;
             }
           })()}
         </View>
@@ -196,7 +224,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
         {/* Show Grade Activity button for new submissions */}
         {!subActivity.grade && editingActivityId !== subActivity.id && (
           <Button className="mt-4" variant="default" onPress={() => onEdit(subActivity)}>
-            <Text>Grade Activity</Text>
+            <Text>{t('assignmentCard.gradeActivity')}</Text>
           </Button>
         )}
       </CardContent>

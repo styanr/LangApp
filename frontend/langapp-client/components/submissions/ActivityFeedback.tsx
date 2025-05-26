@@ -11,34 +11,21 @@ import PronunciationAssessmentResult, {
 import type { SubmissionGradeDto } from '@/api/orval/langAppApi.schemas';
 
 interface ActivityFeedbackProps {
-  /** Existing grade object */
   grade?: SubmissionGradeDto;
-  /** Whether to show the Edit Grade button */
   allowEdit?: boolean;
-  /** Indicates edit mode */
   isEditing: boolean;
-  /** Controlled score input value */
   score: string;
-  /** Controlled feedback textarea value */
   feedback: string;
-  /** Mutation status for save action */
   mutationStatus?: {
     isLoading: boolean;
   };
-  /** Trigger edit mode */
   onEdit: () => void;
-  /** Save edited grade */
   onSave: () => void;
-  /** Cancel editing */
   onCancel: () => void;
   setScore: (value: string) => void;
   setFeedback: (value: string) => void;
 }
 
-/**
- * Displays current grade and feedback, or editing form for grade.
- * Supports pronunciation assessment display when feedback JSON is valid.
- */
 export const ActivityFeedback: React.FC<ActivityFeedbackProps> = ({
   grade,
   allowEdit = true,
@@ -52,7 +39,6 @@ export const ActivityFeedback: React.FC<ActivityFeedbackProps> = ({
   setScore,
   setFeedback,
 }) => {
-  // Parse pronunciation feedback JSON if present
   const parsedPronunciationFeedback = useMemo(() => {
     if (!grade?.feedback) return null;
     try {
@@ -61,12 +47,10 @@ export const ActivityFeedback: React.FC<ActivityFeedbackProps> = ({
         return json as PronunciationWordResult[];
       }
     } catch {
-      // not JSON or not valid pronunciation structure
     }
     return null;
   }, [grade?.feedback]);
 
-  // View mode: show existing grade and feedback
   if (grade && !isEditing) {
     return (
       <View className="mt-4 border-t border-gray-200 pt-4 dark:border-gray-700">
@@ -95,7 +79,6 @@ export const ActivityFeedback: React.FC<ActivityFeedbackProps> = ({
     );
   }
 
-  // Edit mode: show form for editing grade
   if (isEditing) {
     return (
       <View className="mt-4 border-t border-gray-200 pt-4 dark:border-gray-700">
@@ -136,6 +119,5 @@ export const ActivityFeedback: React.FC<ActivityFeedbackProps> = ({
     );
   }
 
-  // No grade and not editing: no feedback section
   return null;
 };

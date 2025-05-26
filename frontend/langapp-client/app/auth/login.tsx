@@ -7,12 +7,15 @@ import { LoginForm } from '@/components/auth/LoginForm';
 import { AuthLayout } from '@/components/auth/AuthLayout';
 import Toast from 'react-native-toast-message';
 import { getErrorMessage } from '@/lib/errors';
+import { useTranslation } from 'react-i18next';
 
 export default function LoginScreen() {
   const { isAuthenticated, isLoading, login } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { registered } = useLocalSearchParams<{ registered?: string }>();
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -24,33 +27,33 @@ export default function LoginScreen() {
     if (registered === 'true') {
       Toast.show({
         type: 'success',
-        text1: 'Registration Successful',
-        text2: 'Please log in with your new account',
+        text1: t('login.registrationSuccessTitle'),
+        text2: t('login.registrationSuccessMessage'),
         position: 'top',
       });
     }
-  }, [registered]);
+  }, [registered, t]);
 
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color="#6366F1" />
-        <Text className="mt-3 text-base text-gray-500">Loading...</Text>
+        <Text className="mt-3 text-base text-gray-500">{t('login.loading')}</Text>
       </View>
     );
   }
 
   return (
     <AuthLayout
-      title="Welcome Back"
-      subtitle="Enter your credentials to access your account"
+      title={t('login.welcomeBack')}
+      subtitle={t('login.credentialsPrompt')}
       Icon={GraduationCap}
       iconSize={54}>
       {/* success toast handles registration message */}
       <LoginForm
         onLogin={async (username, password) => {
           if (!username.trim() || !password.trim()) {
-            setError('Username and password are required');
+            setError(t('login.requiredFields'));
             return;
           }
           setError(null);
@@ -60,7 +63,7 @@ export default function LoginScreen() {
           } catch (err) {
             // setError(err instanceof Error ? err.message : 'Login failed');
             const message = getErrorMessage(err);
-            setError(message || 'Login failed');
+            setError(message || t('login.loginFailed'));
           } finally {
             setIsSubmitting(false);
           }
@@ -68,7 +71,7 @@ export default function LoginScreen() {
         isSubmitting={isSubmitting}
         error={error}
       />
-      <Stack.Screen options={{ title: 'Login', headerShown: false }} />
+      <Stack.Screen options={{ title: t('login.title'), headerShown: false }} />
     </AuthLayout>
   );
 }

@@ -5,6 +5,7 @@ import { UserPlus } from 'lucide-react-native';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { UserRole } from '@/api/orval/langAppApi.schemas';
+import { useTranslation } from 'react-i18next';
 
 interface RegisterFormProps {
   onRegister: (
@@ -20,7 +21,7 @@ interface RegisterFormProps {
   error: string | null;
 }
 
-export function RegisterForm({ onRegister, isSubmitting, error}: RegisterFormProps) {
+export function RegisterForm({ onRegister, isSubmitting, error }: RegisterFormProps) {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -28,6 +29,7 @@ export function RegisterForm({ onRegister, isSubmitting, error}: RegisterFormPro
   const [role, setRole] = useState<UserRole>(UserRole.Student);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const { t } = useTranslation();
 
   const handleSubmit = () => {
     onRegister(username, email, firstName, lastName, role, password, confirmPassword);
@@ -36,9 +38,9 @@ export function RegisterForm({ onRegister, isSubmitting, error}: RegisterFormPro
   return (
     <View className="flex flex-col gap-4 space-y-6 p-6">
       <View className="">
-        <Text className="text-sm font-medium text-gray-700">Username</Text>
+        <Text className="text-sm font-medium text-gray-700">{t('registerForm.username')}</Text>
         <Input
-          placeholder="Choose a username"
+          placeholder={t('registerForm.usernamePlaceholder')}
           value={username}
           onChangeText={setUsername}
           autoCapitalize="none"
@@ -47,9 +49,9 @@ export function RegisterForm({ onRegister, isSubmitting, error}: RegisterFormPro
       </View>
 
       <View className="">
-        <Text className="text-sm font-medium text-gray-700">Email</Text>
+        <Text className="text-sm font-medium text-gray-700">{t('registerForm.email')}</Text>
         <Input
-          placeholder="Enter your email"
+          placeholder={t('registerForm.emailPlaceholder')}
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
@@ -60,18 +62,18 @@ export function RegisterForm({ onRegister, isSubmitting, error}: RegisterFormPro
 
       <View className="flex-row gap-2">
         <View className="flex-1">
-          <Text className="text-sm font-medium text-gray-700">First Name</Text>
+          <Text className="text-sm font-medium text-gray-700">{t('registerForm.firstName')}</Text>
           <Input
-            placeholder="Enter first name"
+            placeholder={t('registerForm.firstNamePlaceholder')}
             value={firstName}
             onChangeText={setFirstName}
             className="h-12"
           />
         </View>
         <View className="flex-1">
-          <Text className="text-sm font-medium text-gray-700">Last Name</Text>
+          <Text className="text-sm font-medium text-gray-700">{t('registerForm.lastName')}</Text>
           <Input
-            placeholder="Enter last name"
+            placeholder={t('registerForm.lastNamePlaceholder')}
             value={lastName}
             onChangeText={setLastName}
             className="h-12"
@@ -80,7 +82,7 @@ export function RegisterForm({ onRegister, isSubmitting, error}: RegisterFormPro
       </View>
 
       <View className="">
-        <Text className="text-sm font-medium text-gray-700">I am a:</Text>
+        <Text className="text-sm font-medium text-gray-700">{t('registerForm.iAmA')}</Text>
         <View className="mt-2 flex-row gap-4">
           <Pressable
             onPress={() => setRole(UserRole.Student)}
@@ -93,7 +95,7 @@ export function RegisterForm({ onRegister, isSubmitting, error}: RegisterFormPro
               className={`font-medium ${
                 role === UserRole.Student ? 'text-primary' : 'text-gray-700'
               }`}>
-              Student
+              {t('registerForm.student')}
             </Text>
           </Pressable>
           <Pressable
@@ -107,16 +109,16 @@ export function RegisterForm({ onRegister, isSubmitting, error}: RegisterFormPro
               className={`font-medium ${
                 role === UserRole.Teacher ? 'text-primary' : 'text-gray-700'
               }`}>
-              Teacher
+              {t('registerForm.teacher')}
             </Text>
           </Pressable>
         </View>
       </View>
 
       <View className="">
-        <Text className="text-sm font-medium text-gray-700">Password</Text>
+        <Text className="text-sm font-medium text-gray-700">{t('registerForm.password')}</Text>
         <Input
-          placeholder="Create a password"
+          placeholder={t('registerForm.passwordPlaceholder')}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
@@ -125,9 +127,11 @@ export function RegisterForm({ onRegister, isSubmitting, error}: RegisterFormPro
       </View>
 
       <View className="">
-        <Text className="text-sm font-medium text-gray-700">Confirm Password</Text>
+        <Text className="text-sm font-medium text-gray-700">
+          {t('registerForm.confirmPassword')}
+        </Text>
         <Input
-          placeholder="Confirm your password"
+          placeholder={t('registerForm.confirmPasswordPlaceholder')}
           value={confirmPassword}
           onChangeText={setConfirmPassword}
           secureTextEntry
@@ -145,16 +149,16 @@ export function RegisterForm({ onRegister, isSubmitting, error}: RegisterFormPro
         <View className="flex-row items-center justify-center gap-2">
           <UserPlus color="white" size={20} />
           <Text className="text-base font-semibold text-white">
-            {isSubmitting ? 'Creating Account...' : 'Register'}
+            {isSubmitting ? t('registerForm.creatingAccount') : t('registerForm.register')}
           </Text>
         </View>
       </Button>
 
       <View className="mt-4 flex-row justify-center">
-        <Text className="text-sm text-gray-500">Already have an account? </Text>
+        <Text className="text-sm text-gray-500">{t('registerForm.alreadyHaveAccount')}</Text>
         <Link href="/auth/login" asChild>
           <Pressable>
-            <Text className="text-sm font-medium text-primary">Login</Text>
+            <Text className="text-sm font-medium text-primary">{t('registerForm.login')}</Text>
           </Pressable>
         </Link>
       </View>

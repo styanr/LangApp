@@ -2,18 +2,20 @@ import React from 'react';
 import { View } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { MultipleChoiceActivityDetailsDto } from '@/api/orval/langAppApi.schemas';
+import { useTranslation } from 'react-i18next';
 
 interface MultipleChoicePromptProps {
   details: MultipleChoiceActivityDetailsDto;
 }
 
 export const MultipleChoicePrompt: React.FC<MultipleChoicePromptProps> = ({ details: d }) => {
+  const { t } = useTranslation();
   return (
     <View className="mt-2">
       {d.questions?.map((q, qi) => (
         <View key={qi} className="mb-4 pb-2">
           <Text className="mb-2 text-base font-medium">
-            Question {qi + 1}: {q.question}
+            {t('multipleChoicePrompt.questionLabel', { index: qi + 1 })}: {q.question}
           </Text>
           {q.options?.map((opt, oi) => (
             <View key={oi} className="mb-2 flex-row items-center">
@@ -29,7 +31,9 @@ export const MultipleChoicePrompt: React.FC<MultipleChoicePromptProps> = ({ deta
               </View>
               <Text>{opt}</Text>
               {q.correctOptionIndex === oi && (
-                <Text className="ml-2 text-xs text-emerald-500">(Correct)</Text>
+                <Text className="ml-2 text-xs text-emerald-500">
+                  {t('multipleChoicePrompt.correct')}
+                </Text>
               )}
             </View>
           ))}

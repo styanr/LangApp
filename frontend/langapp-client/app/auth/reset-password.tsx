@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Toast from 'react-native-toast-message';
 import { getErrorMessage } from '@/lib/errors';
+import { useTranslation } from 'react-i18next';
 
 export default function ResetPasswordScreen() {
   const { isLoading, resetPassword } = useAuth();
@@ -19,11 +20,12 @@ export default function ResetPasswordScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fixedToken, setFixedToken] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   // Validate presence of email & token
   useEffect(() => {
     if (!email || !token) {
-      setError('Invalid or expired reset link.');
+      setError(t('resetPasswordScreen.invalidOrExpiredLink'));
     }
     console.log('Token:', token);
 
@@ -31,15 +33,15 @@ export default function ResetPasswordScreen() {
     if (fixedToken) {
       setFixedToken(fixedToken);
     } else {
-      setError('Invalid token format.');
+      setError(t('resetPasswordScreen.invalidTokenFormat'));
     }
-  }, [email, token]);
+  }, [email, token, t]);
 
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color="#6366F1" />
-        <Text className="mt-3 text-base text-gray-500">Loading...</Text>
+        <Text className="mt-3 text-base text-gray-500">{t('login.loading')}</Text>
       </View>
     );
   }
@@ -47,15 +49,15 @@ export default function ResetPasswordScreen() {
   const handleSubmit = async () => {
     setError(null);
     if (!password.trim() || !confirmPassword.trim()) {
-      setError('Both fields are required');
+      setError(t('resetPasswordScreen.requiredFields'));
       return;
     }
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError(t('resetPasswordScreen.passwordsDoNotMatch'));
       return;
     }
     if (password.length < 8) {
-      setError('Password must be at least 8 characters');
+      setError(t('resetPasswordScreen.passwordTooShort'));
       return;
     }
 
@@ -64,14 +66,14 @@ export default function ResetPasswordScreen() {
       await resetPassword({ email, token: fixedToken || ' ', newPassword: password.trim() });
       Toast.show({
         type: 'success',
-        text1: 'Password Reset',
-        text2: 'Your password has been updated. Please log in.',
+        text1: t('resetPasswordScreen.passwordResetSuccessTitle'),
+        text2: t('resetPasswordScreen.passwordResetSuccessMessage'),
         position: 'top',
       });
       router.replace('/auth/login');
     } catch (err) {
       const message = getErrorMessage(err);
-      setError(message || 'Password reset failed');
+      setError(message || t('resetPasswordScreen.passwordResetFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -79,23 +81,27 @@ export default function ResetPasswordScreen() {
 
   return (
     <AuthLayout
-      title="Reset Password"
-      subtitle="Enter a new password to finish resetting"
+      title={t('resetPasswordScreen.title')}
+      subtitle={t('resetPasswordScreen.subtitle')}
       Icon={ShieldCheck}
       iconSize={54}>
       <View className="px-6">
-        <Text className="text-sm font-medium text-gray-700">New Password</Text>
+        <Text className="text-sm font-medium text-gray-700">
+          {t('resetPasswordScreen.newPassword')}
+        </Text>
         <Input
-          placeholder="Enter new password"
+          placeholder={t('resetPasswordScreen.newPasswordPlaceholder')}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
           className="mb-4 h-12"
         />
 
-        <Text className="text-sm font-medium text-gray-700">Confirm Password</Text>
+        <Text className="text-sm font-medium text-gray-700">
+          {t('resetPasswordScreen.confirmPassword')}
+        </Text>
         <Input
-          placeholder="Confirm new password"
+          placeholder={t('resetPasswordScreen.confirmPasswordPlaceholder')}
           value={confirmPassword}
           onChangeText={setConfirmPassword}
           secureTextEntry
@@ -106,12 +112,14 @@ export default function ResetPasswordScreen() {
 
         <Button onPress={handleSubmit} disabled={isSubmitting} className="h-12">
           <Text className="text-base font-semibold text-white">
-            {isSubmitting ? 'Resetting...' : 'Reset Password'}
+            {isSubmitting
+              ? t('resetPasswordScreen.resetting')
+              : t('resetPasswordScreen.resetPasswordButton')}
           </Text>
         </Button>
       </View>
 
-      <Stack.Screen options={{ title: 'Reset Password', headerShown: false }} />
+      <Stack.Screen options={{ title: t('resetPasswordScreen.title'), headerShown: false }} />
     </AuthLayout>
   );
 }

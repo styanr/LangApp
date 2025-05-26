@@ -4,6 +4,7 @@ import { Text } from '@/components/ui/text';
 import { Paging } from '@/components/ui/paging';
 import { AssignmentCard } from '@/components/assignments/AssignmentCard';
 import type { AssignmentDto } from '@/api/orval/langAppApi.schemas';
+import { useTranslation } from 'react-i18next';
 
 interface GroupAssignmentsSectionProps {
   assignments: AssignmentDto[];
@@ -26,11 +27,15 @@ const GroupAssignmentsSection: React.FC<GroupAssignmentsSectionProps> = ({
   isTeacher = false,
   onPageChange,
 }) => {
+  const { t } = useTranslation();
+
   if (isLoading) {
     return (
       <View className="items-center py-16">
         <ActivityIndicator size="large" color="#a21caf" />
-        <Text className="mt-4 text-lg text-muted-foreground">Loading assignments...</Text>
+        <Text className="mt-4 text-lg text-muted-foreground">
+          {t('groupAssignmentsSection.loading')}
+        </Text>
       </View>
     );
   }
@@ -38,7 +43,7 @@ const GroupAssignmentsSection: React.FC<GroupAssignmentsSectionProps> = ({
   if (isError) {
     return (
       <View className="items-center py-16">
-        <Text className="text-lg text-destructive">Failed to load assignments</Text>
+        <Text className="text-lg text-destructive">{t('groupAssignmentsSection.loadError')}</Text>
       </View>
     );
   }
@@ -47,10 +52,10 @@ const GroupAssignmentsSection: React.FC<GroupAssignmentsSectionProps> = ({
     return (
       <View className="items-center py-16">
         <Text className="text-center text-xl font-semibold text-muted-foreground">
-          No assignments in this group yet.
+          {t('groupAssignmentsSection.noAssignments')}
         </Text>
         <Text className="mt-2 text-center text-base text-muted-foreground">
-          Check back later for language learning tasks.
+          {t('groupAssignmentsSection.noAssignmentsHint')}
         </Text>
       </View>
     );
@@ -62,7 +67,7 @@ const GroupAssignmentsSection: React.FC<GroupAssignmentsSectionProps> = ({
         <AssignmentCard
           key={assignment.id || idx}
           id={assignment.id || ''}
-          name={assignment.name || 'Untitled Assignment'}
+          name={assignment.name || t('groupAssignmentsSection.untitledAssignment')}
           dueTime={assignment.dueTime || ''}
           submitted={assignment.submitted}
           overdue={

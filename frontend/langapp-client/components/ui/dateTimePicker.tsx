@@ -2,6 +2,7 @@ import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { Button } from './button';
 import { Text } from './text';
 import { View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 interface DateTimePickerProps {
   date: Date;
@@ -41,10 +42,12 @@ export const DatePicker = ({
     });
   };
 
+  const { t } = useTranslation();
+
   return (
     <View className={`flex items-start ${className}`}>
       <Button onPress={showDateTimepicker} className="ml-2">
-        <Text className="text-sm">Select Date & Time</Text>
+        <Text className="text-sm">{t('dateTimePicker.pickDatePrompt')}</Text>
       </Button>
       <View className="ml-2">
         <Text className="text-sm">

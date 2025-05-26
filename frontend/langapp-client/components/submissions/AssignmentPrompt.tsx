@@ -14,12 +14,14 @@ import { FillInTheBlankPrompt } from './FillInTheBlankPrompt';
 import { PronunciationPrompt } from './PronunciationPrompt';
 import { QuestionPrompt } from './QuestionPrompt';
 import { WritingPrompt } from './WritingPrompt';
+import { useTranslation } from 'react-i18next';
 
 interface AssignmentPromptProps {
   activity: ActivityDto;
 }
 
 export const AssignmentPrompt: React.FC<AssignmentPromptProps> = ({ activity }) => {
+  const { t } = useTranslation();
   const details = activity.details as
     | MultipleChoiceActivityDetailsDto
     | FillInTheBlankActivityDetailsDto
@@ -29,7 +31,7 @@ export const AssignmentPrompt: React.FC<AssignmentPromptProps> = ({ activity }) 
     | undefined;
 
   if (!details) {
-    return <Text className="text-muted-foreground">No activity details available.</Text>;
+    return <Text className="text-muted-foreground">{t('assignmentPrompt.noDetails')}</Text>;
   }
 
   switch (details.activityType) {
@@ -49,6 +51,6 @@ export const AssignmentPrompt: React.FC<AssignmentPromptProps> = ({ activity }) 
       return <WritingPrompt details={details} />;
 
     default:
-      return <Text className="text-muted-foreground">Unknown activity type</Text>;
+      return <Text className="text-muted-foreground">{t('common.activityTypes.Unknown')}</Text>;
   }
 };

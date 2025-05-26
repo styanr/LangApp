@@ -11,6 +11,7 @@ import { Link, useGlobalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Paging } from '@/components/ui/paging';
 import { CreateStudyGroupModal } from '@/components/groups/CreateStudyGroupModal';
+import { useTranslation } from 'react-i18next';
 
 export default function Groups() {
   const { user } = useAuth();
@@ -23,6 +24,7 @@ export default function Groups() {
   const { data, isLoading, isError, error } = getUserStudyGroups({ pageNumber: page, pageSize });
   const groups = data?.items || [];
   const totalCount = data?.totalCount || 0;
+  const { t } = useTranslation();
 
   const handleCreateGroup = () => {
     setIsModalVisible(true);
@@ -32,12 +34,12 @@ export default function Groups() {
     <View className="flex-1 bg-gradient-to-b from-fuchsia-100 to-indigo-100">
       <Animated.View entering={FadeIn.duration(600)} className="px-6 pb-4 pt-10">
         <Text className="text-4xl font-extrabold text-primary drop-shadow-lg">
-          {isTeacher ? 'Teaching Groups' : 'My Groups'}
+          {isTeacher ? t('groupsScreen.teachingGroups') : t('groupsScreen.myGroups')}
         </Text>
         <Text className="mt-2 text-lg text-muted-foreground">
           {isTeacher
-            ? 'Manage your language teaching groups'
-            : 'All your language learning communities'}
+            ? t('groupsScreen.manageTeachingGroups')
+            : t('groupsScreen.learningCommunities')}
         </Text>
 
         {isTeacher && (
@@ -46,7 +48,7 @@ export default function Groups() {
               className="mt-4 flex-row items-center justify-center gap-2"
               onPress={handleCreateGroup}>
               <PlusCircle size={18} className="mr-1 text-white" color="white" />
-              <Text className="font-medium text-white">New Study Group</Text>
+              <Text className="font-medium text-white">{t('groupsScreen.newStudyGroup')}</Text>
             </Button>
           </Animated.View>
         )}
@@ -58,30 +60,30 @@ export default function Groups() {
         {isLoading && (
           <View className="items-center py-16">
             <ActivityIndicator size="large" color="#a21caf" />
-            <Text className="mt-4 text-lg text-muted-foreground">Loading groups...</Text>
+            <Text className="mt-4 text-lg text-muted-foreground">
+              {t('groupsScreen.loadingGroups')}
+            </Text>
           </View>
         )}
         {isError && (
           <View className="items-center py-16">
-            <Text className="text-lg text-destructive">Failed to load groups</Text>
+            <Text className="text-lg text-destructive">{t('groupsScreen.failedToLoadGroups')}</Text>
           </View>
         )}
         {!isLoading && !isError && groups.length === 0 && (
           <View className="items-center py-16">
             <Text className="text-center text-xl font-semibold text-muted-foreground">
-              {isTeacher
-                ? "You haven't created any teaching groups yet."
-                : "You haven't joined any groups yet."}
+              {isTeacher ? t('groupsScreen.noGroupsTeacher') : t('groupsScreen.noGroupsStudent')}
             </Text>
             <Text className="mt-2 text-center text-base text-muted-foreground">
               {isTeacher
-                ? 'Create your first study group to start teaching!'
-                : 'You have to be added to a group by a teacher to start.'}
+                ? t('groupsScreen.createFirstGroupTeacher')
+                : t('groupsScreen.mustBeAddedStudent')}
             </Text>
             {isTeacher && (
               <Button className="mt-4" onPress={() => setIsModalVisible(true)}>
                 <PlusCircle size={18} className="mr-1 gap-2 text-white" color="white" />
-                <Text className="font-medium text-white">New Study Group</Text>
+                <Text className="font-medium text-white">{t('groupsScreen.newStudyGroup')}</Text>
               </Button>
             )}
           </View>
@@ -102,13 +104,13 @@ export default function Groups() {
                           {group.name}
                         </CardTitle>
                         <CardDescription className="mt-1 text-base text-indigo-700 dark:text-indigo-200">
-                          {group.language || 'Language not specified'}
+                          {group.language || t('groupsScreen.languageNotSpecified')}
                         </CardDescription>
                         {isTeacher && (
                           <View className="mt-1.5 flex-row items-center">
                             <View className="mr-2 h-2 w-2 rounded-full bg-green-500" />
                             <Text className="text-xs font-medium text-green-600">
-                              Teacher Managed
+                              {t('groupsScreen.teacherManaged')}
                             </Text>
                           </View>
                         )}
@@ -121,8 +123,8 @@ export default function Groups() {
                     <CardContent className="px-5 pb-4 pt-0">
                       <Text className="text-sm text-muted-foreground">
                         {isTeacher
-                          ? 'Tap to manage this group, assignments, and students.'
-                          : 'Tap to view group details, posts, and members.'}
+                          ? t('groupsScreen.tapToManageGroup')
+                          : t('groupsScreen.tapToViewGroup')}
                       </Text>
                     </CardContent>
                   </Card>

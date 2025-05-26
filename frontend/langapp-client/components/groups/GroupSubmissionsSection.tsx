@@ -23,6 +23,7 @@ import { PronunciationSubmission } from '../submissions/PronunciationSubmission'
 import { QuestionSubmission } from '../submissions/QuestionSubmission';
 import { WritingSubmission } from '../submissions/WritingSubmission';
 import { ActivityFeedback } from '../submissions/ActivityFeedback';
+import { useTranslation } from 'react-i18next';
 
 interface GroupSubmissionsSectionProps {
   items: UserGroupSubmissionDto[];
@@ -41,6 +42,7 @@ const MemoizedSubmissionItem = React.memo<{
 }>(({ item, index }) => {
   const assignment = item.assignment;
   const submission = item.submission;
+  const { t } = useTranslation();
 
   const { isSubmitted, scorePercentage } = useMemo(() => {
     const submitted = !!submission;
@@ -52,8 +54,10 @@ const MemoizedSubmissionItem = React.memo<{
   }, [submission, assignment]);
 
   const formattedDueDate = useMemo(() => {
-    return assignment?.dueTime ? new Date(assignment.dueTime).toLocaleDateString() : 'No due date';
-  }, [assignment?.dueTime]);
+    return assignment?.dueTime
+      ? new Date(assignment.dueTime).toLocaleDateString()
+      : t('groupSubmissionsSection.noDueDate');
+  }, [assignment?.dueTime, t]);
 
   const formattedSubmissionDate = useMemo(() => {
     return submission?.submittedAt ? new Date(submission.submittedAt).toLocaleDateString() : '';
@@ -77,11 +81,11 @@ const MemoizedSubmissionItem = React.memo<{
           <View className="flex-1">
             <View className="flex-row items-center justify-between">
               <CardTitle className="text-xl font-bold text-fuchsia-900 dark:text-white">
-                {assignment?.name || 'Untitled Assignment'}
+                {assignment?.name || t('groupSubmissionsSection.untitledAssignment')}
               </CardTitle>
               {isSubmitted && (
                 <Text className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-800 dark:bg-emerald-800 dark:text-emerald-100">
-                  Submitted
+                  {t('groupSubmissionsSection.submitted')}
                 </Text>
               )}
             </View>
@@ -89,7 +93,7 @@ const MemoizedSubmissionItem = React.memo<{
             <View className="mt-1 flex-row items-center gap-1">
               <CalendarDays size={14} className="mr-1 text-fuchsia-400" />
               <CardDescription className="text-xs text-fuchsia-700 dark:text-fuchsia-200">
-                Due: {formattedDueDate}
+                {t('groupSubmissionsSection.dueLabel')} {formattedDueDate}
               </CardDescription>
             </View>
           </View>
@@ -111,7 +115,9 @@ const MemoizedSubmissionItem = React.memo<{
             />
           ) : (
             <View className="py-1">
-              <Text className="text-sm font-medium text-amber-600">Not submitted</Text>
+              <Text className="text-sm font-medium text-amber-600">
+                {t('groupSubmissionsSection.notSubmitted')}
+              </Text>
             </View>
           )}
         </CardContent>
@@ -127,11 +133,14 @@ const SubmissionDetails = React.memo<{
   scorePercentage: number | null;
   formattedSubmissionDate: string;
 }>(({ submission, assignment, scorePercentage, formattedSubmissionDate }) => {
+  const { t } = useTranslation();
   return (
     <View>
       <View className="mb-2 flex-row items-center gap-1">
         <Clock size={14} className="mr-2 text-fuchsia-500" />
-        <Text className="text-xs text-muted-foreground">Submitted: {formattedSubmissionDate}</Text>
+        <Text className="text-xs text-muted-foreground">
+          {t('groupSubmissionsSection.submittedLabel')} {formattedSubmissionDate}
+        </Text>
       </View>
 
       {scorePercentage !== null && (
@@ -140,7 +149,7 @@ const SubmissionDetails = React.memo<{
             <View className="flex-row items-center">
               <Award size={14} className="mr-2 text-fuchsia-500" />
               <Text className="text-xs font-medium">
-                Score: {submission?.score}/{assignment?.maxScore}
+                {t('groupSubmissionsSection.scoreLabel')} {submission?.score}/{assignment?.maxScore}
               </Text>
             </View>
             <Text className="text-xs font-medium">{scorePercentage}%</Text>
@@ -161,7 +170,8 @@ const SubmissionDetails = React.memo<{
 
       {submission.status && (
         <Text className="mb-2 text-xs text-muted-foreground">
-          Status: <Text className="font-medium text-fuchsia-700">{submission.status}</Text>
+          {t('groupSubmissionsSection.statusLabel')}{' '}
+          <Text className="font-medium text-fuchsia-700">{submission.status}</Text>
         </Text>
       )}
 
@@ -180,9 +190,12 @@ const ActivitySubmissionsSection = React.memo<{
   activitySubmissions: any[];
   assignmentActivities?: any[];
 }>(({ activitySubmissions, assignmentActivities }) => {
+  const { t } = useTranslation();
   return (
     <View className="mt-2 border-t border-zinc-100 pt-2">
-      <Text className="mb-2 text-lg font-semibold text-fuchsia-800">Activities:</Text>
+      <Text className="mb-2 text-lg font-semibold text-fuchsia-800">
+        {t('groupSubmissionsSection.activitiesLabel')}
+      </Text>
       {activitySubmissions.map((act, actIdx) => (
         <ActivitySubmissionItem
           key={act.id || actIdx}
@@ -199,6 +212,7 @@ const ActivitySubmissionItem = React.memo<{
   activity: any;
   assignmentActivities?: any[];
 }>(({ activity: act, assignmentActivities }) => {
+  const { t } = useTranslation();
   const statusColorClass = useMemo(() => {
     return act.status === 'Completed'
       ? 'bg-emerald-500'
@@ -245,9 +259,13 @@ const ActivitySubmissionItem = React.memo<{
       case 'Writing':
         return <WritingSubmission details={act.details as WritingActivitySubmissionDetailsDto} />;
       default:
-        return <Text className="text-muted-foreground">Unknown activity type</Text>;
+        return (
+          <Text className="text-muted-foreground">
+            {t('groupSubmissionsSection.unknownActivityType')}
+          </Text>
+        );
     }
-  }, [act?.details]);
+  }, [act?.details, t]);
 
   return (
     <View>
@@ -291,6 +309,7 @@ const GroupSubmissionsSection: React.FC<GroupSubmissionsSectionProps> = ({
   totalCount,
   onPageChange,
 }) => {
+  const { t } = useTranslation();
   const memoizedOnPageChange = useCallback(
     (newPage: number) => {
       onPageChange(newPage);
@@ -304,7 +323,9 @@ const GroupSubmissionsSection: React.FC<GroupSubmissionsSectionProps> = ({
     return (
       <View className="items-center py-16">
         <ActivityIndicator size="large" color="#a21caf" />
-        <Text className="mt-4 text-lg text-muted-foreground">Loading submissions...</Text>
+        <Text className="mt-4 text-lg text-muted-foreground">
+          {t('groupSubmissionsSection.loading')}
+        </Text>
       </View>
     );
   }
@@ -312,7 +333,7 @@ const GroupSubmissionsSection: React.FC<GroupSubmissionsSectionProps> = ({
   if (isError) {
     return (
       <View className="items-center py-16">
-        <Text className="text-lg text-destructive">Failed to load submissions</Text>
+        <Text className="text-lg text-destructive">{t('groupSubmissionsSection.loadError')}</Text>
       </View>
     );
   }
@@ -321,7 +342,7 @@ const GroupSubmissionsSection: React.FC<GroupSubmissionsSectionProps> = ({
     return (
       <View className="items-center py-16">
         <Text className="text-center text-xl font-semibold text-muted-foreground">
-          No submissions in this group yet.
+          {t('groupSubmissionsSection.noSubmissions')}
         </Text>
       </View>
     );

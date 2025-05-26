@@ -10,12 +10,14 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { AttachmentManager } from '@/components/posts/AttachmentManager';
 import { handleApiError } from '@/lib/errors';
+import { useTranslation } from 'react-i18next';
 
 const CreatePostPage = () => {
   const { id: groupId } = useGlobalSearchParams();
   const router = useRouter();
   const { createPost, mutationStatus } = usePosts();
   const fileUpload = useFileUpload();
+  const { t } = useTranslation();
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -34,7 +36,10 @@ const CreatePostPage = () => {
 
   const onSubmit = async () => {
     if (!title.trim() || !content.trim()) {
-      Alert.alert('Validation Error', 'Title and content cannot be empty.');
+      Alert.alert(
+        t('createPostScreen.validationErrorTitle'),
+        t('createPostScreen.validationErrorMessage')
+      );
       return;
     }
 
@@ -88,24 +93,24 @@ const CreatePostPage = () => {
   return (
     <ScrollView className="flex-1 bg-background">
       <View className="flex-1 bg-background px-4 pt-10">
-        <Text className="mb-4 text-2xl font-bold">Create Post</Text>
-        <Text className="mb-2">Title</Text>
+        <Text className="mb-4 text-2xl font-bold">{t('createPostScreen.title')}</Text>
+        <Text className="mb-2">{t('createPostScreen.titleLabel')}</Text>
         <Input
           value={title}
           onChangeText={setTitle}
-          placeholder="Enter title"
+          placeholder={t('createPostScreen.titlePlaceholder') as string}
           className="mb-4 rounded border border-input p-2"
         />
-        <Text className="mb-2">Content</Text>
+        <Text className="mb-2">{t('createPostScreen.contentLabel')}</Text>
         <Textarea
           value={content}
           onChangeText={setContent}
-          placeholder="Enter content"
+          placeholder={t('createPostScreen.contentPlaceholder') as string}
           multiline
           className="mb-4 h-32 rounded border border-input p-2 text-base"
         />
 
-        <Text className="mb-2">Post Type</Text>
+        <Text className="mb-2">{t('createPostScreen.postTypeLabel')}</Text>
         <View className="mb-4 flex-row">
           <Pressable
             onPress={() => setPostType(PostType.Discussion)}
@@ -116,7 +121,7 @@ const CreatePostPage = () => {
               className={
                 postType === PostType.Discussion ? 'text-primary-foreground' : 'text-foreground'
               }>
-              Discussion
+              {t('createPostScreen.discussionType')}
             </Text>
           </Pressable>
           <Pressable
@@ -128,13 +133,13 @@ const CreatePostPage = () => {
               className={
                 postType === PostType.Resource ? 'text-primary-foreground' : 'text-foreground'
               }>
-              Resource
+              {t('createPostScreen.resourceType')}
             </Text>
           </Pressable>
         </View>
 
         <Text className="mb-2 text-sm text-muted-foreground">
-          Media upload is enabled. You can upload images or documents (PDFs).
+          {t('createPostScreen.mediaHint')}
         </Text>
 
         {/* Attachment manager for adding and removing files */}
@@ -151,10 +156,10 @@ const CreatePostPage = () => {
           }>
           <Text className="text-sm font-semibold">
             {isUploading
-              ? 'Uploading...'
+              ? t('createPostScreen.uploading')
               : mutationStatus.createPost.isLoading
-                ? 'Creating...'
-                : 'Create'}
+                ? t('createPostScreen.creating')
+                : t('createPostScreen.createButton')}
           </Text>
         </Button>
       </View>

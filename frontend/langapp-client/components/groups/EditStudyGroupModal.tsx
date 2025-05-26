@@ -6,6 +6,7 @@ import { useStudyGroups } from '@/hooks/useStudyGroups';
 import { useQueryClient } from '@tanstack/react-query';
 import { getGetStudyGroupQueryKey, getGetStudyGroupForUserQueryKey } from '@/api/orval/groups';
 import { Text } from '@/components/ui/text';
+import { useTranslation } from 'react-i18next';
 
 interface EditStudyGroupModalProps {
   isVisible: boolean;
@@ -20,6 +21,7 @@ export function EditStudyGroupModal({
   groupId,
   currentName,
 }: EditStudyGroupModalProps) {
+  const { t } = useTranslation();
   const [name, setName] = useState(currentName);
   const { updateGroup } = useStudyGroups();
   const queryClient = useQueryClient();
@@ -48,25 +50,29 @@ export function EditStudyGroupModal({
       <Animated.View
         entering={FadeInDown.duration(300)}
         className="w-full rounded-lg bg-white p-6 shadow-lg">
-        <Text className="mb-4 text-xl font-bold text-primary">Edit Study Group</Text>
+        <Text className="mb-4 text-xl font-bold text-primary">
+          {t('editStudyGroupModal.title')}
+        </Text>
         <View className="mb-4">
-          <Text className="mb-1 text-sm font-medium">Group Name *</Text>
+          <Text className="mb-1 text-sm font-medium">
+            {t('editStudyGroupModal.groupNameLabel')}
+          </Text>
           <TextInput
             className="rounded-md border border-border bg-white px-3 py-2 text-base text-foreground"
             value={name}
             onChangeText={setName}
-            placeholder="Enter group name"
+            placeholder={t('editStudyGroupModal.groupNamePlaceholder')}
           />
         </View>
         <View className="flex-row justify-end gap-2 space-x-2">
           <Pressable className="rounded-md border border-border px-4 py-2" onPress={onClose}>
-            <Text>Cancel</Text>
+            <Text>{t('common.cancel')}</Text>
           </Pressable>
           <Pressable
             className={`rounded-md bg-primary px-4 py-2 ${!name ? 'opacity-50' : ''}`}
             onPress={handleUpdate}
             disabled={!name}>
-            <Text className="font-medium text-white">Save</Text>
+            <Text className="font-medium text-white">{t('common.save')}</Text>
           </Pressable>
         </View>
       </Animated.View>
