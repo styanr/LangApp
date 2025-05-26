@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { Link } from 'expo-router';
 import { UserPlus } from 'lucide-react-native';
@@ -20,7 +20,7 @@ interface RegisterFormProps {
   error: string | null;
 }
 
-export function RegisterForm({ onRegister, isSubmitting, error }: RegisterFormProps) {
+export function RegisterForm({ onRegister, isSubmitting, error}: RegisterFormProps) {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');

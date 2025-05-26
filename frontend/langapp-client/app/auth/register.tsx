@@ -6,6 +6,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { AuthLayout } from '@/components/auth/AuthLayout';
 import { FormError } from '@/components/auth/FormError';
+import { getErrorMessage } from '@/lib/errors';
+import { set } from 'lodash';
 
 export default function RegisterScreen() {
   const { isAuthenticated, isLoading, register } = useAuth();
@@ -13,7 +15,6 @@ export default function RegisterScreen() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  // Redirect to home if already authenticated
   React.useEffect(() => {
     if (isAuthenticated) {
       router.replace('/');
@@ -35,7 +36,6 @@ export default function RegisterScreen() {
       subtitle="Sign up to start learning with LangApp"
       Icon={UserPlus}
       iconSize={48}>
-      {error && <FormError message={error} />}
       <RegisterForm
         onRegister={async (
           username,
@@ -46,10 +46,18 @@ export default function RegisterScreen() {
           password,
           confirmPassword
         ) => {
-          // Validation handled in form
           setError(null);
           setIsSubmitting(true);
           try {
+            if (!username.trim() || !email.trim() || !password.trim()) {
+              setError('Username, email, and password are required');
+              return;
+            }
+            if (password !== confirmPassword) {
+              setError('Passwords do not match');
+              return;
+            }
+
             await register({
               username,
               email,
@@ -57,9 +65,11 @@ export default function RegisterScreen() {
               role,
               password,
             });
+
             router.replace({ pathname: '/auth/login', params: { registered: 'true' } });
           } catch (err) {
-            setError(err instanceof Error ? err.message : 'Registration failed');
+            const message = getErrorMessage(err);
+            setError(message || 'Registration failed. Please try again.');
           } finally {
             setIsSubmitting(false);
           }

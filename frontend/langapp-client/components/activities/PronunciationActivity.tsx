@@ -63,6 +63,8 @@ export default function PronunciationActivity({ activity, submission, onChange }
       setEvaluation(result);
     } catch (e) {
       console.error('Evaluation error:', e);
+      console.error(JSON.stringify(e, null, 2));
+      console.error(JSON.stringify(e.response, null, 2));
     }
   };
 
@@ -95,7 +97,7 @@ export default function PronunciationActivity({ activity, submission, onChange }
 
       // Pass the audio MIME type for WAV files
       const audioMimeType = Platform.OS === 'ios' ? 'audio/wav' : 'audio/x-wav';
-      const url = await upload(recordingUri, filename, 'recordings', audioMimeType);
+      const url = await upload(recordingUri, filename, audioMimeType);
       setUploadedUrl(url);
     } catch (error) {
       console.error('Failed to upload recording:', error);

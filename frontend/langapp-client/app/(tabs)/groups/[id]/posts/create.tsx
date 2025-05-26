@@ -9,6 +9,7 @@ import { useFileUpload } from '@/hooks/useFileUpload';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { AttachmentManager } from '@/components/posts/AttachmentManager';
+import { handleApiError } from '@/lib/errors';
 
 const CreatePostPage = () => {
   const { id: groupId } = useGlobalSearchParams();
@@ -78,7 +79,7 @@ const CreatePostPage = () => {
     } catch (err) {
       console.error('Error creating post:', err);
       // console.error(JSON.stringify(err.response.data, null, 2));
-      Alert.alert('Error', 'Failed to create post or upload media.');
+      handleApiError(err);
     } finally {
       setIsUploading(false);
     }

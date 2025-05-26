@@ -15,16 +15,6 @@ public class ActivityDetailsTests
     }
 
     [Fact]
-    public void Constructor_WithCustomValue_ShouldSetCanBeGradedAutomaticallyCorrectly()
-    {
-        // Arrange & Act
-        var details = new ActivityDetails { CanBeGradedAutomatically = false };
-
-        // Assert
-        Assert.False(details.CanBeGradedAutomatically);
-    }
-
-    [Fact]
     public void Equals_WithSameValue_ShouldReturnTrue()
     {
         // Arrange

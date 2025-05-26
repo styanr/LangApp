@@ -8,6 +8,7 @@ import { FormError } from '@/components/auth/FormError';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Toast from 'react-native-toast-message';
+import { getErrorMessage } from '@/lib/errors';
 
 export default function ForgotPasswordScreen() {
   const { isLoading, requestPasswordReset } = useAuth();
@@ -42,8 +43,8 @@ export default function ForgotPasswordScreen() {
       });
       router.replace('/auth/login');
     } catch (err) {
-      console.error(err);
-      setError(err instanceof Error ? err.message : 'Request failed');
+      const message = getErrorMessage(err);
+      setError(message || 'Reset request failed');
     } finally {
       setIsSubmitting(false);
     }

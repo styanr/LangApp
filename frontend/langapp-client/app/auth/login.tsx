@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { AuthLayout } from '@/components/auth/AuthLayout';
 import Toast from 'react-native-toast-message';
+import { getErrorMessage } from '@/lib/errors';
 
 export default function LoginScreen() {
   const { isAuthenticated, isLoading, login } = useAuth();
@@ -57,7 +58,9 @@ export default function LoginScreen() {
           try {
             await login({ username: username.trim(), password: password.trim() });
           } catch (err) {
-            setError(err instanceof Error ? err.message : 'Login failed');
+            // setError(err instanceof Error ? err.message : 'Login failed');
+            const message = getErrorMessage(err);
+            setError(message || 'Login failed');
           } finally {
             setIsSubmitting(false);
           }

@@ -29,15 +29,9 @@ public class ClientModule : IEndpointModule
 
         try
         {
-            var query = QueryHelpers.ParseQuery(queryString);
-
-            var encodedQuery = string.Join("&", query
-                .SelectMany(kvp => kvp.Value.Select(value =>
-                    $"{Uri.EscapeDataString(kvp.Key)}={Uri.EscapeDataString(value ?? string.Empty)}")));
-
             string appScheme = deepLinkOptions.Value.AppScheme ?? "testapp";
             string path = "auth/reset-password";
-            string deepLink = $"{appScheme}://{path}?{encodedQuery}";
+            string deepLink = $"{appScheme}://{path}{queryString}";
 
             logger.LogInformation("Attempting to redirect to deep link: {DeepLink}", deepLink);
             var html = $@"

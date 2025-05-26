@@ -1,6 +1,6 @@
 import { Alert } from 'react-native';
 import { AxiosError } from 'axios';
-import { ProblemDetailsError } from "./types";
+import { ProblemDetailsError } from './types';
 
 export function isProblemDetailsError(data: any): data is ProblemDetailsError {
   return (
@@ -23,10 +23,39 @@ export function handleApiError(error: unknown) {
       return;
     }
 
-    const fallback = typeof data?.message === 'string' ? data.message : 'An unknown error occurred.';
+    const fallback =
+      typeof data?.message === 'string' ? data.message : 'An unknown error occurred.';
     Alert.alert('Error', fallback);
     return;
   }
 
   Alert.alert('Error', 'An unexpected error occurred.');
+}
+
+interface ValidationError {
+  detail: string;
+  errors: string[];
+}
+
+export function getErrorMessage(error: unknown): string | undefined {
+  if (error instanceof AxiosError) {
+    const data = error.response?.data;
+    console.log('Error data:', data);
+
+    if ('validation_errors' in data && Array.isArray(data.validation_errors)) {
+      if (data.validation_errors.length === 0) {
+        return data.detail || 'Validation failed';
+      }
+
+      return `${data.detail}: ${data.validation_errors.join('\n')}`;
+    }
+
+    if (isProblemDetailsError(data)) {
+      return data.detail;
+    }
+
+    if (typeof data?.message === 'string') {
+      return data.message;
+    }
+  }
 }

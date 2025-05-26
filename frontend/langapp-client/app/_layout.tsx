@@ -9,7 +9,7 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import '@/global.css';
 import { AuthProvider } from '@/hooks/useAuth';
-import { Platform } from 'react-native';
+import { LogBox, Platform } from 'react-native';
 import { NAV_THEME } from '~/lib/constants';
 import { useColorScheme } from '~/lib/useColorScheme';
 import React from 'react';
@@ -25,6 +25,12 @@ const DARK_THEME: Theme = {
   ...DarkTheme,
   colors: NAV_THEME.dark,
 };
+
+const IGNORED_LOGS = [
+"The action 'POP_TO_TOP' was not handled by any navigator."
+]
+
+LogBox.ignoreLogs(IGNORED_LOGS);
 
 export {
   // Catch any errors thrown by the Layout component.

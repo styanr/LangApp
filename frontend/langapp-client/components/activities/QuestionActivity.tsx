@@ -40,7 +40,7 @@ export default function QuestionActivity({ activity, submission, onChange }: Pro
   return (
     <Animated.View entering={FadeInDown.duration(400)} className="mb-4">
       <View className="mb-5 flex-row items-center gap-3">
-        <IconBadge Icon={MessageCircle} size={28} className="mr-2 text-fuchsia-500" />
+        <IconBadge Icon={MessageCircle} size={28} className=" text-black" />
         <UIText className="text-xl font-bold text-fuchsia-900 dark:text-white">
           Question Activity
         </UIText>

@@ -76,7 +76,7 @@ export default function Groups() {
             <Text className="mt-2 text-center text-base text-muted-foreground">
               {isTeacher
                 ? 'Create your first study group to start teaching!'
-                : 'Join or create a group to start learning together!'}
+                : 'You have to be added to a group by a teacher to start.'}
             </Text>
             {isTeacher && (
               <Button className="mt-4" onPress={() => setIsModalVisible(true)}>

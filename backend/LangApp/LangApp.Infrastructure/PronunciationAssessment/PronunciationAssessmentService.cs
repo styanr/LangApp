@@ -81,11 +81,11 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
 
         using var recognizer = new SpeechRecognizer(speechConfig, language.Code, audioInput);
 
-        // Configure pronunciation assessment
         var pronConfig = new PronunciationAssessmentConfig(
             referenceText,
             GradingSystem.HundredMark,
             Granularity.Word,
+            // Granularity.Phoneme, // TODO test phoneme granularity
             enableMiscue: true);
 
         if (enableProsody)
@@ -109,7 +109,7 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
                 _logger.LogWarning("Pronunciation assessment result is null");
                 return;
             }
-            
+
             fluencyScores.Add(pronResult.FluencyScore);
             prosodyScores.Add(pronResult.ProsodyScore);
 
@@ -124,7 +124,6 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
         };
 
         _logger.LogInformation("Starting pronunciation assessment");
-        // Start continuous recognition
         await recognizer.StartContinuousRecognitionAsync().ConfigureAwait(false);
 
         var buffer = new byte[1024];
@@ -136,28 +135,14 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
 
         pushStream.Close();
 
-        // Wait for completion
         await processingComplete.Task.ConfigureAwait(false);
 
-        // Stop recognition
         await recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
         _logger.LogInformation("Pronunciation assessment complete");
-        // Process results and calculate final scores
         var finalWords = ProcessFinalWordList(pronWords, recognizedWords, referenceText, true);
 
-        // Calculate scores
         var scores = CalculateFinalScores(finalWords, fluencyScores, prosodyScores, durations, referenceText,
             enableProsody);
-
-        // return new PronAssessmentResult
-        // {
-        //     AccuracyScore = scores.accuracyScore,
-        //     CompletenessScore = scores.completenessScore,
-        //     FluencyScore = scores.fluencyScore,
-        //     ProsodyScore = scores.prosodyScore,
-        //     PronunciationScore = scores.pronunciationScore,
-        //     Words = finalWords
-        // };
 
         return new SubmissionGrade(
             new Percentage(scores.accuracyScore),
@@ -172,67 +157,94 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
         bool enableMiscue)
     {
         _logger.LogInformation("Processing final word list");
-        var finalWords = new List<Word>();
 
-        // Process reference text
-        string[] referenceWords = referenceText.ToLower().Split(' ');
-        for (int j = 0; j < referenceWords.Length; j++)
-        {
-            referenceWords[j] = Regex.Replace(referenceWords[j], @"^[\p{P}\s]+|[\p{P}\s]+$", "");
-        }
+        var referenceWords = CleanReferenceText(referenceText);
 
-        if (enableMiscue)
-        {
-            _logger.LogInformation("Processing miscue");
-            var differ = new Differ();
-            var inlineBuilder = new InlineDiffBuilder(differ);
-            var diffModel =
-                inlineBuilder.BuildDiffModel(string.Join("\n", referenceWords), string.Join("\n", recognizedWords),
-                    ignoreWhitespace: true, ignoreCase: true, new LineChunker());
-
-            int currentIdx = 0;
-
-            foreach (var delta in diffModel.Lines)
-            {
-                if (delta.Type == ChangeType.Unchanged)
-                {
-                    finalWords.Add(pronWords[currentIdx]);
-                    currentIdx += 1;
-                }
-
-                if (delta.Type == ChangeType.Deleted || delta.Type == ChangeType.Modified)
-                {
-                    var word = new Word(delta.Text, "Omission");
-                    finalWords.Add(word);
-                }
-
-                if (delta.Type == ChangeType.Inserted || delta.Type == ChangeType.Modified)
-                {
-                    if (currentIdx < pronWords.Count)
-                    {
-                        Word w = pronWords[currentIdx];
-                        if (w.ErrorType == "None")
-                        {
-                            w.ErrorType = "Insertion";
-                            finalWords.Add(w);
-                        }
-
-                        currentIdx += 1;
-                    }
-                }
-            }
-
-            _logger.LogInformation("Miscue processed");
-        }
-        else
-        {
-            finalWords = pronWords;
-        }
+        var finalWords = enableMiscue
+            ? ProcessWithMiscue(pronWords, recognizedWords, referenceWords)
+            : [..pronWords];
 
         _logger.LogInformation("Final word list processed");
-
         return finalWords;
     }
+
+    private static string[] CleanReferenceText(string text)
+    {
+        return text.ToLower()
+            .Split(' ')
+            .Select(w => Regex.Replace(w, @"^[\p{P}\s]+|[\p{P}\s]+$", ""))
+            .ToArray();
+    }
+
+    private List<Word> ProcessWithMiscue(
+        List<Word> pronWords,
+        List<string> recognizedWords,
+        string[] referenceWords)
+    {
+        _logger.LogInformation("Processing miscue");
+
+        var differ = new Differ();
+        var inlineBuilder = new InlineDiffBuilder(differ);
+        var diffModel = inlineBuilder.BuildDiffModel(
+            string.Join("\n", referenceWords),
+            string.Join("\n", recognizedWords),
+            ignoreWhitespace: true,
+            ignoreCase: true,
+            new LineChunker());
+
+        var finalWords = new List<Word>();
+        int currentIdx = 0;
+
+        foreach (var delta in diffModel.Lines)
+        {
+            switch (delta.Type)
+            {
+                case ChangeType.Unchanged:
+                    finalWords.Add(pronWords[currentIdx]);
+                    currentIdx++;
+                    break;
+
+                case ChangeType.Deleted:
+                    finalWords.Add(new Word(delta.Text, "Omission"));
+                    break;
+
+                case ChangeType.Inserted:
+                    if (currentIdx < pronWords.Count)
+                    {
+                        var insertedWord = pronWords[currentIdx];
+                        if (insertedWord.ErrorType == "None")
+                        {
+                            insertedWord.ErrorType = "Insertion";
+                            finalWords.Add(insertedWord);
+                        }
+
+                        currentIdx++;
+                    }
+
+                    break;
+
+                case ChangeType.Modified:
+                    finalWords.Add(new Word(delta.Text, "Omission"));
+                    if (currentIdx < pronWords.Count)
+                    {
+                        var modifiedWord = pronWords[currentIdx];
+                        if (modifiedWord.ErrorType == "None")
+                        {
+                            modifiedWord.ErrorType = "Insertion";
+                            finalWords.Add(modifiedWord);
+                        }
+
+                        currentIdx++;
+                    }
+
+                    break;
+            }
+        }
+
+        _logger.LogInformation("Miscue processed");
+        return finalWords;
+    }
+
 
     private (double accuracyScore, double completenessScore, double fluencyScore,
         double prosodyScore, double pronunciationScore)
@@ -246,26 +258,22 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
     {
         string[] referenceWords = referenceText.ToLower().Split(' ');
 
-        // Calculate accuracy score
         var filteredWords = finalWords.Where(item => item.ErrorType != "Insertion");
         var wordsList = filteredWords.ToList();
         var accuracyScore = wordsList.Count != 0
             ? wordsList.Sum(item => item.AccuracyScore) / wordsList.Count
             : 0;
 
-        // Calculate prosody score
         var prosodyScore = prosodyScores.Count != 0
             ? prosodyScores.Sum() / prosodyScores.Count
             : 0;
 
-        // Calculate fluency score
         var fluencyScore = 0.0;
         if (fluencyScores.Any() && durations.Any())
         {
             fluencyScore = fluencyScores.Zip(durations, (x, y) => x * y).Sum() / durations.Sum();
         }
 
-        // Calculate completeness score
         var completenessScore = referenceWords.Length > 0
             ? (double)finalWords.Count(item => item.ErrorType == "None") / referenceWords.Length * 100
             : 0;
@@ -278,7 +286,6 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
         var scoreComponents = new Dictionary<string, (double score, double weight)>
         {
             ["Accuracy"] = (accuracyScore, enableProsody ? 0.4 : 0.5),
-            ["Fluency"] = (fluencyScore, enableProsody ? 0.2 : 0.25),
             ["Completeness"] = (completenessScore, enableProsody ? 0.2 : 0.25)
         };
 

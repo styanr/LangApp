@@ -224,7 +224,7 @@ const GroupPage = () => {
                 <NavigationMenuTrigger
                   className={activeTab === 'assignments' ? 'bg-indigo-100 dark:bg-indigo-900' : ''}>
                   <View className="flex-row items-center gap-1">
-                    <ClipboardList size={16} className="mr-2 text-fuchsia-500" />
+                    <ClipboardList size={16} className="mr-2 text-indigo-500" />
                     <Text>Assignments</Text>
                   </View>
                 </NavigationMenuTrigger>

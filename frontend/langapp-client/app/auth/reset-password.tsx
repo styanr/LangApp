@@ -8,6 +8,7 @@ import { FormError } from '@/components/auth/FormError';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Toast from 'react-native-toast-message';
+import { getErrorMessage } from '@/lib/errors';
 
 export default function ResetPasswordScreen() {
   const { isLoading, resetPassword } = useAuth();
@@ -17,11 +18,20 @@ export default function ResetPasswordScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fixedToken, setFixedToken] = useState<string | null>(null);
 
   // Validate presence of email & token
   useEffect(() => {
     if (!email || !token) {
       setError('Invalid or expired reset link.');
+    }
+    console.log('Token:', token);
+
+    const fixedToken = token?.replace(/ /g, '+');
+    if (fixedToken) {
+      setFixedToken(fixedToken);
+    } else {
+      setError('Invalid token format.');
     }
   }, [email, token]);
 
@@ -51,7 +61,7 @@ export default function ResetPasswordScreen() {
 
     setIsSubmitting(true);
     try {
-      await resetPassword({ email, token, newPassword: password.trim() });
+      await resetPassword({ email, token: fixedToken || ' ', newPassword: password.trim() });
       Toast.show({
         type: 'success',
         text1: 'Password Reset',
@@ -60,7 +70,8 @@ export default function ResetPasswordScreen() {
       });
       router.replace('/auth/login');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Reset failed');
+      const message = getErrorMessage(err);
+      setError(message || 'Password reset failed');
     } finally {
       setIsSubmitting(false);
     }
@@ -72,8 +83,6 @@ export default function ResetPasswordScreen() {
       subtitle="Enter a new password to finish resetting"
       Icon={ShieldCheck}
       iconSize={54}>
-      {error && <FormError message={error} />}
-
       <View className="px-6">
         <Text className="text-sm font-medium text-gray-700">New Password</Text>
         <Input
@@ -92,6 +101,8 @@ export default function ResetPasswordScreen() {
           secureTextEntry
           className="mb-6 h-12"
         />
+
+        {error && <FormError message={error} />}
 
         <Button onPress={handleSubmit} disabled={isSubmitting} className="h-12">
           <Text className="text-base font-semibold text-white">

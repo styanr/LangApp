@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { Redirect, Stack, Tabs } from 'expo-router';
+import { Redirect, Stack, Tabs, useRouter } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
 import { ActivityIndicator, View, Image } from 'react-native';
 import { ClipboardList, House, Settings, UserRound, UsersRound } from 'lucide-react-native';
@@ -12,6 +12,7 @@ const fallbackImage = require('@/assets/image-fallback.png');
 export default function AuthenticatedLayout() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const { isDarkColorScheme } = useColorScheme();
+  const router = useRouter();
 
   const theme = isDarkColorScheme ? NAV_THEME.dark : NAV_THEME.light;
 
@@ -52,12 +53,27 @@ export default function AuthenticatedLayout() {
           title: 'Home',
           tabBarIcon: ({ color }) => <House color={color} size={24} />,
         }}
+        listeners={{
+          tabPress: () => {
+            if (router.canDismiss()) {
+              router.dismissAll();
+            }
+          },
+        }}
       />
       <Tabs.Screen
         name="groups"
         options={{
           title: 'Groups',
           tabBarIcon: ({ color }) => <UsersRound color={color} size={24} />,
+          popToTopOnBlur: true,
+        }}
+        listeners={{
+          tabPress: () => {
+            if (router.canDismiss()) {
+              router.dismissAll();
+            }
+          },
         }}
       />
       <Tabs.Screen
@@ -65,6 +81,14 @@ export default function AuthenticatedLayout() {
         options={{
           title: 'Assignments',
           tabBarIcon: ({ color }) => <ClipboardList color={color} size={24} />,
+          popToTopOnBlur: true,
+        }}
+        listeners={{
+          tabPress: () => {
+            if (router.canDismiss()) {
+              router.dismissAll();
+            }
+          },
         }}
       />
       <Tabs.Screen
@@ -73,11 +97,25 @@ export default function AuthenticatedLayout() {
           title: 'Profile',
           tabBarIcon: ({ color }) => <UserRound color={color} size={24} />,
         }}
+        listeners={{
+          tabPress: () => {
+            if (router.canDismiss()) {
+              router.dismissAll();
+            }
+          },
+        }}
       />
       <Tabs.Screen
         name="users/[id]"
         options={{
           href: null,
+        }}
+        listeners={{
+          tabPress: () => {
+            if (router.canDismiss()) {
+              router.dismissAll();
+            }
+          },
         }}
       />
       <Tabs.Screen
@@ -85,17 +123,38 @@ export default function AuthenticatedLayout() {
         options={{
           href: null,
         }}
+        listeners={{
+          tabPress: () => {
+            if (router.canDismiss()) {
+              router.dismissAll();
+            }
+          },
+        }}
       />
       <Tabs.Screen
         name="posts"
         options={{
           href: null,
         }}
+        listeners={{
+          tabPress: () => {
+            if (router.canDismiss()) {
+              router.dismissAll();
+            }
+          },
+        }}
       />
       <Tabs.Screen
         name="submissions/[submissionId]"
         options={{
           href: null,
+        }}
+        listeners={{
+          tabPress: () => {
+            if (router.canDismiss()) {
+              router.dismissAll();
+            }
+          },
         }}
       />
     </Tabs>

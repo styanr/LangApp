@@ -88,7 +88,7 @@ export function useFileUpload(): UseFileUploadReturn {
       }, 300);
 
       try {
-        // 2. Upload the file using Expo FileSystem
+        console.log('Starting upload to:', uploadUri);
         const uploadResult = await FileSystem.uploadAsync(uploadUri, uri, {
           httpMethod: 'PUT',
           uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
@@ -100,12 +100,11 @@ export function useFileUpload(): UseFileUploadReturn {
           },
         });
 
-        // Check if upload was successful
         if (uploadResult.status !== 200 && uploadResult.status !== 201) {
           throw new Error(`Upload failed with status ${uploadResult.status}`);
         }
       } finally {
-        // Always clear the progress tracker
+        console.log('Upload completed:', uploadUri);
         clearInterval(progressTracker);
       }
 
@@ -121,6 +120,7 @@ export function useFileUpload(): UseFileUploadReturn {
       const cleanBlobUrl = uploadUri.split('?')[0];
       return cleanBlobUrl;
     } catch (error) {
+      console.error('File upload error:', JSON.stringify(error.response, null, 2));
       setIsUploading(false);
       const err = error instanceof Error ? error : new Error('Unknown upload error');
       setUploadError(err);

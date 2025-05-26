@@ -35,11 +35,19 @@ export default function Assignments() {
         <Text className="mt-2 text-lg text-muted-foreground">All your language tasks</Text>
       </Animated.View>
       <RNView className="flex-row items-center px-6 pb-2">
-        <Toggle pressed={showSubmitted} onPressedChange={setShowSubmitted}>
-          {showSubmitted ? <ToggleIcon icon={EyeOff} /> : <ToggleIcon icon={Eye} />}
-        </Toggle>
-        <Text className="ml-2">Show Submitted</Text>
-        <Toggle pressed={showOverdue} onPressedChange={setShowOverdue} className="ml-6">
+        {!isTeacher && (
+          <>
+            <Toggle pressed={showSubmitted} onPressedChange={setShowSubmitted}>
+              {showSubmitted ? <ToggleIcon icon={EyeOff} /> : <ToggleIcon icon={Eye} />}
+            </Toggle>
+            <Text className="ml-2">Show Submitted</Text>
+          </>
+        )}
+        <Toggle
+          pressed={showOverdue}
+          onPressedChange={setShowOverdue}
+          className={!isTeacher ? 'ml-6' : ''}
+        >
           <ToggleIcon icon={CalendarDays} />
         </Toggle>
         <Text className="ml-2">Show Overdue</Text>

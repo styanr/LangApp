@@ -205,6 +205,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               newTokens.accessToken.slice(0, 10),
               '...'
             );
+            console.log(newTokens.accessToken);
 
             // Update auth state with new tokens
             await persistTokens(newTokens);
