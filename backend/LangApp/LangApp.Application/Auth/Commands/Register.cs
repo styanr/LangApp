@@ -1,4 +1,5 @@
 using LangApp.Application.Auth.Exceptions;
+using LangApp.Application.Auth.Services;
 using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.Common.Jobs;
 using LangApp.Application.Common.Services;
@@ -6,7 +7,6 @@ using LangApp.Application.Users.Models;
 using LangApp.Application.Users.Services;
 using LangApp.Core.Enums;
 using LangApp.Core.Factories.Users;
-using LangApp.Core.Repositories;
 using LangApp.Core.ValueObjects;
 
 namespace LangApp.Application.Auth.Commands;
@@ -23,21 +23,23 @@ public record Register(
 public class RegisterHandler : ICommandHandler<Register, Guid>
 {
     private readonly IApplicationUserFactory _factory;
-    private readonly IApplicationUserRepository _repository;
     private readonly IApplicationUserReadService _readService;
     private readonly IJobScheduler _jobScheduler;
     private readonly IEmailService _emailService;
+    private readonly IAuthService _authService;
 
     public RegisterHandler(
         IApplicationUserFactory factory,
-        IApplicationUserRepository repository,
-        IApplicationUserReadService readService, IJobScheduler jobScheduler, IEmailService emailService)
+        IApplicationUserReadService readService,
+        IJobScheduler jobScheduler,
+        IEmailService emailService,
+        IAuthService authService)
     {
         _factory = factory;
-        _repository = repository;
         _readService = readService;
         _jobScheduler = jobScheduler;
         _emailService = emailService;
+        _authService = authService;
     }
 
     public async Task<Guid> HandleAsync(Register command, CancellationToken cancellationToken)
@@ -58,10 +60,10 @@ public class RegisterHandler : ICommandHandler<Register, Guid>
         var fullName = new UserFullName(fullNameModel.FirstName, fullNameModel.LastName);
 
         var user = _factory.Create(username, fullName, pictureUrl, role, email);
-        await _repository.AddAsync(user, password);
+        await _authService.CreateUserAsync(user, password);
 
-        _jobScheduler.Enqueue(() => _emailService.SendEmailAsync(user.Email, "Welcome to LangApp",
-            "Thank you for registering to LangApp. Happy trails!"));
+        var token = await _authService.GenerateEmailConfirmationTokenAsync(email);
+        _jobScheduler.Enqueue(() => _emailService.SendConfirmationEmailAsync(email, token));
 
         return user.Id;
     }

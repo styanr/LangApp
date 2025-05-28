@@ -43,4 +43,11 @@ public class SendGridEmailService : IEmailService
         var message = _emailTemplateRenderer.RenderResetPasswordTemplate(link);
         await SendEmailAsync(email, "Reset Password", message);
     }
+
+    public async Task SendConfirmationEmailAsync(string email, string token)
+    {
+        var link = _deepLinkGenerator.GenerateConfirmationLink(email, token);
+        var message = _emailTemplateRenderer.RenderConfirmationEmailTemplate(link);
+        await SendEmailAsync(email, "Confirm Your Email", message);
+    }
 }

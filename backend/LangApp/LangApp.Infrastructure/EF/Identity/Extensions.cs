@@ -12,7 +12,22 @@ public static class Extensions
 {
     public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddIdentity<IdentityApplicationUser, IdentityRole<Guid>>()
+        services.AddIdentity<IdentityApplicationUser, IdentityRole<Guid>>(options =>
+        {
+            // Require email confirmation before sign in
+            options.SignIn.RequireConfirmedEmail = true;
+            
+            // Configure password requirements
+            options.Password.RequireDigit = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireNonAlphanumeric = true;
+            options.Password.RequiredLength = 8;
+            
+            // Configure lockout
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+            options.Lockout.MaxFailedAccessAttempts = 5;
+        })
             .AddEntityFrameworkStores<WriteDbContext>()
             .AddDefaultTokenProviders();
 

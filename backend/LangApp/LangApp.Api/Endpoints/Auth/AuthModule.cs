@@ -1,4 +1,5 @@
 using LangApp.Api.Common.Endpoints;
+using LangApp.Api.Common.Services;
 using LangApp.Application.Auth.Commands;
 using LangApp.Application.Auth.Models;
 using LangApp.Application.Common.Commands.Abstractions;
@@ -32,6 +33,11 @@ public class AuthModule : IEndpointModule
         group.MapPost("/reset-password", ResetPassword)
             .AllowAnonymous()
             .WithName("ResetPassword");
+        group.MapGet("/confirm-email", ConfirmEmail)
+            .AllowAnonymous()
+            .WithName("ConfirmEmail")
+            .WithDescription(
+                "Confirm user's email address using the token received in the confirmation email.");
     }
 
 
@@ -79,5 +85,23 @@ public class AuthModule : IEndpointModule
         await dispatcher.DispatchAsync(command);
 
         return TypedResults.Ok();
+    }
+
+    private async Task<Results<ContentHttpResult, ProblemHttpResult>> ConfirmEmail(
+        [FromQuery] string email,
+        [FromQuery] string token,
+        [FromServices] ICommandDispatcher dispatcher,
+        [FromServices] IHtmlTemplateService htmlTemplateService
+    )
+    {
+        try
+        {
+            await dispatcher.DispatchAsync(new ConfirmEmail(email, token));
+            return TypedResults.Content(htmlTemplateService.RenderEmailConfirmationSuccess(), "text/html");
+        }
+        catch (Exception ex)
+        {
+            return TypedResults.Content(htmlTemplateService.RenderEmailConfirmationError(), "text/html");
+        }
     }
 }

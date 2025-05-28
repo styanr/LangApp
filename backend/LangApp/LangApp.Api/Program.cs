@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using LangApp.Api.Auth;
 using LangApp.Api.Common.Endpoints;
+using LangApp.Api.Common.Services;
 using LangApp.Api.Middlewares;
 using LangApp.Api.OpenApi;
 using LangApp.Application.Common;
@@ -42,6 +43,7 @@ builder.Services.AddSwagger();
 
 builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddApiServices();
 
 builder.Services.AddJwtBearerAuthentication(builder.Configuration);
 

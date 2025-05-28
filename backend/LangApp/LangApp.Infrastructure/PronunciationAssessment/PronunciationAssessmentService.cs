@@ -84,8 +84,7 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
         var pronConfig = new PronunciationAssessmentConfig(
             referenceText,
             GradingSystem.HundredMark,
-            Granularity.Word,
-            // Granularity.Phoneme, // TODO test phoneme granularity
+            Granularity.Phoneme,
             enableMiscue: true);
 
         if (enableProsody)

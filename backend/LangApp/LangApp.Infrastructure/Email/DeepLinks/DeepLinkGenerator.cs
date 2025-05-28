@@ -27,4 +27,18 @@ public class DeepLinkGenerator : IDeepLinkGenerator
         var query = QueryHelpers.AddQueryString($"{apiUrl}/client/deep-link", queryParams);
         return query;
     }
+
+    public string GenerateConfirmationLink(string email, string token)
+    {
+        var apiUrl = _publicOptions.Value.BaseUrl;
+
+        var queryParams = new Dictionary<string, string?>
+        {
+            { "email", email },
+            { "token", token }
+        };
+
+        var query = QueryHelpers.AddQueryString($"{apiUrl}/auth/confirm-email", queryParams);
+        return query;
+    }
 }

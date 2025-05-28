@@ -27,12 +27,17 @@ internal class AuthService : IAuthService
         _context = context;
     }
 
-
     public async Task<TokenResponse?> Authenticate(string username, string password)
     {
         var user = await _userManager.FindByNameAsync(username);
 
         if (user is null) return null;
+
+        // Check if email is confirmed
+        if (!await _userManager.IsEmailConfirmedAsync(user))
+        {
+            throw new ValidationException(new[] { "Please confirm your email before signing in." });
+        }
 
         var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
 
@@ -43,7 +48,6 @@ internal class AuthService : IAuthService
             Id = Guid.NewGuid(),
             UserId = user.Id,
             Token = _tokenFactory.GenerateRefreshToken(),
-            // TODO: Get from config
             ExpiresAtUtc = DateTime.UtcNow + TimeSpan.FromDays(30)
         };
 
@@ -67,6 +71,13 @@ internal class AuthService : IAuthService
         }
 
         var user = token.User;
+        
+        // Check if email is still confirmed (in case it was unconfirmed after initial confirmation)
+        if (!await _userManager.IsEmailConfirmedAsync(user))
+        {
+            throw new ValidationException(new[] { "Email confirmation is required. Please confirm your email." });
+        }
+
         var accessToken = _tokenFactory.GenerateAccessToken(user);
         token.Token = _tokenFactory.GenerateRefreshToken();
         token.ExpiresAtUtc = DateTime.UtcNow + TimeSpan.FromDays(30);
@@ -91,6 +102,50 @@ internal class AuthService : IAuthService
 
         var result = await _userManager.ResetPasswordAsync(user, token, password);
 
+        if (!result.Succeeded)
+        {
+            throw new ValidationException(result.Errors.Select(e => e.Description));
+        }
+    }
+
+    public async Task<string> GenerateEmailConfirmationTokenAsync(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user is null)
+        {
+            throw new ValidationException(new[] { "User not found." });
+        }
+
+        return await _userManager.GenerateEmailConfirmationTokenAsync(user);
+    }
+
+    public async Task ConfirmEmailAsync(string email, string token)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user is null)
+        {
+            throw new ValidationException(new[] { "User not found." });
+        }
+
+        var result = await _userManager.ConfirmEmailAsync(user, token);
+        if (!result.Succeeded)
+        {
+            throw new ValidationException(result.Errors.Select(e => e.Description));
+        }
+    }
+
+    public async Task CreateUserAsync(ApplicationUser user, string password)
+    {
+        var identityUser = new IdentityApplicationUser(
+            user.Id,
+            user.Username,
+            user.FullName,
+            user.Email,
+            user.PictureUrl,
+            user.Role
+        );
+
+        var result = await _userManager.CreateAsync(identityUser, password);
         if (!result.Succeeded)
         {
             throw new ValidationException(result.Errors.Select(e => e.Description));
