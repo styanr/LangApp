@@ -153,20 +153,20 @@ public class HtmlTemplateService : IHtmlTemplateService
                          <h2>Opening the application...</h2>
                          <div class="loader"></div>
                          <p>If the app doesn't open automatically, please click the button below:</p>
-                         <p><a href='{deepLink}' class="button">Open App</a></p>
+                         <p><a href='{{deepLink}}' class="button">Open App</a></p>
                          
                          <div id="fallbackMessage">
                              <h3>App not installed?</h3>
                              <p>If you don't have the app installed, you can download it from:</p>
                              <p>
-                                 <a href='{options.PlayStoreUrl}' class="store-button">Google Play</a>
+                                 <a href='{{options.PlayStoreUrl}}' class="store-button">Google Play</a>
                              </p>
                          </div>
                      </div>
 
                      <script>
                          // Try to open the app immediately
-                         window.location.href = '{deepLink}';
+                         window.location.href = '{{deepLink}}';
                          
                          // Set a timeout to show the fallback message if the app doesn't open
                          setTimeout(function() {
