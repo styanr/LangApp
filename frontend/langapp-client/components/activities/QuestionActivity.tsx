@@ -42,7 +42,7 @@ export default function QuestionActivity({ activity, submission, onChange }: Pro
   return (
     <Animated.View entering={FadeInDown.duration(400)} className="mb-4">
       <View className="mb-5 flex-row items-center gap-3">
-        <IconBadge Icon={MessageCircle} size={28} className=" text-black" />
+        <IconBadge Icon={MessageCircle} size={28} className="text-black" />
         <UIText className="text-xl font-bold text-fuchsia-900 dark:text-white">
           {t('common.activityTypes.Question')}
         </UIText>
@@ -63,13 +63,14 @@ export default function QuestionActivity({ activity, submission, onChange }: Pro
             value={answer}
             onChangeText={setAnswer}
             placeholder={t('questionActivity.answerPlaceholder')}
-            maxLength={maxLength}
+            {...(maxLength && maxLength > 0 ? { maxLength } : {})}
             multiline
             className="h-24 text-base"
           />
-          {maxLength && (
+          {maxLength && maxLength > 0 && (
             <UIText className="mt-2 text-right text-xs text-muted-foreground">
-              {answer.length}/{maxLength} characters
+              {answer.length}/{maxLength}{' '}
+              {t('questionActivity.charactersLabel', { defaultValue: 'characters' })}
             </UIText>
           )}
         </CardContent>

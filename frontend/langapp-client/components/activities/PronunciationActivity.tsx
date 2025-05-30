@@ -19,6 +19,7 @@ import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
 import PronunciationAssessmentResult from './PronunciationAssessmentResult';
 import { useTranslation } from 'react-i18next';
 import { handleApiError } from '@/lib/errors';
+import { codeToDisplayNameMap, LanguagesArray } from '@/lib/languages';
 
 interface Props {
   activity: ActivityDto;
@@ -135,6 +136,8 @@ export default function PronunciationActivity({ activity, submission, onChange }
     );
   }
 
+  const languageReadableCode = codeToDisplayNameMap[language || ''];
+
   return (
     <Animated.View entering={FadeInDown.duration(400)} className="mb-4">
       <View className="mb-5 flex-row items-center gap-3">
@@ -149,13 +152,12 @@ export default function PronunciationActivity({ activity, submission, onChange }
           <CardTitle>{t('pronunciationActivity.cardTitle')}</CardTitle>
         </CardHeader>
         <CardContent className="p-4">
-          {/* Reference text to pronounce */}
           {referenceText && (
             <View className="mb-6 rounded-lg bg-muted p-4">
               <Text className="text-lg font-medium">"{referenceText}"</Text>
               {language && (
                 <Text className="mt-1 text-sm text-muted-foreground">
-                  {t('pronunciationActivity.referenceTextLabel')} {language}
+                  {t('pronunciationActivity.referenceTextLabel')} {t(languageReadableCode, {defaultValue: language})}
                 </Text>
               )}
             </View>

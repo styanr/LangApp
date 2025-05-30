@@ -9,12 +9,15 @@ import { useCallback, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { CheckCircle } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
+import { ActivityDto } from '@/api/orval/langAppApi.schemas';
 
 export default function AssignmentDetailPage() {
   const { assignmentId } = useLocalSearchParams();
   const router = useRouter();
   const { getAssignmentById } = useAssignments();
   const { data: assignment, isLoading, isError } = getAssignmentById(assignmentId as string);
+  const { t } = useTranslation();
 
   const overdue = useMemo(() => {
     if (!assignment?.dueTime) return false;
@@ -32,7 +35,9 @@ export default function AssignmentDetailPage() {
     return (
       <View className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color="#a21caf" />
-        <Text className="mt-4 text-lg text-muted-foreground">Loading assignment...</Text>
+        <Text className="mt-4 text-lg text-muted-foreground">
+          {t('assignmentDetailScreen.loading')}
+        </Text>
       </View>
     );
   }
@@ -40,7 +45,7 @@ export default function AssignmentDetailPage() {
   if (isError || !assignment) {
     return (
       <View className="flex-1 items-center justify-center">
-        <Text className="text-lg text-destructive">Failed to load assignment.</Text>
+        <Text className="text-lg text-destructive">{t('assignmentDetailScreen.failedToLoad')}</Text>
       </View>
     );
   }
@@ -56,7 +61,7 @@ export default function AssignmentDetailPage() {
               <View className="ml-auto flex-row items-center rounded-full bg-emerald-100 px-3 py-1 dark:bg-emerald-800">
                 <CheckCircle size={16} className="mr-1 text-emerald-600 dark:text-emerald-300" />
                 <Text className="text-sm font-medium text-emerald-700 dark:text-emerald-200">
-                  Submitted
+                  {t('assignmentDetailScreen.submitted')}
                 </Text>
               </View>
             )}
@@ -77,8 +82,9 @@ export default function AssignmentDetailPage() {
               className="text-muted-foreground"
             />
             <Text className="ml-2 text-lg font-semibold">
-              Max Score:{' '}
-              <Text className="font-bold text-primary">{assignment.maxScore ?? 'N/A'}</Text>
+              {t('assignmentDetailScreen.maxScore', {
+                score: assignment.maxScore ?? t('common.notApplicable'),
+              })}
             </Text>
           </View>
 
@@ -89,13 +95,17 @@ export default function AssignmentDetailPage() {
                 size={22}
                 className="text-primary"
               />
-              <Text className="ml-2 text-xl font-semibold">Activities</Text>
+              <Text className="ml-2 text-xl font-semibold">
+                {t('assignmentDetailScreen.activities')}
+              </Text>
             </View>
 
             <View className="mt-3 border-l-2 border-primary/40 pl-4">
-              {assignment.activities?.map((act, idx) => (
+              {assignment.activities?.map((act: ActivityDto, idx: number) => (
                 <View key={act.id ?? idx} className="mb-1 py-2">
-                  <Text className="text-base font-medium">{act.details?.activityType}</Text>
+                  <Text className="text-base font-medium">
+                    {t(`common.activityTypes.${act.details?.activityType ?? 'Unknown'}` as const)}
+                  </Text>
                 </View>
               ))}
             </View>
@@ -109,10 +119,10 @@ export default function AssignmentDetailPage() {
               <MaterialCommunityIcons name="pencil" size={20} color={'white'} />
               <Text className="ml-2 font-medium text-white">
                 {assignment.submitted
-                  ? 'Already Submitted'
+                  ? t('assignmentDetailScreen.alreadySubmitted')
                   : overdue
-                    ? 'Overdue'
-                    : 'Begin Submission'}
+                    ? t('assignmentDetailScreen.overdue')
+                    : t('assignmentDetailScreen.beginSubmission')}
               </Text>
             </View>
           </Button>

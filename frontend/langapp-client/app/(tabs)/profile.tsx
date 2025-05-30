@@ -17,6 +17,7 @@ import { useFileUpload } from '@/hooks/useFileUpload';
 import { useTranslation } from 'react-i18next';
 import { set } from 'lodash';
 import { LogOut } from '@/lib/icons/LogOut';
+import { AppLanguageSelector } from '@/components/ui/app-language-selector';
 
 export default function Profile() {
   const { t } = useTranslation();
@@ -187,6 +188,18 @@ export default function Profile() {
             </View>
           </View>
           {error && <Text className="mt-2 text-destructive">{error}</Text>}
+
+          {/* App Language Selector Section */}
+          <View className="mt-6 gap-3">
+            <Text className="text-sm font-semibold text-primary">
+              {t('profileScreen.appLanguage')}
+            </Text>
+            <Text className="text-xs text-muted-foreground">
+              {t('profileScreen.appLanguageSubtitle')}
+            </Text>
+            <AppLanguageSelector className="w-full" />
+          </View>
+
           <View className="mt-6 flex-row gap-4">
             {editMode ? (
               <>

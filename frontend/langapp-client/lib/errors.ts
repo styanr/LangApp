@@ -15,8 +15,10 @@ export function isProblemDetailsError(data: any): data is ProblemDetailsError {
 }
 
 export function handleApiError(error: unknown) {
+  console.log('API Error:', error);
   if (error instanceof AxiosError) {
     const data = error.response?.data;
+    console.log('Error data:', data);
 
     if (isProblemDetailsError(data)) {
       Alert.alert(`Error: ${data.title}`, data.detail);

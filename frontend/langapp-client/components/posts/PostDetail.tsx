@@ -19,13 +19,13 @@ import {
 } from 'lucide-react-native';
 import PostComments from './PostComments';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { formatDistanceToNowUTC } from '@/lib/dateUtils';
 import { usePosts } from '@/hooks/usePosts';
 import { useRouter } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import { AttachmentManager } from './AttachmentManager';
 import { useTranslation } from 'react-i18next';
+import { DateDisplay } from '@/components/ui/DateDisplay';
 
 interface PostDetailProps {
   post: PostDto;
@@ -203,11 +203,6 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, isLoading, isError
     );
   }
 
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return '';
-    return formatDistanceToNowUTC(dateString);
-  };
-
   return (
     <ScrollView className="flex-1 px-4 pt-6">
       <Animated.View entering={FadeInDown.duration(500)}>
@@ -220,7 +215,10 @@ export const PostDetail: React.FC<PostDetailProps> = ({ post, isLoading, isError
                   {post.authorName || `${t('common.user')} ${post.authorId}`}
                 </Text>
                 <Text className="text-xs text-muted-foreground">
-                  {formatDate(post.createdAt)}
+                  <DateDisplay
+                    dateString={post.createdAt || ''}
+                    className="text-xs text-muted-foreground"
+                  />
                   {post.isEdited && ` (${t('postDetail.edited')})`}
                 </Text>
               </View>

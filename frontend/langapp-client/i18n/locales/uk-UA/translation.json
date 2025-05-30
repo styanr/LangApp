@@ -38,8 +38,8 @@
     "lastName": "Прізвище",
     "lastNamePlaceholder": "Введіть прізвище",
     "iAmA": "Я:",
-    "student": "Студент",
-    "teacher": "Викладач",
+    "student": "Учень",
+    "teacher": "Вчитель",
     "password": "Пароль",
     "passwordPlaceholder": "Створіть пароль",
     "confirmPassword": "Підтвердження паролю",
@@ -105,7 +105,7 @@
     "studyGroupsDescriptionStudent": "Ваші мовні навчальні спільноти",
     "viewAllGroups": "Переглянути всі групи",
     "assignments": "Завдання",
-    "assignmentsDescription": "Ваші поточні мовні завдання",
+    "assignmentsDescription": "Ваші поточні завдання",
     "viewAllAssignments": "Переглянути всі завдання"
   },
   "groupsScreen": {
@@ -121,13 +121,13 @@
     "createFirstGroupTeacher": "Створіть свою першу навчальну групу, щоб почати викладати!",
     "mustBeAddedStudent": "Вас має додати вчитель до групи, щоб почати.",
     "languageNotSpecified": "Мову не вказано",
-    "teacherManaged": "Керується викладачем",
+    "teacherManaged": "Керується вчителем",
     "tapToManageGroup": "Натисніть, щоб керувати цією групою, завданнями та студентами.",
     "tapToViewGroup": "Натисніть, щоб переглянути деталі групи, дописи та учасників."
   },
   "assignmentsScreen": {
     "title": "Мої завдання",
-    "subtitle": "Всі ваші мовні завдання",
+    "subtitle": "Всі ваші завдання",
     "showSubmitted": "Показати здані",
     "showOverdue": "Пок. прострочені",
     "loading": "Завантаження завдань...",
@@ -139,12 +139,12 @@
   "assignmentCard": {
     "submitted": "Здано",
     "overdue": "Прострочено",
-    "due": "Термін: {{date}}",
+    "dueLabel": "Термін:",
     "noDueDate": "Без терміну",
     "group": "Група: {{groupName}}",
     "defaultDescription": "Натисніть, щоб переглянути деталі завдання та активності.",
     "assignmentPrompt": "Умова завдання:",
-    "studentSubmission": "Відповідь студента:",
+    "studentSubmission": "Відповідь учня:",
     "gradeActivity": "Оцінити вправу"
   },
   "profileScreen": {
@@ -165,7 +165,9 @@
     "permissionRequiredMessage": "Потрібен дозвіл на доступ до медіатеки.",
     "uploadFailedTitle": "Не вдалося завантажити",
     "uploadFailedMessage": "Не вдалося завантажити зображення",
-    "updateFailedMessage": "Не вдалося оновити профіль"
+    "updateFailedMessage": "Не вдалося оновити профіль",
+    "appLanguage": "Мова застосунку",
+    "appLanguageSubtitle": "Оберіть бажану мову застосунку"
   },
   "groupScreen": {
     "loadingGroup": "Завантаження групи...",
@@ -184,7 +186,7 @@
     "showSubmitted": "Показати здані",
     "showOverdue": "Пок. прострочені",
     "addUserToGroupPlaceholder": "Додати користувачів до групи",
-    "cannotAddTeacher": "Не можна додати викладача",
+    "cannotAddTeacher": "Не можна додати вчителя",
     "add": "Додати",
     "backToAssignments": "Назад до завдань",
     "errorAddingMember": "Помилка при додаванні учасника"
@@ -218,7 +220,9 @@
     "creating": "Створення...",
     "createButton": "Створити",
     "validationErrorTitle": "Помилка валідації",
-    "validationErrorMessage": "Заголовок і вміст не можуть бути порожніми."
+    "validationErrorMessage": "Заголовок і вміст не можуть бути порожніми.",
+    "cannotSwitchTitle": "Неможливо змінити тип допису",
+    "cannotSwitchMessage": "Видаліть усі документи."
   },
   "attachmentManager": {
     "attachmentsLabel": "Вкладення",
@@ -234,8 +238,8 @@
   },
   "groupPost": {
     "edited": "відредаговано",
-    "teacher": "Викладач",
-    "student": "Студент",
+    "teacher": "Вчитель",
+    "student": "Учень",
     "attachment_one": "{{count}} вкладення",
     "attachment_other": "{{count}} вкладень"
   },
@@ -295,9 +299,9 @@
     "unknownActivityType": "Невідомий тип вправи"
   },
   "submissionListItem": {
-    "student": "Студент: {{studentName}}",
+    "student": "Учень: {{studentName}}",
     "unmarked": "Не оцінено",
-    "submitted": "Здано: {{date}}",
+    "submittedLabel": "Здано:",
     "unknown": "Невідомо",
     "score": "Оцінка: {{score}}/{{maxScore}}",
     "notGraded": "Не оцінено",
@@ -306,22 +310,22 @@
   "fillInTheBlankActivityForm": {
     "title": "Вправа на заповнення пропусків",
     "templateTextLabel": "Текст-шаблон",
-    "templateTextDescription": "Використовуйте підкреслення (_) для позначення пропусків. Кожне підкреслення стане полем для заповнення студентом.",
+    "templateTextDescription": "Використовуйте підкреслення (_) для позначення пропусків. Кожне підкреслення стане полем для заповнення учнем.",
     "examplesLabel": "Приклади:",
     "examplesContent": "\n• \"Небо _.\" → \"Небо _____\"\n• \"Париж — столиця _.\" → \"Париж — столиця _____\"\n• \"Я люблю _ вранці.\" → \"Я люблю _____ вранці.\"",
     "templateTextPlaceholder": "Введіть текст з _ для пропусків. Наприклад: Небо _.",
-    "studentPreviewLabel": "Попередній перегляд для студента",
+    "studentPreviewLabel": "Попередній перегляд для учня",
     "blanksDetected_one": "Виявлено {{count}} пропуск",
     "blanksDetected_other": "Виявлено {{count}} пропусків",
     "studentPreviewDescription": "Так виглядатиме вправа для студентів:",
-    "studentInputsLabel": "Поля для введення, які побачить студент:",
+    "studentInputsLabel": "Поля для введення, які побачить учень:",
     "moreBlanks": "+ {{count}} ще",
     "noBlanksTitle": "Пропуски не виявлено",
     "noBlanksDescription": "Щоб створити пропуски, додайте підкреслення (_) у ваш текст. Переконайтеся, що кожне підкреслення має пробіли навколо або знаходиться біля розділових знаків. Наприклад: \"Небо _.\" або \"Привіт, _!\"",
     "validExamplesLabel": "Коректні приклади:",
     "validExamplesContent": "\n• \"Небо _\"\n• \"Привіт, _!\"\n• \"_ — це відповідь.\"",
     "acceptableAnswersLabel": "Прийнятні відповіді",
-    "acceptableAnswersDescription": "Для кожного пропуску вкажіть одну або кілька прийнятних відповідей (через кому). Відповідь студента має точно співпадати з однією з них, щоб бути правильною.",
+    "acceptableAnswersDescription": "Для кожного пропуску вкажіть одну або кілька прийнятних відповідей (через кому). Відповідь учня має точно співпадати з однією з них, щоб бути правильною.",
     "blankLabel": "Пропуск {{index}}",
     "answerPlaceholder": "наприклад, синє, блакитне, голубе",
     "multipleAnswersHint": "Введіть кілька правильних відповідей через кому"
@@ -332,6 +336,7 @@
     "questionPlaceholder": "Текст питання",
     "optionsPlaceholder": "Варіанти (через кому)",
     "correctOptionIndexPlaceholder": "Індекс правильної відповіді (з 0)",
+    "correctOptionLabel": "Виберіть правильну відповідь:",
     "removeQuestionButton": "Видалити питання",
     "addQuestionButton": "Додати питання"
   },
@@ -381,10 +386,10 @@
   "submissionStatsCard": {
     "submitted": "Здано",
     "notSubmitted": "Не здано",
-    "submittedStudents": "Студенти, які здали:",
+    "submittedStudents": "Учні, які здали:",
     "noStudentsSubmitted": "Ще ніхто не здав.",
-    "studentsWhoHaventSubmitted": "Студенти, які не здали:",
-    "allStudentsSubmittedOrNoGroup": "Всі студенти здали або немає даних про групу."
+    "studentsWhoHaventSubmitted": "Учні, які не здали:",
+    "allStudentsSubmittedOrNoGroup": "Всі учні здали або немає даних про групу."
   },
   "fillInTheBlankActivity": {
     "cardTitle": "Заповніть речення",
@@ -452,6 +457,10 @@
       "Question": "Питання",
       "Unknown": "Невідома вправа"
     },
+    "postTypes": {
+      "Discussion": "Обговорення",
+      "Resource": "Ресурс"
+    },
     "gradeStatus": {
       "Pending": "Очікує",
       "Completed": "Завершено",
@@ -460,8 +469,8 @@
       "Unknown": "Невідомо"
     },
     "roles": {
-      "Student": "Студент",
-      "Teacher": "Викладач",
+      "Student": "Учень",
+      "Teacher": "Вчитель",
       "Owner": "Власник",
       "Member": "Учасник"
     }
@@ -499,7 +508,7 @@
     "referenceText": "Текст для вимови:"
   },
   "writingSubmission": {
-    "studentResponse": "Відповідь студента:",
+    "studentResponse": "Відповідь учня:",
     "noText": "[Текст не надано]",
     "wordCount": "Кількість слів: {{count}}"
   },
@@ -510,10 +519,11 @@
   "multipleChoiceSubmission": {
     "questionLabel": "Питання {{index}}",
     "selectedOption": "Обраний варіант: {{index}}",
-    "noAnswer": "Відповідь не вибрана"
+    "noAnswer": "Відповідь не вибрана",
+    "optionNotFound": "Варіант не знайдено"
   },
   "questionSubmission": {
-    "studentAnswer": "Відповідь студента:",
+    "studentAnswer": "Відповідь учня:",
     "noAnswer": "[Відповідь не надана]"
   },
   "pronunciationSubmission": {
@@ -523,7 +533,7 @@
     "noRecording": "Запис не надано"
   },
   "studentInfo": {
-    "title": "Інформація про студента",
+    "title": "Інформація про учня",
     "unmarked": "Не оцінено",
     "submittedLabel": "Здано:",
     "scoreLabel": "Оцінка: {{score}}",
@@ -582,5 +592,54 @@
   },
   "paging": {
     "pageInfo": "Сторінка {{currentPage}} з {{totalPages}}"
+  },
+  "languageSelector": {
+    "placeholder": "Оберіть мову",
+    "label": "Мова"
+  },
+  "submitAssignmentScreen": {
+    "loading": "Завантаження...",
+    "noActivities": "Немає вправ для здачі.",
+    "activityProgress": "Вправа {{currentIndex}} з {{totalActivities}}",
+    "unsupportedActivityType": "Непідтримуваний тип вправи: {{type}}",
+    "previousButton": "Попередня",
+    "nextButton": "Наступна",
+    "submittingButton": "Надсилання...",
+    "submitButton": "Здати завдання"
+  },
+  "assignmentDetailScreen": {
+    "loading": "Завантаження завдання...",
+    "failedToLoad": "Не вдалося завантажити завдання.",
+    "submitted": "Здано",
+    "maxScore": "Макс. бал: {{score}}",
+    "activities": "Вправи",
+    "alreadySubmitted": "Вже здано",
+    "overdue": "Прострочено",
+    "beginSubmission": "Почати"
+  },
+  "teacherAssignmentOverview": {
+    "loadingAssignmentData": "Завантаження даних завдання...",
+    "failedToLoadAssignmentData": "Не вдалося завантажити дані завдання.",
+    "retry": "Повторити",
+    "assignmentViewTitle": "Перегляд завдання",
+    "submissionStatsTitle": "Статистика подань",
+    "studentSubmissionsTitle": "Подання учнів",
+    "noSubmissionsYet": "Подань ще немає"
+  },
+  "activityFeedback": {
+    "currentGrade": "Поточна оцінка:",
+    "score": "Оцінка: {{score}}%",
+    "feedback": "Відгук:",
+    "editGrade": "Редагувати оцінку",
+    "scoreLabel": "Оцінка (%)",
+    "scorePlaceholder": "Введіть оцінку (0-100)",
+    "scoreHelper": "Введіть число від 0 до 100",
+    "feedbackLabel": "Відгук (необов'язково)",
+    "feedbackPlaceholder": "Надайте відгук учню",
+    "saveGrade": "Зберегти оцінку",
+    "cancel": "Скасувати",
+    "jsonMode": "JSON",
+    "resultMode": "Результат",
+    "textMode": "Текст"
   }
 }

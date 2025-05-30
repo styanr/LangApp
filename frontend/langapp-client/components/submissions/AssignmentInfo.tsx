@@ -4,8 +4,8 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Clock, Award } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
 import { AssignmentDto } from '@/api/orval/langAppApi.schemas';
-import { formatRelativeDate } from '@/lib/dateUtils';
 import { useTranslation } from 'react-i18next';
+import { DateDisplay } from '@/components/ui/DateDisplay';
 
 interface AssignmentInfoProps {
   assignment: AssignmentDto;
@@ -26,11 +26,12 @@ export const AssignmentInfo: React.FC<AssignmentInfoProps> = ({ assignment }) =>
           <View className="flex-row items-center">
             <Clock size={16} className="mr-2 text-fuchsia-500" />
             <Text className="text-sm">
-              {t('assignmentCard.due', {
-                date: assignment.dueTime
-                  ? formatRelativeDate(new Date(assignment.dueTime))
-                  : t('assignmentCard.noDueDate'),
-              })}
+              {t('assignmentCard.dueLabel')}{' '}
+              {assignment.dueTime ? (
+                <DateDisplay dateString={assignment.dueTime} strict={true} className={'text-sm'} />
+              ) : (
+                t('assignmentCard.noDueDate')
+              )}
             </Text>
           </View>
           <View className="flex-row items-center">

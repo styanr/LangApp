@@ -64,7 +64,7 @@ export default function WritingActivity({ activity, submission, onChange }: Prop
             placeholder={t('writingActivity.answerPlaceholder')}
             className="h-40 text-base"
           />
-          {maxWords && (
+          {maxWords && maxWords > 0 && (
             <UIText className="mt-2 text-right text-xs text-muted-foreground">
               {t('writingActivity.wordCount', {
                 count: text.trim().split(/\s+/).filter(Boolean).length,

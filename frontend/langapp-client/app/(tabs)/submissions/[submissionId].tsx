@@ -36,7 +36,6 @@ export default function SubmissionDetailPage() {
     refetch: refetchSubmission,
   } = getSubmissionById(submissionId as string);
 
-  // Fetch the original assignment data once we have the submission data
   const {
     data: assignment,
     isLoading: isAssignmentLoading,

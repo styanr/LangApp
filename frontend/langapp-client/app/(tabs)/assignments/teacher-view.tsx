@@ -7,6 +7,7 @@ import Animated, { FadeIn } from 'react-native-reanimated';
 import { useState, useCallback } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useStudyGroups } from '@/hooks/useStudyGroups';
+import { useTranslation } from 'react-i18next';
 
 import { SectionHeader } from '@/components/assignments/teacher-view/SectionHeader';
 import { AssignmentOverviewCard } from '@/components/assignments/teacher-view/AssignmentOverviewCard';
@@ -30,6 +31,7 @@ export default function TeacherAssignmentOverviewPage() {
   const router = useRouter();
   const [page, setPage] = useState(1);
   const pageSize = 10;
+  const { t } = useTranslation();
 
   const { getAssignmentById, getAssignmentStatsById } = useAssignments();
   const {
@@ -114,7 +116,7 @@ export default function TeacherAssignmentOverviewPage() {
     return (
       <View className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color="#a21caf" />
-        <Text className="mt-4 text-lg">Loading assignment data...</Text>
+        <Text className="mt-4 text-lg">{t('teacherAssignmentOverview.loadingAssignmentData')}</Text>
       </View>
     );
   }
@@ -122,9 +124,11 @@ export default function TeacherAssignmentOverviewPage() {
   if (isError || !assignment) {
     return (
       <View className="flex-1 items-center justify-center">
-        <Text className="text-lg text-destructive">Failed to load assignment data.</Text>
+        <Text className="text-lg text-destructive">
+          {t('teacherAssignmentOverview.failedToLoadAssignmentData')}
+        </Text>
         <Button className="mt-4" onPress={onRefresh}>
-          <Text>Retry</Text>
+          <Text>{t('teacherAssignmentOverview.retry')}</Text>
         </Button>
       </View>
     );
@@ -137,7 +141,7 @@ export default function TeacherAssignmentOverviewPage() {
       refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} />}>
       <Animated.View entering={FadeIn.duration(400)}>
         <SectionHeader
-          title="Assignment View"
+          title={t('teacherAssignmentOverview.assignmentViewTitle')}
           icon={<Clipboard size={24} className="text-fuchsia-600" />}
         />
 
@@ -148,7 +152,7 @@ export default function TeacherAssignmentOverviewPage() {
         {groupData && groupData.members && assignmentStats && (
           <View className="mb-6">
             <SectionHeader
-              title="Submission Stats"
+              title={t('teacherAssignmentOverview.submissionStatsTitle')}
               icon={
                 <MaterialCommunityIcons name="chart-bar" size={24} className="text-fuchsia-600" />
               }
@@ -163,7 +167,7 @@ export default function TeacherAssignmentOverviewPage() {
         {/* Submissions List */}
         <View className="mb-4">
           <SectionHeader
-            title="Student Submissions"
+            title={t('teacherAssignmentOverview.studentSubmissionsTitle')}
             icon={
               <MaterialCommunityIcons name="account-group" size={24} className="text-fuchsia-600" />
             }
@@ -188,13 +192,12 @@ export default function TeacherAssignmentOverviewPage() {
                 size={36}
                 className="mb-2 text-fuchsia-400"
               />
-              <Text className="text-center">No submissions yet</Text>
+              <Text className="text-center">{t('teacherAssignmentOverview.noSubmissionsYet')}</Text>
             </View>
           )}
         </View>
 
         {/* Pagination */}
-        {/* Avoid text not in text component error */}
         {!!totalCount && totalCount > pageSize && (
           <Paging
             page={page}

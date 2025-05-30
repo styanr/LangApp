@@ -8,6 +8,7 @@ import { IconBadge } from '@/components/ui/themed-icon';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { Link } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { DateDisplay } from '../ui/DateDisplay';
 
 interface AssignmentCardProps {
   /** Whether the assignment is overdue */
@@ -86,7 +87,12 @@ const CardInnerContent: React.FC<CardInnerContentProps> = React.memo(
                   <RNView className="flex-row items-center gap-2">
                     <CalendarDays size={16} className="text" />
                     <Text className="text-xs text-fuchsia-700 dark:text-fuchsia-200">
-                      {t('assignmentCard.due', { date: formattedDueDate })}
+                      {t('assignmentCard.dueLabel')}{' '}
+                      <DateDisplay
+                        dateString={dueTime}
+                        strict
+                        className="text-xs text-fuchsia-700 dark:text-fuchsia-200"
+                      />
                     </Text>
                   </RNView>
                 ) : (

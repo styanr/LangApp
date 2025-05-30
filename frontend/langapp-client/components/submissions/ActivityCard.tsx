@@ -150,21 +150,23 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
     <Card className="mb-6 overflow-hidden rounded-xl border">
       <View className={`h-1 w-full ${statusBg}`} />
       <CardHeader className="pb-3">
-        <View className="flex-row items-center justify-between ">
+        <View className="flex flex-col gap-3">
           <View className="flex-row items-center gap-2">
             <IconBadge
               Icon={getActivityIcon(details.activityType || '')}
               size={20}
-              className="mr-2 text-fuchsia-500"
+              className="text-black"
             />
             <Text className="text-lg font-semibold">
               {t('common.activity')}: {getActivityTypeLabel(details.activityType)}
             </Text>
           </View>
-          <View className={`rounded-full px-2 py-1 ${statusBg}`}>
-            <Text className={`text-xs font-medium ${statusColor}`}>
-              {getGradeStatusLabel(subActivity.status)}
-            </Text>
+          <View className="flex-row justify-start">
+            <View className={`rounded-full px-2 py-1 ${statusBg}`}>
+              <Text className={`text-xs font-medium ${statusColor}`}>
+                {getGradeStatusLabel(subActivity.status)}
+              </Text>
+            </View>
           </View>
         </View>
       </CardHeader>
@@ -183,6 +185,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
                 return (
                   <MultipleChoiceSubmission
                     details={details as MultipleChoiceActivitySubmissionDetailsDto}
+                    originalActivity={originalActivity}
                   />
                 );
               case 'FillInTheBlank':

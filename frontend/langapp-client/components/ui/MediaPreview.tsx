@@ -1,16 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Pressable,
-  Image,
-  Modal,
-  Platform,
-  Alert,
-  ActivityIndicator,
-  Dimensions,
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, Image, Modal, Pressable, View } from 'react-native';
 import { Text } from './text';
-import { FileIcon, ImageIcon, FileTextIcon, XCircle, ExternalLink } from 'lucide-react-native';
+import { FileIcon, FileTextIcon, ImageIcon, XCircle } from 'lucide-react-native';
+import { ExternalLink } from '@/lib/icons/ExternalLink';
 import * as WebBrowser from 'expo-linking';
 import { Button } from './button';
 import { useFileAccess } from '@/hooks/useFileAccess';
@@ -34,8 +26,7 @@ export function MediaPreview({ url, index }: MediaPreviewProps) {
   const getFileExtension = (fileUrl: string): string => {
     const cleanedUrl = fileUrl.split('?')[0];
     const filename = cleanedUrl.split('/').pop() || '';
-    const extension = filename.split('.').pop()?.toLowerCase() || '';
-    return extension;
+    return filename.split('.').pop()?.toLowerCase() || '';
   };
 
   const getFileName = async (fileUrl: string): Promise<string> => {

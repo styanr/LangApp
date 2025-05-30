@@ -55,13 +55,6 @@ export default function AuthenticatedLayout() {
           title: t('tabs.home'),
           tabBarIcon: ({ color }) => <House color={color} size={24} />,
         }}
-        listeners={{
-          tabPress: () => {
-            if (router.canDismiss()) {
-              router.dismissAll();
-            }
-          },
-        }}
       />
       <Tabs.Screen
         name="groups"

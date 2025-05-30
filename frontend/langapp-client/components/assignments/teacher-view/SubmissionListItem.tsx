@@ -6,9 +6,9 @@ import Animated, { FadeIn } from 'react-native-reanimated';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { User } from '@/lib/icons/User';
 import { Clock } from '@/lib/icons/Clock';
-import { formatRelativeDate } from '@/lib/dateUtils';
 import { AssignmentSubmissionDto, GradeStatus } from '@/api/orval/langAppApi.schemas';
 import { useTranslation } from 'react-i18next';
+import { DateDisplay } from '@/components/ui/DateDisplay';
 
 interface SubmissionListItemProps {
   submission: AssignmentSubmissionDto;
@@ -79,11 +79,16 @@ export const SubmissionListItem: React.FC<SubmissionListItemProps> = ({
               <View className="flex-row items-center">
                 <Clock size={16} className="mr-1 text-muted-foreground" />
                 <Text className="text-xs text-muted-foreground">
-                  {t('submissionListItem.submitted', {
-                    date: submission.submittedAt
-                      ? formatRelativeDate(new Date(submission.submittedAt))
-                      : t('submissionListItem.unknown'),
-                  })}
+                  {t('submissionListItem.submittedLabel')}{' '}
+                  {submission.submittedAt ? (
+                    <DateDisplay
+                      dateString={submission.submittedAt}
+                      strict={true}
+                      className="text-xs text-muted-foreground"
+                    />
+                  ) : (
+                    t('submissionListItem.unknown')
+                  )}
                 </Text>
               </View>
 

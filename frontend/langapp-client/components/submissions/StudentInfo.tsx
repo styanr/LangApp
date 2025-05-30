@@ -3,9 +3,9 @@ import { View } from 'react-native';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { User, Clock, Award } from 'lucide-react-native';
 import { Text } from '@/components/ui/text';
-import { formatRelativeDate } from '@/lib/dateUtils';
 import { AssignmentSubmissionDto, GradeStatus } from '@/api/orval/langAppApi.schemas';
 import { useTranslation } from 'react-i18next';
+import { DateDisplay } from '@/components/ui/DateDisplay';
 
 const getStatusColor = (status?: GradeStatus): string => {
   switch (status) {
@@ -65,7 +65,11 @@ export const StudentInfo: React.FC<StudentInfoProps> = ({ submission }) => {
             <Clock size={16} className="mr-2 text-fuchsia-500" />
             <Text className="text-sm">
               {t('studentInfo.submittedLabel')}{' '}
-              {formatRelativeDate(new Date(submission.submittedAt || ''))}
+              <DateDisplay
+                dateString={submission.submittedAt || ''}
+                strict={true}
+                className={'text-sm'}
+              />
             </Text>
           </View>
           <View className="flex-row items-center">

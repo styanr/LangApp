@@ -6,9 +6,8 @@ import { usePostComments } from '@/hooks/usePostComments';
 import { PostCommentDto } from '@/api/orval/langAppApi.schemas';
 import { Edit2, Trash2 } from 'lucide-react-native';
 import { UserProfilePicture } from '@/components/ui/UserProfilePicture';
-import { formatDistanceToNow } from 'date-fns';
-import { formatDistanceToNowUTC } from '@/lib/dateUtils';
 import { useTranslation } from 'react-i18next';
+import { DateDisplay } from '@/components/ui/DateDisplay';
 
 interface PostCommentsProps {
   postId: string;
@@ -94,15 +93,6 @@ export const PostComments: React.FC<PostCommentsProps> = ({
     setEditingContent('');
   };
 
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return '';
-    try {
-      return formatDistanceToNowUTC(dateString);
-    } catch (e) {
-      return dateString;
-    }
-  };
-
   return (
     <View className="mt-4">
       <Text className="mb-2 text-lg font-semibold">{t('postComments.title')}</Text>
@@ -152,7 +142,11 @@ export const PostComments: React.FC<PostCommentsProps> = ({
                         {comment.authorName || `${t('common.user')} ${comment.authorId}`}
                       </Text>
                       <Text className="text-xs text-muted-foreground">
-                        {formatDate(comment.createdAt)}
+                        <DateDisplay
+                          dateString={comment.createdAt || ''}
+                          className="text-xs text-muted-foreground"
+                        />
+                        {/*{formatDate(comment.createdAt)}*/}
                         {comment.editedAt && ` (${t('postComments.edited')})`}
                       </Text>
                     </View>

@@ -90,7 +90,7 @@ function SelectContent({
   return (
     <SelectPrimitive.Portal hostName={portalHost}>
       <SelectPrimitive.Overlay style={Platform.OS !== 'web' ? StyleSheet.absoluteFill : undefined}>
-        <Animated.View className='z-50' entering={FadeIn} exiting={FadeOut}>
+        <View className='z-50' >
           <SelectPrimitive.Content
             className={cn(
               'relative z-50 max-h-96 min-w-[8rem] rounded-md border border-border bg-popover shadow-md shadow-foreground/10 py-2 px-1 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
@@ -116,7 +116,7 @@ function SelectContent({
             </SelectPrimitive.Viewport>
             <SelectScrollDownButton />
           </SelectPrimitive.Content>
-        </Animated.View>
+        </View>
       </SelectPrimitive.Overlay>
     </SelectPrimitive.Portal>
   );

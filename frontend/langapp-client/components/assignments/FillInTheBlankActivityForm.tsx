@@ -50,7 +50,6 @@ export const FillInTheBlankActivityForm: React.FC<Props> = ({ details, onChange 
     setAnswers(newAnswers);
   }, [answerInputs]);
 
-  // Notify parent of changes (template or answers updated)
   useEffect(() => {
     onChange({ activityType: 'FillInTheBlank', templateText, answers });
   }, [templateText, answers]);
@@ -100,7 +99,7 @@ export const FillInTheBlankActivityForm: React.FC<Props> = ({ details, onChange 
 
       {/* Preview section */}
       {templateText && (
-        <Card className="mb-4 overflow-hidden border border-border">
+        <Card className="mb-4 overflow-hidden border-border">
           <CardContent className="p-0">
             <View className="flex-row items-center border-b border-border bg-primary/5 p-3">
               <Info size={16} className="mr-2 text-primary" />

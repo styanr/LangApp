@@ -127,7 +127,7 @@ const GroupPage = () => {
 
   const navigateToPost = (postId: string) => {
     router.push({
-      pathname: `/(tabs)/posts/${postId}`,
+      pathname: `/(tabs)/groups/${groupId}/posts/${postId}`,
     });
   };
 

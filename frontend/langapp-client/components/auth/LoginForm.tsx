@@ -68,7 +68,7 @@ export function LoginForm({ onLogin, isSubmitting, error }: LoginFormProps) {
       </Button>
 
       <View className="mt-4 flex-row justify-center">
-        <Text className="text-sm text-gray-500">{t('loginForm.noAccount')}</Text>
+        <Text className="text-sm text-gray-500">{t('loginForm.noAccount')} </Text>
         <Link href="/auth/register" asChild>
           <Pressable>
             <Text className="text-sm font-medium text-primary">{t('loginForm.register')}</Text>

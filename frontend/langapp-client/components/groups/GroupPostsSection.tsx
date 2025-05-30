@@ -76,6 +76,7 @@ const GroupPostsSection: React.FC<GroupPostsSectionProps> = ({
             profilePicture: post.authorProfilePicture || null,
             role: post.authorRole || 'student',
           }}
+          type={post.type || ''}
           onPress={onPress}
           index={idx}
         />

@@ -16,6 +16,8 @@ import {
   getGetAssignmentsByGroupQueryKey,
   getGetAssignmentsByUserQueryKey,
 } from '@/api/orval/assignments';
+import { useTranslation } from 'react-i18next';
+import { handleApiError } from '@/lib/errors';
 
 export default function SubmitAssignmentPage() {
   const { assignmentId } = useLocalSearchParams();
@@ -23,6 +25,7 @@ export default function SubmitAssignmentPage() {
   const { getAssignmentById } = useAssignments();
   const { data: assignment, isLoading, isError } = getAssignmentById(String(assignmentId));
   const activities = assignment?.activities || [];
+  const { t } = useTranslation();
 
   const [index, setIndex] = useState(0);
   const [details, setDetails] = useState<any[]>(() => Array(activities.length).fill(null));
@@ -58,13 +61,25 @@ export default function SubmitAssignmentPage() {
   const handleNext = () => setIndex((i) => Math.min(i + 1, activities.length - 1));
 
   const handleSubmit = async () => {
-    await createSubmission(String(assignmentId), {
-      activitySubmissionDtos: activities.map((act, i) => ({
-        activityId: act.id ?? '',
-        details: details[i],
-      })),
-    });
-    // Invalidate assignment lists after submission
+    try {
+      // if (activities.length === 0) {
+      //   throw new Error(t('submitAssignmentScreen.noActivities'));
+      // }
+      // if (details.some((detail) => detail === null)) {
+      //   throw new Error(t('submitAssignmentScreen.fillAllActivities'));
+      // }
+
+      await createSubmission(String(assignmentId), {
+        activitySubmissionDtos: activities.map((act, i) => ({
+          activityId: act.id ?? '',
+          details: details[i],
+        })),
+      });
+    } catch (error) {
+      handleApiError(error);
+      return;
+    }
+
     if (assignment?.studyGroupId) {
       queryClient.invalidateQueries({
         queryKey: getGetAssignmentsByGroupQueryKey(assignment.studyGroupId, {
@@ -83,7 +98,7 @@ export default function SubmitAssignmentPage() {
     queryClient.invalidateQueries({
       queryKey: getGetAssignmentsByUserQueryKey({ showSubmitted: false, showOverdue: false }),
     });
-    // Reset state after successful submission
+
     setDetails(Array(activities.length).fill(null));
     setIndex(0);
     if (assignment?.studyGroupId) {
@@ -97,7 +112,9 @@ export default function SubmitAssignmentPage() {
     return (
       <View className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color="#a21caf" />
-        <Text className="mt-4 text-lg text-muted-foreground">Loading...</Text>
+        <Text className="mt-4 text-lg text-muted-foreground">
+          {t('submitAssignmentScreen.loading')}
+        </Text>
       </View>
     );
   }
@@ -105,7 +122,7 @@ export default function SubmitAssignmentPage() {
   if (isError || activities.length === 0) {
     return (
       <View className="flex-1 items-center justify-center">
-        <Text className="text-lg text-destructive">No activities to submit.</Text>
+        <Text className="text-lg text-destructive">{t('submitAssignmentScreen.noActivities')}</Text>
       </View>
     );
   }
@@ -126,13 +143,17 @@ export default function SubmitAssignmentPage() {
 
   // Select the component or fallback for unsupported types
   const ActivityComponent =
-    activityComponentMap[type ?? ''] ?? (() => <Text>Unsupported activity type: {type}</Text>);
+    activityComponentMap[type ?? ''] ??
+    (() => <Text>{t('submitAssignmentScreen.unsupportedActivityType', { type })}</Text>);
 
   return (
     <ScrollView className="flex-1 bg-background p-4" contentContainerStyle={{ paddingBottom: 32 }}>
       <View className="mb-4">
         <Text className="text-xl font-semibold">
-          Activity {index + 1} of {activities.length}
+          {t('submitAssignmentScreen.activityProgress', {
+            currentIndex: index + 1,
+            totalActivities: activities.length,
+          })}
         </Text>
         <Progress
           value={((index + 1) / activities.length) * 100}
@@ -143,16 +164,18 @@ export default function SubmitAssignmentPage() {
       <ActivityComponent activity={activity} submission={details[index]} onChange={handleChange} />
       <View className="mt-6 flex-row justify-between">
         <Button disabled={index === 0} onPress={handlePrev} variant="outline">
-          <Text>Previous</Text>
+          <Text>{t('submitAssignmentScreen.previousButton')}</Text>
         </Button>
         {index < activities.length - 1 ? (
           <Button onPress={handleNext}>
-            <Text>Next</Text>
+            <Text>{t('submitAssignmentScreen.nextButton')}</Text>
           </Button>
         ) : (
           <Button onPress={handleSubmit} disabled={mutationStatus.createSubmission.isLoading}>
             <Text>
-              {mutationStatus.createSubmission.isLoading ? 'Submitting...' : 'Submit Assignment'}
+              {mutationStatus.createSubmission.isLoading
+                ? t('submitAssignmentScreen.submittingButton')
+                : t('submitAssignmentScreen.submitButton')}
             </Text>
           </Button>
         )}

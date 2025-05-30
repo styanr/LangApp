@@ -21,7 +21,7 @@ export const WritingActivityForm: React.FC<Props> = ({ details, onChange }) => {
     onChange({
       activityType: 'Writing',
       prompt,
-      maxWords: maxWords ? parseInt(maxWords, 10) : undefined,
+      maxWords: maxWords && !isNaN(parseInt(maxWords)) ? parseInt(maxWords, 10) : undefined,
     });
   }, [prompt, maxWords]);
 

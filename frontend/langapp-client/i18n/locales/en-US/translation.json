@@ -139,7 +139,7 @@
   "assignmentCard": {
     "submitted": "Submitted",
     "overdue": "Overdue",
-    "due": "Due: {{date}}",
+    "dueLabel": "Due:",
     "noDueDate": "No due date",
     "group": "Group: {{groupName}}",
     "defaultDescription": "Tap to view assignment details and activities.",
@@ -165,7 +165,9 @@
     "permissionRequiredMessage": "Permission to access media library is required.",
     "uploadFailedTitle": "Upload failed",
     "uploadFailedMessage": "Could not upload image",
-    "updateFailedMessage": "Failed to update profile"
+    "updateFailedMessage": "Failed to update profile",
+    "appLanguage": "App Language",
+    "appLanguageSubtitle": "Choose your preferred app language"
   },
   "groupScreen": {
     "loadingGroup": "Loading group...",
@@ -218,7 +220,9 @@
     "creating": "Creating...",
     "createButton": "Create",
     "validationErrorTitle": "Validation Error",
-    "validationErrorMessage": "Title and content cannot be empty."
+    "validationErrorMessage": "Title and content cannot be empty.",
+    "cannotSwitchTitle": "Cannot Switch Post Type",
+    "cannotSwitchMessage": "Please remove all documents."
   },
   "attachmentManager": {
     "attachmentsLabel": "Attachments",
@@ -297,7 +301,7 @@
   "submissionListItem": {
     "student": "Student: {{studentName}}",
     "unmarked": "Unmarked",
-    "submitted": "Submitted: {{date}}",
+    "submittedLabel": "Submitted:",
     "unknown": "Unknown",
     "score": "Score: {{score}}/{{maxScore}}",
     "notGraded": "Not graded",
@@ -332,6 +336,7 @@
     "questionPlaceholder": "Question text",
     "optionsPlaceholder": "Options (comma separated)",
     "correctOptionIndexPlaceholder": "Correct option index (0-based)",
+    "correctOptionLabel": "Select the correct option:",
     "removeQuestionButton": "Remove Question",
     "addQuestionButton": "Add Question"
   },
@@ -452,6 +457,10 @@
       "Question": "Question",
       "Unknown": "Unknown Activity"
     },
+    "postTypes": {
+      "Discussion": "Discussion",
+      "Resource": "Resource"
+    },
     "gradeStatus": {
       "Pending": "Pending",
       "Completed": "Completed",
@@ -510,7 +519,8 @@
   "multipleChoiceSubmission": {
     "questionLabel": "Question {{index}}",
     "selectedOption": "Selected Option: {{index}}",
-    "noAnswer": "No answer selected"
+    "noAnswer": "No answer selected",
+    "optionNotFound": "Option not found"
   },
   "questionSubmission": {
     "studentAnswer": "Student's Answer:",
@@ -582,5 +592,54 @@
   },
   "paging": {
     "pageInfo": "Page {{currentPage}} of {{totalPages}}"
+  },
+  "languageSelector": {
+    "placeholder": "Select Language",
+    "label": "Language"
+  },
+  "submitAssignmentScreen": {
+    "loading": "Loading...",
+    "noActivities": "No activities to submit.",
+    "activityProgress": "Activity {{currentIndex}} of {{totalActivities}}",
+    "unsupportedActivityType": "Unsupported activity type: {{type}}",
+    "previousButton": "Previous",
+    "nextButton": "Next",
+    "submittingButton": "Submitting...",
+    "submitButton": "Submit Assignment"
+  },
+  "assignmentDetailScreen": {
+    "loading": "Loading assignment...",
+    "failedToLoad": "Failed to load assignment.",
+    "submitted": "Submitted",
+    "maxScore": "Max Score: {{score}}",
+    "activities": "Activities",
+    "alreadySubmitted": "Already Submitted",
+    "overdue": "Overdue",
+    "beginSubmission": "Begin Submission"
+  },
+  "teacherAssignmentOverview": {
+    "loadingAssignmentData": "Loading assignment data...",
+    "failedToLoadAssignmentData": "Failed to load assignment data.",
+    "retry": "Retry",
+    "assignmentViewTitle": "Assignment View",
+    "submissionStatsTitle": "Submission Stats",
+    "studentSubmissionsTitle": "Student Submissions",
+    "noSubmissionsYet": "No submissions yet"
+  },
+  "activityFeedback": {
+    "currentGrade": "Current Grade:",
+    "score": "Score: {{score}}%",
+    "feedback": "Feedback:",
+    "editGrade": "Edit Grade",
+    "scoreLabel": "Score (%)",
+    "scorePlaceholder": "Enter score (0-100)",
+    "scoreHelper": "Enter a number between 0 and 100",
+    "feedbackLabel": "Feedback (optional)",
+    "feedbackPlaceholder": "Provide feedback to the student",
+    "saveGrade": "Save Grade",
+    "cancel": "Cancel",
+    "jsonMode": "JSON",
+    "resultMode": "Result",
+    "textMode": "Text"
   }
 }

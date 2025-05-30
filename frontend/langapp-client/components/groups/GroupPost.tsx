@@ -1,14 +1,12 @@
 import { View, Pressable } from 'react-native';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
-import { MessageSquare, Calendar, MoreVertical} from 'lucide-react-native';
-import {Paperclip} from '@/lib/icons/Paperclip'
+import { MessageSquare, Calendar, MoreVertical, Badge } from 'lucide-react-native';
+import { Paperclip } from '@/lib/icons/Paperclip';
 import Animated, { FadeInUp } from 'react-native-reanimated';
-import { formatDistanceToNow } from 'date-fns';
-import { UTCDate } from '@date-fns/utc';
-import { toUTCDate } from '@/lib/dateUtils';
 import { UserProfilePicture } from '@/components/ui/UserProfilePicture';
 import { useTranslation } from 'react-i18next';
+import { DateDisplay } from '@/components/ui/DateDisplay';
 
 type PostProps = {
   id: string;
@@ -23,6 +21,7 @@ type PostProps = {
   };
   isEdited?: boolean;
   mediaCount?: number;
+  type: string;
   onPress: (postId: string) => void;
   index?: number;
 };
@@ -35,11 +34,11 @@ export const GroupPost = ({
   author,
   isEdited = false,
   mediaCount = 0,
+  type,
   onPress,
   index = 0,
 }: PostProps) => {
   const { t } = useTranslation();
-  const formattedDate = formatDistanceToNow(toUTCDate(createdAt), { addSuffix: true });
 
   return (
     <Animated.View
@@ -52,21 +51,30 @@ export const GroupPost = ({
               <CardTitle className="text-xl font-bold text-indigo-900 dark:text-white">
                 <Text>{title}</Text>
               </CardTitle>
-              <CardDescription className="mt-1 text-sm text-indigo-700 dark:text-indigo-200">
-                <View
-                  className={`flex-row items-center gap-2 rounded p-2 ${author.role === 'Teacher' ? 'border border-yellow-500' : 'border-1 border-blue-400'}`}>
-                  <UserProfilePicture imageUrl={author.profilePicture} size={20} />
-                  <View className={`flex-row items-center gap-1`}>
-                    <Text className="text-xs">
-                      {author.name} • {formattedDate}
-                      {isEdited && ` (${t('groupPost.edited')})`}
-                      {author.role === 'Teacher'
-                        ? ` (${t('groupPost.teacher')})`
-                        : ` (${t('groupPost.student')})`}
-                    </Text>
+              <View className="mt-1 flex flex-col gap-2">
+                <CardDescription className="mt-1 text-sm text-indigo-700 dark:text-indigo-200">
+                  <View
+                    className={`flex-row items-center gap-2 rounded p-2 ${author.role === 'Teacher' ? 'border border-yellow-500' : 'border-1 border-blue-400'}`}>
+                    <UserProfilePicture imageUrl={author.profilePicture} size={20} />
+                    <View className={`flex-row items-center gap-1`}>
+                      <Text className="text-xs">
+                        {author.name} •{' '}
+                        <DateDisplay className="text-xs" dateString={createdAt} strict={false} />
+                        {isEdited && ` (${t('groupPost.edited')})`}
+                        {author.role === 'Teacher'
+                          ? ` (${t('groupPost.teacher')})`
+                          : ` (${t('groupPost.student')})`}
+                      </Text>
+                    </View>
                   </View>
+                </CardDescription>
+
+                <View className="flex-row">
+                  <Text className="mt-1 rounded-full bg-primary px-2 py-0.5 text-xs font-medium text-white">
+                    {t(`common.postTypes.${type}`, { defaultValue: type })}
+                  </Text>
                 </View>
-              </CardDescription>
+              </View>
             </View>
             <MoreVertical size={18} className="text-indigo-400" />
           </CardHeader>

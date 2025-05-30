@@ -13,7 +13,6 @@ export const WritingSubmission: React.FC<WritingSubmissionProps> = ({ details: d
   const wordCount = d.text ? d.text.trim().split(/\s+/).filter(Boolean).length : 0;
   return (
     <View className="mt-2">
-      <Text className="font-medium">{t('writingSubmission.studentResponse')}</Text>
       <View className="mt-2 rounded-md bg-muted p-3">
         <Text>{d.text || t('writingSubmission.noText')}</Text>
       </View>

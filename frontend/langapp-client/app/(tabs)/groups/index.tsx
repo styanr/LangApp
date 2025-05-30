@@ -80,12 +80,6 @@ export default function Groups() {
                 ? t('groupsScreen.createFirstGroupTeacher')
                 : t('groupsScreen.mustBeAddedStudent')}
             </Text>
-            {isTeacher && (
-              <Button className="mt-4" onPress={() => setIsModalVisible(true)}>
-                <PlusCircle size={18} className="mr-1 gap-2 text-white" color="white" />
-                <Text className="font-medium text-white">{t('groupsScreen.newStudyGroup')}</Text>
-              </Button>
-            )}
           </View>
         )}
         <View className="gap-1">

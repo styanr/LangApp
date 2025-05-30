@@ -21,7 +21,7 @@ export const QuestionActivityForm: React.FC<Props> = ({ details, onChange }) => 
     onChange({
       activityType: 'Question',
       question,
-      maxLength: maxLength ? parseInt(maxLength) : undefined,
+      maxLength: maxLength && !isNaN(parseInt(maxLength)) ? parseInt(maxLength) : undefined,
       answers,
     });
   }, [question, maxLength, answers]);

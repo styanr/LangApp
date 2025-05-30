@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { AttachmentManager } from '@/components/posts/AttachmentManager';
 import { handleApiError } from '@/lib/errors';
 import { useTranslation } from 'react-i18next';
+import Toast from 'react-native-toast-message';
 
 const CreatePostPage = () => {
   const { id: groupId } = useGlobalSearchParams();
@@ -34,6 +35,33 @@ const CreatePostPage = () => {
     setMediaFiles(updatedMedia);
   };
 
+  const hasDocuments = () => {
+    return mediaFiles.some((file) => {
+      if (typeof file === 'string') {
+        // For existing media URLs, check if they end with document extensions
+        const url = file.toLowerCase();
+        return url.includes('.pdf') || url.includes('application/pdf');
+      } else {
+        return file.type === 'application/pdf' || file.type.includes('pdf');
+      }
+    });
+  };
+
+  const handlePostTypeChange = (newPostType: PostType) => {
+    // Prevent switching from Resource to Discussion if documents are attached
+    if (postType === PostType.Resource && newPostType === PostType.Discussion && hasDocuments()) {
+      Toast.show({
+        type: 'error',
+        text1: t('createPostScreen.cannotSwitchTitle'),
+        text2: t('createPostScreen.cannotSwitchMessage'),
+        position: 'top',
+      });
+      return;
+    }
+
+    setPostType(newPostType);
+  };
+
   const onSubmit = async () => {
     if (!title.trim() || !content.trim()) {
       Alert.alert(
@@ -46,7 +74,6 @@ const CreatePostPage = () => {
     try {
       setIsUploading(true);
 
-      // Upload all media files if any
       let mediaUrls: string[] = [];
 
       if (mediaFiles.length > 0) {
@@ -57,10 +84,8 @@ const CreatePostPage = () => {
             typeof file !== 'string'
         );
 
-        // Add existing URLs directly
         mediaUrls = [...existingUrls];
 
-        // Upload new files
         if (newFiles.length > 0) {
           const uploadPromises = newFiles.map((file) => {
             return fileUpload.upload(file.uri, file.name, file.type);
@@ -71,7 +96,6 @@ const CreatePostPage = () => {
         }
       }
 
-      // Create post with media URLs if available
       await createPost({
         title,
         content,
@@ -113,7 +137,7 @@ const CreatePostPage = () => {
         <Text className="mb-2">{t('createPostScreen.postTypeLabel')}</Text>
         <View className="mb-4 flex-row">
           <Pressable
-            onPress={() => setPostType(PostType.Discussion)}
+            onPress={() => handlePostTypeChange(PostType.Discussion)}
             className={`mr-2 rounded-lg px-4 py-2 ${
               postType === PostType.Discussion ? 'bg-primary' : 'bg-muted'
             }`}>
@@ -125,7 +149,7 @@ const CreatePostPage = () => {
             </Text>
           </Pressable>
           <Pressable
-            onPress={() => setPostType(PostType.Resource)}
+            onPress={() => handlePostTypeChange(PostType.Resource)}
             className={`rounded-lg px-4 py-2 ${
               postType === PostType.Resource ? 'bg-primary' : 'bg-muted'
             }`}>

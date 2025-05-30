@@ -9,21 +9,43 @@ export interface Language {
   displayName: string;
 }
 
+
 export const Languages: Record<string, Language> = {
-  EnglishUS: { code: 'en-US', displayName: i18n.t('languages.english_us') },
-  French: { code: 'fr-FR', displayName: i18n.t('languages.french') },
-  German: { code: 'de-DE', displayName: i18n.t('languages.german') },
-  Spanish: { code: 'es-ES', displayName: i18n.t('languages.spanish') },
-  Italian: { code: 'it-IT', displayName: i18n.t('languages.italian') },
-  Polish: { code: 'pl-PL', displayName: i18n.t('languages.polish') },
-  Dutch: { code: 'nl-NL', displayName: i18n.t('languages.dutch') },
-  Swedish: { code: 'sv-SE', displayName: i18n.t('languages.swedish') },
-  Portuguese: { code: 'pt-PT', displayName: i18n.t('languages.portuguese') },
-  Finnish: { code: 'fi-FI', displayName: i18n.t('languages.finnish') },
-  Danish: { code: 'da-DK', displayName: i18n.t('languages.danish') },
-  Norwegian: { code: 'no-NO', displayName: i18n.t('languages.norwegian') },
-  Ukrainian: { code: 'uk-UA', displayName: i18n.t('languages.ukrainian') },
 };
+
+export const getLanguages = (): {code: string, displayName: string}[] => ([
+  { code: 'en-US', displayName: i18n.t('languages.english_us') },
+  { code: 'fr-FR', displayName: i18n.t('languages.french') },
+  { code: 'de-DE', displayName: i18n.t('languages.german') },
+   { code: 'es-ES', displayName: i18n.t('languages.spanish') },
+   { code: 'it-IT', displayName: i18n.t('languages.italian') },
+   { code: 'pl-PL', displayName: i18n.t('languages.polish') },
+   { code: 'nl-NL', displayName: i18n.t('languages.dutch') },
+   { code: 'sv-SE', displayName: i18n.t('languages.swedish') },
+   { code: 'pt-PT', displayName: i18n.t('languages.portuguese') },
+   { code: 'fi-FI', displayName: i18n.t('languages.finnish') },
+   { code: 'da-DK', displayName: i18n.t('languages.danish') },
+   { code: 'no-NO', displayName: i18n.t('languages.norwegian') },
+   { code: 'uk-UA', displayName: i18n.t('languages.ukrainian') },
+]);
+
+export const codeToDisplayNameMap: Record<string, string> = {
+  'en-US': 'languages.english_us',
+  'fr-FR': 'languages.french',
+  'de-DE': 'languages.german',
+  'es-ES': 'languages.spanish',
+  'it-IT': 'languages.italian',
+  'pl-PL': 'languages.polish',
+  'nl-NL': 'languages.dutch',
+  'sv-SE': 'languages.swedish',
+  'pt-PT': 'languages.portuguese',
+  'fi-FI': 'languages.finnish',
+  'da-DK': 'languages.danish',
+  'no-NO': 'languages.norwegian',
+  'uk-UA': 'languages.ukrainian',
+};
+
+console.log('Available languages:', Languages);
 
 /**
  * Languages as an array for dropdown menus and selectors

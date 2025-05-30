@@ -10,10 +10,12 @@ interface MultipleChoicePromptProps {
 
 export const MultipleChoicePrompt: React.FC<MultipleChoicePromptProps> = ({ details: d }) => {
   const { t } = useTranslation();
+
+  
   return (
-    <View className="mt-2">
+    <View className="mt-2 flex flex-col gap-4">
       {d.questions?.map((q, qi) => (
-        <View key={qi} className="mb-4 pb-2">
+        <View key={qi} className="">
           <Text className="mb-2 text-base font-medium">
             {t('multipleChoicePrompt.questionLabel', { index: qi + 1 })}: {q.question}
           </Text>

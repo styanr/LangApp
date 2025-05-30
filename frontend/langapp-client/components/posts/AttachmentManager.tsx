@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable, Image, Alert, ScrollView } from 'react-native';
 import { Button } from '@/components/ui/button';
-import { X, FileText, Image as ImageIcon, PlusCircle } from 'lucide-react-native';
+import { X, PlusCircle } from 'lucide-react-native';
+import { FileText } from '@/lib/icons/FileText';
+import { ImageIcon } from '@/lib/icons/ImageIcon';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { MediaPreview } from '@/components/ui/MediaPreview';
@@ -180,7 +182,6 @@ export function AttachmentManager({
         </View>
       )}
 
-      {/* Buttons to add new attachments */}
       <View className="mt-2 flex-row">
         <Button variant="outline" onPress={pickImage} className="mr-2 flex-row items-center">
           <ImageIcon size={16} className="mr-1" />

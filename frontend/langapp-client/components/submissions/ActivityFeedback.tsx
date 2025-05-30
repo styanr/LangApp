@@ -1,14 +1,16 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { Button } from '@/components/ui/button';
-import { Award } from 'lucide-react-native';
+import { Award, FileJson, Eye } from 'lucide-react-native';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Toggle, ToggleIcon } from '@/components/ui/toggle';
 import PronunciationAssessmentResult, {
   PronunciationWordResult,
 } from '../activities/PronunciationAssessmentResult';
 import type { SubmissionGradeDto } from '@/api/orval/langAppApi.schemas';
+import { useTranslation } from 'react-i18next'; // Added import
 
 interface ActivityFeedbackProps {
   grade?: SubmissionGradeDto;
@@ -39,6 +41,9 @@ export const ActivityFeedback: React.FC<ActivityFeedbackProps> = ({
   setScore,
   setFeedback,
 }) => {
+  const { t } = useTranslation(); // Instantiated useTranslation
+  const [showTextMode, setShowTextMode] = useState(false);
+
   const parsedPronunciationFeedback = useMemo(() => {
     if (!grade?.feedback) return null;
     try {
@@ -46,33 +51,51 @@ export const ActivityFeedback: React.FC<ActivityFeedbackProps> = ({
       if (Array.isArray(json) && json.length > 0 && json[0].WordText) {
         return json as PronunciationWordResult[];
       }
-    } catch {
-    }
+    } catch {}
     return null;
   }, [grade?.feedback]);
 
   if (grade && !isEditing) {
     return (
       <View className="mt-4 border-t border-gray-200 pt-4 dark:border-gray-700">
-        <Text className="mb-1 font-medium">Current Grade:</Text>
+        <Text className="mb-1 font-medium">{t('activityFeedback.currentGrade')}</Text>
         <View className="flex-row items-center">
           <Award size={18} className="mr-2 text-fuchsia-500" />
-          <Text>Score: {grade.scorePercentage}%</Text>
+          <Text>{t('activityFeedback.score', { score: grade.scorePercentage })}</Text>
         </View>
         {grade.feedback && (
           <View className="mt-2">
-            <Text className="mb-1 font-medium">Feedback:</Text>
-            <View className="rounded-md bg-muted p-2">
-              <Text>{grade.feedback}</Text>
+            <View className="mb-2 flex-row items-center justify-between">
+              <Text className="font-medium">{t('activityFeedback.feedback')}</Text>
+              {parsedPronunciationFeedback && (
+                <View className="flex-row items-center gap-2">
+                  <Text className="text-xs text-muted-foreground">
+                    {showTextMode
+                      ? t('activityFeedback.textMode')
+                      : t('activityFeedback.resultMode')}
+                  </Text>
+                  <Toggle
+                    pressed={showTextMode}
+                    onPressedChange={setShowTextMode}
+                    variant="outline"
+                    size="sm">
+                    <ToggleIcon icon={showTextMode ? Eye : FileJson} size={16} />
+                  </Toggle>
+                </View>
+              )}
             </View>
-            {parsedPronunciationFeedback && (
+            {parsedPronunciationFeedback && !showTextMode ? (
               <PronunciationAssessmentResult words={parsedPronunciationFeedback} />
+            ) : (
+              <View className="rounded-md bg-muted p-2">
+                <Text>{grade.feedback}</Text>
+              </View>
             )}
           </View>
         )}
         {allowEdit && (
           <Button className="mt-4" onPress={onEdit}>
-            <Text>Edit Grade</Text>
+            <Text>{t('activityFeedback.editGrade')}</Text>
           </Button>
         )}
       </View>
@@ -82,24 +105,24 @@ export const ActivityFeedback: React.FC<ActivityFeedbackProps> = ({
   if (isEditing) {
     return (
       <View className="mt-4 border-t border-gray-200 pt-4 dark:border-gray-700">
-        <Text className="mb-3 font-medium">Edit Grade</Text>
+        <Text className="mb-3 font-medium">{t('activityFeedback.editGrade')}</Text>
         <View className="mb-4">
-          <Text className="mb-2">Score (%)</Text>
+          <Text className="mb-2">{t('activityFeedback.scoreLabel')}</Text>
           <Input
             value={score}
             onChangeText={setScore}
             keyboardType="number-pad"
-            placeholder="Enter score (0-100)"
+            placeholder={t('activityFeedback.scorePlaceholder')}
             className="mb-1"
           />
-          <Text className="text-xs text-muted-foreground">Enter a number between 0 and 100</Text>
+          <Text className="text-xs text-muted-foreground">{t('activityFeedback.scoreHelper')}</Text>
         </View>
         <View className="mb-4">
-          <Text className="mb-2">Feedback (optional)</Text>
+          <Text className="mb-2">{t('activityFeedback.feedbackLabel')}</Text>
           <Textarea
             value={feedback}
             onChangeText={setFeedback}
-            placeholder="Provide feedback to the student"
+            placeholder={t('activityFeedback.feedbackPlaceholder')}
             className="min-h-[120px]"
           />
         </View>
@@ -108,11 +131,11 @@ export const ActivityFeedback: React.FC<ActivityFeedbackProps> = ({
             {mutationStatus?.isLoading ? (
               <ActivityIndicator size="small" color="#ffffff" />
             ) : (
-              <Text>Save Grade</Text>
+              <Text>{t('activityFeedback.saveGrade')}</Text>
             )}
           </Button>
           <Button className="flex-1" variant="outline" onPress={onCancel}>
-            <Text>Cancel</Text>
+            <Text>{t('activityFeedback.cancel')}</Text>
           </Button>
         </View>
       </View>

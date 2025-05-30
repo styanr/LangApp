@@ -43,15 +43,18 @@ export default function FillInTheBlankActivity({ activity, submission, onChange 
     if (!isEqual(values, newInitialValues)) {
       setValues(newInitialValues);
     }
-  }, [activity.id, templateText, blanksCount, submission?.answers]);
+  }, [activity.id, templateText, blanksCount]);
 
   useEffect(() => {
     const submissionDetails: FillInTheBlankActivitySubmissionDetailsDto = {
       activityType: 'FillInTheBlank',
       answers: values.map((answer: string, idx: number) => ({ index: idx, answer })),
     };
-    onChange(submissionDetails);
-  }, [values, onChange, blanksCount]);
+    if (!isEqual(submissionDetails, submission)) {
+      console.log('Submission details changed, calling onChange:', submissionDetails);
+      onChange(submissionDetails);
+    }
+  }, [values]);
 
   const handleChange = (idx: number, text: string) => {
     setValues((prevValues: string[]) => {

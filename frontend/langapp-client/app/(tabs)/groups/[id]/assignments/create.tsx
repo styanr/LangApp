@@ -14,7 +14,8 @@ import { QuestionActivityForm } from '@/components/assignments/QuestionActivityF
 import { WritingActivityForm } from '@/components/assignments/WritingActivityForm';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { ArrowLeft, Plus, ClipboardList, CheckCircle } from 'lucide-react-native';
+import { ArrowLeft, Plus, ClipboardList } from 'lucide-react-native';
+import { CheckCircle } from '@/lib/icons/CheckCircle';
 import type {
   CreateActivityDto,
   CreateAssignmentRequest,
@@ -101,7 +102,6 @@ export default function CreateAssignmentPage() {
   // Helper for activity type translation
   const getActivityTypeText = (activityType?: string) => {
     if (!activityType) return t('common.activityTypes.Unknown');
-    // Remove 'Activity' suffix if present
     const type = activityType.replace('Activity', '');
     return t(`common.activityTypes.${type}`, { defaultValue: type });
   };
@@ -124,7 +124,7 @@ export default function CreateAssignmentPage() {
 
         {/* Main form card */}
         <Card className="mb-6 overflow-hidden rounded-xl border shadow-sm">
-          <CardHeader className="border-b bg-card pb-3">
+          <CardHeader className="bg-fuchsia-50 pb-3 dark:bg-slate-900">
             <CardTitle>{t('createAssignmentScreen.assignmentDetails')}</CardTitle>
           </CardHeader>
 
@@ -168,7 +168,7 @@ export default function CreateAssignmentPage() {
             entering={FadeInDown.delay(i * 100).duration(400)}
             className="mb-4">
             <Card className="overflow-hidden rounded-xl border shadow-sm">
-              <CardHeader className="border-b bg-fuchsia-50 pb-3 dark:bg-fuchsia-900/20">
+              <CardHeader className=" bg-fuchsia-50 pb-3 dark:bg-fuchsia-900/20">
                 <CardTitle>
                   {t('createAssignmentScreen.activityTitle', {
                     index: i + 1,
@@ -282,12 +282,12 @@ export default function CreateAssignmentPage() {
 
         {/* Submit button */}
         <Button
-          className="mt-2"
+          className="mt-2 flex-row"
           onPress={onSubmit}
           disabled={
             mutationStatus.createAssignment.isLoading || !name.trim() || activities.length === 0
           }>
-          <CheckCircle size={18} className="mr-2" />
+          <CheckCircle size={18} className=" mr-2 color-white" />
           <Text className="font-semibold">
             {mutationStatus.createAssignment.isLoading ? t('common.saving') : t('common.create')}
           </Text>

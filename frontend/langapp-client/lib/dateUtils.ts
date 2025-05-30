@@ -1,21 +1,11 @@
-import { formatDistanceToNow, format, Locale } from 'date-fns';
+import { formatDistanceStrict, formatDistanceToNow, format, Locale } from 'date-fns';
 import i18n from '@/i18n';
 
 import { uk, enUS } from 'date-fns/locale';
 
-interface Locales {
-  [key: string]: Locale;
-}
-
-const locales: Locales = {
-  'uk-UA': uk,
-  'en-US': enUS,
-};
-
-const locale = locales[i18n.language] || enUS;
-
 export const toUTCDate = (dateString: string): Date => {
-  const fixedDateString = dateString + 'Z'; // Append 'Z' to indicate UTC
+  const fixedDateString = dateString + 'Z';
+  console.log(`Converting date string to UTC: ${fixedDateString}`);
   const date = new Date(fixedDateString);
   if (isNaN(date.getTime())) {
     throw new Error(`Invalid date string: ${dateString}`);
@@ -23,25 +13,46 @@ export const toUTCDate = (dateString: string): Date => {
   return date;
 };
 
-export const formatDistanceToNowUTC = (dateString: string): string => {
+const toLocale = (locale: string): Locale => {
+  if (locale === 'uk-UA') {
+    return uk;
+  }
+  return enUS;
+};
+
+export const formatDistanceToNowUTC = (dateString: string, localeString: string): string => {
+  const locale = toLocale(localeString);
+
   const date = toUTCDate(dateString);
+  date.setSeconds(date.getSeconds() - 10);
+  console.log(date);
   return formatDistanceToNow(date, { locale, addSuffix: true });
 };
 
-export const formatRelativeDate = (date: Date): string => {
-  try {
-    // For recent dates, show relative time
-    const now = new Date();
-    const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+export const formatDistanceStrinct = (date: Date, localeString: string): string => {
+  const locale = toLocale(localeString);
+  return formatDistanceStrict(date, new Date(), { locale, addSuffix: true });
+};
 
-    if (diffInDays < 7) {
-      return formatDistanceToNow(date, { locale, addSuffix: true });
-    }
+export const formatDistanceStrictUTC = (dateString: string, localeString: string): string => {
+  const locale = toLocale(localeString);
 
-    // For older dates, show formatted date
-    return format(date, 'MMM d, yyyy', { locale });
-  } catch (error) {
-    console.error('Error formatting date:', error);
-    return 'Invalid date';
-  }
+  const date = toUTCDate(dateString);
+  date.setSeconds(date.getSeconds() - 10);
+  return formatDistanceStrict(date, new Date(), { locale, addSuffix: true });
+};
+
+export const formatDistanceToDateStrictUTC = (date: Date, localeString: string): string => {
+  const locale = toLocale(localeString);
+
+  const utcDate = toUTCDate(date.toISOString());
+  utcDate.setSeconds(utcDate.getSeconds() - 10);
+  return formatDistanceStrict(utcDate, new Date(), { locale, addSuffix: true });
+};
+
+export const formatAbsolute = (dateString: string, localeString: string): string => {
+  console.log(dateString);
+  const date = new Date(dateString);
+  const locale = toLocale(localeString);
+  return format(dateString, 'PPPPp', { locale });
 };

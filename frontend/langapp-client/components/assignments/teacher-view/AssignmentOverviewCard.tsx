@@ -6,9 +6,9 @@ import { Book } from '@/lib/icons/Book';
 import { Calendar } from '@/lib/icons/Calendar';
 import { FileSpreadsheet } from '@/lib/icons/FileSpreadsheet';
 import { Users } from '@/lib/icons/Users';
-import { formatRelativeDate } from '@/lib/dateUtils';
 import { AssignmentDto } from '@/api/orval/langAppApi.schemas';
 import { useTranslation } from 'react-i18next';
+import { DateDisplay } from '@/components/ui/DateDisplay';
 
 interface AssignmentOverviewCardProps {
   assignment: AssignmentDto;
@@ -42,9 +42,11 @@ export const AssignmentOverviewCard: React.FC<AssignmentOverviewCardProps> = ({
             <Text className="text-sm">
               {t('assignmentOverviewCard.dueLabel')}
               {' '}
-              {assignment.dueTime
-                ? formatRelativeDate(new Date(assignment.dueTime))
-                : t('assignmentOverviewCard.noDueDate')}
+              {assignment.dueTime ? (
+                <DateDisplay dateString={assignment.dueTime} strict={true} className={'text-sm'} />
+              ) : (
+                t('assignmentOverviewCard.noDueDate')
+              )}
             </Text>
           </View>
 

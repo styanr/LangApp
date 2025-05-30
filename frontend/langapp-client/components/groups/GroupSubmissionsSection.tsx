@@ -126,7 +126,6 @@ const MemoizedSubmissionItem = React.memo<{
   );
 });
 
-// Memoized submission details component
 const SubmissionDetails = React.memo<{
   submission: any;
   assignment: any;
@@ -171,7 +170,9 @@ const SubmissionDetails = React.memo<{
       {submission.status && (
         <Text className="mb-2 text-xs text-muted-foreground">
           {t('groupSubmissionsSection.statusLabel')}{' '}
-          <Text className="font-medium text-fuchsia-700">{submission.status}</Text>
+          <Text className="font-medium text-fuchsia-700">
+            {t(`common.gradeStatus.${submission.status}`, { defaultValue: submission.status })}
+          </Text>
         </Text>
       )}
 
@@ -185,7 +186,6 @@ const SubmissionDetails = React.memo<{
   );
 });
 
-// Memoized activity submissions section without artificial loading
 const ActivitySubmissionsSection = React.memo<{
   activitySubmissions: any[];
   assignmentActivities?: any[];
@@ -207,7 +207,6 @@ const ActivitySubmissionsSection = React.memo<{
   );
 });
 
-// Memoized individual activity submission
 const ActivitySubmissionItem = React.memo<{
   activity: any;
   assignmentActivities?: any[];
@@ -240,6 +239,7 @@ const ActivitySubmissionItem = React.memo<{
         return (
           <MultipleChoiceSubmission
             details={act.details as MultipleChoiceActivitySubmissionDetailsDto}
+            originalActivity={matchingActivity}
           />
         );
       case 'FillInTheBlank':
@@ -271,14 +271,16 @@ const ActivitySubmissionItem = React.memo<{
     <View>
       <View className="mb-1 ml-1 flex-row items-center">
         <View className={`mr-2 h-2 w-2 rounded-full ${statusColorClass}`} />
-        <Text className="mr-1 text-lg text-zinc-600">{act.details?.activityType}</Text>
+        <Text className="mr-1 text-lg text-zinc-600">{t(`common.activityTypes.${act.details?.activityType}`, { defaultValue: act.details?.activityType})}</Text>
         {act.grade?.scorePercentage != null && (
           <Text className={scoreColorClass}> {act.grade.scorePercentage}%</Text>
         )}
       </View>
 
       {act.activityId && matchingActivity && <AssignmentPrompt activity={matchingActivity} />}
-
+<Text className="mt-4 text-lg">
+  Ваша відповідь:
+</Text>
       {ActivitySubmissionComponent}
 
       {act.grade && (

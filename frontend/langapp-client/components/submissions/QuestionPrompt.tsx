@@ -14,7 +14,7 @@ export const QuestionPrompt: React.FC<QuestionPromptProps> = ({ details: d }) =>
     <View className="mt-2">
       <Text className="mb-2 font-medium">{t('questionPrompt.question')}</Text>
       <Text className="text-base">{d.question}</Text>
-      {d.maxLength && (
+      {d.maxLength && d.maxLength > 0 && (
         <Text className="mt-2 text-xs text-muted-foreground">
           {t('questionPrompt.maxLength', { max: d.maxLength })}
         </Text>

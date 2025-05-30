@@ -1,19 +1,12 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Pressable, ScrollView } from 'react-native';
 import { ChevronDown } from 'lucide-react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
-import { LanguagesArray, Language, Languages } from '@/lib/languages';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from './select';
+import { getLanguages, Language, Languages, codeToDisplayNameMap } from '@/lib/languages';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from './text';
+import { useTranslation } from 'react-i18next';
+import { Label } from '@rn-primitives/select';
 
 interface LanguageSelectorProps {
   value: string;
@@ -30,7 +23,13 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const selectedLanguage = LanguagesArray.find((lang) => lang.code === value);
+  const {i18n} = useTranslation();
+  const languages = useMemo(() => getLanguages(), [i18n.language]);
+
+  const selectedLanguage = useMemo(
+    () => languages.find((lang) => lang.code === value),
+    [languages, value]
+  );
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -48,11 +47,13 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     left: 12,
     right: 12,
   };
+  const { t } = useTranslation();
 
+  console.log(languages);
   return (
     <View className={`relative ${className}`}>
       <Pressable
-        className="flex-row items-center justify-between rounded-md border border-border px-3 py-2 bg-background"
+        className="flex-row items-center justify-between rounded-md border border-border bg-background px-3 py-2"
         onPress={toggleDropdown}>
         <Text className={`text-base ${!selectedLanguage ? 'text-gray-500' : 'text-foreground'}`}>
           {selectedLanguage ? selectedLanguage.displayName : placeholder}
@@ -65,8 +66,8 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
           entering={FadeIn.duration(200)}
           exiting={FadeOut.duration(200)}
           className="absolute left-0 right-0 top-full z-50 mt-1 max-h-64 rounded-md border border-border bg-background shadow-lg">
-          <ScrollView className="max-h-64">
-            {LanguagesArray.map((language) => (
+          <ScrollView className="max-h-96">
+            {languages.map((language) => (
               <Pressable
                 key={language.code}
                 className={`px-3 py-2.5 ${language.code === value ? 'bg-primary/10' : 'hover:bg-gray-100'}`}

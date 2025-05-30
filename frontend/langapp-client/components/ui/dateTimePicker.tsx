@@ -3,6 +3,7 @@ import { Button } from './button';
 import { Text } from './text';
 import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { DateDisplay } from '@/components/ui/DateDisplay';
 
 interface DateTimePickerProps {
   date: Date;
@@ -49,10 +50,8 @@ export const DatePicker = ({
       <Button onPress={showDateTimepicker} className="ml-2">
         <Text className="text-sm">{t('dateTimePicker.pickDatePrompt')}</Text>
       </Button>
-      <View className="ml-2">
-        <Text className="text-sm">
-          {date instanceof Date ? date.toLocaleDateString() : date} {date.toLocaleTimeString()}
-        </Text>
+      <View className="ml-2 mt-2">
+        <DateDisplay dateString={date.toISOString()} relative={false} className={'text-sm'} />
       </View>
     </View>
   );
