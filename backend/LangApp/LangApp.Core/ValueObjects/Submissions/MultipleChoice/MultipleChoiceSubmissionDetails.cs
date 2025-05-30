@@ -1,4 +1,4 @@
-using LangApp.Core.Exceptions;
+using LangApp.Core.Exceptions.ValueObjects.Submissions.MultipleChoice;
 
 namespace LangApp.Core.ValueObjects.Submissions.MultipleChoice;
 
@@ -8,7 +8,7 @@ public record MultipleChoiceSubmissionDetails : SubmissionDetails
     {
         if (Answers.Select(a => a.QuestionIndex).Distinct().Count() != Answers.Count)
         {
-            throw new LangAppException("Answers must contain unique question indexes");
+            throw new DuplicateQuestionIndexInSubmissionException();
         }
 
         this.Answers = Answers;

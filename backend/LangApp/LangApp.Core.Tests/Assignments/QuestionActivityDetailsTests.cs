@@ -1,4 +1,5 @@
 using LangApp.Core.Exceptions;
+using LangApp.Core.Exceptions.ValueObjects.Question;
 using LangApp.Core.ValueObjects.Assignments.Question;
 
 namespace LangApp.Core.Tests.Assignments;
@@ -33,10 +34,8 @@ public class QuestionActivityDetailsTests
         var answers = new List<string> { "Paris" };
 
         // Act & Assert
-        var exception = Assert.Throws<LangAppException>(() =>
+        Assert.Throws<EmptyQuestionTextException>(() =>
             new QuestionActivityDetails(invalidQuestion, answers, 50));
-
-        Assert.Equal("Question cannot be empty", exception.Message);
     }
 
     [Theory]
@@ -51,10 +50,8 @@ public class QuestionActivityDetailsTests
         var answers = new List<string> { "Paris" };
 
         // Act & Assert
-        var exception = Assert.Throws<LangAppException>(() =>
+        Assert.Throws<InvalidQuestionMaxLengthException>(() =>
             new QuestionActivityDetails(question, answers, invalidMaxLength));
-
-        Assert.Equal("Max length must be between 0 and 100", exception.Message);
     }
 
     [Theory]

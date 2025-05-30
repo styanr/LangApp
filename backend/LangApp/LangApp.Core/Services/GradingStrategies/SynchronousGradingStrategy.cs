@@ -20,6 +20,6 @@ public abstract class SynchronousGradingStrategy<TAssignmentDetails> : IGradingS
         }
     }
 
-    protected abstract SubmissionGrade ExecuteGrade(TAssignmentDetails assignment, SubmissionDetails submission,
+    protected abstract SubmissionGrade ExecuteGrade(TAssignmentDetails activity, SubmissionDetails submission,
         CancellationToken cancellationToken);
 }

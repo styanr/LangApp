@@ -1,6 +1,7 @@
 using LangApp.Core.Entities.Assignments;
 using LangApp.Core.Exceptions;
 using LangApp.Core.Enums;
+using LangApp.Core.Exceptions.Assignments;
 using LangApp.Core.ValueObjects;
 using LangApp.Core.ValueObjects.Assignments;
 using LangApp.Core.ValueObjects.Assignments.Pronunciation;
@@ -85,10 +86,8 @@ public class AssignmentTests
         var dueDate = DateTime.UtcNow.AddDays(7);
 
         // Act & Assert
-        var exception = Assert.Throws<LangAppException>(() =>
+        Assert.Throws<InvalidAssignmentNameException>(() =>
             Assignment.Create(id, invalidName, description, authorId, studyGroupId, dueDate));
-
-        Assert.Equal("Name cannot be null or empty", exception.Message);
     }
 
     [Fact]
@@ -103,10 +102,8 @@ public class AssignmentTests
         var dueDate = DateTime.UtcNow.AddDays(7);
 
         // Act & Assert
-        var exception = Assert.Throws<LangAppException>(() =>
+        Assert.Throws<InvalidAssignmentNameException>(() =>
             Assignment.Create(id, tooLongName, description, authorId, studyGroupId, dueDate));
-
-        Assert.Equal("Name cannot be longer than 100 characters", exception.Message);
     }
 
     [Fact]
@@ -121,7 +118,7 @@ public class AssignmentTests
         var pastDueDate = DateTime.UtcNow.AddDays(-1);
 
         // Act & Assert
-        Assert.Throws<LangAppException>(() =>
+        Assert.Throws<InvalidAssignmentDueDateException>(() =>
             Assignment.Create(id, name, description, authorId, studyGroupId, pastDueDate));
     }
 
@@ -251,8 +248,7 @@ public class AssignmentTests
         );
 
         // Act & Assert
-        var exception = Assert.Throws<LangAppException>(() => assignment.UpdateName(invalidName));
-        Assert.Equal("Name cannot be null or empty", exception.Message);
+        Assert.Throws<InvalidAssignmentNameException>(() => assignment.UpdateName(invalidName));
     }
 
     [Fact]
@@ -293,6 +289,6 @@ public class AssignmentTests
         var pastDate = DateTime.UtcNow.AddDays(-1);
 
         // Act & Assert
-        Assert.Throws<LangAppException>(() => assignment.UpdateDueDate(pastDate));
+        Assert.Throws<InvalidAssignmentDueDateException>(() => assignment.UpdateDueDate(pastDate));
     }
 }

@@ -1,4 +1,5 @@
 using LangApp.Core.Exceptions;
+using LangApp.Core.Exceptions.ValueObjects.Question;
 
 namespace LangApp.Core.ValueObjects.Assignments.Question;
 
@@ -12,29 +13,29 @@ public record QuestionActivityDetails : ActivityDetails
     {
         if (maxLength is < 0 or > 100)
         {
-            throw new LangAppException("Max length must be between 0 and 100");
+            throw new InvalidQuestionMaxLengthException(maxLength);
         }
 
         if (string.IsNullOrWhiteSpace(question))
         {
-            throw new LangAppException("Question cannot be empty");
+            throw new EmptyQuestionTextException();
         }
 
         if (answers.Count < 1)
         {
-            throw new LangAppException("Question must have at least one answer");
+            throw new NoAnswersProvidedForQuestionException();
         }
 
         foreach (var answer in answers)
         {
             if (answer.Length > MaxLength)
             {
-                throw new LangAppException($"Answer cannot be longer than {MaxLength} characters");
+                throw new AnswerTooLongException(answer, MaxLength);
             }
 
             if (string.IsNullOrWhiteSpace(answer))
             {
-                throw new LangAppException("Answer cannot be empty");
+                throw new EmptyAnswerException();
             }
         }
 

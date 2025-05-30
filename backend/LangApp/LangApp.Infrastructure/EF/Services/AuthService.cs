@@ -33,7 +33,6 @@ internal class AuthService : IAuthService
 
         if (user is null) return null;
 
-        // Check if email is confirmed
         if (!await _userManager.IsEmailConfirmedAsync(user))
         {
             throw new ValidationException(new[] { "Please confirm your email before signing in." });
@@ -71,7 +70,7 @@ internal class AuthService : IAuthService
         }
 
         var user = token.User;
-        
+
         // Check if email is still confirmed (in case it was unconfirmed after initial confirmation)
         if (!await _userManager.IsEmailConfirmedAsync(user))
         {

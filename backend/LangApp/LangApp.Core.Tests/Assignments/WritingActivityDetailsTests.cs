@@ -1,4 +1,5 @@
 using LangApp.Core.Exceptions;
+using LangApp.Core.Exceptions.ValueObjects.Writing;
 using LangApp.Core.ValueObjects.Assignments.Writing;
 
 namespace LangApp.Core.Tests.Assignments;
@@ -28,10 +29,8 @@ public class WritingActivityDetailsTests
     public void Create_WithInvalidPrompt_ShouldThrowException(string invalidPrompt)
     {
         // Arrange & Act & Assert
-        var exception = Assert.Throws<LangAppException>(() =>
+        Assert.Throws<EmptyWritingPromptException>(() =>
             new WritingActivityDetails(invalidPrompt, 200));
-
-        Assert.Equal("Prompt cannot be empty", exception.Message);
     }
 
     [Theory]
@@ -43,10 +42,8 @@ public class WritingActivityDetailsTests
     public void Create_WithInvalidMaxWords_ShouldThrowException(int invalidMaxWords)
     {
         // Arrange & Act & Assert
-        var exception = Assert.Throws<LangAppException>(() =>
+        Assert.Throws<InvalidWritingMaxWordsException>(() =>
             new WritingActivityDetails("Write an essay", invalidMaxWords));
-
-        Assert.Equal("Max words must be between 10 and 500", exception.Message);
     }
 
     [Theory]

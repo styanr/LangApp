@@ -1,4 +1,5 @@
 using LangApp.Core.Exceptions;
+using LangApp.Core.Exceptions.ValueObjects.Submissions.Writing;
 using LangApp.Core.Services.WordCounting;
 
 namespace LangApp.Core.ValueObjects.Submissions.Writing;
@@ -10,9 +11,10 @@ public record WritingSubmissionDetails : SubmissionDetails
 
     public WritingSubmissionDetails(string text)
     {
-        if (WordCounter.CountWords(text) > WordLimit)
+        var wordCount = WordCounter.CountWords(text);
+        if (wordCount > WordLimit)
         {
-            throw new LangAppException("Text is too long");
+            throw new WritingSubmissionTooLongException(wordCount, WordLimit);
         }
 
         Text = text;

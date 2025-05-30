@@ -1,4 +1,5 @@
 using LangApp.Core.Exceptions;
+using LangApp.Core.Exceptions.Grading;
 using LangApp.Core.Services.GradingStrategies;
 using LangApp.Core.ValueObjects.Assignments.FillInTheBlank;
 using LangApp.Core.ValueObjects.Submissions;
@@ -204,10 +205,8 @@ public class FillInTheBlankGradingStrategyTests
         var submission = new SubmissionDetails(); // Not the correct type
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<LangAppException>(async () =>
+        var exception = await Assert.ThrowsAsync<IncompatibleSubmissionTypeException>(async () =>
             await _gradingStrategy.GradeAsync(activity, submission, CancellationToken.None));
-
-        Assert.Contains("not compatible with the assignment", exception.Message);
     }
 
     private FillInTheBlankActivityDetails CreateSampleActivity()

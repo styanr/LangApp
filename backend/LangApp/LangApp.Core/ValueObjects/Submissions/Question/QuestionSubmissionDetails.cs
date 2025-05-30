@@ -1,4 +1,4 @@
-using LangApp.Core.Exceptions;
+using LangApp.Core.Exceptions.ValueObjects.Submissions.Question;
 
 namespace LangApp.Core.ValueObjects.Submissions.Question;
 
@@ -10,7 +10,7 @@ public record QuestionSubmissionDetails : SubmissionDetails
     {
         if (string.IsNullOrWhiteSpace(answer))
         {
-            throw new LangAppException("Answer cannot be empty");
+            throw new EmptyQuestionSubmissionAnswerException();
         }
 
         Answer = answer;

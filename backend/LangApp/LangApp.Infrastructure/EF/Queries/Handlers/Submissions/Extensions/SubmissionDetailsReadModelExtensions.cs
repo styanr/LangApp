@@ -1,5 +1,6 @@
 using LangApp.Application.Submissions.Dto;
 using LangApp.Core.Exceptions;
+using LangApp.Infrastructure.EF.Exceptions;
 using LangApp.Infrastructure.EF.Models.Submissions;
 using LangApp.Infrastructure.EF.Models.Submissions.FillInTheBlank;
 using LangApp.Infrastructure.EF.Models.Submissions.MultipleChoice;
@@ -34,7 +35,7 @@ public static class SubmissionDetailsReadModelExtensions
 
             WritingSubmissionDetailsReadModel writingDetails =>
                 new WritingActivitySubmissionDetailsDto(writingDetails.Text),
-            _ => throw new LangAppException("Wrong submission details type")
+            _ => throw new UnhandledSubmissionTypeMappingException(details.GetType())
         };
     }
 }

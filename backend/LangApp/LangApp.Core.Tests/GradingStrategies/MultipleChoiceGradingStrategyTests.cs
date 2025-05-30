@@ -1,4 +1,6 @@
 using LangApp.Core.Exceptions;
+using LangApp.Core.Exceptions.Grading;
+using LangApp.Core.Exceptions.ValueObjects.Submissions.MultipleChoice;
 using LangApp.Core.Services.GradingStrategies;
 using LangApp.Core.ValueObjects.Assignments.MultipleChoice;
 using LangApp.Core.ValueObjects.Submissions;
@@ -48,7 +50,7 @@ public class MultipleChoiceGradingStrategyTests
         var activity = new MultipleChoiceActivityDetails([]);
         var submission = new MultipleChoiceSubmissionDetails([]);
 
-        await Assert.ThrowsAsync<LangAppException>(() =>
+        await Assert.ThrowsAsync<NoQuestionsInActivityException>(() =>
             _gradingStrategy.GradeAsync(activity, submission));
     }
 
@@ -58,7 +60,7 @@ public class MultipleChoiceGradingStrategyTests
         var activity = CreateSampleActivity();
         var invalidSubmission = new SubmissionDetails();
 
-        await Assert.ThrowsAsync<LangAppException>(() =>
+        await Assert.ThrowsAsync<IncompatibleSubmissionTypeException>(() =>
             _gradingStrategy.GradeAsync(activity, invalidSubmission));
     }
 
@@ -91,7 +93,7 @@ public class MultipleChoiceGradingStrategyTests
     [Fact]
     public void Submission_WithDuplicateIndexes_ShouldThrow()
     {
-        Assert.Throws<LangAppException>(() =>
+        Assert.Throws<DuplicateQuestionIndexInSubmissionException>(() =>
             new MultipleChoiceSubmissionDetails([
                 new(0, 1),
                 new(0, 2)

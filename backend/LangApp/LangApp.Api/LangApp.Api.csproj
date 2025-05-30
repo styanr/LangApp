@@ -28,8 +28,4 @@
         <ProjectReference Include="..\LangApp.Infrastructure\LangApp.Infrastructure.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Common\Configuration\" />
-    </ItemGroup>
-
 </Project>

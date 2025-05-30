@@ -1,4 +1,5 @@
 using LangApp.Core.Exceptions;
+using LangApp.Core.Exceptions.Grading;
 using LangApp.Core.Repositories;
 using LangApp.Core.Services.PronunciationAssessment;
 using LangApp.Core.ValueObjects;
@@ -24,8 +25,7 @@ public class PronunciationGradingStrategy : IGradingStrategy<PronunciationActivi
     {
         if (submission is not PronunciationSubmissionDetails pronunciationSubmission)
         {
-            throw new LangAppException(
-                $"Invalid submission type '{submission.GetType().Name}' for pronunciation activity.");
+            throw new IncompatibleSubmissionTypeException(submission.GetType(), activity.GetType());
         }
 
         var score = await _assessmentService.Assess(

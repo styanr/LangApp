@@ -4,6 +4,7 @@ using LangApp.Application.Assignments.Dto.MultipleChoice;
 using LangApp.Application.Assignments.Dto.Pronunciation;
 using LangApp.Application.Assignments.Dto.Question;
 using LangApp.Application.Assignments.Dto.Writing;
+using LangApp.Application.Assignments.Exceptions;
 using LangApp.Core.Exceptions;
 using LangApp.Core.ValueObjects.Assignments;
 
@@ -30,7 +31,7 @@ public static class ActivityDetailsExtensions
             WritingActivityDetailsDto writingDto =>
                 writingDto.ToValueObject(),
 
-            _ => throw new LangAppException($"Unsupported activity type: {detailsDto.GetType().Name}")
+            _ => throw new UnhandledActivityDtoTypeException(detailsDto.GetType())
         };
     }
 }

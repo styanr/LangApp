@@ -1,4 +1,5 @@
 using LangApp.Core.Exceptions;
+using LangApp.Core.Exceptions.Grading;
 using LangApp.Core.Services.GradingStrategies;
 using LangApp.Core.ValueObjects.Assignments.Question;
 using LangApp.Core.ValueObjects.Submissions;
@@ -88,7 +89,7 @@ public class QuestionGradingStrategyTests
         var incompatibleSubmission = new SubmissionDetails();
 
         // Act & Assert
-        await Assert.ThrowsAsync<LangAppException>(() =>
+        await Assert.ThrowsAsync<IncompatibleSubmissionTypeException>(() =>
             _gradingStrategy.GradeAsync(activity, incompatibleSubmission));
     }
 

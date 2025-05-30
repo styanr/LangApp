@@ -17,16 +17,16 @@ public class AudioFetcher : IAudioFetcher
     {
         if (!Uri.IsWellFormedUriString(fileUri, UriKind.Absolute))
         {
-            throw new InvalidUriException(fileUri);
+            throw new InvalidAudioFileUriException(fileUri);
         }
 
         var uri = new Uri(fileUri);
 
         var blobName = uri.Segments.Last();
         var container = uri.Segments.Skip(1).FirstOrDefault()?.TrimEnd('/')
-                        ?? throw new LangAppException("Missing container segment");
+                        ?? throw new MissingContainerSegmentException();
         if (!await _blobService.Exists(container, blobName))
-            throw new LangAppException("File not found");
+            throw new AudioFileNotFoundException(container, blobName);
         var stream = await _blobService.DownloadFileAsync(container, blobName);
         return new AudioStreamInfo(stream);
     }

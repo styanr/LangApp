@@ -5,17 +5,20 @@ using LangApp.Application.Auth.Models;
 using LangApp.Application.Users.Dto;
 using LangApp.Application.Users.Models;
 using LangApp.Core.Enums;
+using LangApp.Infrastructure.EF.Context;
 using Newtonsoft.Json;
 
 namespace LangApp.Tests.Integration.Helpers;
 
-public class TestUserHelper
+internal class TestUserHelper
 {
     private readonly HttpClient _client;
+    private readonly WriteDbContext _context;
 
-    public TestUserHelper(HttpClient client)
+    public TestUserHelper(HttpClient client, WriteDbContext context)
     {
         _client = client;
+        _context = context;
     }
 
     public async Task<(string Token, Guid UserId)> RegisterAndLoginAsync(
@@ -37,6 +40,15 @@ public class TestUserHelper
         Console.WriteLine(body);
         regResponse.EnsureSuccessStatusCode();
 
+        var user = _context.Users.FirstOrDefault(u => u.UserName == username);
+        if (user is null)
+        {
+            throw new InvalidOperationException("User not found after registration.");
+        }
+
+        user.EmailConfirmed = true;
+        await _context.SaveChangesAsync();
+
         return await LoginAsync(username, password);
     }
 
@@ -44,6 +56,7 @@ public class TestUserHelper
     {
         var login = new Login(username, password);
         var loginResponse = await _client.PostAsJsonAsync("/api/v1/auth/login", login);
+        var body = await loginResponse.Content.ReadAsStringAsync();
         loginResponse.EnsureSuccessStatusCode();
 
         var content = await loginResponse.Content.ReadAsStringAsync();

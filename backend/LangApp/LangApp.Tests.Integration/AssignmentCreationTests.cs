@@ -29,7 +29,7 @@ public class AssignmentCreationTests : IClassFixture<LangAppApplicationFactory>,
         _client = factory.CreateClient();
         _dbContext = factory.Services.CreateScope()
             .ServiceProvider.GetRequiredService<WriteDbContext>();
-        _userHelper = new TestUserHelper(_client);
+        _userHelper = new TestUserHelper(_client, _dbContext);
     }
 
     public async Task InitializeAsync()

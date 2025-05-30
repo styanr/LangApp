@@ -3,6 +3,7 @@ using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.StudyGroups.Exceptions;
 using LangApp.Application.Submissions.Dto;
 using LangApp.Core.Exceptions;
+using LangApp.Core.Exceptions.Grading;
 using LangApp.Core.Factories.Assignments;
 using LangApp.Core.Repositories;
 using LangApp.Core.Services.GradingStrategies;
@@ -50,7 +51,8 @@ public class EvaluatePronunciationHandler : ICommandHandler<EvaluatePronunciatio
 
         if (activity.Details is not PronunciationActivityDetails activityDetails)
         {
-            throw new LangAppException("Provided activity is not a pronunciation activity");
+            throw new IncompatibleSubmissionTypeException(typeof(PronunciationActivityDetails),
+                activity.Details.GetType());
         }
 
         var submissionDetails = new PronunciationSubmissionDetails(recordingUrl);

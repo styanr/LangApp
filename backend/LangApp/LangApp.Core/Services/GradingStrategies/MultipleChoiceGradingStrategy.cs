@@ -1,4 +1,5 @@
 using LangApp.Core.Exceptions;
+using LangApp.Core.Exceptions.Grading;
 using LangApp.Core.ValueObjects;
 using LangApp.Core.ValueObjects.Assignments.MultipleChoice;
 using LangApp.Core.ValueObjects.Submissions;
@@ -16,13 +17,12 @@ public class MultipleChoiceGradingStrategy
     {
         if (submission is not MultipleChoiceSubmissionDetails multipleChoiceSubmissionDetails)
         {
-            throw new LangAppException(
-                $"Provided submission {submission.GetType()} is not compatible with the assignment {activity.GetType()}");
+            throw new IncompatibleSubmissionTypeException(submission.GetType(), activity.GetType());
         }
 
         if (activity.Questions.Count == 0)
         {
-            throw new LangAppException("Grading failed: activity contains no questions.");
+            throw new NoQuestionsInActivityException();
         }
 
         int correctOptions = 0;

@@ -19,7 +19,6 @@ public abstract class AggregateRoot : BaseEntity
         _domainEvents.Add(@event);
     }
 
-    // TODO encapsulation? hello?
     public void ClearEvents()
     {
         _domainEvents.Clear();

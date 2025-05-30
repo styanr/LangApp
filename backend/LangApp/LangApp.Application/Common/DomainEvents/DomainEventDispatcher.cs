@@ -12,7 +12,6 @@ public class DomainEventDispatcher : IDomainEventDispatcher
         _publisher = publisher;
     }
 
-// TODO could be concurrent
     public async Task DispatchEventsAsync(IEnumerable<IDomainEvent> events)
     {
         foreach (var @event in events)

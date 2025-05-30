@@ -1,5 +1,6 @@
 using LangApp.Core.Exceptions;
 using LangApp.Core.Exceptions.Assignments;
+using LangApp.Core.Exceptions.Grading;
 using LangApp.Core.Services.GradingStrategies;
 using LangApp.Core.Services.PronunciationAssessment;
 using LangApp.Core.ValueObjects;
@@ -51,7 +52,7 @@ public class PronunciationGradingStrategyTests
         var invalidSubmission = new SubmissionDetails();
 
         // Act & Assert
-        await Assert.ThrowsAsync<LangAppException>(() =>
+        await Assert.ThrowsAsync<IncompatibleSubmissionTypeException>(() =>
             _gradingStrategy.GradeAsync(activity, invalidSubmission));
     }
 

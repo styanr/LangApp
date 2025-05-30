@@ -27,8 +27,8 @@ public class StudyGroupTests : IClassFixture<LangAppApplicationFactory>, IAsyncL
         _client = factory.CreateClient();
         _dbContext = factory.Services.CreateScope()
             .ServiceProvider.GetRequiredService<WriteDbContext>();
-        _teacherHelper = new TestUserHelper(_client);
-        _studentHelper = new TestUserHelper(_client);
+        _teacherHelper = new TestUserHelper(_client, _dbContext);
+        _studentHelper = new TestUserHelper(_client, _dbContext);
     }
 
     public async Task InitializeAsync()

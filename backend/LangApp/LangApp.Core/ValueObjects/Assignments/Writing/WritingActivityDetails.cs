@@ -1,4 +1,4 @@
-using LangApp.Core.Exceptions;
+using LangApp.Core.Exceptions.ValueObjects.Writing;
 
 namespace LangApp.Core.ValueObjects.Assignments.Writing;
 
@@ -12,12 +12,12 @@ public record WritingActivityDetails : ActivityDetails
     {
         if (maxWords is < 10 or > 500)
         {
-            throw new LangAppException("Max words must be between 10 and 500");
+            throw new InvalidWritingMaxWordsException(maxWords);
         }
 
         if (string.IsNullOrWhiteSpace(prompt))
         {
-            throw new LangAppException("Prompt cannot be empty");
+            throw new EmptyWritingPromptException();
         }
 
         Prompt = prompt;

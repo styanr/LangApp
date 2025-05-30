@@ -52,7 +52,6 @@ public static class Extensions
         services.AddTransient<IActivitySubmissionFactory, ActivitySubmissionFactory>();
         services.AddTransient<IAssignmentSubmissionFactory, AssignmentSubmissionFactory>();
 
-        // TODO move to separate methods
         services.AddSingleton<IDomainEventDispatcher, DomainEventDispatcher>();
         services.AddSingleton<IGradingStrategyDispatcher, InMemoryGradingStrategyDispatcher>();
 

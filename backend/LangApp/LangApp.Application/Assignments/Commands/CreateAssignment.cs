@@ -1,4 +1,5 @@
 using LangApp.Application.Assignments.Dto;
+using LangApp.Application.Assignments.Exceptions;
 using LangApp.Application.Assignments.Extensions;
 using LangApp.Application.Common.Commands.Abstractions;
 using LangApp.Application.Common.Exceptions;
@@ -41,7 +42,7 @@ public class CreateAssignmentHandler : ICommandHandler<CreateAssignment, Guid>
 
         if (activities.Count == 0)
         {
-            throw new LangAppException("At least one activity is required");
+            throw new NoActivitiesException();
         }
 
         var group = await _groupRepository.GetAsync(groupId)

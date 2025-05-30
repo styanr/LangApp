@@ -61,7 +61,7 @@ public class AssignmentsModule : IEndpointModule
     )
     {
         var userId = context.User.GetUserId();
-        var query = new GetAssignmentsByGroup(request.GroupId, userId, request.ShowSubmitted)
+        var query = new GetAssignmentsByGroup(request.GroupId, userId, request.ShowSubmitted, request.ShowOverdue)
         {
             PageNumber = pageNumber ?? 1,
             PageSize = pageSize ?? 10,

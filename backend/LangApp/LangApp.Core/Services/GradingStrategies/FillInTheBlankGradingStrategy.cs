@@ -1,4 +1,5 @@
 using LangApp.Core.Exceptions;
+using LangApp.Core.Exceptions.Grading;
 using LangApp.Core.ValueObjects;
 using LangApp.Core.ValueObjects.Assignments.FillInTheBlank;
 using LangApp.Core.ValueObjects.Submissions;
@@ -15,15 +16,14 @@ public class FillInTheBlankGradingStrategy : SynchronousGradingStrategy<FillInTh
     {
         if (submission is not FillInTheBlankSubmissionDetails fillInTheBlankSubmission)
         {
-            throw new LangAppException(
-                $"Provided submission {submission.GetType()} is not compatible with the assignment {activity.GetType()}");
+            throw new IncompatibleSubmissionTypeException(submission.GetType(), activity.GetType());
         }
 
         int totalBlanks = activity.Answers.Count;
 
         if (totalBlanks == 0)
         {
-            throw new LangAppException("Grading failed: activity contains no blanks to fill.");
+            return new SubmissionGrade(new Percentage(0));
         }
 
         int correctAnswers = 0;

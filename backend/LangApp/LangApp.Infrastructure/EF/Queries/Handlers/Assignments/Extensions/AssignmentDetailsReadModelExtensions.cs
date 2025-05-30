@@ -7,6 +7,7 @@ using LangApp.Application.Assignments.Dto.Writing;
 using LangApp.Core.Exceptions;
 using LangApp.Core.ValueObjects.Assignments.FillInTheBlank;
 using LangApp.Core.ValueObjects.Assignments.Writing;
+using LangApp.Infrastructure.EF.Exceptions;
 using LangApp.Infrastructure.EF.Models.Assignments;
 using LangApp.Infrastructure.EF.Models.Assignments.FillInTheBlank;
 using LangApp.Infrastructure.EF.Models.Assignments.MultipleChoice;
@@ -68,7 +69,7 @@ public static class AssignmentDetailsReadModelExtensions
                 CreateQuestionDto(questionDetails, restricted),
             WritingActivityDetailsReadModel writingDetails =>
                 CreateWritingDto(writingDetails, restricted),
-            _ => throw new LangAppException("Wrong assignment details type")
+            _ => throw new UnhandledActivityTypeMappingException(details.GetType())
         };
     }
 
