@@ -1,6 +1,6 @@
 using LangApp.Core.Common;
 using LangApp.Core.Events.Assignments;
-using LangApp.Core.Exceptions;
+using LangApp.Core.Exceptions.Assignments;
 
 namespace LangApp.Core.Entities.Assignments;
 
@@ -92,20 +92,20 @@ public class Assignment : AggregateRoot
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new LangAppException("Name cannot be null or empty");
+            throw new InvalidAssignmentNameException(name);
         }
 
         if (name.Length > 100)
         {
-            throw new LangAppException("Name cannot be longer than 100 characters");
+            throw new InvalidAssignmentNameException(name);
         }
     }
 
     private static void ValidateDescription(string? description)
     {
-        if (string.IsNullOrWhiteSpace(description) || description.Length > 500)
+        if (description is not null && description.Length > 500)
         {
-            throw new LangAppException("Description cannot be longer than 500 characters");
+            throw new InvalidAssignmentDescriptionException(description);
         }
     }
 
@@ -113,7 +113,7 @@ public class Assignment : AggregateRoot
     {
         if (authorId == Guid.Empty)
         {
-            throw new LangAppException("Author ID cannot be empty");
+            throw new InvalidAssignmentAuthorIdException(authorId);
         }
     }
 
@@ -121,7 +121,7 @@ public class Assignment : AggregateRoot
     {
         if (studyGroupId == Guid.Empty)
         {
-            throw new LangAppException("Study Group ID cannot be empty");
+            throw new InvalidAssignmentStudyGroupIdException(studyGroupId);
         }
     }
 
@@ -129,7 +129,7 @@ public class Assignment : AggregateRoot
     {
         if (dueDate <= DateTime.UtcNow)
         {
-            throw new LangAppException("Due date cannot be in the past");
+            throw new InvalidAssignmentDueDateException(dueDate);
         }
     }
 
