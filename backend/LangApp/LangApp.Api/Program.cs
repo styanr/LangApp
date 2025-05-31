@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using LangApp.Api.Auth;
 using LangApp.Api.Common.Endpoints;
 using LangApp.Api.Common.Services;
+using LangApp.Api.Converters;
 using LangApp.Api.Middlewares;
 using LangApp.Api.OpenApi;
 using LangApp.Application.Common;
@@ -53,8 +54,8 @@ builder.Services.Configure<JsonOptions>(opt =>
 {
     opt.SerializerOptions.PropertyNameCaseInsensitive = true;
     opt.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    opt.SerializerOptions.Converters.Add(new TrimStringConverter());
 });
-
 builder.Services.AddCors();
 
 var app = builder.Build();

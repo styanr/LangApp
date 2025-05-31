@@ -35,7 +35,7 @@ internal class AuthService : IAuthService
 
         if (!await _userManager.IsEmailConfirmedAsync(user))
         {
-            throw new ValidationException(new[] { "Please confirm your email before signing in." });
+            throw new ValidationException(["Please confirm your email before signing in."]);
         }
 
         var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
@@ -71,10 +71,9 @@ internal class AuthService : IAuthService
 
         var user = token.User;
 
-        // Check if email is still confirmed (in case it was unconfirmed after initial confirmation)
         if (!await _userManager.IsEmailConfirmedAsync(user))
         {
-            throw new ValidationException(new[] { "Email confirmation is required. Please confirm your email." });
+            throw new ValidationException(["Email confirmation is required. Please confirm your email."]);
         }
 
         var accessToken = _tokenFactory.GenerateAccessToken(user);
@@ -112,7 +111,7 @@ internal class AuthService : IAuthService
         var user = await _userManager.FindByEmailAsync(email);
         if (user is null)
         {
-            throw new ValidationException(new[] { "User not found." });
+            throw new ValidationException(["User not found."]);
         }
 
         return await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -123,7 +122,7 @@ internal class AuthService : IAuthService
         var user = await _userManager.FindByEmailAsync(email);
         if (user is null)
         {
-            throw new ValidationException(new[] { "User not found." });
+            throw new ValidationException(["User not found."]);
         }
 
         var result = await _userManager.ConfirmEmailAsync(user, token);

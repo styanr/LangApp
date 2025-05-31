@@ -91,6 +91,46 @@ public class PostCreationTests : IClassFixture<LangAppApplicationFactory>, IAsyn
     }
 
     [Fact]
+    public async Task CreatePostWithSpaces_ShouldSucceed()
+    {
+        // Arrange
+        var createDto = new CreatePostRequest(
+            _testGroupId,
+            PostType.Discussion,
+            "              Integration Post ",
+            "This is a test post content.               ",
+            ["media1.png", "media2.jpg"]
+        );
+
+        // Act
+        var response = await _client.PostAsJsonAsync("/api/v1/posts", createDto);
+        response.EnsureSuccessStatusCode();
+
+        var id = response.Headers?.Location?.Segments.Last();
+        id.Should().NotBeNullOrEmpty();
+
+        var fetchResponse = await _client.GetAsync($"/api/v1/posts/{id}");
+        fetchResponse.EnsureSuccessStatusCode();
+
+        var content = await fetchResponse.Content.ReadAsStringAsync();
+        var serializerOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+        serializerOptions.Converters.Add(new JsonStringEnumConverter());
+        var post = JsonSerializer.Deserialize<PostDto>(content, serializerOptions);
+
+        // Assert
+        post.Should().NotBeNull();
+        post!.Title.Should().Be("Integration Post");
+        post.Content.Should().Be("This is a test post content.");
+        post.GroupId.Should().Be(_testGroupId);
+        post.Type.Should().Be(PostType.Discussion);
+        post.Media.Should().BeEquivalentTo(["media1.png", "media2.jpg"]);
+        post.Comments.Should().BeEmpty();
+    }
+
+    [Fact]
     public async Task CreatePostAndAddComment_ShouldSucceed()
     {
         // Arrange
