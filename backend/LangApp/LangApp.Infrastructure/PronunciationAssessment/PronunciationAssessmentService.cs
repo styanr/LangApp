@@ -21,8 +21,6 @@ namespace LangApp.Infrastructure.PronunciationAssessment;
 
 public class PronunciationAssessmentService : IPronunciationAssessmentService
 {
-    private readonly BlobStorageService _blobStorageService;
-    private readonly IConfiguration _configuration;
     private readonly ILogger<PronunciationAssessmentService> _logger;
     private readonly IOptions<SpeechConfigOptions> _config;
     private readonly IAudioFetcher _audioFetcher;
@@ -33,8 +31,6 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
         ILogger<PronunciationAssessmentService> logger,
         IOptions<SpeechConfigOptions> config, IAudioFetcher audioFetcher)
     {
-        _blobStorageService = blobStorageService;
-        _configuration = configuration;
         _logger = logger;
         _config = config;
         _audioFetcher = audioFetcher;
@@ -115,10 +111,11 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
             pronWords.AddRange(pronResult.Words.Select(word =>
                 new Word(word.Word, word.ErrorType, word.AccuracyScore)));
 
-            foreach (var result in e.Result.Best())
+            foreach (var words in e.Result.Best().Select(w => w.Words))
             {
-                durations.Add(result.Words.Sum(item => item.Duration));
-                recognizedWords.AddRange(result.Words.Select(item => item.Word).ToList());
+                var wordList = words.ToList();
+                durations.Add(wordList.Sum(item => item.Duration));
+                recognizedWords.AddRange(wordList.Select(item => item.Word).ToList());
             }
         };
 
@@ -171,7 +168,8 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
     {
         return text.ToLower()
             .Split(' ')
-            .Select(w => Regex.Replace(w, @"^[\p{P}\s]+|[\p{P}\s]+$", ""))
+            .Select(w => Regex.Replace(w, @"^[\p{P}\s]+|[\p{P}\s]+$", "", RegexOptions.None,
+                TimeSpan.FromSeconds(1.5)))
             .ToArray();
     }
 
@@ -245,7 +243,7 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
     }
 
 
-    private (double accuracyScore, double completenessScore, double fluencyScore,
+    private static (double accuracyScore, double completenessScore, double fluencyScore,
         double prosodyScore, double pronunciationScore)
         CalculateFinalScores(
             List<Word> finalWords,

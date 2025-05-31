@@ -19,14 +19,12 @@ public record AddMembersToStudyGroup(
 public class AddMembersToStudyGroupHandler : ICommandHandler<AddMembersToStudyGroup>
 {
     private readonly IStudyGroupRepository _repository;
-    private readonly IApplicationUserRepository _userRepository;
     private readonly IApplicationUserReadService _readService;
 
-    public AddMembersToStudyGroupHandler(IStudyGroupRepository repository, IApplicationUserRepository userRepository,
+    public AddMembersToStudyGroupHandler(IStudyGroupRepository repository,
         IApplicationUserReadService readService)
     {
         _repository = repository;
-        _userRepository = userRepository;
         _readService = readService;
     }
 
@@ -44,15 +42,15 @@ public class AddMembersToStudyGroupHandler : ICommandHandler<AddMembersToStudyGr
             throw new UnauthorizedException(userId, studyGroup);
         }
 
-        foreach (var member in members)
+        foreach (var memberId in members.Select(m => m.UserId))
         {
-            var exists = await _readService.Exists(member.UserId);
+            var exists = await _readService.Exists(memberId);
             if (!exists)
             {
-                throw new UserNotFoundException(member.UserId);
+                throw new UserNotFoundException(memberId);
             }
 
-            var isStudent = await _readService.GetRoleAsync(member.UserId) == UserRole.Student;
+            var isStudent = await _readService.GetRoleAsync(memberId) == UserRole.Student;
             if (!isStudent)
             {
                 throw new StudyGroupInvalidMemberException(studyGroupId);

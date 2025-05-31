@@ -42,15 +42,13 @@ public class FillInTheBlankGradingStrategy : SynchronousGradingStrategy<FillInTh
             }
         }
 
-        double percentageValue = totalBlanks > 0
-            ? (double)correctAnswers / totalBlanks * 100
-            : 0;
+        double percentageValue = (double)correctAnswers / totalBlanks * 100;
 
         var percentage = new Percentage(percentageValue);
         return new SubmissionGrade(percentage);
     }
 
-    private bool IsCorrectAnswer(string submittedAnswer, FillInTheBlankAnswer correctAnswer)
+    private static bool IsCorrectAnswer(string submittedAnswer, FillInTheBlankAnswer correctAnswer)
     {
         if (string.IsNullOrWhiteSpace(submittedAnswer))
         {

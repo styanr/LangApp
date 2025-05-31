@@ -16,13 +16,14 @@ public record FillInTheBlankActivityDetails : ActivityDetails
             throw new InvalidFillInTheBlankQuestionText("Template text cannot be null or empty.");
         }
 
-        if (!Regex.IsMatch(templateText, ValidTemplateRegex))
+        if (!Regex.IsMatch(templateText, ValidTemplateRegex, RegexOptions.None, TimeSpan.FromSeconds(1.5)))
         {
             throw new InvalidFillInTheBlankQuestionText(
                 "Template must contain at least one underscore surrounded by spaces or at the beginning/end of text.");
         }
 
-        var matches = Regex.Matches(templateText, ExtractUnderscoresRegex);
+        var matches = Regex.Matches(templateText, ExtractUnderscoresRegex, RegexOptions.None,
+            TimeSpan.FromSeconds(1.5));
         var blankCount = matches.Count;
 
         if (answers is null || answers.Count != blankCount)

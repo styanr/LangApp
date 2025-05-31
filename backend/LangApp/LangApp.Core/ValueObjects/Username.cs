@@ -8,7 +8,9 @@ public record Username
 {
     private const int MinLength = 4;
     private const int MaxLength = 20;
-    private readonly Regex re = new("^(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$");
+
+    private readonly Regex re = new("^(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$", RegexOptions.None,
+        TimeSpan.FromSeconds(1.5));
 
     public string Value { get; }
 
