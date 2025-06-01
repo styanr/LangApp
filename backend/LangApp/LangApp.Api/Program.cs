@@ -9,6 +9,7 @@ using LangApp.Application.Common;
 using LangApp.Infrastructure;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.HttpLogging;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -82,6 +83,15 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseInfrastructureEndpoints();
+
+// app.UseXContentTypeOptions();
+// app.UseXfo(options => options.Deny());
+// app.UseCsp(options => options
+//     .DefaultSources(s => s.Self())
+//     .ScriptSources(s => s.Self().UnsafeInline())
+//     .ObjectSources(s => s.None())
+//     .StyleSources(s => s.Self().UnsafeInline())
+// );
 
 
 app.Run();

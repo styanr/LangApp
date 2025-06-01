@@ -6,7 +6,6 @@ using LangApp.Application.Submissions.Dto;
 using LangApp.Application.Submissions.Queries;
 using LangApp.Infrastructure.EF.Context;
 using LangApp.Infrastructure.EF.Models.Assignments;
-using LangApp.Infrastructure.EF.Models.StudyGroups;
 using LangApp.Infrastructure.EF.Models.Submissions;
 using LangApp.Infrastructure.EF.Queries.Handlers.Submissions.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -18,20 +17,19 @@ internal class
 {
     private readonly DbSet<AssignmentSubmissionReadModel> _submissions;
     private readonly DbSet<AssignmentReadModel> _assignments;
-    private readonly DbSet<StudyGroupReadModel> _groups;
 
 
     public GetSubmissionsByAssignmentHandler(ReadDbContext context)
     {
         _submissions = context.Submissions;
         _assignments = context.Assignments;
-        _groups = context.StudyGroups;
     }
 
 
     public async Task<PagedResult<AssignmentSubmissionDto>?> HandleAsync(GetSubmissionsByAssignment query)
     {
-        var assignment = _assignments.Include(a => a.StudyGroup).FirstOrDefault(a => a.Id == query.AssignmentId);
+        var assignment = await _assignments.Include(a => a.StudyGroup)
+            .FirstOrDefaultAsync(a => a.Id == query.AssignmentId);
 
         if (assignment is null)
         {
@@ -43,13 +41,13 @@ internal class
             throw new UnauthorizedException(query.UserId, query.AssignmentId, "Assignment");
         }
 
-        var submissionEntities = _submissions
+        var submissionEntities = await _submissions
             .Where(s => s.AssignmentId == query.AssignmentId)
             .Include(s => s.ActivitySubmissions)
             .ThenInclude(asub => asub.Grade)
             .Include(s => s.Student)
             .TakePage(query.PageNumber, query.PageSize)
-            .ToList();
+            .ToListAsync();
 
         var submissions = submissionEntities
             .Select(s => new AssignmentSubmissionDto(

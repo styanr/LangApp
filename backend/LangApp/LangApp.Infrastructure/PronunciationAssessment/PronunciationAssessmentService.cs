@@ -140,8 +140,9 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
         var scores = CalculateFinalScores(finalWords, fluencyScores, prosodyScores, durations, referenceText,
             enableProsody);
 
+        _logger.LogInformation("Final scores calculated: {Scores}", scores);
         return new SubmissionGrade(
-            new Percentage(scores.accuracyScore),
+            new Percentage(scores.pronunciationScore),
             JsonSerializer.Serialize(finalWords)
         );
     }
@@ -158,7 +159,7 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
 
         var finalWords = enableMiscue
             ? ProcessWithMiscue(pronWords, recognizedWords, referenceWords)
-            : [..pronWords];
+            : [.. pronWords];
 
         _logger.LogInformation("Final word list processed");
         return finalWords;
@@ -283,7 +284,8 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
         var scoreComponents = new Dictionary<string, (double score, double weight)>
         {
             ["Accuracy"] = (accuracyScore, enableProsody ? 0.4 : 0.5),
-            ["Completeness"] = (completenessScore, enableProsody ? 0.2 : 0.25)
+            ["Completeness"] = (completenessScore, enableProsody ? 0.2 : 0.25),
+            ["Fluency"] = (fluencyScore, enableProsody ? 0.2 : 0.25)
         };
 
         // Add prosody component only when enabled

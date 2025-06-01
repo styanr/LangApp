@@ -26,10 +26,10 @@ internal class
 
     public async Task<AssignmentSubmissionsStatisticsDto?> HandleAsync(GetAssignmnentSubmissionsStatistics query)
     {
-        var assignment = _assignments
+        var assignment = await _assignments
             .Include(a => a.StudyGroup)
             .ThenInclude(g => g.Members)
-            .FirstOrDefault(a => a.Id == query.AssignmentId);
+            .FirstOrDefaultAsync(a => a.Id == query.AssignmentId);
 
         if (assignment is null)
         {
