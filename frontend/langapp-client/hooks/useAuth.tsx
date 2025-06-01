@@ -7,7 +7,6 @@ import React, {
   useCallback,
   useRef,
 } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios, { AxiosError } from 'axios';
 import {
   useRegister,
@@ -28,6 +27,7 @@ import type {
   LoginMutationResult,
 } from '@/api/orval/authentication';
 import { axiosInstance } from '@/api/axiosMutator';
+import * as SecureStore from 'expo-secure-store';
 
 type AuthTokens = LoginMutationResult;
 
@@ -61,8 +61,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }[]
   >([]);
 
+  console.log('[AuthProvider] Initializing auth provider');
+
   const isRefreshing = useRef(false);
   const setIsRefreshing = (value: boolean) => {
+    console.log(`[Auth] Token refresh state: ${value ? 'REFRESHING' : 'IDLE'}`);
     isRefreshing.current = value;
   };
 
@@ -76,6 +79,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { data: userResponse, isLoading: isUserLoading } = useGetCurrentUser({
     query: { enabled: !!tokens?.accessToken },
   });
+
+  useEffect(() => {
+    console.log(
+      '[Auth] User data loaded:',
+      userResponse ? 'YES' : 'NO',
+      'isLoading:',
+      isUserLoading
+    );
+  }, [userResponse, isUserLoading]);
 
   const user = userResponse ?? null;
 
@@ -96,10 +108,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Load stored tokens on mount
   useEffect(() => {
     (async () => {
+      console.log('[Auth] Loading stored tokens on mount');
       try {
-        const json = await AsyncStorage.getItem('@langapp:tokens');
-        if (json) setTokens(JSON.parse(json));
+        const json = await SecureStore.getItemAsync('langapp.tokens');
+        if (json) {
+          console.log('[Auth] Found stored tokens');
+          const parsedTokens = JSON.parse(json);
+          console.log('[Auth] Access token found:', !!parsedTokens?.accessToken);
+          console.log('[Auth] Refresh token found:', !!parsedTokens?.refreshToken);
+          setTokens(parsedTokens);
+        } else {
+          console.log('[Auth] No tokens found in storage');
+        }
+      } catch (error) {
+        console.error('[Auth] Error loading tokens:', error);
       } finally {
+        console.log('[Auth] Finished loading tokens, setting isLoading to false');
         setIsLoading(false);
       }
     })();
@@ -111,7 +135,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       async (config) => {
         try {
           console.log('[Request Interceptor] Fetching token from storage...');
-          const tokensStr = await AsyncStorage.getItem('@langapp:tokens');
+          const tokensStr = await SecureStore.getItemAsync('langapp.tokens');
           if (tokensStr) {
             const tokens = JSON.parse(tokensStr);
             if (tokens?.accessToken) {
@@ -183,7 +207,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             if (!baseURL) {
               throw new Error('EXPO_PUBLIC_API_URL is not defined');
             }
-            const tokensStr = await AsyncStorage.getItem('@langapp:tokens');
+            const tokensStr = await SecureStore.getItemAsync('langapp.tokens');
             const storedTokens = tokensStr ? JSON.parse(tokensStr) : null;
 
             if (!storedTokens?.refreshToken) {
@@ -218,7 +242,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             return axiosInstance(originalRequest);
           } catch (refreshError) {
             console.error('[Response Interceptor] Token refresh failed:', refreshError);
-            await AsyncStorage.removeItem('@langapp:tokens');
+            await SecureStore.deleteItemAsync('langapp.tokens');
             setTokens(null);
             processQueue(refreshError, null);
             return Promise.reject(refreshError);
@@ -239,40 +263,105 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const persistTokens = useCallback(async (t: AuthTokens) => {
+    console.log('[Auth] Persisting new tokens');
+    console.log(
+      '[Auth] Access token:',
+      t.accessToken ? t.accessToken.slice(0, 10) + '...' : 'none'
+    );
+    console.log('[Auth] Refresh token:', t.refreshToken ? 'present' : 'none');
+
     setTokens(t);
-    await AsyncStorage.setItem('@langapp:tokens', JSON.stringify(t));
-    // Update axios default headers with the new token
-    axiosInstance.defaults.headers.common.Authorization = `Bearer ${t.accessToken}`;
+    try {
+      await SecureStore.setItemAsync('langapp.tokens', JSON.stringify(t));
+      console.log('[Auth] Successfully stored tokens in SecureStore');
+
+      // Update axios default headers with the new token
+      axiosInstance.defaults.headers.common.Authorization = `Bearer ${t.accessToken}`;
+      console.log('[Auth] Updated axios default headers with new token');
+    } catch (error) {
+      console.error('[Auth] Error storing tokens:', error);
+    }
   }, []);
 
   const register = async (data: RegisterMutationBody) => {
-    await registerMutate({ data });
+    console.log('[Auth] Attempting to register user:', data.email);
+    try {
+      await registerMutate({ data });
+      console.log('[Auth] Registration successful');
+    } catch (error) {
+      console.error('[Auth] Registration failed:', error);
+      throw error;
+    }
   };
 
   const login = async (data: LoginMutationBody) => {
-    const resp = await loginMutate({ data });
-    await persistTokens(resp);
+    console.log('[Auth] Attempting to login user:', data.username);
+    try {
+      const resp = await loginMutate({ data });
+      console.log('[Auth] Login successful, received tokens');
+      await persistTokens(resp);
+      console.log('[Auth] Authentication completed successfully');
+    } catch (error) {
+      console.error('[Auth] Login failed:', error);
+      throw error;
+    }
   };
 
   const refreshSession = async () => {
-    if (!tokens?.refreshToken) throw new Error('no refresh token');
-    const resp = await refreshMutate({ data: { refreshToken: tokens.refreshToken } });
-    await persistTokens(resp);
+    console.log('[Auth] Manual refresh session requested');
+    if (!tokens?.refreshToken) {
+      console.error('[Auth] Cannot refresh - no refresh token available');
+      throw new Error('no refresh token');
+    }
+    try {
+      console.log('[Auth] Attempting to refresh token');
+      const resp = await refreshMutate({ data: { refreshToken: tokens.refreshToken } });
+      console.log('[Auth] Token refresh successful');
+      await persistTokens(resp);
+      console.log('[Auth] New tokens persisted after refresh');
+    } catch (error) {
+      console.error('[Auth] Token refresh failed:', error);
+      throw error;
+    }
   };
 
   const requestPasswordReset = async (data: RequestPasswordResetMutationBody) => {
-    await requestResetMutate({ data });
+    console.log('[Auth] Requesting password reset for:', data.email);
+    try {
+      await requestResetMutate({ data });
+      console.log('[Auth] Password reset requested successfully');
+    } catch (error) {
+      console.error('[Auth] Password reset request failed:', error);
+      throw error;
+    }
   };
 
   const resetPassword = async (data: ResetPasswordMutationBody) => {
-    await resetPwdMutate({ data });
+    console.log('[Auth] Attempting to reset password');
+    try {
+      await resetPwdMutate({ data });
+      console.log('[Auth] Password reset successful');
+    } catch (error) {
+      console.error('[Auth] Password reset failed:', error);
+      throw error;
+    }
   };
 
   const logout = async () => {
-    setTokens(null);
-    await AsyncStorage.removeItem('@langapp:tokens');
-    // Clear the Authorization header
-    delete axiosInstance.defaults.headers.common.Authorization;
+    console.log('[Auth] Logging out user');
+    try {
+      setTokens(null);
+      await SecureStore.deleteItemAsync('langapp.tokens');
+      console.log('[Auth] Tokens cleared from SecureStore');
+
+      // Clear the Authorization header
+      delete axiosInstance.defaults.headers.common.Authorization;
+      console.log('[Auth] Authorization header cleared');
+      console.log('[Auth] Logout successful');
+    } catch (error) {
+      console.error('[Auth] Error during logout:', error);
+      throw error;
+    }
   };
 
   /**
@@ -283,7 +372,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     fullName?: { firstName?: string; lastName?: string };
     pictureUrl?: string | null;
   }) => {
-    return await updateUserInfoMutation(data);
+    console.log('[Auth] Updating user info:', data);
+    try {
+      const result = await updateUserInfoMutation(data);
+      console.log('[Auth] User info updated successfully');
+      return result;
+    } catch (error) {
+      console.error('[Auth] User info update failed:', error);
+      throw error;
+    }
   };
 
   const value: AuthContextValue = {

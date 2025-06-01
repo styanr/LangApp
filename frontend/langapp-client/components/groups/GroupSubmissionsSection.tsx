@@ -35,7 +35,6 @@ interface GroupSubmissionsSectionProps {
   onPageChange: (page: number) => void;
 }
 
-// Memoized submission item component
 const MemoizedSubmissionItem = React.memo<{
   item: UserGroupSubmissionDto;
   index: number;
@@ -47,9 +46,10 @@ const MemoizedSubmissionItem = React.memo<{
   const { isSubmitted, scorePercentage } = useMemo(() => {
     const submitted = !!submission;
     const percentage =
-      submission?.score && assignment?.maxScore
+      submission?.score != null && assignment?.maxScore != null
         ? Math.round((submission.score / assignment.maxScore) * 100)
         : null;
+
     return { isSubmitted: submitted, scorePercentage: percentage };
   }, [submission, assignment]);
 
@@ -271,16 +271,18 @@ const ActivitySubmissionItem = React.memo<{
     <View>
       <View className="mb-1 ml-1 flex-row items-center">
         <View className={`mr-2 h-2 w-2 rounded-full ${statusColorClass}`} />
-        <Text className="mr-1 text-lg text-zinc-600">{t(`common.activityTypes.${act.details?.activityType}`, { defaultValue: act.details?.activityType})}</Text>
+        <Text className="mr-1 text-lg text-zinc-600">
+          {t(`common.activityTypes.${act.details?.activityType}`, {
+            defaultValue: act.details?.activityType,
+          })}
+        </Text>
         {act.grade?.scorePercentage != null && (
           <Text className={scoreColorClass}> {act.grade.scorePercentage}%</Text>
         )}
       </View>
 
       {act.activityId && matchingActivity && <AssignmentPrompt activity={matchingActivity} />}
-<Text className="mt-4 text-lg">
-  Ваша відповідь:
-</Text>
+      <Text className="mt-4 text-lg">Ваша відповідь:</Text>
       {ActivitySubmissionComponent}
 
       {act.grade && (

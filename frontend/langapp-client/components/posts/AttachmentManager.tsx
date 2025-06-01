@@ -86,7 +86,7 @@ export function AttachmentManager({
         copyToCacheDirectory: true,
       });
 
-      if (result.canceled === false && result.assets && result.assets.length > 0) {
+      if (!result.canceled && result.assets && result.assets.length > 0) {
         const asset = result.assets[0];
         const newFile = {
           uri: asset.uri,

@@ -93,7 +93,7 @@ export default function SubmissionDetailPage() {
       setEditingActivityId(null);
       setScore('');
       setFeedback('');
-      refetchSubmission();
+      await refetchSubmission();
     } catch (error) {
       Alert.alert(
         t('submissionDetailScreen.saveGradeErrorTitle'),

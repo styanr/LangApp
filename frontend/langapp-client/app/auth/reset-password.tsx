@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import Toast from 'react-native-toast-message';
 import { getErrorMessage } from '@/lib/errors';
 import { useTranslation } from 'react-i18next';
+import { validatePassword, passwordsMatch as doPasswordsMatch } from '@/lib/validation';
 
 export default function ResetPasswordScreen() {
   const { isLoading, resetPassword } = useAuth();
@@ -20,6 +21,13 @@ export default function ResetPasswordScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fixedToken, setFixedToken] = useState<string | null>(null);
+
+  // Password validation states
+  const [passwordValid, setPasswordValid] = useState(false);
+  const [passwordsMatch, setPasswordsMatch] = useState(false);
+  const [passwordTouched, setPasswordTouched] = useState(false);
+  const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
+
   const { t } = useTranslation();
 
   // Validate presence of email & token
@@ -37,6 +45,17 @@ export default function ResetPasswordScreen() {
     }
   }, [email, token, t]);
 
+  // Validate password
+  useEffect(() => {
+    const passwordValidation = validatePassword(password);
+    setPasswordValid(passwordValidation.isValid);
+  }, [password]);
+
+  // Validate password matching
+  useEffect(() => {
+    setPasswordsMatch(doPasswordsMatch(password, confirmPassword));
+  }, [password, confirmPassword]);
+
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center">
@@ -48,16 +67,23 @@ export default function ResetPasswordScreen() {
 
   const handleSubmit = async () => {
     setError(null);
+
+    // Mark fields as touched on submit
+    setPasswordTouched(true);
+    setConfirmPasswordTouched(true);
+
     if (!password.trim() || !confirmPassword.trim()) {
       setError(t('resetPasswordScreen.requiredFields'));
       return;
     }
-    if (password !== confirmPassword) {
-      setError(t('resetPasswordScreen.passwordsDoNotMatch'));
+
+    if (!passwordValid) {
+      setError(t('registerForm.passwordValidation'));
       return;
     }
-    if (password.length < 8) {
-      setError(t('resetPasswordScreen.passwordTooShort'));
+
+    if (!passwordsMatch) {
+      setError(t('resetPasswordScreen.passwordsDoNotMatch'));
       return;
     }
 
@@ -93,9 +119,16 @@ export default function ResetPasswordScreen() {
           placeholder={t('resetPasswordScreen.newPasswordPlaceholder')}
           value={password}
           onChangeText={setPassword}
+          onBlur={() => setPasswordTouched(true)}
           secureTextEntry
-          className="mb-4 h-12"
+          className={`mb-2 h-12 ${!passwordValid && passwordTouched ? 'border-red-500' : ''}`}
         />
+        {!passwordValid && passwordTouched && (
+          <Text className="mb-2 text-xs text-red-500">
+            {t('registerForm.passwordValidation') ||
+              'Password must be at least 8 characters with uppercase, lowercase, number, and symbol'}
+          </Text>
+        )}
 
         <Text className="text-sm font-medium text-gray-700">
           {t('resetPasswordScreen.confirmPassword')}
@@ -104,13 +137,22 @@ export default function ResetPasswordScreen() {
           placeholder={t('resetPasswordScreen.confirmPasswordPlaceholder')}
           value={confirmPassword}
           onChangeText={setConfirmPassword}
+          onBlur={() => setConfirmPasswordTouched(true)}
           secureTextEntry
-          className="mb-6 h-12"
+          className={`mb-2 h-12 ${!passwordsMatch && confirmPasswordTouched ? 'border-red-500' : ''}`}
         />
+        {!passwordsMatch && confirmPasswordTouched && (
+          <Text className="mb-2 text-xs text-red-500">
+            {t('registerForm.passwordsMatchValidation') || 'Passwords must match'}
+          </Text>
+        )}
 
-        {error && <FormError message={error} />}
+        {error && <FormError message={error} className="mb-4" />}
 
-        <Button onPress={handleSubmit} disabled={isSubmitting} className="h-12">
+        <Button
+          onPress={handleSubmit}
+          disabled={isSubmitting || !passwordValid || !passwordsMatch}
+          className="h-12">
           <Text className="text-base font-semibold text-white">
             {isSubmitting
               ? t('resetPasswordScreen.resetting')

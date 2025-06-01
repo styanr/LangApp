@@ -161,10 +161,17 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
               {t('common.activity')}: {getActivityTypeLabel(details.activityType)}
             </Text>
           </View>
-          <View className="flex-row justify-start">
+          <View className="flex-row justify-start gap-2">
             <View className={`rounded-full px-2 py-1 ${statusBg}`}>
               <Text className={`text-xs font-medium ${statusColor}`}>
                 {getGradeStatusLabel(subActivity.status)}
+              </Text>
+            </View>
+            <View className={`rounded-full bg-gray-100 px-2 py-1 dark:bg-gray-900/30`}>
+              <Text className={`text-xs font-medium`}>
+                {t('submissionDetailScreen.scoreLabel', {
+                  count: 10,
+                })}
               </Text>
             </View>
           </View>

@@ -7,6 +7,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from './text';
 import { useTranslation } from 'react-i18next';
 import { Label } from '@rn-primitives/select';
+import { Picker } from '@react-native-picker/picker';
+import { cn } from '@/lib/utils';
 
 interface LanguageSelectorProps {
   value: string;
@@ -21,66 +23,30 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   placeholder = 'Select a language',
   className = '',
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const languages = useMemo(() => getLanguages(), [i18n.language]);
-
   const selectedLanguage = useMemo(
     () => languages.find((lang) => lang.code === value),
     [languages, value]
   );
-
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handleSelect = (language: Language) => {
-    onValueChange(language.code);
-    setIsOpen(false);
-  };
-
-  const insets = useSafeAreaInsets();
-  const contentInsets = {
-    top: insets.top,
-    bottom: insets.bottom,
-    left: 12,
-    right: 12,
-  };
   const { t } = useTranslation();
 
-  console.log(languages);
   return (
-    <View className={`relative ${className}`}>
-      <Pressable
-        className="flex-row items-center justify-between rounded-md border border-border bg-background px-3 py-2"
-        onPress={toggleDropdown}>
-        <Text className={`text-base ${!selectedLanguage ? 'text-gray-500' : 'text-foreground'}`}>
-          {selectedLanguage ? selectedLanguage.displayName : placeholder}
-        </Text>
-        <ChevronDown size={18} className="text-gray-500" />
-      </Pressable>
-
-      {isOpen && (
-        <Animated.View
-          entering={FadeIn.duration(200)}
-          exiting={FadeOut.duration(200)}
-          className="absolute left-0 right-0 top-full z-50 mt-1 max-h-64 rounded-md border border-border bg-background shadow-lg">
-          <ScrollView className="max-h-96">
-            {languages.map((language) => (
-              <Pressable
-                key={language.code}
-                className={`px-3 py-2.5 ${language.code === value ? 'bg-primary/10' : 'hover:bg-gray-100'}`}
-                onPress={() => handleSelect(language)}>
-                <Text
-                  className={`${language.code === value ? 'font-medium text-primary' : 'text-foreground'}`}>
-                  {language.displayName}
-                </Text>
-              </Pressable>
-            ))}
-          </ScrollView>
-        </Animated.View>
-      )}
+    <View className={cn(className, 'border border-gray-200 rounded-lg px-2')}>
+      <Picker
+        selectedValue={value}
+        onValueChange={onValueChange}
+        style={{ width: '100%' }}
+      >
+        <Picker.Item label={placeholder} value="" />
+        {languages.map((language) => (
+          <Picker.Item
+            key={language.code}
+            label={language.displayName}
+            value={language.code}
+          />
+        ))}
+      </Picker>
     </View>
   );
 };

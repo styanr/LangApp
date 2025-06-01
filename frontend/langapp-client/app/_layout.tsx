@@ -1,10 +1,4 @@
-import {
-  Theme,
-  ThemeProvider,
-  DefaultTheme,
-  DarkTheme,
-  NavigationContainer,
-} from '@react-navigation/native';
+import { Theme, ThemeProvider, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import '@/global.css';
@@ -66,7 +60,12 @@ const RootLayout = () => {
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
             <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-            <Stack>
+            <Stack
+              screenOptions={{
+                navigationBarColor: isDarkColorScheme
+                  ? DARK_THEME.colors.background
+                  : LIGHT_THEME.colors.background,
+              }}>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             </Stack>
             <Toast />

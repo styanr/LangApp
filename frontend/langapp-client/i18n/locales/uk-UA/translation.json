@@ -1,7 +1,7 @@
 {
   "login": {
     "registrationSuccessTitle": "Реєстрація успішна",
-    "registrationSuccessMessage": "Увійдіть у свій новий обліковий запис",
+    "registrationSuccessMessage": "Підтвердіть свою електронну пошту, щоб увійти.",
     "loading": "Завантаження...",
     "welcomeBack": "З поверненням",
     "credentialsPrompt": "Введіть облікові дані для доступу до акаунту",
@@ -29,21 +29,30 @@
     "title": "Реєстрація"
   },
   "registerForm": {
-    "username": "Ім’я користувача",
-    "usernamePlaceholder": "Виберіть ім’я користувача",
+    "username": "Ім'я користувача",
+    "usernamePlaceholder": "Виберіть ім'я користувача",
+    "usernameValidation": "Ім'я користувача повинно відповідати формату",
+    "usernameTooShort": "Ім'я користувача повинно містити щонайменше 4 символи",
+    "usernameTooLong": "Ім'я користувача не може перевищувати 20 символів",
+    "usernameInvalidFormat": "Ім'я користувача може містити тільки літери, цифри, символи . та _ (не може починатися/закінчуватися символами ./_ або мати послідовні символи ./_)",
     "email": "Електронна пошта",
     "emailPlaceholder": "Введіть електронну пошту",
-    "firstName": "Ім’я",
-    "firstNamePlaceholder": "Введіть ім’я",
+    "emailValidation": "Будь ласка, введіть дійсну електронну адресу",
+    "firstName": "Ім'я",
+    "firstNamePlaceholder": "Введіть ім'я",
+    "firstNameValidation": "Ім'я обов'язкове",
     "lastName": "Прізвище",
     "lastNamePlaceholder": "Введіть прізвище",
+    "lastNameValidation": "Прізвище обов'язкове",
     "iAmA": "Я:",
     "student": "Учень",
     "teacher": "Вчитель",
     "password": "Пароль",
     "passwordPlaceholder": "Створіть пароль",
+    "passwordValidation": "Пароль повинен містити щонайменше 8 символів з великою літерою, малою літерою, цифрою та спеціальним символом",
     "confirmPassword": "Підтвердження паролю",
     "confirmPasswordPlaceholder": "Підтвердіть пароль",
+    "passwordsMatchValidation": "Паролі повинні співпадати",
     "creatingAccount": "Створення акаунту...",
     "register": "Зареєструватися",
     "alreadyHaveAccount": "Вже є акаунт? ",
@@ -566,7 +575,9 @@
     "invalidScoreTitle": "Неправильна оцінка",
     "invalidScoreMessage": "Оцінка має бути числом від 0 до 100",
     "saveGradeErrorTitle": "Помилка",
-    "saveGradeErrorMessage": "Не вдалося зберегти оцінку. Будь ласка, спробуйте ще раз."
+    "saveGradeErrorMessage": "Не вдалося зберегти оцінку. Будь ласка, спробуйте ще раз.",
+    "scoreLabel_one": "{{count}} бал",
+    "scoreLabel_other": "{{count}} балів"
   },
   "userViewScreen": {
     "loadingText": "Завантаження користувача...",
@@ -609,6 +620,7 @@
   },
   "assignmentDetailScreen": {
     "loading": "Завантаження завдання...",
+    "noDescription": "Немає опису для цього завдання.",
     "failedToLoad": "Не вдалося завантажити завдання.",
     "submitted": "Здано",
     "maxScore": "Макс. бал: {{score}}",
@@ -641,5 +653,20 @@
     "jsonMode": "JSON",
     "resultMode": "Результат",
     "textMode": "Текст"
+  },
+  "mediaPreview": {
+    "loadingFile": "Завантаження файлу...",
+    "error": "Помилка: {{error}}",
+    "fileNotAvailable": "Файл недоступний.",
+    "loadingFilename": "Завантаження назви файлу...",
+    "cannotPreview": "Цей тип файлу не можна переглянути безпосередньо.",
+    "loading": "Завантаження...",
+    "opening": "Відкривання...",
+    "openInBrowser": "Відкрити в браузері",
+    "loadingName": "Завантаження назви...",
+    "defaultFileName": "Файл {{index}}",
+    "failedToGetAccessibleUrl": "Не вдалося отримати доступний URL",
+    "couldNotOpenFile": "Не вдалося відкрити цей файл",
+    "failedToLoadImage": "Не вдалося завантажити зображення"
   }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Text } from '@/components/ui/text';
 import { useGlobalSearchParams, useLocalSearchParams, useRouter } from 'expo-router';
 import { View, ScrollView, ActivityIndicator, RefreshControl, Alert } from 'react-native';
@@ -117,8 +117,15 @@ const GroupPage = () => {
   const totalAssignments = assignmentsData?.totalCount || 0;
   const members = group?.members || [];
   const totalSubmissions = submissions?.length ? submissions.length : 0;
-  const isOwner = owner?.id === user?.id;
+  // const isOwner = owner?.id === user?.id;
 
+  const isOwner = useMemo(() => {
+    return owner?.id === user?.id;
+  }, [owner, user]);
+
+  useEffect(() => {
+    setShowOverdue(isOwner);
+  }, [isOwner]);
   const onRefresh = async () => {
     setIsRefreshing(true);
     await Promise.all([refetchGroup(), refetchPosts(), refetchAssignments(), refetchSubmissions()]);
@@ -301,7 +308,6 @@ const GroupPage = () => {
                     />
                   </>
                 ) : (
-                  // Student view: show submitted filter and submissions link
                   <>
                     <View className="mb-2 flex gap-3  px-4 pb-2">
                       <Button
@@ -313,18 +319,23 @@ const GroupPage = () => {
                           {t('groupScreen.viewSubmissions')}
                         </Text>
                       </Button>
-                      <View className="flex-row items-center">
-                        <Toggle pressed={showSubmitted} onPressedChange={setShowSubmitted}>
-                          {showSubmitted ? <ToggleIcon icon={EyeOff} /> : <ToggleIcon icon={Eye} />}
-                        </Toggle>
-                        <Text className="ml-2">{t('groupScreen.showSubmitted')}</Text>
-                        <Toggle
-                          pressed={showOverdue}
-                          onPressedChange={setShowOverdue}
-                          className="ml-6">
-                          <ToggleIcon icon={CalendarDays} />
-                        </Toggle>
-                        <Text className="ml-2">{t('groupScreen.showOverdue')}</Text>
+                      <View className="flex-row items-center justify-center gap-2 px-6 pb-2">
+                        <View className="flex-row items-center">
+                          <Toggle pressed={showSubmitted} onPressedChange={setShowSubmitted}>
+                            {showSubmitted ? (
+                              <ToggleIcon icon={EyeOff} />
+                            ) : (
+                              <ToggleIcon icon={Eye} />
+                            )}
+                          </Toggle>
+                          <Text className="ml-2">{t('assignmentsScreen.showSubmitted')}</Text>
+                        </View>
+                        <View className="flex-row items-center">
+                          <Toggle pressed={showOverdue} onPressedChange={setShowOverdue}>
+                            <ToggleIcon icon={CalendarDays} />
+                          </Toggle>
+                          <Text className="ml-2">{t('assignmentsScreen.showOverdue')}</Text>
+                        </View>
                       </View>
                     </View>
                     <GroupAssignmentsSection

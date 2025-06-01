@@ -19,6 +19,7 @@ export default function LoginScreen() {
 
   useEffect(() => {
     if (isAuthenticated) {
+      router.dismissAll();
       router.replace('/');
     }
   }, [isAuthenticated]);

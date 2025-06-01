@@ -26,7 +26,6 @@ export const getLanguages = (): {code: string, displayName: string}[] => ([
    { code: 'fi-FI', displayName: i18n.t('languages.finnish') },
    { code: 'da-DK', displayName: i18n.t('languages.danish') },
    { code: 'no-NO', displayName: i18n.t('languages.norwegian') },
-   { code: 'uk-UA', displayName: i18n.t('languages.ukrainian') },
 ]);
 
 export const codeToDisplayNameMap: Record<string, string> = {
@@ -42,7 +41,6 @@ export const codeToDisplayNameMap: Record<string, string> = {
   'fi-FI': 'languages.finnish',
   'da-DK': 'languages.danish',
   'no-NO': 'languages.norwegian',
-  'uk-UA': 'languages.ukrainian',
 };
 
 console.log('Available languages:', Languages);

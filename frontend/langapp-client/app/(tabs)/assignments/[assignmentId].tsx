@@ -54,7 +54,7 @@ export default function AssignmentDetailPage() {
     <ScrollView className="flex-1 bg-background p-4" contentContainerStyle={{ paddingBottom: 32 }}>
       <Animated.View entering={FadeIn.duration(400)}>
         <Card className="rounded-xl border border-border p-6 shadow-sm">
-          <View className="mb-3 flex-row items-center">
+          <View className="mb-2 flex-row items-center">
             <MaterialCommunityIcons name="book-education" size={28} className="text-primary" />
             <Text className="ml-2 text-3xl font-bold text-primary">{assignment.name}</Text>
             {assignment.submitted && (
@@ -67,15 +67,15 @@ export default function AssignmentDetailPage() {
             )}
           </View>
 
-          {assignment.description != null && (
-            <View className="mt-4 rounded-lg bg-secondary/10 p-4">
-              <Text className="text-base leading-relaxed text-foreground">
-                {assignment.description}
-              </Text>
-            </View>
-          )}
+          <View className="mt-2 rounded-lg bg-secondary/10 p-4">
+            <Text className="text-base leading-relaxed text-foreground">
+              {assignment.description !== null && assignment.description !== ''
+                ? assignment.description
+                : t('assignmentDetailScreen.noDescription')}
+            </Text>
+          </View>
 
-          <View className="mt-6 flex-row items-center">
+          <View className="mt-2 flex-row items-center">
             <MaterialCommunityIcons
               name="trophy-outline"
               size={20}

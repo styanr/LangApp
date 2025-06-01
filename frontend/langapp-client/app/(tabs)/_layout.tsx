@@ -36,6 +36,7 @@ export default function AuthenticatedLayout() {
   }
 
   if (!isAuthenticated) {
+    console.log('Redirecting to login...');
     return <Redirect href="/auth/login" />;
   }
 
@@ -91,13 +92,6 @@ export default function AuthenticatedLayout() {
         options={{
           title: t('tabs.profile'),
           tabBarIcon: ({ color }) => <UserRound color={color} size={24} />,
-        }}
-        listeners={{
-          tabPress: () => {
-            if (router.canDismiss()) {
-              router.dismissAll();
-            }
-          },
         }}
       />
       <Tabs.Screen

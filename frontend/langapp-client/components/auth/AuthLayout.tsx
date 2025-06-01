@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { View, Text, Pressable, ScrollView, Image } from 'react-native';
 import { Stack, Link } from 'expo-router';
 import Animated from 'react-native-reanimated';
 import { Card } from '@/components/ui/card';
@@ -24,8 +24,8 @@ export function AuthLayout({ title, subtitle, Icon, iconSize = 54, children }: A
 
       <View className="absolute left-6 top-12 z-10">
         <Link href="/" asChild>
-          <Pressable className="flex-row items-center gap-2">
-            <GraduationCap color="#6366F1" size={26} />
+          <Pressable className="flex-row items-center gap-2 rounded-lg bg-white p-2 px-3 shadow-md dark:bg-zinc-800">
+            <Image source={require('@/assets/icon.png')} className="h-8 w-8" resizeMode="contain" />
             <Text className="text-xl font-bold text-gray-800 dark:text-gray-200">LangApp</Text>
           </Pressable>
         </Link>
@@ -48,8 +48,12 @@ export function AuthLayout({ title, subtitle, Icon, iconSize = 54, children }: A
             </View>
 
             <View className="mb-4 items-center px-6">
-              <Text className="mb-1 text-2xl font-bold text-gray-800 dark:text-gray-200">{title}</Text>
-              <Text className="text-center text-sm text-gray-500 dark:text-gray-400">{subtitle}</Text>
+              <Text className="mb-1 text-2xl font-bold text-gray-800 dark:text-gray-200">
+                {title}
+              </Text>
+              <Text className="text-center text-sm text-gray-500 dark:text-gray-400">
+                {subtitle}
+              </Text>
             </View>
 
             {children}

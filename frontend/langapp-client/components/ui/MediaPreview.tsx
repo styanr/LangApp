@@ -7,6 +7,7 @@ import * as WebBrowser from 'expo-linking';
 import { Button } from './button';
 import { useFileAccess } from '@/hooks/useFileAccess';
 import { unescapeUnicode } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 interface MediaPreviewProps {
   url: string;
@@ -14,6 +15,7 @@ interface MediaPreviewProps {
 }
 
 export function MediaPreview({ url, index }: MediaPreviewProps) {
+  const { t } = useTranslation();
   const [modalVisible, setModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isFetchingFilename, setIsFetchingFilename] = useState(false);
@@ -30,7 +32,8 @@ export function MediaPreview({ url, index }: MediaPreviewProps) {
   };
 
   const getFileName = async (fileUrl: string): Promise<string> => {
-    let filename = fileUrl.split('/').pop() || `File ${index + 1}`;
+    let filename =
+      fileUrl.split('/').pop() || t('mediaPreview.defaultFileName', { index: index + 1 });
     try {
       const response = await fetch(fileUrl, { method: 'HEAD' });
       const encodedFileName = response.headers.get('x-ms-meta-originalfilename');
@@ -64,9 +67,10 @@ export function MediaPreview({ url, index }: MediaPreviewProps) {
             setIsFetchingFilename(false);
           }
         } catch (e) {
-          const errorMessage = e instanceof Error ? e.message : 'Failed to get accessible URL';
+          const errorMessage =
+            e instanceof Error ? e.message : t('mediaPreview.failedToGetAccessibleUrl');
           setError(errorMessage);
-          Alert.alert('Error', `Could not load file: ${errorMessage}`);
+          Alert.alert(t('common.error'), t('mediaPreview.error', { error: errorMessage }));
         }
         setIsLoading(false);
       }
@@ -76,13 +80,14 @@ export function MediaPreview({ url, index }: MediaPreviewProps) {
 
   const generateFallbackFileName = (fileUrl: string): string => {
     const currentExtension = getFileExtension(fileUrl);
-    const filename = fileUrl.split('/').pop() || `File ${index + 1}`;
+    const filename =
+      fileUrl.split('/').pop() || t('mediaPreview.defaultFileName', { index: index + 1 });
     return filename.length > 25 ? `${filename.substring(0, 20)}...${currentExtension}` : filename;
   };
 
   const openFile = async () => {
     if (!accessibleUrl) {
-      Alert.alert('Error', 'File URL is not available. Cannot open.');
+      Alert.alert(t('common.error'), t('mediaPreview.fileNotAvailable'));
       return;
     }
     const currentlyOpening = !isLoading;
@@ -90,7 +95,7 @@ export function MediaPreview({ url, index }: MediaPreviewProps) {
     try {
       await WebBrowser.openURL(accessibleUrl);
     } catch (error) {
-      Alert.alert('Error', 'Could not open this file');
+      Alert.alert(t('common.error'), t('mediaPreview.couldNotOpenFile'));
     } finally {
       if (currentlyOpening) setIsLoading(false);
     }
@@ -110,7 +115,9 @@ export function MediaPreview({ url, index }: MediaPreviewProps) {
   const getFileNameToDisplay = (): string => {
     return (
       displayedFileName ||
-      (currentFileUrl ? generateFallbackFileName(currentFileUrl) : `File ${index + 1}`)
+      (currentFileUrl
+        ? generateFallbackFileName(currentFileUrl)
+        : t('mediaPreview.defaultFileName', { index: index + 1 }))
     );
   };
 
@@ -119,7 +126,9 @@ export function MediaPreview({ url, index }: MediaPreviewProps) {
       return (
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color="#4F46E5" />
-          <Text className="mt-4 text-base font-medium text-primary">Loading file...</Text>
+          <Text className="mt-4 text-base font-medium text-primary">
+            {t('mediaPreview.loadingFile')}
+          </Text>
         </View>
       );
     }
@@ -127,7 +136,7 @@ export function MediaPreview({ url, index }: MediaPreviewProps) {
       return (
         <View className="flex-1 items-center justify-center">
           <Text className="max-w-[80%] text-center text-base font-medium text-destructive">
-            Error: {error}
+            {t('mediaPreview.error', { error })}
           </Text>
         </View>
       );
@@ -136,7 +145,9 @@ export function MediaPreview({ url, index }: MediaPreviewProps) {
       return (
         <View className="flex-1 items-center justify-center">
           {!isLoading && (
-            <Text className="text-center text-base text-muted-foreground">File not available.</Text>
+            <Text className="text-center text-base text-muted-foreground">
+              {t('mediaPreview.fileNotAvailable')}
+            </Text>
           )}
         </View>
       );
@@ -151,7 +162,7 @@ export function MediaPreview({ url, index }: MediaPreviewProps) {
             className="h-full w-full rounded-lg"
             resizeMode="contain"
             onError={() => {
-              Alert.alert('Error', 'Failed to load image');
+              Alert.alert(t('common.error'), t('mediaPreview.failedToLoadImage'));
             }}
           />
         </View>
@@ -164,11 +175,11 @@ export function MediaPreview({ url, index }: MediaPreviewProps) {
           </View>
           <Text className="mb-2 text-center text-lg font-semibold">
             {isFetchingFilename
-              ? 'Loading filename...'
+              ? t('mediaPreview.loadingFilename')
               : displayedFileName || generateFallbackFileName(accessibleUrl)}
           </Text>
           <Text className="mb-8 text-center text-base text-muted-foreground">
-            This file type cannot be previewed directly.
+            {t('mediaPreview.cannotPreview')}
           </Text>
           <Button
             onPress={openFile}
@@ -177,10 +188,10 @@ export function MediaPreview({ url, index }: MediaPreviewProps) {
             <ExternalLink size={16} className="mr-2 text-white" />
             <Text className="text-base font-semibold text-white">
               {isLoading && !accessibleUrl
-                ? 'Loading...'
+                ? t('mediaPreview.loading')
                 : isLoading
-                  ? 'Opening...'
-                  : 'Open in Browser'}
+                  ? t('mediaPreview.opening')
+                  : t('mediaPreview.openInBrowser')}
             </Text>
           </Button>
         </View>
@@ -209,7 +220,9 @@ export function MediaPreview({ url, index }: MediaPreviewProps) {
           </View>
         )}
         <Text className="text-base font-medium" numberOfLines={1} ellipsizeMode="tail">
-          {isFetchingFilename && !displayedFileName ? 'Loading name...' : getFileNameToDisplay()}
+          {isFetchingFilename && !displayedFileName
+            ? t('mediaPreview.loadingName')
+            : getFileNameToDisplay()}
         </Text>
       </Pressable>
 

@@ -1,7 +1,7 @@
 {
   "login": {
     "registrationSuccessTitle": "Registration Successful",
-    "registrationSuccessMessage": "Please log in with your new account",
+    "registrationSuccessMessage": "Verify your email to log in",
     "loading": "Loading...",
     "welcomeBack": "Welcome Back",
     "credentialsPrompt": "Enter your credentials to access your account",
@@ -31,19 +31,28 @@
   "registerForm": {
     "username": "Username",
     "usernamePlaceholder": "Choose a username",
+    "usernameValidation": "Username must follow the required format",
+    "usernameTooShort": "Username must be at least 4 characters",
+    "usernameTooLong": "Username cannot exceed 20 characters",
+    "usernameInvalidFormat": "Username can only contain letters, numbers, . and _ (cannot start/end with ./_ or have consecutive ./_ characters)",
     "email": "Email",
     "emailPlaceholder": "Enter your email",
+    "emailValidation": "Please enter a valid email address",
     "firstName": "First Name",
     "firstNamePlaceholder": "Enter first name",
+    "firstNameValidation": "First name is required",
     "lastName": "Last Name",
     "lastNamePlaceholder": "Enter last name",
+    "lastNameValidation": "Last name is required",
     "iAmA": "I am a:",
     "student": "Student",
     "teacher": "Teacher",
     "password": "Password",
     "passwordPlaceholder": "Create a password",
+    "passwordValidation": "Password must be at least 8 characters with uppercase, lowercase, number, and symbol",
     "confirmPassword": "Confirm Password",
     "confirmPasswordPlaceholder": "Confirm your password",
+    "passwordsMatchValidation": "Passwords must match",
     "creatingAccount": "Creating Account...",
     "register": "Register",
     "alreadyHaveAccount": "Already have an account? ",
@@ -566,7 +575,9 @@
     "invalidScoreTitle": "Invalid Score",
     "invalidScoreMessage": "Score must be a number between 0 and 100",
     "saveGradeErrorTitle": "Error",
-    "saveGradeErrorMessage": "Failed to save grade. Please try again."
+    "saveGradeErrorMessage": "Failed to save grade. Please try again.",
+    "scoreLabel_one": "{{count}} point",
+    "scoreLabel_many": "{{count}} points"
   },
   "userViewScreen": {
     "loadingText": "Loading user...",
@@ -609,6 +620,7 @@
   },
   "assignmentDetailScreen": {
     "loading": "Loading assignment...",
+    "noDescription": "No description provided.",
     "failedToLoad": "Failed to load assignment.",
     "submitted": "Submitted",
     "maxScore": "Max Score: {{score}}",
@@ -641,5 +653,20 @@
     "jsonMode": "JSON",
     "resultMode": "Result",
     "textMode": "Text"
+  },
+  "mediaPreview": {
+    "loadingFile": "Loading file...",
+    "error": "Error: {{error}}",
+    "fileNotAvailable": "File not available.",
+    "loadingFilename": "Loading filename...",
+    "cannotPreview": "This file type cannot be previewed directly.",
+    "loading": "Loading...",
+    "opening": "Opening...",
+    "openInBrowser": "Open in Browser",
+    "loadingName": "Loading name...",
+    "defaultFileName": "File {{index}}",
+    "failedToGetAccessibleUrl": "Failed to get accessible URL",
+    "couldNotOpenFile": "Could not open this file",
+    "failedToLoadImage": "Failed to load image"
   }
 }

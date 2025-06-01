@@ -25,6 +25,7 @@ import type { StudyGroupSlimDto, AssignmentDto } from '@/api/orval/langAppApi.sc
 import { UserProfilePicture } from '@/components/ui/UserProfilePicture';
 import { AssignmentCard } from '@/components/assignments/AssignmentCard';
 import { CreateStudyGroupModal } from '@/components/groups/CreateStudyGroupModal';
+import { StudyGroupCard } from '@/components/groups/StudyGroupCard';
 import { useTranslation } from 'react-i18next';
 
 export default function Dashboard() {
@@ -146,28 +147,21 @@ export default function Dashboard() {
             <Text className="text-sm font-semibold text-white">{t('dashboard.newStudyGroup')}</Text>
           </Button>
         )}
-        {groups.slice(0, 3).map((group: StudyGroupSlimDto, index) => (
-          <Link
-            key={group.id}
-            href={{ pathname: '/(tabs)/groups', params: { groupId: group.id } }}
-            asChild>
-            <Pressable>
-              <Animated.View entering={FadeInDown.delay(150 + index * 100).duration(400)}>
-                <CardContent className="mb-2 rounded-md border border-border bg-card/50 p-4">
-                  <View className="mb-2 flex-row items-center gap-2">
-                    <IconBadge Icon={GraduationCap} size={20} className="text-primary" />
-                    <View className="ml-2 flex-1">
-                      <Text className="font-semibold text-card-foreground">{group.name}</Text>
-                      <Text className="text-sm font-semibold text-card-foreground">
-                        {group.language || t('dashboard.languageNotSpecified')}
-                      </Text>
-                    </View>
-                  </View>
-                </CardContent>
-              </Animated.View>
-            </Pressable>
-          </Link>
-        ))}
+        <View className="gap-3">
+          {groups.slice(0, 3).map((group: StudyGroupSlimDto, index) => (
+            <Animated.View
+              key={group.id}
+              entering={FadeInDown.delay(150 + index * 100).duration(400)}>
+              <StudyGroupCard
+                group={group}
+                index={index}
+                isTeacher={isTeacher}
+                compact={true}
+                showAnimation={false}
+              />
+            </Animated.View>
+          ))}
+        </View>
       </View>
     );
   };
