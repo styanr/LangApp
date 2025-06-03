@@ -282,7 +282,7 @@ const ActivitySubmissionItem = React.memo<{
       </View>
 
       {act.activityId && matchingActivity && <AssignmentPrompt activity={matchingActivity} />}
-      <Text className="mt-4 text-lg">Ваша відповідь:</Text>
+      <Text className="mt-4 text-lg">{t('groupSubmissionsSection.yourAnswerLabel')}</Text>
       {ActivitySubmissionComponent}
 
       {act.grade && (

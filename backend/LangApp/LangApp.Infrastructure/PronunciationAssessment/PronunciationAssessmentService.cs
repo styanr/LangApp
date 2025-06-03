@@ -283,9 +283,9 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
         // https://github.com/Azure-Samples/cognitive-services-speech-sdk/blob/master/samples/csharp/sharedcontent/console/speech_recognition_samples.cs
         var scoreComponents = new Dictionary<string, (double score, double weight)>
         {
-            ["Accuracy"] = (accuracyScore, enableProsody ? 0.4 : 0.5),
-            ["Completeness"] = (completenessScore, enableProsody ? 0.2 : 0.25),
-            ["Fluency"] = (fluencyScore, enableProsody ? 0.2 : 0.25)
+            ["Accuracy"] = (accuracyScore, enableProsody ? 0.4 : 0.6),
+            ["Completeness"] = (completenessScore, 0.2),
+            ["Fluency"] = (fluencyScore, 0.2)
         };
 
         // Add prosody component only when enabled
