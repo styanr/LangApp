@@ -1,4 +1,5 @@
 using LangApp.Core.Exceptions;
+using LangApp.Core.Exceptions.Assignments;
 using LangApp.Core.Exceptions.Grading;
 using LangApp.Core.Exceptions.ValueObjects.Submissions.MultipleChoice;
 using LangApp.Core.Services.GradingStrategies;
@@ -47,11 +48,7 @@ public class MultipleChoiceGradingStrategyTests
     [Fact]
     public async Task Grade_EmptyActivityQuestions_ShouldThrow()
     {
-        var activity = new MultipleChoiceActivityDetails([]);
-        var submission = new MultipleChoiceSubmissionDetails([]);
-
-        await Assert.ThrowsAsync<NoQuestionsInActivityException>(() =>
-            _gradingStrategy.GradeAsync(activity, submission));
+        Assert.Throws<InvalidMultipleChoiceQuestionException>(() => new MultipleChoiceActivityDetails([]));
     }
 
     [Fact]
