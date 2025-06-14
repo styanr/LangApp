@@ -51,7 +51,9 @@ public class LangAppApplicationFactory : WebApplicationFactory<Program>, IAsyncL
             var mockAudioFetcher = new Mock<IAudioFetcher>();
             services.RemoveAll<IAudioFetcher>();
             services.AddSingleton(mockAudioFetcher.Object);
-
+            
+            Console.WriteLine(_postgresContainer.GetConnectionString());
+            
             services.AddDbContext<WriteDbContext>(options =>
                 options.UseNpgsql(_postgresContainer.GetConnectionString()), ServiceLifetime.Scoped);
 
