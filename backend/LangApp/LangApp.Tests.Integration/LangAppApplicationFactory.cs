@@ -1,9 +1,9 @@
+using Hangfire;
+using Hangfire.PostgreSql;
 using LangApp.Application.Common.Jobs;
 using LangApp.Application.Common.Services;
 using LangApp.Core.Services.PronunciationAssessment;
-using LangApp.Infrastructure.BlobStorage;
 using LangApp.Infrastructure.EF.Context;
-using LangApp.Infrastructure.PronunciationAssessment;
 using LangApp.Infrastructure.PronunciationAssessment.Audio;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -11,8 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
-using Npgsql;
-using Respawn;
 using Testcontainers.PostgreSql;
 
 namespace LangApp.Tests.Integration;
@@ -31,10 +29,26 @@ public class LangAppApplicationFactory : WebApplicationFactory<Program>, IAsyncL
     {
         builder.ConfigureServices(services =>
         {
+            var connectionString = _postgresContainer.GetConnectionString();
+            
             services.Remove(services.Single(a => a.ServiceType == typeof(DbContextOptions<WriteDbContext>)));
             services.Remove(services.Single(a => a.ServiceType == typeof(DbContextOptions<ReadDbContext>)));
 
+            var hangfireServices = services.Where(s =>
+                    s.ServiceType.FullName?.Contains("hangfire", StringComparison.InvariantCultureIgnoreCase) == true)
+                .ToList();
 
+            foreach (var service in hangfireServices)
+            {
+                services.Remove(service);
+            }
+
+            services.AddHangfire(config =>
+            {
+                config.UseFilter(new AutomaticRetryAttribute { Attempts = 3 });
+                config.UsePostgreSqlStorage(c =>
+                    c.UseNpgsqlConnection(connectionString));
+            });
             var mockEmailService = new Mock<IEmailService>();
             services.RemoveAll<IEmailService>();
             services.AddSingleton(mockEmailService.Object);
@@ -51,12 +65,12 @@ public class LangAppApplicationFactory : WebApplicationFactory<Program>, IAsyncL
             var mockAudioFetcher = new Mock<IAudioFetcher>();
             services.RemoveAll<IAudioFetcher>();
             services.AddSingleton(mockAudioFetcher.Object);
-
+            
             services.AddDbContext<WriteDbContext>(options =>
-                options.UseNpgsql(_postgresContainer.GetConnectionString()), ServiceLifetime.Scoped);
+                options.UseNpgsql(connectionString), ServiceLifetime.Scoped);
 
             services.AddDbContext<ReadDbContext>(options =>
-                options.UseNpgsql(_postgresContainer.GetConnectionString()), ServiceLifetime.Scoped);
+                options.UseNpgsql(connectionString), ServiceLifetime.Scoped);
 
             var mockScheduler = new Mock<IJobScheduler>();
             services.RemoveAll<IJobScheduler>();

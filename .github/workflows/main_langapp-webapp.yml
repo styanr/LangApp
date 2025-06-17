@@ -7,6 +7,7 @@ on:
       - '.github/workflows/main_langapp-webapp.yml'
     branches:
       - main
+      - cicd-integration-tests
   workflow_dispatch:
 env:
   SOLUTION_PATH: ./backend/LangApp/LangApp.sln
@@ -29,7 +30,7 @@ jobs:
         run: dotnet build ${{env.SOLUTION_PATH}} --configuration Release
 
       - name: Test
-        run: dotnet test ${{env.SOLUTION_PATH}} --filter 'FullyQualifiedName!~Integration' --configuration Release --no-build --verbosity normal
+        run: dotnet test ${{env.SOLUTION_PATH}} --configuration Release --no-build --verbosity normal
 
       - name: dotnet publish
         working-directory: ${{env.API_PROJECT_PATH}}
