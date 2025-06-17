@@ -254,7 +254,7 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
             string referenceText,
             bool enableProsody)
     {
-        string[] referenceWords = referenceText.ToLower().Split(' ');
+        string[] referenceWords = Regex.Split(referenceText.ToLower().Trim(), @"\s+");
 
         var filteredWords = finalWords.Where(item => item.ErrorType != "Insertion");
         var wordsList = filteredWords.ToList();
@@ -294,8 +294,11 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
             scoreComponents["Prosody"] = (prosodyScore, 0.2);
         }
 
+        // this is needed to avoid situations when completeness is low but score is high due to fluency and prosody
+        var penalty = Math.Min(1.0, completenessScore / 100.0);
+
         var pronunciationScore = scoreComponents.Sum(component =>
-            component.Value.score * component.Value.weight);
+            component.Value.score * component.Value.weight) * penalty;
 
         return (accuracyScore, completenessScore, fluencyScore, prosodyScore, pronunciationScore);
     }
