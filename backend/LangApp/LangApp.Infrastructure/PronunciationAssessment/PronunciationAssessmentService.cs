@@ -279,12 +279,12 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
         completenessScore = completenessScore <= 100 ? completenessScore : 100;
 
         // Calculate overall pronunciation score
-        // the weights are taken from microsoft documentation
+        // the weights are taken from microsoft documentation, modified a bit to make completeness more significant
         // https://github.com/Azure-Samples/cognitive-services-speech-sdk/blob/master/samples/csharp/sharedcontent/console/speech_recognition_samples.cs
         var scoreComponents = new Dictionary<string, (double score, double weight)>
         {
-            ["Accuracy"] = (accuracyScore, enableProsody ? 0.4 : 0.6),
-            ["Completeness"] = (completenessScore, 0.2),
+            ["Accuracy"] = (accuracyScore, enableProsody ? 0.3 : 0.5),
+            ["Completeness"] = (completenessScore, 0.3),
             ["Fluency"] = (fluencyScore, 0.2)
         };
 
