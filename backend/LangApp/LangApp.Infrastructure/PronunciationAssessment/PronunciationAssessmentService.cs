@@ -254,7 +254,8 @@ public class PronunciationAssessmentService : IPronunciationAssessmentService
             string referenceText,
             bool enableProsody)
     {
-        string[] referenceWords = Regex.Split(referenceText.ToLower().Trim(), @"\s+");
+        string[] referenceWords = Regex.Split(referenceText.ToLower().Trim(), @"\s+", RegexOptions.None,
+            TimeSpan.FromSeconds(1.5));
 
         var filteredWords = finalWords.Where(item => item.ErrorType != "Insertion");
         var wordsList = filteredWords.ToList();
