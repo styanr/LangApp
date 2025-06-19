@@ -7,9 +7,6 @@ interface UseFileAccessReturn {
   error: Error | null;
 }
 
-/**
- * A hook for retrieving read access URLs for files in Azure Blob Storage
- */
 export function useFileAccess(): UseFileAccessReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -36,7 +33,6 @@ export function useFileAccess(): UseFileAccessReturn {
       const containerName = pathSegments[0];
       const blobFileName = pathSegments.slice(1).join('/');
 
-      // Get a SAS token for the blob
       const readResponse = await getReadSasUri({
         containerName,
         blobFileName,

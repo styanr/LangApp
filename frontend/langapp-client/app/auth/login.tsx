@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { AuthLayout } from '@/components/auth/AuthLayout';
 import Toast from 'react-native-toast-message';
-import { getErrorMessage } from '@/lib/errors';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useTranslation } from 'react-i18next';
 
 export default function LoginScreen() {
@@ -14,6 +14,7 @@ export default function LoginScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { registered } = useLocalSearchParams<{ registered?: string }>();
+  const { getErrorMessage } = useErrorHandler();
 
   const { t } = useTranslation();
 

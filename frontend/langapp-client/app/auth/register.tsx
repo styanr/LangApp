@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { AuthLayout } from '@/components/auth/AuthLayout';
 import { FormError } from '@/components/auth/FormError';
-import { getErrorMessage } from '@/lib/errors';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { set } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
@@ -14,6 +14,7 @@ export default function RegisterScreen() {
   const { isAuthenticated, isLoading, register } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { getErrorMessage } = useErrorHandler();
   const router = useRouter();
   const { t } = useTranslation();
 

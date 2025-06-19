@@ -1,4 +1,3 @@
-import { Alert } from 'react-native';
 import { AxiosError } from 'axios';
 import { ProblemDetailsError } from './types';
 
@@ -14,32 +13,21 @@ export function isProblemDetailsError(data: any): data is ProblemDetailsError {
   );
 }
 
-export function handleApiError(error: unknown) {
+// Legacy functions - use useErrorHandler hook instead for proper i18n support
+// These are kept for backward compatibility but should be migrated to the hook
+
+export function handleError(error: unknown) {
+  console.warn('Using legacy handleError - consider using useErrorHandler hook for i18n support');
   console.log('API Error:', error);
-  if (error instanceof AxiosError) {
-    const data = error.response?.data;
-    console.log('Error data:', data);
 
-    if (isProblemDetailsError(data)) {
-      Alert.alert(`Error: ${data.title}`, data.detail);
-      return;
-    }
-
-    const fallback =
-      typeof data?.message === 'string' ? data.message : 'An unknown error occurred.';
-    Alert.alert('Error', fallback);
-    return;
-  }
-
-  Alert.alert('Error', 'An unexpected error occurred.');
-}
-
-interface ValidationError {
-  detail: string;
-  errors: string[];
+  // Basic error handling without i18n - hook version is preferred
 }
 
 export function getErrorMessage(error: unknown): string | undefined {
+  console.warn(
+    'Using legacy getErrorMessage - consider using useErrorHandler hook for i18n support'
+  );
+
   if (error instanceof AxiosError) {
     const data = error.response?.data;
     console.log('Error data:', data);
@@ -60,4 +48,12 @@ export function getErrorMessage(error: unknown): string | undefined {
       return data.message;
     }
   }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return 'An unknown error occurred.';
 }
+
+export { useErrorHandler } from '@/hooks/useErrorHandler';

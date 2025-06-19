@@ -8,12 +8,13 @@ import { FormError } from '@/components/auth/FormError';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Toast from 'react-native-toast-message';
-import { getErrorMessage } from '@/lib/errors';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useTranslation } from 'react-i18next';
 
 export default function ForgotPasswordScreen() {
   const { isLoading, requestPasswordReset } = useAuth();
   const [email, setEmail] = useState('');
+  const { getErrorMessage } = useErrorHandler();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { t } = useTranslation();

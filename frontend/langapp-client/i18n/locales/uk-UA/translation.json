@@ -135,7 +135,7 @@
     "tapToViewGroup": "Натисніть, щоб переглянути деталі групи, дописи та учасників."
   },
   "assignmentsScreen": {
-    "title": "Мої завдання",
+    "title": "Завдання",
     "subtitle": "Всі ваші завдання",
     "showSubmitted": "Показати здані",
     "showOverdue": "Пок. прострочені",
@@ -143,6 +143,7 @@
     "loadError": "Не вдалося завантажити завдання",
     "noAssignments": "У вас немає запланованих завдань.",
     "noAssignmentsHint": "Завітайте пізніше або приєднайтеся до групи, щоб почати!",
+    "noAssignmentsTeacherHint": "Перейдіть до групи і створіть завдання, щоб почати!",
     "untitledAssignment": "Завдання без назви"
   },
   "assignmentCard": {
@@ -305,7 +306,8 @@
     "scoreLabel": "Оцінка:",
     "statusLabel": "Статус:",
     "activitiesLabel": "Вправи:",
-    "unknownActivityType": "Невідомий тип вправи"
+    "unknownActivityType": "Невідомий тип вправи",
+    "yourAnswerLabel": "Ваша відповідь"
   },
   "submissionListItem": {
     "student": "Учень: {{studentName}}",
@@ -457,6 +459,9 @@
     "create": "Створити",
     "notApplicable": "Н/Д",
     "activity": "Вправа",
+    "activity_one": "Вправа",
+    "activity_few": "Вправи",
+    "activity_many": "Вправ",
     "activities": "Вправи",
     "activityTypes": {
       "FillInTheBlank": "Заповнення пропусків",
@@ -611,6 +616,7 @@
   "submitAssignmentScreen": {
     "loading": "Завантаження...",
     "noActivities": "Немає вправ для здачі.",
+    "fillAllActivities": "Будь ласка, виконайте всі вправи перед здачею.",
     "activityProgress": "Вправа {{currentIndex}} з {{totalActivities}}",
     "unsupportedActivityType": "Непідтримуваний тип вправи: {{type}}",
     "previousButton": "Попередня",
@@ -668,5 +674,11 @@
     "failedToGetAccessibleUrl": "Не вдалося отримати доступний URL",
     "couldNotOpenFile": "Не вдалося відкрити цей файл",
     "failedToLoadImage": "Не вдалося завантажити зображення"
+  },
+  "errors": {
+    "genericError": "Помилка",
+    "unknownError": "Сталася невідома помилка.",
+    "unexpectedError": "Сталася неочікувана помилка.",
+    "validationFailed": "Перевірка не пройшла"
   }
 }

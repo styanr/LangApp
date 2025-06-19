@@ -1,5 +1,5 @@
 import { useAssignments } from '@/hooks/useAssignments';
-import { ScrollView, ActivityIndicator, View as RNView } from 'react-native';
+import { ScrollView, ActivityIndicator, View } from 'react-native';
 import { Toggle, ToggleIcon } from '@/components/ui/toggle';
 import { Eye, EyeOff, CalendarDays } from 'lucide-react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
@@ -18,20 +18,21 @@ export default function Assignments() {
   const [showOverdue, setShowOverdue] = useState(false);
   const pageSize = 10;
   const { getUserAssignments } = useAssignments();
-  // Fetch assignments with submitted and overdue filters
+
   const { data, isLoading, isError } = getUserAssignments({
     pageNumber: page,
     pageSize,
     showSubmitted,
     showOverdue,
   });
+
   const assignments = data?.items || [];
   const totalCount = data?.totalCount || 0;
   const { user } = useAuth();
   const isTeacher = user?.role === 'Teacher';
 
   return (
-    <RNView className="flex-1 bg-gradient-to-b from-indigo-50 to-fuchsia-100">
+    <View className="flex-1 bg-gradient-to-b from-indigo-50 to-fuchsia-100">
       <Animated.View entering={FadeIn.duration(600)} className="px-6 pb-4 pt-10">
         <Text className="text-4xl font-extrabold text-primary drop-shadow-lg">
           {t('assignmentsScreen.title')}
@@ -40,50 +41,52 @@ export default function Assignments() {
           {t('assignmentsScreen.subtitle')}
         </Text>
       </Animated.View>
-      <RNView className="flex-row items-center justify-center gap-2 px-6 pb-2">
+      <View className="flex-row items-center justify-center gap-2 px-6 pb-2">
         {!isTeacher && (
-          <RNView className="flex-row items-center">
+          <View className="flex-row items-center">
             <Toggle pressed={showSubmitted} onPressedChange={setShowSubmitted}>
               {showSubmitted ? <ToggleIcon icon={EyeOff} /> : <ToggleIcon icon={Eye} />}
             </Toggle>
             <Text className="ml-2">{t('assignmentsScreen.showSubmitted')}</Text>
-          </RNView>
+          </View>
         )}
-        <RNView className="flex-row items-center">
+        <View className="flex-row items-center">
           <Toggle pressed={showOverdue} onPressedChange={setShowOverdue}>
             <ToggleIcon icon={CalendarDays} />
           </Toggle>
           <Text className="ml-2">{t('assignmentsScreen.showOverdue')}</Text>
-        </RNView>
-      </RNView>
+        </View>
+      </View>
       <ScrollView
         className="flex-1 px-2"
         contentContainerStyle={{ paddingBottom: 32 }}
         showsVerticalScrollIndicator={false}>
         {isLoading && (
-          <RNView className="items-center py-16">
+          <View className="items-center py-16">
             <ActivityIndicator size="large" color="#a21caf" />
             <Text className="mt-4 text-lg text-muted-foreground">
               {t('assignmentsScreen.loading')}
             </Text>
-          </RNView>
+          </View>
         )}
         {isError && (
-          <RNView className="items-center py-16">
+          <View className="items-center py-16">
             <Text className="text-lg text-destructive">{t('assignmentsScreen.loadError')}</Text>
-          </RNView>
+          </View>
         )}
         {!isLoading && !isError && assignments.length === 0 && (
-          <RNView className="items-center py-16">
+          <View className="items-center py-16">
             <Text className="text-center text-xl font-semibold text-muted-foreground">
               {t('assignmentsScreen.noAssignments')}
             </Text>
             <Text className="mt-2 text-center text-base text-muted-foreground">
-              {t('assignmentsScreen.noAssignmentsHint')}
+              {isTeacher
+                ? t('assignmentsScreen.noAssignmentsTeacherHint')
+                : t('assignmentsScreen.noAssignmentsHint')}
             </Text>
-          </RNView>
+          </View>
         )}
-        <RNView className="gap-3">
+        <View className="gap-3">
           {assignments.map((assignment, idx) => (
             <AssignmentCard
               key={assignment.id}
@@ -101,11 +104,11 @@ export default function Assignments() {
               isTeacher={isTeacher}
             />
           ))}
-        </RNView>
+        </View>
         {totalCount > pageSize && (
           <Paging page={page} pageSize={pageSize} totalCount={totalCount} onPageChange={setPage} />
         )}
       </ScrollView>
-    </RNView>
+    </View>
   );
 }

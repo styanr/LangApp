@@ -45,7 +45,7 @@ export default defineConfig({
         query: {
           useQuery: true,
           options: {
-            staleTime: 25 * 1000 * 60, // 25 minutes
+            staleTime: 5 * 1000 * 60, // 25 minutes
           },
         },
       },

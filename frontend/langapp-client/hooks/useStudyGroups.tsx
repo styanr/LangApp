@@ -17,18 +17,9 @@ import type {
   MembersBodyRequestModel,
 } from '@/api/orval/langAppApi.schemas';
 
-/**
- * A custom hook for managing study groups
- * Provides methods to fetch, create, update, and manage study group members
- */
 export function useStudyGroups() {
   const queryClient = useQueryClient();
 
-  /**
-   * Get a specific study group by ID
-   * @param id The ID of the study group to fetch
-   * @param options Optional query options
-   */
   const getStudyGroup = (
     id: string,
     options?: {
@@ -39,11 +30,6 @@ export function useStudyGroups() {
     return useGetStudyGroup(id, options);
   };
 
-  /**
-   * Get study groups for the current user with pagination support
-   * @param params Pagination and filter parameters
-   * @param options Optional query options
-   */
   const getUserStudyGroups = (
     params?: GetStudyGroupForUserParams,
     options?: {
@@ -54,13 +40,9 @@ export function useStudyGroups() {
     return useGetStudyGroupForUser(params, options);
   };
 
-  /**
-   * Create a new study group
-   */
   const { mutateAsync: createGroupAsync, ...createGroupRest } = useCreateStudyGroup({
     mutation: {
       onSuccess: () => {
-        // Invalidate the user study groups query to reflect the new group
         queryClient.invalidateQueries({
           queryKey: getGetStudyGroupForUserQueryKey(),
         });

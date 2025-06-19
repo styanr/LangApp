@@ -191,7 +191,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                   resolve(axiosInstance(originalRequest));
                 },
                 reject: (err) => {
-                  console.error('[Queued Request] Token refresh failed. Rejecting queued request.');
+                  console.log('[Queued Request] Token refresh failed. Rejecting queued request.');
                   reject(err);
                 },
               });
@@ -211,7 +211,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             const storedTokens = tokensStr ? JSON.parse(tokensStr) : null;
 
             if (!storedTokens?.refreshToken) {
-              console.error('[Response Interceptor] No refresh token available');
+              console.log('[Response Interceptor] No refresh token available');
               setTokens(null);
               throw new Error('Missing refresh token');
             }

@@ -54,11 +54,15 @@ export default function AssignmentDetailPage() {
     <ScrollView className="flex-1 bg-background p-4" contentContainerStyle={{ paddingBottom: 32 }}>
       <Animated.View entering={FadeIn.duration(400)}>
         <Card className="rounded-xl border border-border p-6 shadow-sm">
-          <View className="mb-2 flex-row items-center">
-            <MaterialCommunityIcons name="book-education" size={28} className="text-primary" />
-            <Text className="ml-2 text-3xl font-bold text-primary">{assignment.name}</Text>
+          <View className="mb-2 flex-row flex-wrap items-center justify-between gap-y-2">
+            <View className="flex flex-1 flex-row flex-wrap items-center">
+              <MaterialCommunityIcons name="book-education" size={28} className="text-primary" />
+              <Text className="ml-2 flex-1 flex-wrap text-3xl font-bold text-primary">
+                {assignment.name}
+              </Text>
+            </View>
             {assignment.submitted && (
-              <View className="ml-auto flex-row items-center rounded-full bg-emerald-100 px-3 py-1 dark:bg-emerald-800">
+              <View className="flex-row items-center rounded-full bg-emerald-100 px-3 py-1 dark:bg-emerald-800">
                 <CheckCircle size={16} className="mr-1 text-emerald-600 dark:text-emerald-300" />
                 <Text className="text-sm font-medium text-emerald-700 dark:text-emerald-200">
                   {t('assignmentDetailScreen.submitted')}
@@ -104,7 +108,9 @@ export default function AssignmentDetailPage() {
               {assignment.activities?.map((act: ActivityDto, idx: number) => (
                 <View key={act.id ?? idx} className="mb-1 py-2">
                   <Text className="text-base font-medium">
-                    {t(`common.activityTypes.${act.details?.activityType ?? 'Unknown'}` as const)}
+                    {t(`common.activityTypes.${act.details?.activityType}`, {
+                      defaultValue: t('common.activityTypes.Unknown'),
+                    })}
                   </Text>
                 </View>
               ))}

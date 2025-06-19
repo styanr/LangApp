@@ -135,14 +135,15 @@
     "tapToViewGroup": "Tap to view group details, posts, and members."
   },
   "assignmentsScreen": {
-    "title": "My Assignments",
-    "subtitle": "All your language tasks",
+    "title": "Assignments",
+    "subtitle": "All your assignments",
     "showSubmitted": "Show Submitted",
     "showOverdue": "Show Overdue",
     "loading": "Loading assignments...",
     "loadError": "Failed to load assignments",
     "noAssignments": "You have no assignments due.",
     "noAssignmentsHint": "Check back later or join a group to get started!",
+    "noAssignmentsTeacherHint": "Go to a group and an assignment to get started!",
     "untitledAssignment": "Untitled Assignment"
   },
   "assignmentCard": {
@@ -305,7 +306,8 @@
     "scoreLabel": "Score:",
     "statusLabel": "Status:",
     "activitiesLabel": "Activities:",
-    "unknownActivityType": "Unknown activity type"
+    "unknownActivityType": "Unknown activity type",
+    "yourAnswerLabel": "Your Answer"
   },
   "submissionListItem": {
     "student": "Student: {{studentName}}",
@@ -577,7 +579,7 @@
     "saveGradeErrorTitle": "Error",
     "saveGradeErrorMessage": "Failed to save grade. Please try again.",
     "scoreLabel_one": "{{count}} point",
-    "scoreLabel_many": "{{count}} points"
+    "scoreLabel_other": "{{count}} points"
   },
   "userViewScreen": {
     "loadingText": "Loading user...",
@@ -611,6 +613,7 @@
   "submitAssignmentScreen": {
     "loading": "Loading...",
     "noActivities": "No activities to submit.",
+    "fillAllActivities": "Please complete all activities before submitting.",
     "activityProgress": "Activity {{currentIndex}} of {{totalActivities}}",
     "unsupportedActivityType": "Unsupported activity type: {{type}}",
     "previousButton": "Previous",
@@ -668,5 +671,11 @@
     "failedToGetAccessibleUrl": "Failed to get accessible URL",
     "couldNotOpenFile": "Could not open this file",
     "failedToLoadImage": "Failed to load image"
+  },
+  "errors": {
+    "genericError": "Error",
+    "unknownError": "An unknown error occurred.",
+    "unexpectedError": "An unexpected error occurred.",
+    "validationFailed": "Validation failed"
   }
 }

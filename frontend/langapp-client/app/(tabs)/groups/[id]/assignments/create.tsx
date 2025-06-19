@@ -25,12 +25,13 @@ import type {
   QuestionActivityDetailsDto,
   WritingActivityDetailsDto,
 } from '@/api/orval/langAppApi.schemas';
-import { handleApiError } from '@/lib/errors';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { DatePicker } from '@/components/ui/dateTimePicker';
 import { useTranslation } from 'react-i18next';
 
 export default function CreateAssignmentPage() {
   const { t } = useTranslation();
+  const { handleError } = useErrorHandler();
   const router = useRouter();
   const { id: groupId } = useGlobalSearchParams();
   const groupIdValue = groupId as string;
@@ -95,7 +96,7 @@ export default function CreateAssignmentPage() {
     } catch (err) {
       console.error(err);
       setApiError(t('createAssignmentScreen.createFailedError'));
-      handleApiError(err);
+      handleError(err);
     }
   };
 

@@ -33,13 +33,14 @@ import { useUsers } from '@/hooks/useUsers';
 import { SearchInput } from '@/components/ui/search-input';
 
 import { AxiosError } from 'axios';
-import { handleApiError } from '@/lib/errors';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useTranslation } from 'react-i18next';
 
 type TabType = 'posts' | 'assignments' | 'members' | 'submissions';
 
 const GroupPage = () => {
   const { t } = useTranslation();
+  const { handleError } = useErrorHandler();
   const { id: groupId } = useGlobalSearchParams();
 
   const router = useRouter();
@@ -158,7 +159,7 @@ const GroupPage = () => {
     } catch (error) {
       console.error(t('groupScreen.errorAddingMember'), error);
 
-      handleApiError(error);
+      handleError(error);
       setSearchTerm('');
       refetchGroup();
     }

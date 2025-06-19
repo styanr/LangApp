@@ -47,7 +47,6 @@ export default function SubmissionDetailPage() {
   const isLoading = isSubmissionLoading || isAssignmentLoading;
   const isError = isSubmissionError || isAssignmentError;
 
-  // Create a map of activityId -> ActivityDto for efficient lookup
   const activityMap = useMemo(() => {
     if (!assignment?.activities) return new Map<string, ActivityDto>();
 
@@ -60,7 +59,6 @@ export default function SubmissionDetailPage() {
     return map;
   }, [assignment?.activities]);
 
-  // Handle going back to assignment view
   const handleBackToAssignment = () => {
     if (submission?.assignmentId) {
       router.push(`/(tabs)/assignments/teacher-view?assignmentId=${submission.assignmentId}`);
@@ -69,7 +67,6 @@ export default function SubmissionDetailPage() {
     }
   };
 
-  // Handle saving the grade for an activity
   const handleSaveGrade = async (activityId: string) => {
     if (!submissionId) return;
 
@@ -102,7 +99,6 @@ export default function SubmissionDetailPage() {
     }
   };
 
-  // Handle starting to edit a grade
   const handleEditGrade = (activity: ActivitySubmissionDto) => {
     if (!activity.id) return;
 
@@ -111,7 +107,6 @@ export default function SubmissionDetailPage() {
     setFeedback(activity.grade?.feedback || '');
   };
 
-  // Cancel editing
   const handleCancelEdit = () => {
     setEditingActivityId(null);
     setScore('');
@@ -153,10 +148,8 @@ export default function SubmissionDetailPage() {
 
         {assignment && <AssignmentInfo assignment={assignment} />}
 
-        {/* Student Information */}
         <StudentInfo submission={submission!} />
 
-        {/* Activity Submissions */}
         {submission.activitySubmissions?.map((subActivity, index) => {
           const originalActivity = subActivity.activityId
             ? activityMap.get(subActivity.activityId)
@@ -180,7 +173,6 @@ export default function SubmissionDetailPage() {
           );
         })}
 
-        {/* No activities fallback */}
         {!submission.activitySubmissions || submission.activitySubmissions.length === 0 ? (
           <View className="items-center justify-center rounded-xl bg-fuchsia-50 p-8 dark:bg-fuchsia-900/10">
             <AlertCircle size={32} className="mb-2 text-fuchsia-400" />

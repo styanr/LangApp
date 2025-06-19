@@ -18,7 +18,7 @@ import type { SubmissionGradeDto } from '@/api/orval/langAppApi.schemas';
 import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
 import PronunciationAssessmentResult from './PronunciationAssessmentResult';
 import { useTranslation } from 'react-i18next';
-import { handleApiError } from '@/lib/errors';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { codeToDisplayNameMap, LanguagesArray } from '@/lib/languages';
 
 interface Props {
@@ -29,6 +29,7 @@ interface Props {
 
 export default function PronunciationActivity({ activity, submission, onChange }: Props) {
   const { t } = useTranslation();
+  const { handleError } = useErrorHandler();
   const [uploadedUrl, setUploadedUrl] = useState<string | null>(submission?.recordingUrl || null);
 
   // Get details from the activity
@@ -68,9 +69,11 @@ export default function PronunciationActivity({ activity, submission, onChange }
     } catch (e) {
       console.error('Evaluation error:', e);
       console.error(JSON.stringify(e, null, 2));
-      console.error(JSON.stringify(e.response, null, 2));
+      if (e && typeof e === 'object' && 'response' in e) {
+        console.error(JSON.stringify((e as any).response, null, 2));
+      }
 
-      handleApiError(e);
+      handleError(e);
     }
   };
 
@@ -157,7 +160,8 @@ export default function PronunciationActivity({ activity, submission, onChange }
               <Text className="text-lg font-medium">"{referenceText}"</Text>
               {language && (
                 <Text className="mt-1 text-sm text-muted-foreground">
-                  {t('pronunciationActivity.referenceTextLabel')} {t(languageReadableCode, {defaultValue: language})}
+                  {t('pronunciationActivity.referenceTextLabel')}{' '}
+                  {t(languageReadableCode, { defaultValue: language })}
                 </Text>
               )}
             </View>

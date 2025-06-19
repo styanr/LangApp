@@ -110,6 +110,9 @@ export function useSubmissions() {
           });
         },
       },
+      request: {
+        timeout: 120000, // 2 minutes timeout for pronunciation evaluation
+      },
     });
 
   const evaluatePronunciation = useCallback(

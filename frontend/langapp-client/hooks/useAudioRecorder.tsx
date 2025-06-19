@@ -31,7 +31,6 @@ export function useAudioRecorder() {
     isRecording: expoIsRecording,
   } = useExpoAudioRecorder();
 
-  // Request permissions on mount and set audio mode
   useEffect(() => {
     const getPermissionsAndSetupAudioMode = async () => {
       const permission = await Audio.requestPermissionsAsync();
@@ -42,7 +41,7 @@ export function useAudioRecorder() {
           await Audio.setAudioModeAsync({
             allowsRecordingIOS: true,
             playsInSilentModeIOS: true,
-            staysActiveInBackground: true,
+            staysActiveInBackground: false,
             shouldDuckAndroid: true,
             playThroughEarpieceAndroid: false,
           });
@@ -54,12 +53,31 @@ export function useAudioRecorder() {
 
     getPermissionsAndSetupAudioMode();
 
-    // Cleanup sound object on unmount
+    // cleanup
     return () => {
-      if (localState.sound) {
-        localState.sound.unloadAsync();
-      }
-      // @siteed/expo-audio-studio's useAudioRecorder hook should handle its own internal cleanup
+      const cleanup = async () => {
+        if (expoIsRecording) {
+          await resetRecording();
+        }
+        if (localState.sound) {
+          await localState.sound.unloadAsync();
+        }
+
+        try {
+          await Audio.setAudioModeAsync({
+            allowsRecordingIOS: false,
+            playsInSilentModeIOS: false,
+            staysActiveInBackground: false,
+            shouldDuckAndroid: false,
+            playThroughEarpieceAndroid: false,
+          });
+        } catch (error) {
+          console.error('Failed to reset audio mode', error);
+        }
+      };
+
+      // Call the async function but don't await it
+      cleanup();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // localState.sound is not needed in dependency array
@@ -74,7 +92,6 @@ export function useAudioRecorder() {
       }
     }
 
-    // Reset local state for a new recording
     if (localState.sound) {
       await localState.sound.unloadAsync();
     }
@@ -88,13 +105,11 @@ export function useAudioRecorder() {
     const config: RecordingConfig = {
       sampleRate: 16000,
       channels: 1,
-      encoding: 'pcm_16bit', // This encoding is generally WAV compatible
-      // onAudioStream can be omitted if not needed for real-time processing
+      encoding: 'pcm_16bit', // WAV
     };
 
     try {
       await expoStartRecording(config);
-      // expoIsRecording from useExpoAudioRecorder will now be true
     } catch (err) {
       console.error('Failed to start recording with @siteed/expo-audio-studio', err);
     }
@@ -105,7 +120,6 @@ export function useAudioRecorder() {
 
     try {
       const audioFile: AudioRecording | undefined = await expoStopRecording();
-      // expoIsRecording from useExpoAudioRecorder will now be false
 
       if (audioFile && audioFile.fileUri) {
         const { sound } = await Audio.Sound.createAsync({ uri: audioFile.fileUri });

@@ -148,8 +148,6 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({
     showDescription,
     compact,
     overdue,
-    // id is not needed for CardInnerContent rendering but kept for potential future use
-    // index is used by Animated.View, not CardInnerContent
   };
 
   const content = <CardInnerContent {...cardContentProps} />;

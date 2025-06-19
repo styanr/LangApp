@@ -33,7 +33,7 @@ const apiMutator = <T>(
     ...options,
     cancelToken: source.token,
     baseURL,
-    timeout: options?.timeout || 10000,
+    timeout: options?.timeout || 30 * 1000, // Default timeout of 30 seconds
   }).then(({ data }) => data);
 
   // @ts-ignore
