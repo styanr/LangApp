@@ -59,7 +59,7 @@ public class PronunciationGradingStrategyTests
     [Fact]
     public void Constructor_EmptyReferenceText_ThrowsException()
     {
-        Assert.Throws<InvalidPronunciationAssignmentDetailsException>(() =>
+        Assert.Throws<InvalidPronunciationActivityReferenceTextException>(() =>
             new PronunciationActivityDetails("", Language.EnglishUS));
     }
 }

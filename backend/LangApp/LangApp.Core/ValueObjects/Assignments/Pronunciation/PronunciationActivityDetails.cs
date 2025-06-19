@@ -12,14 +12,30 @@ public record PronunciationActivityDetails : ActivityDetails
     public PronunciationActivityDetails(string referenceText, Language language, bool allowAssessment = true,
         bool allowListening = true)
     {
-        if (string.IsNullOrWhiteSpace(referenceText))
+        if (!IsValidReferenceText(referenceText))
         {
-            throw new InvalidPronunciationAssignmentDetailsException(referenceText);
+            throw new InvalidPronunciationActivityReferenceTextException(referenceText);
+        }
+
+        if (!IsValidReferenceTextLength(referenceText))
+        {
+            throw new PronunciationActivityReferenceTextTooLongException(referenceText.Length, 1000);
         }
 
         ReferenceText = referenceText;
         Language = language;
         AllowAssessment = allowAssessment;
         AllowListening = allowListening;
+    }
+
+    private static bool IsValidReferenceText(string referenceText)
+    {
+        return !string.IsNullOrWhiteSpace(referenceText);
+    }
+
+    private static bool IsValidReferenceTextLength(string referenceText)
+    {
+        const int maxLength = 1000;
+        return referenceText.Length <= maxLength;
     }
 }

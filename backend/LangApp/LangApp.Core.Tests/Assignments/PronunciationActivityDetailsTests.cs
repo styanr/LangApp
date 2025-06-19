@@ -28,6 +28,7 @@ public class PronunciationActivityDetailsTests
         // Arrange
         var language = Language.EnglishUS;
         // Act & Assert
-        Assert.Throws<InvalidPronunciationAssignmentDetailsException>(() => new PronunciationActivityDetails(invalidText, language));
+        Assert.Throws<InvalidPronunciationActivityReferenceTextException>(() =>
+            new PronunciationActivityDetails(invalidText, language));
     }
 }
