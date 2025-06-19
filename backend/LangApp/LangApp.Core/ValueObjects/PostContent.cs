@@ -6,7 +6,7 @@ namespace LangApp.Core.ValueObjects;
 public record PostContent
 {
     private const int MinLength = 5;
-    private const int MaxLength = 500;
+    private const int MaxLength = 1000;
     public string Value { get; private set; }
 
     public PostContent(string content)
