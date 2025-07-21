@@ -8,7 +8,7 @@ namespace LangApp.Core.Entities.Users;
 public class ApplicationUser : AggregateRoot
 {
     public Username Username { get; private set; }
-    public string Email { get; private set; }
+    public Email Email { get; private set; }
     public UserFullName FullName { get; private set; }
     public string? PictureUrl { get; private set; }
     public UserRole Role { get; private set; }
@@ -18,7 +18,7 @@ public class ApplicationUser : AggregateRoot
     }
 
     internal ApplicationUser(Guid id, Username username, UserFullName fullName, string? pictureUrl, UserRole role,
-        string email) : base(id)
+        Email email) : base(id)
     {
         Username = username;
         FullName = fullName;
@@ -60,5 +60,14 @@ public class ApplicationUser : AggregateRoot
         Role = role;
 
         AddEvent(new UserRoleUpdated(role));
+    }
+
+    public void UpdateEmail(Email email)
+    {
+        if (Email == email) return;
+
+        Email = email;
+
+        AddEvent(new UserEmailUpdated(email));
     }
 }

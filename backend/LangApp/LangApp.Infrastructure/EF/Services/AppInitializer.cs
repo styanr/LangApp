@@ -18,16 +18,10 @@ internal sealed class AppInitializer : IHostedService
     {
         using var scope = _provider.CreateScope();
 
-        // TODO a more flexible approach?
-        DbContext[] dbContextList =
-        [
-            scope.ServiceProvider.GetRequiredService<ReadDbContext>(),
-            scope.ServiceProvider.GetRequiredService<WriteDbContext>()
-        ];
+        // Use WriteDbContext for migrations since it contains the full schema
+        var writeDbContext = scope.ServiceProvider.GetRequiredService<WriteDbContext>();
 
-        var dbContext = dbContextList[1];
-
-        await dbContext.Database.MigrateAsync(cancellationToken);
+        await writeDbContext.Database.MigrateAsync(cancellationToken);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

@@ -14,8 +14,12 @@ const initI18n = async () => {
   let savedLanguage = await AsyncStorage.getItem('language');
 
   if (!savedLanguage) {
-    savedLanguage = Localization.getLocales()[0].languageTag;
-    // savedLanguage = 'uk-UA'; // TODO: change later when rebuilt because expo-localization is a native module
+    // Get system locale, with fallback support for supported languages
+    const systemLocale = Localization.getLocales()[0].languageTag;
+    const supportedLanguages = Object.keys(resources);
+    
+    // Use system locale if supported, otherwise default to en-US
+    savedLanguage = supportedLanguages.includes(systemLocale) ? systemLocale : 'en-US';
   }
 
   i18n.use(initReactI18next).init({
