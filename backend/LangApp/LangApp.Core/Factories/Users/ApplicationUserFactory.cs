@@ -16,9 +16,9 @@ public class ApplicationUserFactory : IApplicationUserFactory
     }
 
     public ApplicationUser Create(Username username, UserFullName fullName, string? pictureUrl, UserRole role,
-        string email) => new(_keyGenerator.NewKey(), username, fullName, pictureUrl, role, email);
+        Email email) => new(_keyGenerator.NewKey(), username, fullName, pictureUrl, role, email);
 
     public ApplicationUser Create(Guid id, Username username, UserFullName fullName, string? pictureUrl,
         UserRole role,
-        string email) => new(id, username, fullName, pictureUrl, role, email);
+        Email email) => new(id, username, fullName, pictureUrl, role, email);
 }
