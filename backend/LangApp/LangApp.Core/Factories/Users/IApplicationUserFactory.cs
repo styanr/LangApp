@@ -8,8 +8,8 @@ namespace LangApp.Core.Factories.Users;
 public interface IApplicationUserFactory
 {
     ApplicationUser Create(Username username, UserFullName fullName, string? pictureUrl, UserRole role,
-        Email email);
+        string email);
 
     ApplicationUser Create(Guid id, Username username, UserFullName fullName, string? pictureUrl, UserRole role,
-        Email email);
+        string email);
 }

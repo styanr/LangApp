@@ -10,11 +10,11 @@ public static class ModelExtensions
         IApplicationUserFactory factory)
     {
         var username = new Username(identityUser.UserName!);
-        var email = new Email(identityUser.Email!);
 
+        // TODO: emails
         var domainUser = factory.Create(identityUser.Id, username, identityUser.FullName,
             identityUser.PictureUrl,
-            identityUser.Role, email);
+            identityUser.Role, identityUser.Email!);
 
         return domainUser;
     }
@@ -25,7 +25,7 @@ public static class ModelExtensions
             domainModel.Id,
             domainModel.Username,
             domainModel.FullName,
-            domainModel.Email.Value,
+            domainModel.Email,
             domainModel.PictureUrl,
             domainModel.Role
         );
